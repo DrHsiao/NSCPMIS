@@ -1,0 +1,129 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0030Model
+@{ ViewBag.Title = "分支計畫案件管制";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+@section head{
+
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    @*<link href="~/Content/themes/base/jquery-ui.theme.css" rel="stylesheet" />*@
+
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            計畫經費管制查詢 [1.1.5]
+            <small>預算統計檢視</small>
+            <br /><small>@Model.CurrentProjectName</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page"> <i class="fa-solid fa-file"></i><a href="@Url.Content("~/")PJE0050">計畫經費管制查詢 [1.1.5]</a></li>
+
+            <li class="breadcrumb-item active" aria-current="page"><i class="fa-solid fa-file"></i>預算統計</li>
+        </ol>
+    </div>
+</div>
+@using(Html.BeginForm("", "PJE0050", FormMethod.Post, new { id = "mainForm" })) {
+
+
+    <input type="hidden" name="PID" id="PID" value="@Model.PID" />
+    <input type="hidden" name="prePage" value="@Request.Params["page"]" />
+    <input type="hidden" name="page" value="@Model.page" />
+    <input type="hidden" name="TID" id="TID" value="@Model.TID" />
+
+    <a class="btn btn-secondary btn-lg" href="PJE0050?prePage=@Model.prePage">返回</a>
+    <button class="btn btn-secondary btn-lg" type="button" onclick="exportTableToExcel('myTable', '預算統計')">匯出 Excel</button>
+
+    <script>
+        function exportTableToExcel(tableID, filename = '') {
+            const table = document.getElementById(tableID);
+            const style = `
+  <style>
+    table, th, td {
+      border: 1px solid black !important;
+      border-collapse: collapse !important;
+    }
+  </style>
+`;
+
+            const html = style + table.outerHTML;
+            const blob = new Blob(
+                ["\ufeff" + html], // 加上 UTF-8 BOM
+                { type: "application/vnd.ms-excel;charset=utf-8;" }
+            );
+
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = filename+".xls";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+    <br />
+    <br />
+
+    <div class="card mb-3">
+        @{
+            System.Data.DataTable yline = ViewBag.yline;
+            decimal d;
+        }
+        @if(yline.Rows.Count > 0) {
+
+            <table id="myTable" class="table table-hover table-bordered" style="display: block; height: 500px; overflow-y: scroll; overflow-x: auto;">
+                <tr>
+                    <td nowrap ></td>
+                    @{System.Data.DataTable xline = ViewBag.xline;}
+                    @foreach(System.Data.DataRow x in xline.Rows) {
+                        <td colspan="2" >@x["CATY_NAME"]</td>
+                    }
+                </tr>
+                <tr>
+                    <td style="">縣市別</td>
+                    @foreach(System.Data.DataRow x in xline.Rows) {
+                        <td nowrap align="center">件數</td>
+                        <td nowrap align="center" style="width:300px;">金額(元)</td>
+                    }
+                </tr>
+
+
+                @for(int i = 0; i < yline.Rows.Count; i++) {
+                    <tr>
+                        @for(int j = 0; j < yline.Columns.Count; j++) {
+
+
+                            try {
+                                d = Convert.ToDecimal(yline.Rows[i][j]);
+                                if(d > 1000) {
+                                    <td nowrap align="right">@String.Format("{0:###,###.00}", d)</td>
+                                } else {
+                                    <td nowrap align="right">@d</td>
+                                }
+
+                            } catch {
+                                <td nowrap>@yline.Rows[i][j]</td>
+                            }
+
+                            @*<td nowrap align="right">@yline.Rows[i][j]</td>*@
+
+
+                        }
+
+
+                    </tr>
+                }
+
+
+            </table>
+        } else {
+
+            <table class="table"><tr><td>無資料</td></tr></table>
+
+
+        }
+    </div>
+}

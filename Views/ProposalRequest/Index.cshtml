@@ -1,0 +1,1718 @@
+﻿@model IEnumerable<WCals.Models.ProposalRequestViewModel>
+@{
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<div>
+    @Html.Action("SideBar", "Home")
+</div>
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+
+
+<style>
+    /*basic reset*/
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    html {
+        height: 100%;
+        /*background: #6441A5;*/ /* fallback for old browsers */
+        background: -webkit-linear-gradient(to left, #6441A5, #2a0845); /* Chrome 10-25, Safari 5.1-6 */
+    }
+
+    body {
+        font-family: montserrat, arial, verdana;
+        background: transparent;
+    }
+
+    /*form styles*/
+    #msform {
+        text-align: center;
+        position: relative;
+        margin-top: 30px;
+    }
+
+        #msform fieldset {
+            background: white;
+            border: 0 none;
+            border-radius: 0px;
+            box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+            padding: 20px 30px;
+            box-sizing: border-box;
+            width: 80%;
+            margin: 0 10%;
+            /*stacking fieldsets above each other*/
+            position: relative;
+        }
+
+            /*Hide all except first fieldset*/
+            #msform fieldset:not(:first-of-type) {
+                display: none;
+            }
+
+        /*inputs*/
+        #msform input, #msform textarea, #msform select {
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 0px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: montserrat;
+            color: #2C3E50;
+            font-size: 13px;
+        }
+
+            #msform input:focus, #msform textarea:focus {
+                -moz-box-shadow: none !important;
+                -webkit-box-shadow: none !important;
+                box-shadow: none !important;
+                border: 1px solid #ee0979;
+                outline-width: 0;
+                transition: All 0.5s ease-in;
+                -webkit-transition: All 0.5s ease-in;
+                -moz-transition: All 0.5s ease-in;
+                -o-transition: All 0.5s ease-in;
+            }
+
+
+        /*buttons*/
+        #msform .action-button {
+            width: 100px;
+            background: #ee0979;
+            font-weight: bold;
+            color: white;
+            border: 0 none;
+            border-radius: 25px;
+            cursor: pointer;
+            padding: 10px 5px;
+            margin: 10px 5px;
+        }
+
+            #msform .action-button:hover, #msform .action-button:focus {
+                box-shadow: 0 0 0 2px white, 0 0 0 3px #ee0979;
+            }
+
+        #msform .action-button-previous {
+            width: 100px;
+            background: #C5C5F1;
+            font-weight: bold;
+            color: white;
+            border: 0 none;
+            border-radius: 25px;
+            cursor: pointer;
+            padding: 10px 5px;
+            margin: 10px 5px;
+        }
+
+            #msform .action-button-previous:hover, #msform .action-button-previous:focus {
+                box-shadow: 0 0 0 2px white, 0 0 0 3px #C5C5F1;
+            }
+
+
+
+    /*headings*/
+    .fs-title {
+        font-size: 18px;
+        text-transform: uppercase;
+        color: #2C3E50;
+        margin-bottom: 10px;
+        letter-spacing: 2px;
+        font-weight: bold;
+    }
+
+    .fs-subtitle {
+        font-weight: normal;
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    /*progressbar*/
+    #progressbar {
+        margin-bottom: 30px;
+        overflow: hidden;
+        counter-reset: step;
+        display: flex; /* 將 #progressbar 設置為 flex 容器 */
+        justify-content: space-between; /* 平均分佈 li 元素 */
+    }
+
+        #progressbar li {
+            list-style-type: none;
+            text-transform: uppercase;
+            font-size: 15px;
+            width: 33.33%;
+            float: left;
+            position: relative;
+            letter-spacing: 1px;
+            padding: 10px; /* 添加內邊距以創建框框 */
+            border: 1px solid #ccc; /* 添加邊框 */
+            border-radius: 5px; /* 添加圓角 */
+            margin-right: 10px; /* 添加右邊距以分隔框框 */
+            background-color: white; /* 添加背景色 */
+            color: black;
+            -webkit-text-stroke: 0.7px black; /*為文字添加黑色 1px 的筆畫寬度 */
+        }
+
+            #progressbar li:before {
+                content: counter(step);
+                counter-increment: step;
+                width: 24px;
+                height: 24px;
+                line-height: 26px;
+                display: block;
+                font-size: 12px;
+                color: #333;
+                background: white;
+                border-radius: 25px;
+                margin: 0 auto 10px auto;
+            }
+
+            /*progressbar connectors*/
+            #progressbar li:after {
+                content: '';
+                width: 100%;
+                height: 2px;
+                background: white;
+                position: absolute;
+                left: -50%;
+                top: 40px;
+                z-index: -1; /*put it behind the numbers*/
+            }
+
+            #progressbar li:first-child:after {
+                /*connector not needed before the first step*/
+                content: none;
+            }
+
+            /*marking active/completed steps green*/
+            /*The number of the step and the connector before it = green*/
+            #progressbar li.active:before, #progressbar li.active:after {
+                background: #ee0979;
+                color: white;
+            }
+
+    @@media (min-width: 768px) {
+        .modal-dialog {
+            width: 1700px; /* 新的宽度 */
+        }
+    }
+</style>
+
+
+<div class="card mb-3"><div class="card-body">
+
+    <div>
+        <!-- MultiStep Form -->
+        <div class="row">
+            <div style="width: 83%; margin-left: 6.66%; ">
+                <form id="msform" action="@Url.Action("Save")" method="post" enctype="multipart/form-data">
+                    <!-- progressbar -->
+                    <ul id="progressbar">
+                        <li class="active">選擇申請計畫項目</li>
+                        <li>申請內容基本資料</li>
+                        <li>實施區域</li>
+                        <li>執行內容</li>
+                        <li>勘查評估事項</li>
+                        <li>財源分配</li>
+                        <li>檢附資料</li>
+                    </ul>
+                    <!-- fieldsets -->
+                    <fieldset id="1">
+                        <h2 class="fs-title">選擇申請計畫項目</h2>
+                        <h3 class="fs-subtitle">Select application project</h3>
+                        <select name="YRC_ID" required>
+                            <option value="" disabled selected>請選擇一個計畫</option>
+
+                            @foreach (var item in ViewBag.PJMFORM)
+                            {
+                                <option value="@item.YRC_ID">@item.SYR@item.PJ_NAME</option>
+                            }
+                        </select>
+                        <input type="button" data-id=1 name="next" class="next action-button" value="下一頁" />
+                    </fieldset>
+                    <fieldset id="2">
+                        <h2 class="fs-title">申請內容基本資料</h2>
+                        <h3 class="fs-subtitle">Basic information about application content</h3>
+                        <hr />
+                        <div style="font-size:18px; text-align:left; color:red">　申請案件類別(必填)</div>
+                        <br />
+                        <select name="PJ_CATY_CODE" required>
+                            <option value="" disabled selected>請選擇</option>
+                            @foreach (var item in ViewBag.SMCCODE2)
+                            {
+                                <option value="@item.CATY_COD">@item.CODE_DESC</option>
+                            }
+                        </select>
+                        <hr />
+                        <div style="font-size: 18px; text-align: left; color: red">　辦理狀態(必填)</div>
+                        <br />
+                        <select name="EXT_FG" id="TD_TYPE" required>
+                            <option value="" disabled selected>請選擇</option>
+                            <option value="true">延續性工程</option>
+                            <option value="false">新建工程</option>
+                        </select>
+                        <hr />
+                        <div style="font-size: 18px; text-align: left; color: red">　工程名稱(必填)</div>
+                        <div id="Change">
+                            <input type="text" required id="TD_NAME" name="AP_NAME" placeholder="工程名稱：" data-bs-toggle="modal" data-bs-target="#myModal" class="modal-dialog modal-lg" />
+                        </div>
+                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">
+                                            &times;
+                                        </button>
+                                        <h4 class="modal-title" id="myModalLabel">
+                                            選擇一個工程名稱
+                                        </h4>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <div style="display:flex">
+                                            <input id="TD_NAME_SEARCH" class="form-control" />
+                                            <button type="button" style="height:90%" id="btn1" onclick="Search()" class="btn btn-primary">查詢</button>
+                                        </div>
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th></th>
+                                                <th>工程編號</th>
+                                                <th>工程名稱</th>
+                                                <th>縣市別</th>
+                                                <th>鄉鎮別</th>
+                                            </tr>
+                                            @foreach (var item in ViewBag.WindowsTDName)
+                                            {
+                                                <tr>
+                                                    <td><button value="@item.TD_NAME" id="TD_NAME_Button" type="button" class="btn btn-secondary" data-bs-dismiss="modal">選擇</button></td>
+                                                    <td>@item.TD_CODE</td>
+                                                    <td>@item.TD_NAME</td>
+                                                    <td>@item.TD_CITY</td>
+                                                    <td>@item.TD_TOWN</td>
+                                                </tr>
+                                            }
+                                        </table>
+
+                                        <div id="PageList">
+                                            <button type="button" id="minus" onclick="LastPage()"> ＜ </button>
+                                            <label id="page" value="@ViewBag.Page">@ViewBag.Page</label>
+                                            <button type="button" id="plus" onclick="NextPage()"> ＞ </button>
+                                            <label id="count_page">共 @ViewBag.Count 頁</label>
+                                            <label></label>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            關閉
+                                        </button>
+                                    </div>
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal -->
+                        </div>
+                        <hr />
+                        <div style="font-size: 18px; text-align: left; color: red">　縣市別(必填)</div>
+                        <br />
+
+                        <select id="CITY" name="CITY" required>
+                            <option value="" disabled selected>請選擇：</option>
+                            @foreach (var item in ViewBag.City)
+                            {
+                                <option>@item.CITY</option>
+                            }
+                        </select>
+                        <hr />
+                        <div style="font-size: 18px; text-align: left; color: red">　實施計畫名稱(必填)</div>
+                        <br />
+
+                        <select name="AP_PJ_NAME" required>
+                            <option value="" disabled selected>請選擇：</option>
+                            @foreach (var item in ViewBag.PJName)
+                            {
+                                <option>@item</option>
+                            }
+                        </select>
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　受補助單位</div>
+                        <br />
+
+                        <select name="FILL_MCH">
+                            <option value="" disabled selected>請選擇：</option>
+                            <option>@ViewBag.User</option>
+                            <option>下水道工程處</option>
+
+                        </select>
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　預定執行單位</div>
+                        <br />
+
+                        <input name="EXE_MCH" type="text" placeholder="預定執行單位：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　預定開始日期</div>
+                        <br />
+
+                        <input type="date" name="START_DT" placeholder="預定開始日期：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　預定完成日期</div>
+                        <br />
+
+                        <input type="date" name="END_DT" placeholder="預定完成日期：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　預期效益</div>
+                        <br />
+
+                        <input type="text" name="BENEFITS" placeholder="預期效益：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　全期內容</div>
+                        <br />
+
+                        <input type="text" name="AP_ALL_NOTE" placeholder="全期內容：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　本年度辦理內容</div>
+                        <br />
+
+                        <input type="text" name="AP_YEAR_NOTE" placeholder="本年度辦理內容：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　備註說明</div>
+                        <br />
+
+                        <input type="text" name="AP_NOTE" placeholder="備註說明：" />
+                        <hr />
+
+                        <div style="font-size: 18px; text-align: left; color: red">　填表單位(必填)</div>
+                        <br />
+
+                        <input type="text" required name="ADV_DP" placeholder="填表單位：" />
+                        <hr />
+
+                        <div style="font-size: 18px; text-align: left; color: red">　計畫聯絡人(必填)</div>
+                        <br />
+
+                        <input type="text" required name="CONT_NAME" placeholder="計畫聯絡人：" />
+                        <hr />
+
+
+                        <div style="font-size: 18px; text-align: left; color: red">　計畫聯絡人職稱(必填)</div>
+                        <br />
+
+                        <input type="text" autocomplete="new-password" required name="CONT_TITLE" placeholder="計畫聯絡人職稱：" />
+                        <hr />
+
+                        <div style="font-size: 18px; text-align: left; color: red">　計畫聯絡人電話(必填)</div>
+                        <br />
+
+                        <input type="text" required name="CONT_TEL" placeholder="計畫聯絡人電話：" />
+                        <hr />
+
+                        <div style="font-size: 18px; text-align: left; color: red">　計畫聯絡人Email(必填)</div>
+                        <br />
+
+                        <input type="text" required name="CONT_EMAIL" placeholder="計畫聯絡人Email：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　計畫聯絡人傳真</div>
+                        <br />
+
+                        <input type="text" name="CONT_FAX" placeholder="計畫聯絡人傳真：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　預定徵收公告日</div>
+                        <br />
+
+                        <input type="date" name="TF106_DT" placeholder="預定徵收公告日：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　預定用地取得完成日</div>
+                        <br />
+
+                        <input type="date" name="TF108_DT" placeholder="預定用地取得完成日：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　預定設計完成日</div>
+                        <br />
+
+                        <input type="date" name="TK103_DT" placeholder="預定設計完成日：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　預定發包日</div>
+                        <br />
+
+                        <input type="date" name="TK105_DT" placeholder="預定發包日：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　預定開工日</div>
+                        <br />
+
+                        <input type="date" name="TK106_DT" placeholder="預定開工日：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　預定完工日</div>
+                        <br />
+
+                        <input type="date" name="TK107_DT" placeholder="預定完工日：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　系統別</div>
+                        <br />
+
+                        <input type="text" name="SYS_CATY" placeholder="系統別：" />
+
+                        <hr />
+
+                        <select name="IPJ_CODE">
+                            <option disabled selected>辦理層級：</option>
+                            @foreach (var item in ViewBag.SMCCODE1)
+                            {
+                                <option value="@item.CATY_COD">@item.CODE_DESC</option>
+                            }
+                        </select>
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　縣市評估優先次序</div>
+                        <br />
+
+                        <input type="text" name="S1_ORDER" placeholder="縣市評估優先次序：" />
+                        <hr />
+
+                        <div style="font-size:18px; text-align:left">　關注立委</div>
+                        <br />
+
+                        <input type="text" name="ATTENTION_PEOPLE" placeholder="關注立委：" />
+                        <hr />
+
+                        <input type="button" data-id=2 name="previous" class="previous action-button-previous" value="上一頁" />
+                        <input type="button" data-id=2 name="next" class="next action-button" value="下一頁" />
+                    </fieldset>
+                    <fieldset id="3">
+                        <h2 class="fs-title">實施區域</h2>
+                        <h3 class="fs-subtitle">Implementation area</h3>
+
+                        <div id="FirstCity">
+                            <div class="city-block" id="City1">
+                                <div style="display:flex">
+                                    <button type="button" class="form-control closebtn" style="width:4%; height:49px; font-size:28px;">-</button>
+                                    <select style="text-align:center; width:92%;" id="Town" name="TOWN" class="Town">
+                                        <option value="" disabled selected>請選擇一個鄉鎮</option>
+                                    </select>
+                                    <button type="button" class="form-control btn btn-danger deleteButton" style="width:4%; height:49px; font-size:20px;">X</button>
+                                </div>
+                                <div class="city-source" id="CitySource1">
+                                    <div style="font-size: 18px; text-align: left;">　地點描述：</div>
+                                    <input type="text" id="Detail" name="POS_SYB" class="Detail" placeholder="地點描述:" />
+                                    <div style="font-size: 18px; text-align: left; ">　X座標：</div>
+                                    <input name="GIS_X" type="text" placeholder="X座標:" />
+                                    <div style="font-size: 18px; text-align: left; ">　Y座標：</div>
+                                    <input name="GIS_Y" type="text" placeholder="Y座標:" />
+                                    <div style="font-size: 18px; text-align: left; ">　Z座標：</div>
+                                    <input name="GIS_Z" type="text" placeholder="Z座標:" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <br />
+                        <input type="button" id="addCityBlock" value="新增" />
+                        <input type="button" data-id=3 name="previous" class="previous action-button-previous" value="上一頁" />
+                        <input type="button" data-id=3 name="next" class="next action-button" value="下一頁" />
+                    </fieldset>
+                    <fieldset id="4">
+                        <div id="FirstTown">
+                            <h2 class="fs-title">執行內容</h2>
+                            <h3 class="fs-subtitle">Execution content</h3>
+                            <div class="Town-block" id="Town1">
+                                <label style="width:50%">鄉鎮別</label><label style="width:50%">地點描述</label>
+                                <div style="display:flex">
+                                    <button type="button" class="form-control closebtn" style="width:4%; height:49px; font-size:28px;">-</button>
+                                    <input name="count" class="count" readonly hidden/>
+                                    <input type="text" style="width:48%; text-align:center" readonly id="TownReadOnly" class="Town" />
+                                    <input type="text" style="width:48%; text-align:center" readonly id="DetailReadOnly" class="Detail" />
+                                </div>
+                                <div class="Town-Material">
+                                    <div style="display:flex">
+                                        <label style="width:19.2%">項目類別</label><label style="width:19.2%">項目內容</label>
+                                        <label style="width:19.2%">單位</label><label style="width:19.2%">數量</label><label style="width:19.2%">備註</label><label style="width:4%"> </label>
+                                    </div>
+                                    <div style="display:flex" class="Material">
+                                        <select name="MT_NAME" style="width:19.2%;"><option>污水管線</option><option>人手孔</option><option>污水處理廠</option></select>
+                                        <input name="MT_DESC" value="0" type="text" style="width:19.2%" onblur="checkValue(this)" /><input name="MT_UNIT" value="0" type="text" style="width:19.2%" onblur="checkValue(this)"/><input name="MT_QTY" value=0.00 type="text" style="width:19.2%" onblur="formatDecimal(this)"/><input name="MT_SPEC" value="0" type="text" style="width:19.2%" onblur="checkValue(this)"/>
+                                        <button type="button" class="form-control btn btn-danger deleteButton" style="width:4%; height:49px; font-size:20px;">X</button>
+                                    </div>
+                                    <input type="button" class="addMaterialBlock" value="新增" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="button" data-id=4 name="previous" class="previous action-button-previous" value="上一頁" />
+                        <input type="button" data-id=4 name="next" class="next action-button" value="下一頁" />
+                    </fieldset>
+                    <fieldset id="5">
+                        <h2 class="fs-title">勘查評估事項</h2>
+                        <h3 class="fs-subtitle">Exploration and evaluation matters</h3>
+                        <table class="table table-bordered" style="width:70%; margin-left:auto; margin-right:auto; font-size:20px">
+                            <tr>
+                                <td>1.符合系統規劃</td>
+                                <td>
+                                    <div style="display:flex;justify-content: flex-start; gap: 20px;">
+                                        <input name="SWW1_FG" type="radio" />是<input name="SWW1_FG" type="radio" />否
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>2.實施計畫是否通過</td>
+                                <td>
+                                    <div style="display:flex;justify-content: flex-start; gap: 20px;">
+                                        <input name="SWW2_FG" type="radio" />是<input name="SWW2_FG" type="radio" />否
+                                    </div>
+                                </td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    3.用地變更程序
+                                </td>
+                                <td>
+                                    <div style="display: flex; justify-content: flex-start; gap: 20px;">
+                                        <input name="SWW3_FG" type="radio" />是<input name="SWW3_FG" type="radio" />否
+                                    </div>
+                                </td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>4.用地取得</td>
+                                <td>
+                                    <div style="display: flex; justify-content: flex-start; gap: 20px;">
+                                        <input name="SWW4_FG" type="radio" />是<input name="SWW4_FG" type="radio" />否
+                                    </div>
+                                </td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>5.下游管線廠站建設期程是否配合</td>
+                                <td>
+                                    <div style="display: flex; justify-content: flex-start; gap: 20px;">
+                                        <input name="SWW5_FG" type="radio" />是<input name="SWW5_FG" type="radio" />否
+                                    </div>
+                                </td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    6.交維問題可否解決
+                                </td>
+                                <td>
+                                    <div style="display: flex; justify-content: flex-start; gap: 20px;">
+                                        <input name="SWW6_FG" type="radio" />是<input name="SWW6_FG" type="radio" />否
+                                    </div>
+                                </td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    7.地下管線拆遷
+                                </td>
+                                <td>
+                                    <div style="display: flex; justify-content: flex-start; gap: 20px;">
+                                        <input name="SWW7_FG" type="radio" />是<input name="SWW7_FG" type="radio" />否
+                                    </div>
+                                </td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    8.本工程已完成設計
+                                </td>
+                                <td>
+                                    <div style="display: flex; justify-content: flex-start; gap: 20px;">
+                                        <input name="SWW8_FG" type="radio" />是<input name="SWW8_FG" type="radio" />否
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="display: flex;">
+                                        <input name="SWW81_FG" type="checkbox" style="width:20px; height:20px" /> 辦理中
+                                    </div>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>9.本工程前一年度執行率%(新建工程免填)</td>
+                                <td>
+                                    <input name="BSWW9_RATE" type="text" style="height:20px; width:220px" />
+                                </td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    10.前一年度配合款編列情形
+                                </td>
+                                <td>
+                                    <div style="display: flex; justify-content: flex-start; gap: 20px;">
+                                        <input name="SWW10_FG" type="radio" />是<input name="SWW10_FG" type="radio" />否
+                                    </div>
+                                </td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    11.是否可配合納入預算
+                                </td>
+                                <td>
+                                    <div style="display: flex; justify-content: flex-start; gap: 20px;">
+                                        <input name="SWW11_FG" type="radio" />是<input name="SWW11_FG" type="radio" />否
+                                    </div>
+                                </td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    12.其他
+                                </td>
+                                <td>
+                                    <input name="BSWWOT_DESC" type="text" style="height:20px; width:220px" />
+                                </td>
+                                <td></td>
+
+                            </tr>
+                        </table>
+                        <input type="button" data-id=5 name="previous" class="previous action-button-previous" value="上一頁" />
+                        <input type="button" data-id=5 name="next" class="next action-button" value="下一頁" />
+                    </fieldset>
+                    <fieldset id="6">
+                        <h2 class="fs-title">財源分配</h2>
+                        <h3 class="fs-subtitle">Distribution of financial resources</h3>
+                        <div style="font-size: 18px; text-align: left;">　工程總經費 (單位：千元)</div>
+                        <hr />
+                        <div style="font-size: 18px; text-align: left;">　中央補助款</div>
+                        <input name="TCEN_FUND" />
+                        <div style="font-size: 18px; text-align: left;">　地方配合款</div>
+                        <input name="TLOC_FUND" />
+
+                        <br />
+                        <br />
+
+                        <div style="font-size: 18px; text-align: left;">　以前年度已編列 (單位：千元)</div>
+                        <hr />
+                        <div style="font-size: 18px; text-align: left;">　中央補助款</div>
+                        <input name="RCEN_FUND" />
+                        <div style="font-size: 18px; text-align: left;">　地方配合款</div>
+                        <input name="RLOC_FUND" />
+                        <br />
+                        <br />
+                        <div style="font-size: 18px; text-align: left;">　款項明細</div>
+                        <hr />
+                        <table id="CostList" width="100%">
+                            <tr>
+                                <th style="text-align: center;">年度</th>
+                                <th style="text-align: center;">經費層級</th>
+                                <th style="text-align: center;">需求經費(千元)</th>
+                                <th style="text-align: center;">經費描述</th>
+                                <th style="text-align: center;">刪除</th>
+                            </tr>
+                            <tr>
+                                <td><input name="SYR" type="text" /></td>
+                                <td><select name="FIT_CODE"><option value="00">中央補助款</option><option value="11">地方配合款</option></select></td>
+                                <td><input name="FUND" type="text" /></td>
+                                <td><input name="FUND_DESC" type="text" /></td>
+                                <td><input type="button" value="X" class="btn btn-danger" onclick="deleteRow(this)" /></td>
+                            </tr>
+                        </table>
+                        <input type="button" class="addTable" value="新增" />
+
+                        <input type="button" data-id=6 name="previous" class="previous action-button-previous" value="上一頁" />
+                        <input type="button" data-id=6 name="next" class="next action-button" value="下一頁" />
+                    </fieldset>
+                    <fieldset id="7">
+                        <h2 class="fs-title">檢附資料</h2>
+                        <h3 class="fs-subtitle">Attached information</h3>
+                        <table id="itemList" width="100%">
+                            <tr>
+                                <th style="text-align: center;">項目</th>
+                                <th style="text-align: center;">檔案說明</th>
+                                <th style="text-align: center;">檔案</th>
+                                <th style="text-align: center;">檔案大小</th>
+                                <th style="text-align: center;">刪除</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select name="FC_DESC">
+                                        <option selected="selected" value="工程用地位置簡圖">工程用地位置簡圖
+                                        <option value="現況照片">現況照片</option>
+                                        <option value="計畫執行時程表">計畫執行時程表</option>
+                                        <option value="機關補充資料">機關補充資料</option>
+                                    </select>
+                                </td>
+                                <td><input name="FILE_MEMO" type="text" /></td>
+                                <td><input type="file" name="FILE_PATH" id="file-input" style="height:48px" /></td>
+                                <td><input type="text" name="FILE_SIZE" id="file-size" readonly /></td>
+                                <td><input type="button" value="X" class="btn btn-danger" onclick="deleteRow(this)" /></td>
+                            </tr>
+                        </table>
+                        <input type="button" class="addTable2" value="新增" />
+
+                        <input type="button" data-id=7 name="previous" class="previous action-button-previous" value="上一頁" />
+                        @*有卡控上限要開啟!!!!*@
+                        <input type="submit" data-id=7 name="submit" formnovalidate class="action-button" value="提交" />
+                    </fieldset>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div></div>
+
+
+
+@*下一頁功能 有卡控上限要開啟!!!!*@
+<script>
+    $(".next").click(function () {
+
+        /////////////////////////////////////////////底下這些是卡控required 上機時居要拿掉註解
+        //if ($(this).data('id') == 1) {
+        //    var fieldset = document.getElementById('1');
+        //    var Required = fieldset.querySelectorAll('input[required], select[required]');
+        //    for (var i = 0; i < Required.length; i++) {
+        //        if (Required[i].value === "") {
+        //            alert("請選擇一個計劃!!");
+        //            return; // 直接結束整個事件處理函式
+        //        }
+        //    }
+        //}
+
+        //if ($(this).data('id') == 2) {
+        //    var Required = document.querySelectorAll('input[required], select[required]');
+        //    for (var i = 0; i < Required.length; i++) {
+        //        if (Required[i].value === "") {
+        //            alert("請將必填做填寫!!");
+        //            return; // 直接結束整個事件處理函式
+        //        }
+        //    }
+        //}
+        if ($(this).data('id') == 4) {
+            var townBlocks = document.querySelectorAll('#FirstTown .Town-block');
+
+            townBlocks.forEach(function (townBlock) {
+                var materialCount = townBlock.querySelectorAll('.Material').length;
+                var countInput = townBlock.querySelector('input[name="count"]');
+                if (countInput) {
+                    countInput.value = materialCount;
+                }
+            });
+        }
+
+
+        var id = parseInt($(this).attr('data-id'));
+        if (id != null) {
+            var NextTextid = id + 1;
+            var Nowtext = document.getElementById(id);
+            var text = document.getElementById(NextTextid);
+            var ilList = document.getElementById('progressbar');
+            ilList.children[id].classList.add('active');
+            Nowtext.style.display = 'none';
+            text.style.display = 'block';
+        }
+    });
+
+    $(".previous").click(function () {
+        var id = parseInt($(this).attr('data-id'));
+        if (id != null) {
+            var PreviousTextid = id - 1;
+            var Nowtext = document.getElementById(id);
+            var text = document.getElementById(PreviousTextid);
+            var ilList = document.getElementById('progressbar');
+            ilList.children[PreviousTextid].classList.remove('active');
+            Nowtext.style.display = 'none';
+            text.style.display = 'block';
+        }
+    });
+
+    $(".submit").click(function () {
+        return false;
+    });
+</script>
+@*搜尋功能*@
+<script>
+    function Search() {
+        var Search_thing = document.getElementById('TD_NAME_SEARCH').value;
+        $.ajax({
+            url: '@Url.Action("Search","ProposalRequest")',
+            type: 'POST',
+            data: { Search_thing: Search_thing },
+            success: function (result) {
+                var page = document.getElementById('page');
+                page.textContent = 1;
+                var Count = document.getElementById('count_page');
+                var Count_Value = Math.round(parseInt(result.length) / 10);
+                Count.textContent = "共" + Count_Value + "頁";
+                const tableBody = document.querySelector('table.table-bordered tbody');
+                tableBody.innerHTML = '';
+                var i = 1;
+                // 遍歷返回的數據,創建新的表格行
+                result.forEach(item => {
+
+                    if (i === 11) { // 如果計數器達到 11 (即第10次迭代)
+                        return; // 退出迭圈
+                    }
+                    const row = document.createElement('tr');
+                    const selectCell = document.createElement('td');
+                    const selectButton = document.createElement('button');
+                    selectButton.type = 'button';
+                    selectButton.id = 'TD_NAME_Button';
+                    selectButton.value = item.TD_NAME;
+                    selectButton.textContent = '選擇';
+                    selectButton.setAttribute('data-dismiss', 'modal'); // 添加 data-bs-dismiss="modal" 屬性
+                    selectCell.appendChild(selectButton);
+
+                    const codeCell = document.createElement('td');
+                    codeCell.textContent = item.TD_CODE;
+
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = item.TD_NAME;
+
+                    const cityCell = document.createElement('td');
+                    cityCell.textContent = item.TD_CITY;
+
+                    const townCell = document.createElement('td');
+                    townCell.textContent = item.TD_TOWN;
+
+                    row.appendChild(selectCell);
+                    row.appendChild(codeCell);
+                    row.appendChild(nameCell);
+                    row.appendChild(cityCell);
+                    row.appendChild(townCell);
+
+                    tableBody.appendChild(row);
+
+                    i++;
+                });
+            }
+
+        })
+    }
+</script>
+
+<script>
+    // 在表格的 <tbody> 元素上添加事件監聽器
+    const tableBody = document.querySelector('table.table-bordered tbody');
+    tableBody.addEventListener('click', function (event) {
+        // 檢查事件目標是否為 TD_NAME_Button 按鈕
+        if (event.target.id === 'TD_NAME_Button') {
+            const TD_NAME_INPUT = document.getElementById('TD_NAME');
+            if (TD_NAME_INPUT) {
+                TD_NAME_INPUT.value = event.target.value;
+            }
+        }
+    });
+</script>
+@*彈跳視窗換頁功能*@
+<script>
+    function NextPage() {
+        var Search_thing = document.getElementById('TD_NAME_SEARCH').value;
+        var Page = parseInt(document.getElementById('page').textContent);
+        var Count = (document.getElementById('count_page').textContent).match(/\d+/);
+        var Next_Page = Page + 1;
+        if (Next_Page > Count) {
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("NextPage","ProposalRequest")',
+            type: 'POST',
+            data: { Page: Page , Search_thing: Search_thing},
+            success: function (result) {
+                const tableBody = document.querySelector('table.table-bordered tbody');
+                tableBody.innerHTML = '';
+                document.getElementById('page').textContent = Next_Page;
+                // 遍歷返回的數據,創建新的表格行
+                result.forEach(item => {
+                    const row = document.createElement('tr');
+                    const selectCell = document.createElement('td');
+                    const selectButton = document.createElement('button');
+                    selectButton.type = 'button';
+                    selectButton.id = 'TD_NAME_Button';
+                    selectButton.value = item.TD_NAME;
+                    selectButton.textContent = '選擇';
+                    selectButton.setAttribute('data-dismiss', 'modal'); // 添加 data-bs-dismiss="modal" 屬性
+                    selectCell.appendChild(selectButton);
+
+                    const codeCell = document.createElement('td');
+                    codeCell.textContent = item.TD_CODE;
+
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = item.TD_NAME;
+
+                    const cityCell = document.createElement('td');
+                    cityCell.textContent = item.TD_CITY;
+
+                    const townCell = document.createElement('td');
+                    townCell.textContent = item.TD_TOWN;
+
+                    row.appendChild(selectCell);
+                    row.appendChild(codeCell);
+                    row.appendChild(nameCell);
+                    row.appendChild(cityCell);
+                    row.appendChild(townCell);
+
+                    tableBody.appendChild(row);
+                });
+            }
+        })
+    }
+</script>
+
+@*套用引用功能*@
+<script>
+    function LastPage() {
+        var Search_thing = document.getElementById('TD_NAME_SEARCH').value;
+        var Page = parseInt(document.getElementById('page').textContent);
+        var Next_Page = Page - 1;
+        if (Next_Page === 0)
+        {
+           return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("LastPage","ProposalRequest")',
+            type: 'POST',
+            data: { Page: Page , Search_thing: Search_thing},
+            success: function (result) {
+                const tableBody = document.querySelector('table.table-bordered tbody');
+                tableBody.innerHTML = '';
+                document.getElementById('page').textContent = Next_Page;
+                // 遍歷返回的數據,創建新的表格行
+                result.forEach(item => {
+                    const row = document.createElement('tr');
+                    const selectCell = document.createElement('td');
+                    const selectButton = document.createElement('button');
+                    selectButton.type = 'button';
+                    selectButton.id = 'TD_NAME_Button';
+                    selectButton.value = item.TD_NAME;
+                    selectButton.textContent = '選擇';
+                    selectButton.setAttribute('data-dismiss', 'modal'); // 添加 data-bs-dismiss="modal" 屬性
+                    selectCell.appendChild(selectButton);
+
+                    const codeCell = document.createElement('td');
+                    codeCell.textContent = item.TD_CODE;
+
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = item.TD_NAME;
+
+                    const cityCell = document.createElement('td');
+                    cityCell.textContent = item.TD_CITY;
+
+                    const townCell = document.createElement('td');
+                    townCell.textContent = item.TD_TOWN;
+
+                    row.appendChild(selectCell);
+                    row.appendChild(codeCell);
+                    row.appendChild(nameCell);
+                    row.appendChild(cityCell);
+                    row.appendChild(townCell);
+
+                    tableBody.appendChild(row);
+                });
+            }
+        })
+    }
+</script>
+
+@*新建工程會變成自行填寫功能*@
+<script>
+    // 獲取下拉選單元素
+    const selectElement = document.getElementById('TD_TYPE');
+
+    // 獲取需要操作的 div 元素
+    const divElement = document.getElementById('Change');
+
+    // 監聽下拉選單的 change 事件
+    selectElement.addEventListener('change', function () {
+        // 如果下拉選單的值為 "新建工程"
+        if (this.value === 'false') {
+            // 尋找 div 內部 id 為 "TD_CODE" 的 input 元素
+            const inputElement = divElement.querySelector('#TD_NAME');
+
+            // 如果找到該 input 元素
+            if (inputElement) {
+                // 將其從 DOM 中移除
+                inputElement.remove();
+            }
+
+            divElement.innerHTML += '<input type="text" required id="TD_NAME" name="AP_NAME" placeholder="工程名稱："/>';
+
+        } else {
+
+            const inputElement = divElement.querySelector('#TD_NAME');
+
+            // 如果找到該 input 元素
+            if (inputElement) {
+                // 將其從 DOM 中移除
+                inputElement.remove();
+            }
+            // 直接使用 innerHTML 添加 HTML 標籤
+            divElement.innerHTML += '<input type="text" required id="TD_NAME" name="AP_NAME" placeholder="工程名稱：" data-bs-toggle="modal" data-bs-target="#myModal" class="modal-dialog modal-lg" />';
+        }
+    });
+</script>
+
+@*抓鄉鎮市功能*@
+<script>
+ $(function () {
+    $("#CITY").change(function () {
+        var SelectValue = $(this).val();
+        $.ajax({
+            url: '@Url.Action("GetTown","ProposalRequest")',
+            type: 'POST',
+            data: { CITY: SelectValue },
+            success: function (result) {
+                // 獲取所有 class="Town" 的 <select> 元素
+                var townSelects = document.querySelectorAll('.Town');
+
+                // 遍歷每個 <select> 元素
+                townSelects.forEach(function (townSelect) {
+                    // 清空現有的選項
+                    townSelect.innerHTML = "<option value='' disabled selected>請選擇一個鄉鎮</option>";
+
+                    // 遍歷 result 列表,並將每個值作為新選項插入到 <select> 中
+                    result.forEach(function (result) {
+                        var option = document.createElement("option");
+                        option.value = result.TOWNName;
+                        option.text = result.TOWNName;
+                        townSelect.appendChild(option);
+                    });
+                });
+            }
+        })
+    })
+})
+</script>
+
+@*卷軸捲起功能*@
+<script>
+    window.addEventListener('DOMContentLoaded', function () {
+        const firstCity = document.getElementById('FirstCity');
+        const firstTown = document.getElementById('FirstTown');
+
+        firstCity.addEventListener('click', function (event) {
+            const button = event.target.closest('.city-block button.closebtn');
+            if (button) {
+                const citySource = button.parentNode.nextElementSibling;
+                if (citySource.style.display === 'none') {
+                    citySource.style.display = 'block';
+                    button.textContent = '-';
+                } else {
+                    citySource.style.display = 'none';
+                    button.textContent = '+';
+                }
+            }
+        });
+
+        firstTown.addEventListener('click', function (event) {
+            const button = event.target.closest('.Town-block button.closebtn');
+            if (button) {
+                const TownSource = button.parentNode.nextElementSibling;
+                if (TownSource.style.display === 'none') {
+                    TownSource.style.display = 'block';
+                    button.textContent = '-';
+                } else {
+                    TownSource.style.display = 'none';
+                    button.textContent = '+';
+                }
+            }
+        });
+    });
+</script>
+
+@*新增CITYBLOCK*@
+<script>
+    // 獲取最後一個 city-block 的編號
+    function getLastCityBlockId() {
+        const cityBlocks = document.querySelectorAll('#FirstCity .city-block');
+        let lastId = 0;
+
+        cityBlocks.forEach(function (cityBlock) {
+            const id = parseInt(cityBlock.id.replace('City', ''));
+            if (id > lastId) {
+                lastId = id;
+            }
+        });
+
+        return lastId;
+    }
+
+
+
+    // 創建新的 city-block
+    function createNewCityBlock() {
+        const lastId = getLastCityBlockId();
+        const newId = lastId + 1;
+
+        const newCityBlock = document.createElement('div');
+        newCityBlock.classList.add('city-block');
+        newCityBlock.id = `City${newId}`;
+
+        const flexDiv = document.createElement('div');
+        flexDiv.style.display = 'flex';
+
+        const button = document.createElement('button');
+        button.classList.add('form-control', 'closebtn');
+        button.type = 'button';
+        button.style.width = '4%';
+        button.style.height = '49px';
+        button.style.fontSize = '28px';
+        button.textContent = '-';
+
+        const select = document.createElement('select');
+        select.classList.add('Town');
+        select.name = 'TOWN';
+        select.style.textAlign = 'center';
+        select.style.width = '92%';
+        select.innerHTML = '<option value="" disabled selected>請選擇一個鄉鎮</option>';
+
+        const existingSelect = document.querySelector('#FirstCity .city-block:last-child .Town');
+        if (existingSelect) {
+            const options = existingSelect.options;
+            for (let i = 0; i < options.length; i++) {
+                const option = options[i];
+                if (!option.disabled) {
+                    const newOption = document.createElement('option');
+                    newOption.value = option.value;
+                    newOption.text = option.text;
+                    select.add(newOption);
+                }
+            }
+        }
+
+        // 建立 "X" 刪除按鈕
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.classList.add('form-control', 'btn', 'btn-danger', 'deleteButton');
+        deleteButton.style.width = '4%';
+        deleteButton.style.height = '49px';
+        deleteButton.style.fontSize = '20px';
+        deleteButton.textContent = 'X';
+
+
+        flexDiv.appendChild(button);
+        flexDiv.appendChild(select);
+        flexDiv.appendChild(deleteButton);
+
+        const citySource = document.createElement('div');
+        citySource.classList.add('city-source');
+        citySource.id = `CitySource${newId}`;
+
+        const describeDiv = document.createElement('div');
+        describeDiv.style.fontSize = '18px';
+        describeDiv.style.textAlign = 'left';
+        describeDiv.textContent = '　地點描述：';
+
+        const describeInput = document.createElement('input');
+        describeInput.type = 'text';
+        describeInput.name = 'POS_SYB';
+        describeInput.className = 'Detail';
+        describeInput.placeholder = '地點描述:';
+
+        const xCoordDiv = document.createElement('div');
+        xCoordDiv.style.fontSize = '18px';
+        xCoordDiv.style.textAlign = 'left';
+        xCoordDiv.textContent = '　X座標：';
+
+        const xCoordInput = document.createElement('input');
+        xCoordInput.type = 'text';
+        xCoordInput.name = 'GIS_X';
+        xCoordInput.placeholder = 'X座標:';
+
+        const yCoordDiv = document.createElement('div');
+        yCoordDiv.style.fontSize = '18px';
+        yCoordDiv.style.textAlign = 'left';
+        yCoordDiv.textContent = '　Y座標：';
+
+        const yCoordInput = document.createElement('input');
+        yCoordInput.type = 'text';
+        yCoordInput.name = 'GIS_Y';
+        yCoordInput.placeholder = 'Y座標:';
+
+        const zCoordDiv = document.createElement('div');
+        zCoordDiv.style.fontSize = '18px';
+        zCoordDiv.style.textAlign = 'left';
+        zCoordDiv.textContent = '　Z座標：';
+
+        const zCoordInput = document.createElement('input');
+        zCoordInput.type = 'text';
+        zCoordInput.name = 'GIS_Z';
+        zCoordInput.placeholder = 'Z座標:';
+
+        citySource.appendChild(describeDiv);
+        citySource.appendChild(describeInput);
+        citySource.appendChild(xCoordDiv);
+        citySource.appendChild(xCoordInput);
+        citySource.appendChild(yCoordDiv);
+        citySource.appendChild(yCoordInput);
+        citySource.appendChild(zCoordDiv);
+        citySource.appendChild(zCoordInput);
+
+        newCityBlock.appendChild(flexDiv);
+        newCityBlock.appendChild(citySource);
+
+        document.getElementById('FirstCity').appendChild(newCityBlock);
+
+
+        //////多一個鄉鎮
+        const firstTown = document.querySelector('#FirstTown');
+
+        if (firstTown) {
+            const townBlock = document.createElement('div');
+            townBlock.classList.add('Town-block');
+            townBlock.id = `Town${newId}`;
+
+            const label1 = document.createElement('label');
+            label1.style.width = '50%';
+            label1.textContent = '鄉鎮別';
+
+            const label2 = document.createElement('label');
+            label2.style.width = '50%';
+            label2.textContent = '地點描述';
+
+            const flexDiv1 = document.createElement('div');
+            flexDiv1.style.display = 'flex';
+
+            const closeButton = document.createElement('button');
+            closeButton.type = 'button';
+            closeButton.classList.add('form-control', 'closebtn');
+            closeButton.style.width = '4%';
+            closeButton.style.height = '49px';
+            closeButton.style.fontSize = '28px';
+            closeButton.textContent = '-';
+
+            const countInput = document.createElement('input');
+            countInput.type = 'text';
+            countInput.style.width = '48%';
+            countInput.style.textAlign = 'center';
+            countInput.name = 'count';
+            countInput.readOnly = true;
+            countInput.hidden = true;
+            countInput.classList.add('count');
+
+
+            const townInput = document.createElement('input');
+            townInput.type = 'text';
+            townInput.style.width = '48%';
+            townInput.style.textAlign = 'center';
+            townInput.readOnly = true;
+            townInput.id = 'TownReadOnly';
+            townInput.classList.add('Town');
+
+            const detailInput = document.createElement('input');
+            detailInput.type = 'text';
+            detailInput.style.width = '48%';
+            detailInput.style.textAlign = 'center';
+            detailInput.readOnly = true;
+            detailInput.id = 'DetailReadOnly';
+            detailInput.classList.add('Detail');
+
+
+            flexDiv1.appendChild(closeButton);
+            flexDiv1.appendChild(countInput);
+            flexDiv1.appendChild(townInput);
+            flexDiv1.appendChild(detailInput);
+
+            const townMaterial = document.createElement('div');
+            townMaterial.classList.add('Town-Material');
+
+            const flexDiv2 = document.createElement('div');
+            flexDiv2.style.display = 'flex';
+
+            const label3 = document.createElement('label');
+            label3.style.width = '19.2%';
+            label3.textContent = '項目類別';
+
+            const label4 = document.createElement('label');
+            label4.style.width = '19.2%';
+            label4.textContent = '項目內容';
+
+            const label5 = document.createElement('label');
+            label5.style.width = '19.2%';
+            label5.textContent = '單位';
+
+            const label6 = document.createElement('label');
+            label6.style.width = '19.2%';
+            label6.textContent = '數量';
+
+            const label7 = document.createElement('label');
+            label7.style.width = '19.2%';
+            label7.textContent = '備註';
+
+            const label8 = document.createElement('label');
+            label8.style.width = '4%';
+            label8.textContent = ' ';
+
+            flexDiv2.appendChild(label3);
+            flexDiv2.appendChild(label4);
+            flexDiv2.appendChild(label5);
+            flexDiv2.appendChild(label6);
+            flexDiv2.appendChild(label7);
+            flexDiv2.appendChild(label8);
+
+            const materialDiv = document.createElement('div');
+            materialDiv.style.display = 'flex';
+            materialDiv.classList.add('Material');
+
+            const select = document.createElement('select');
+            select.name = 'MT_NAME';
+            select.style.width = '19.2%';
+
+            const option1 = document.createElement('option');
+            option1.textContent = '污水管線';
+
+            const option2 = document.createElement('option');
+            option2.textContent = '人手孔';
+
+            const option3 = document.createElement('option');
+            option3.textContent = '污水處理廠';
+
+            select.appendChild(option1);
+            select.appendChild(option2);
+            select.appendChild(option3);
+
+            const input1 = document.createElement('input');
+            input1.type = 'text';
+            input1.name = 'MT_DESC';
+            input1.value = '0';
+            input1.style.width = '19.2%';
+            input1.setAttribute('onblur', 'checkValue(this)');
+
+            const input2 = document.createElement('input');
+            input2.type = 'text';
+            input2.name = 'MT_UNIT';
+            input2.value = '0';
+            input2.style.width = '19.2%';
+            input2.setAttribute('onblur', 'checkValue(this)');
+
+            const input3 = document.createElement('input');
+            input3.type = 'text';
+            input3.value = 0.00;
+            input3.pattern = '^\d*(\.\d{0,2})?$';
+            input3.name = 'MT_QTY';
+            input3.style.width = '19.2%';
+            input3.setAttribute('onblur', 'formatDecimal(this)');
+
+            const input4 = document.createElement('input');
+            input4.type = 'text';
+            input4.value = '0';
+            input4.name = 'MT_SPEC';
+            input4.style.width = '19.2%';
+            input4.setAttribute('onblur', 'checkValue(this)');
+
+            const deleteButton = document.createElement('button');
+            deleteButton.type = 'button';
+            deleteButton.classList.add('form-control', 'btn', 'btn-danger', 'deleteButton');
+            deleteButton.style.width = '4%';
+            deleteButton.style.height = '49px';
+            deleteButton.style.fontSize = '20px';
+            deleteButton.textContent = 'X';
+
+            materialDiv.appendChild(select);
+            materialDiv.appendChild(input1);
+            materialDiv.appendChild(input2);
+            materialDiv.appendChild(input3);
+            materialDiv.appendChild(input4);
+            materialDiv.appendChild(deleteButton);
+
+            townMaterial.appendChild(flexDiv2);
+            townMaterial.appendChild(materialDiv);
+
+            const addMaterialButton = document.createElement('input');
+            addMaterialButton.type = 'button';
+            addMaterialButton.className = 'addMaterialBlock';
+            addMaterialButton.value = '新增';
+
+            townMaterial.appendChild(addMaterialButton);
+
+            townBlock.appendChild(label1);
+            townBlock.appendChild(label2);
+            townBlock.appendChild(flexDiv1);
+            townBlock.appendChild(townMaterial);
+
+            firstTown.appendChild(townBlock);
+        }
+    }
+
+    // 新增按鈕點擊事件
+    const addCityBlockButton = document.getElementById('addCityBlock');
+    addCityBlockButton.addEventListener('click', createNewCityBlock);
+</script>
+
+@*/////刪除按鈕事件//////////*@
+<script>
+    window.addEventListener('DOMContentLoaded', function () {
+        const firstCity = document.getElementById('FirstCity');
+
+        firstCity.addEventListener('click', function (event) {
+            const button = event.target.closest('.city-block button.deleteButton');
+            if (button) {
+                // 獲取當前按鈕所在的 city-block 元素
+                const cityBlock = button.closest('.city-block');
+
+                // 從 DOM 中刪除 city-block 元素
+                cityBlock.remove();
+            }
+        });
+    });
+
+</script>
+
+@*////當下拉選單選取鄉鎮後執行內容會自動帶入鄉鎮別*@
+<script>
+    // 獲取下拉選單和文字輸入框的元素
+    const selectTown = document.getElementById('FirstCity');
+
+    // 監聽下拉選單的 change 事件
+    selectTown.addEventListener('change', function (event) {
+        const select = event.target.closest('.Town');
+        if (select) {
+            const selectID = event.target.closest('.city-block').id;
+            const id = parseInt(selectID.replace('City', ''));
+            const townID = `Town${id}`;
+            // 獲取選中的值
+            const selectedValue = select.value;
+
+            const TownReadOnly = document.querySelector(`#${townID} #TownReadOnly`);
+
+            // 將選中的值填入文字輸入框
+            TownReadOnly.value = selectedValue;
+        }
+    });
+</script>
+
+@*////填入地點描述*@
+<script>
+    // 獲取輸入框元素
+    const town1 = document.getElementById('FirstCity');
+
+    // 監聽 Town1 的 input 事件
+    town1.addEventListener('input', function (event) {
+        const input = event.target.closest('.Detail');
+
+        if (input) {
+
+            // 獲取 input 的值
+            const value = input.value;
+            const selectID = event.target.closest('.city-block').id;
+            const id = parseInt(selectID.replace('City', ''));
+            const townID = `Town${id}`;
+
+            const TownReadOnly = document.querySelector(`#${townID} #DetailReadOnly`);
+            TownReadOnly.value = value;
+        }
+    });
+</script>
+
+@*///////////////加入Town的材料*@
+<script>
+    window.addEventListener('DOMContentLoaded', function () {
+        const firstTown = document.getElementById('FirstTown');
+        // 新增按鈕的點擊事件處理函數
+        firstTown.addEventListener('click', function (event) {
+            const button = event.target.closest('.addMaterialBlock');
+            const materialContainer = event.target.closest('.Town-Material');
+            if (button) {
+                // 建立新的 div 元素
+                const newDiv = document.createElement('div');
+                newDiv.style.display = 'flex';
+                newDiv.className = 'Material';
+                // 建立新的子元素
+                const select = document.createElement('select');
+                select.name = 'MT_NAME';
+                select.style.width = '19.2%';
+                const option1 = document.createElement('option');
+                option1.textContent = '污水管線';
+                const option2 = document.createElement('option');
+                option2.textContent = '人手孔';
+                const option3 = document.createElement('option');
+                option3.textContent = '污水處理廠';
+                select.appendChild(option1);
+                select.appendChild(option2);
+                select.appendChild(option3);
+                const input1 = document.createElement('input');
+                input1.name = 'MT_DESC';
+                input1.type = 'text';
+                input1.style.width = '19.2%';
+                input1.value = '0';
+                input1.setAttribute('onblur', 'checkValue(this)');
+                const input2 = document.createElement('input');
+                input2.name = 'MT_UNIT';
+                input2.type = 'text';
+                input2.style.width = '19.2%';
+                input2.value = '0';
+                input2.setAttribute('onblur', 'checkValue(this)');
+                const input3 = document.createElement('input');
+                input3.name = 'MT_QTY';
+                input3.type = 'text';
+                input3.style.width = '19.2%';
+                input3.value = 0.00;
+                input3.pattern = '^\d*(\.\d{0,2})?$';
+                input3.setAttribute('onblur', 'formatDecimal(this)');
+                const input4 = document.createElement('input');
+                input4.name = 'MT_SPEC';
+                input4.type = 'text';
+                input4.style.width = '19.2%';
+                input4.value = '0';
+                input4.setAttribute('onblur', 'checkValue(this)');
+                const deleteButton = document.createElement('button');
+                deleteButton.type = 'button';
+                deleteButton.classList.add('form-control', 'btn', 'btn-danger', 'deleteButton');
+                deleteButton.style.width = '4%';
+                deleteButton.style.height = '49px';
+                deleteButton.style.fontSize = '20px';
+                deleteButton.textContent = 'X';
+                // 將子元素加入到新的 div 中
+                newDiv.appendChild(select);
+                newDiv.appendChild(input1);
+                newDiv.appendChild(input2);
+                newDiv.appendChild(input3);
+                newDiv.appendChild(input4);
+                newDiv.appendChild(deleteButton);
+                // 將新的 div 加入到指定的位置 (新增按鈕之前)
+                materialContainer.insertBefore(newDiv, button);
+            }
+        });
+
+    });
+</script>
+
+@*//刪除鄉鎮的材料*@
+<script>
+    window.addEventListener('DOMContentLoaded', function () {
+        const materialContainer = document.getElementById('FirstTown');
+        materialContainer.addEventListener('click', function (event) {
+            const button = event.target.closest('.Material button.deleteButton');
+            if (button) {
+                const materialBlock = button.closest('.Material');
+                materialBlock.remove();
+            }
+        });
+    });
+</script>
+
+@*////增加刪除明細項目*@
+<script>
+    document.querySelector('.addTable').addEventListener('click', function () {
+        var table = document.getElementById('CostList');
+        var newRow = table.insertRow(-1);
+
+        var cell1 = newRow.insertCell(0);
+        var cell2 = newRow.insertCell(1);
+        var cell3 = newRow.insertCell(2);
+        var cell4 = newRow.insertCell(3);
+        var cell5 = newRow.insertCell(4);
+
+        cell1.innerHTML = '<input name="SYR" type="text" />';
+        cell2.innerHTML = '<select name="FIT_CODE"><option value="00">中央補助款</option><option value="11">地方配合款</option></select>';
+        cell3.innerHTML = '<input name="FUND" type="text" />';
+        cell4.innerHTML = '<input name="FUND_DESC" type="text" />';
+        cell5.innerHTML = '<input type="button" value="X" class="btn btn-danger" onclick="deleteRow(this)"/>';
+    });
+
+    function deleteRow(btn) {
+        var row = btn.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+</script>
+
+@*////增加刪除檔案欄位*@
+<script>
+    document.querySelector('.addTable2').addEventListener('click', function () {
+        var table = document.getElementById('itemList');
+        var newRow = table.insertRow(-1);
+
+        var cell1 = newRow.insertCell(0);
+        var cell2 = newRow.insertCell(1);
+        var cell3 = newRow.insertCell(2);
+        var cell4 = newRow.insertCell(3);
+        var cell5 = newRow.insertCell(4);
+
+        cell1.innerHTML = '<select><option selected = "selected" value = "工程用地位置簡圖"> 工程用地位置簡圖<option value = "現況照片">現況照片</option ><option value="計畫執行時程表">計畫執行時程表</option><option value="機關補充資料">機關補充資料</option></select > ';
+        cell2.innerHTML = '<input type="text" />';
+        cell3.innerHTML = '<input type="file" name="FILE_PATH" id="file-input" style="height:48px"/>';
+        cell4.innerHTML = '<input type="text" name="FILE-SIZE" id="file-size" readonly />';
+        cell5.innerHTML = '<input type="button" value="X" class="btn btn-danger" onclick="deleteRow(this)"/>';
+    });
+
+    function deleteRow(btn) {
+        var row = btn.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+</script>
+
+@*拿檔案大小*@
+<script>
+    document.getElementById('file-input').addEventListener('change', function (e) {
+        var file = e.target.files[0];
+        if (file) {
+            var size = file.size;
+            var sizeDisplay = formatFileSize(size);
+            document.getElementById('file-size').value = sizeDisplay;
+        }
+    });
+
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' bytes';
+        else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+        else if (bytes < 1073741824) return (bytes / 1048576).toFixed(2) + ' MB';
+        else return (bytes / 1073741824).toFixed(2) + ' GB';
+    }
+</script>
+
+@*空白填0*@
+<script>
+    function checkValue(input) {
+        if (input.value.trim() === '') {
+            input.value = '0';
+        }
+    }
+</script>
+
+
+
+
+@*變成decimal格式*@
+<script>
+    function formatDecimal(input) {
+        // 將輸入值轉換為浮點數
+        let value = parseFloat(input.value);
+
+        // 檢查是否為有效數字
+        if (!isNaN(value)) {
+            // 格式化為保留兩位小數的字符串
+            input.value = value.toFixed(2);
+        } else {
+            // 如果輸入無效,重置為0.00
+            input.value = "0.00";
+        }
+    }
+</script>

@@ -1,0 +1,186 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0040Model
+@{ ViewBag.Title = "計畫經費管制(執行單位)[1.1.4]";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+@section head{
+
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+
+}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            計畫經費管制(執行單位)[1.1.4]
+            <small></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                計畫經費管制[1.1.4]
+            </li>
+        </ol>
+    </div>
+</div>
+
+
+@using(Html.BeginForm("", "PJE0040", FormMethod.Post, new { id = "mainForm", @class = "form-inline" })) {
+
+
+
+
+    <input type="hidden" name="PID" id="PID" value="@Model.PID" />
+    <input type="hidden" name="prePage" value="@Request.Params["page"]" />
+    <input type="hidden" name="page" value="@Model.page" />
+        <table width="100%" class="table">
+            <tr>
+                <td>
+                    @Html.DropDownListFor(x => x.SYR, (SelectList)ViewBag.SYRS, new { @class = "form-control" })
+                </td>
+                <td>
+                    @*Html.DropDownListFor(x => x.SEQ_NO_M, (SelectList)ViewBag.SEQ_NO_MS, new { @class = "form-control" })*@
+                    <select name="SEQ_NO_M" id="SEQ_NO_M" class="form-select"><option>未選擇計畫</option></select>
+                    @*Html.DropDownListFor(x => x.SEQ_NO_S, (SelectList)ViewBag.SEQ_NO_SS, new { @class = "form-control" })*@
+                </td>
+                <td>
+                    <select name="SEQ_NO_S" id="SEQ_NO_S" class="form-select"><option value="0">未選擇提案</option></select>
+                </td>
+            
+                <td>
+                    
+                    @*<select class="form-select" name="SEQ_NO_M" id="SEQ_NO_M">
+                            <option>分支計畫</option>
+                        </select>*@
+
+                    @*<select class="form-select" name="SEQ_NO_S" id="SEQ_NO_S">
+                            <option>經費期別</option>
+                        </select>*@
+                    <input type="hidden" name="PID" id="PID" value="@Model.PID" />
+                    <button type="button" id="queryBtn" class="btn btn-primary" onclick="query();">查詢</button>
+                    <script>
+                        function query(pid) {
+                            var h = $(window).height();
+                            //var w = $(window).width();
+                            //$("#viewer").width(w-20);
+                            $("#viewer").height(h);
+
+                            var pid = $("#PID").val();
+                            var seq = $("#SEQ_NO_S").val();
+
+                            if (!seq) {
+                                seq = 0;
+                            }
+
+                            //alert("@Url.Content("~/PJE0040/Search?PID=")"+pid+"&SEQ_NO="+seq);
+                            $("#viewer").attr("src",  "@Url.Content("~/PJE0040/Search?PID=")"+pid+"&SEQ_NO="+seq);
+                        }
+                    </script>
+                </td>
+            
+            <tr>
+                <td colspan="999">                    
+                <iframe id="viewer" src="" style="padding:0px;border:0px; height:888px; width:100%;"></iframe>
+                </td>
+            </tr>
+        </table>
+    }
+
+
+<div id="editFrame" title="編輯" style="padding:0px; color:#ffffff;">
+
+    <iframe id="editor" src="" style="width:1024px; height:640px; border:0px;"></iframe>
+
+
+</div>
+<script>
+    $(function () {
+
+        $("#editFrame").dialog({
+            autoOpen: false,
+            show: {
+                //effect: "blind",
+                //effect: "drop",
+                duration: 1000
+            },
+            hide: {
+                //effect: "explode",
+                //effect: "drop",
+                duration: 1000
+            },
+            autoOpen: false,
+            maxWidth: 1024,
+            maxHeight: 640,
+            width: 1024,
+            height: 640,
+            modal: true
+        });
+
+
+
+    });
+
+function editPrj(pid, tid) {
+    $("#editor").attr("src", "@Url.Content("~/PJE0030/")EditMnd?PID="+pid+"&TID="+tid+"&SEQ_NO=");
+    $("#editFrame").dialog("open");
+    }
+    function closeEdit() {
+        $("#editFrame").dialog("close");
+    }
+
+    $("#editFrame").on('dialogclose', function (event) {
+        //alert();
+        //location.reload();
+        $('#queryBtn').trigger("click");
+    });
+</script>
+<script>
+$("#SYR").on("change", function () {
+
+    $("#SEQ_NO_M").html("");
+
+    $.ajax({
+        url: '@Url.Content("~/")PJE0040/GetSEQ_NO_M',
+        method: 'post',
+        data: { "PID": $("#SYR").val()},
+        success: function (d) {
+            var p = jQuery.parseJSON(d);
+            $("#SEQ_NO_M").prepend("<option value=''>請選擇</option>");
+            for (i = 0; i < p.length; i++) {
+                $("#SEQ_NO_M").append("<option value='" + p[i].PID + "'>" + p[i].PNAME + "</option>");
+            }
+        }
+    });
+
+});
+
+$("#SEQ_NO_M").on("change", function () {
+    $("#SEQ_NO_S").html("");
+    $("#PID").val($("#SEQ_NO_M").val());
+    $.ajax({
+        url: '@Url.Content("~/")PJE0040/GetSEQ_NO_S',
+        method: 'post',
+        data: { "PID": $("#SEQ_NO_M").val()},
+        success: function (d) {
+            var p = jQuery.parseJSON(d);
+            //$("#SEQ_NO_S").prepend("<option value='0'>原預算</option>");
+            for (i = 0; i < p.length; i++) {
+                $("#SEQ_NO_S").append("<option value='" + p[i].SEQ_NO + "'>" + p[i].f2 + "</option>");
+            }
+            //$("#SEQ_NO_S").append("<option value='0'>原預算</option>");
+        }
+    });
+
+});
+
+
+
+</script>
+@section scripts{
+
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+
+
+}

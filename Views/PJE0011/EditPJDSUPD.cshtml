@@ -1,0 +1,126 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0011Model
+@{ ViewBag.Title = "計畫經費管制[1.1.3] ";
+    //Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+
+    <link rel="stylesheet" href="~/Scripts/plugins/bootstrap-fileinput/icon.mini.css" crossorigin="anonymous">
+    <link href="~/Scripts/plugins/bootstrap-fileinput/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+</head>
+<body style="padding:5px;">
+    @using(Html.BeginForm("", "PJE0011", FormMethod.Post, new { id = "mainForm", enctype = "multipart/form-data" })) {
+        @Html.HiddenFor(x => x.PPID);
+        <input type="hidden" name="DeleteId" id="DeleteId1" />
+        <input type="hidden" name="DeleteId1" id="DeleteId2" />        
+        <button class="btn btn-warning" name="action" type="submit" onclick="selAll();" value="SavePJDSUPD">儲存</button>
+        <script>
+            function selAll() {
+                let selectBox = document.getElementById("js_multiselect_to_1");
+                for (let i = 0; i < selectBox.options.length; i++) {
+                    selectBox.options[i].selected = true;
+                }
+            }
+        </script>
+        System.Data.DataTable pjdsupd = ViewBag.PJDSUPD;
+        System.Data.DataTable deptV1 = ViewBag.depts;
+
+        <br /><br />
+        <div class="body-content">
+
+
+
+
+            <div class="row">
+                <div class="col-4">
+                    <select name="from[]" style="font-size:18px;" class="js-multiselect form-control" size="16" multiple="multiple">
+                        @foreach(System.Data.DataRow p in deptV1.Rows) {
+                            <option value="@p["DEPT_NO"]">@p["DEPT_NAME"]</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-2">
+                    <button type="button" id="js_right_All_1" class="btn btn-block btn-primary"><i class="fa-solid fa-forward"></i></button>
+                    <button type="button" id="js_right_Selected_1" class="btn btn-block btn-primary"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button type="button" id="js_left_Selected_1" class="btn btn-block btn-primary"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button type="button" id="js_left_All_1" class="btn btn-block btn-primary"><i class="fa-solid fa-backward"></i></button>
+                </div>
+
+                <div class="col-4">
+                    <select name="PJDSUPD_DEPT_NO" style="font-size:18px;" id="js_multiselect_to_1" class="form-select" size="16" multiple="multiple">
+                         @foreach(System.Data.DataRow p in pjdsupd.Rows) {
+                                <option selected value="@p["DEPT_NO"]">@p["DEPT_NAME"]</option>
+                            }
+                        
+
+                    </select>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+        <script type="text/javascript">
+            jQuery(document).ready(function ($) {
+                $('.js-multiselect').multiselect({
+                    right: '#js_multiselect_to_1',
+                    rightAll: '#js_right_All_1',
+                    rightSelected: '#js_right_Selected_1',
+                    leftSelected: '#js_left_Selected_1',
+                    leftAll: '#js_left_All_1'
+                });
+            });
+        </script>
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+    <script>
+        function addOne() {
+
+            $('#pjdbody').prepend($('#pjdadd').html());
+
+        }
+    </script>
+    @if(ViewBag.msg != null) {
+        <script>
+            alert('@ViewBag.msg');
+        </script>
+    }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+
+
+    <script src="~/Scripts/plugins/bootstrap-fileinput/fileinput.js"></script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/zh-TW.js"></script>
+    <script type="text/javascript" src="~/Scripts/bootstrap-multiselect.min.js"></script>
+</body>
+</html>

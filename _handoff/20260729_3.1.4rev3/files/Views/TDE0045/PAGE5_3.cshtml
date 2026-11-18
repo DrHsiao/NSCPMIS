@@ -1,0 +1,379 @@
+﻿@model WCals.ViewModels.NewModels.TDE0040Model
+@{
+    Layout = null;
+    var listData = ViewBag.ListData as System.Data.DataTable;
+    var syrList = ViewBag.SyrList as System.Data.DataTable;
+    var mscdData = ViewBag.MscdData as System.Data.DataTable;
+    var selectedSyr = ViewBag.SelectedSyr as string;
+
+    @* 3.1.4rev3：本頁資料來源改為 TDDPCOS，鍵＝工程＋計畫(PID)＋年度＋月份，所以要先選計畫 *@
+    var selectedPid = ViewBag.SelectedPid as string ?? "";
+    var hasMscd = mscdData != null && mscdData.Rows.Count > 0;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>經費來源</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <style>
+        html, body { height: 100%; margin: 0; padding: 0; }
+  body { padding: 10px; box-sizing: border-box; font-size: 14px; }
+  .form-group { margin-bottom: 10px; }
+  .input { width: 100%; }
+        .alert { margin-top: 10px; }
+        .table th { text-align: center; background-color: #f5f5f5; white-space: nowrap; }
+.table td { vertical-align: middle !important; white-space: nowrap; }
+      .text-right { text-align: right; }
+        .text-center { text-align: center; }
+ .table-scroll-wrapper {
+            overflow-x: auto;
+            overflow-y: auto;
+    max-height: 400px;
+      border: 1px solid #ddd;
+        }
+        .table-scroll-wrapper table {
+            min-width: 2500px;
+        }
+        .syr-select {
+          display: inline-block;
+        margin-left: 10px;
+   }
+    
+        /* 表格框線與排版美化 */
+        .table-bordered { border: 0 !important; }
+        .table-bordered th, .table-bordered td { border: 0 !important; border-bottom: 1px solid #e2e8f0 !important; }
+        .table > thead > tr > th { 
+            border-bottom: 2px solid #337ab7 !important; 
+            background-color: #f8fafc; 
+            color: #334155; 
+        }
+        .table > tbody > tr:last-child > td { border-bottom: 0 !important; }
+</style>
+</head>
+<body>
+    <input type="hidden" id="hidTD_CODE" value="@Model.TD_CODE" />
+
+    <!-- 訊息顯示區 -->
+    <div id="messageArea"></div>
+
+    <!-- 經費來源列表 -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white fw-bold">
+     <strong>經費來源</strong>
+            <span class="ms-2" style="font-size:12px; opacity:.85;">（點選一個計畫，下方會顯示該計畫的地方預算執行數）</span>
+        </div>
+  <div class="card-body">
+         <div class="table-responsive">
+        @* 3.1.4rev2：欄位比照舊系統 App_Data\CMETMS\TDE0020B043.Xml 的上方清單
+           （年度／主計畫名稱／分支計畫編號／分支計畫名稱／流水碼），
+           原本顯示 PID/TID/FID 這類內部代碼且查不到資料。
+           3.1.4rev3：補回舊系統的 PJ_TYPE='B' 過濾與年度升冪，並加上「選取」——
+           因為下方 TDDPCOS 的資料是以「工程＋計畫(PID)＋年度」為鍵，一定要先選計畫。 *@
+        <table class="table table-striped table-hover" id="itemTable">
+            <thead>
+                <tr>
+                    <th style="width:60px;">選取</th>
+                    <th style="width:80px;">年度</th>
+                    <th>主計畫名稱</th>
+                    <th style="width:120px;">分支計畫編號</th>
+                    <th>分支計畫名稱</th>
+                    <th style="width:90px;">流水碼</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (listData != null && listData.Rows.Count > 0)
+                {
+                    foreach (System.Data.DataRow row in listData.Rows)
+                    {
+                        var syr = row["SYR"] != DBNull.Value ? row["SYR"].ToString() : "";
+                        var anPjName = row["AN_PJ_NAME"] != DBNull.Value ? row["AN_PJ_NAME"].ToString() : "";
+                        var pjCode = row["PJ_CODE"] != DBNull.Value ? row["PJ_CODE"].ToString() : "";
+                        var pjName = row["PJ_NAME"] != DBNull.Value ? row["PJ_NAME"].ToString() : "";
+                        var pid = row["PID"] != DBNull.Value ? row["PID"].ToString() : "";
+                        var isSel = pid == selectedPid;
+                        <tr class="@(isSel ? "table-warning" : "")" style="cursor:pointer;" onclick="selectPid('@pid');">
+                            <td class="text-center">
+                                <input type="radio" name="pidPick" value="@pid" @(isSel ? "checked" : "")
+                                       onclick="event.stopPropagation(); selectPid('@pid');" />
+                            </td>
+                            <td class="text-center">@syr</td>
+                            <td>@anPjName</td>
+                            <td class="text-center">@pjCode</td>
+                            <td>@pjName</td>
+                            <td class="text-center">@pid</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center">無資料</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+  </div>
+        </div>
+    </div>
+
+    <!-- 分月進度列表 -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white fw-bold">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+   <strong>分月進度</strong>
+    <span class="syr-select">
+  <select id="syrSelect" class="form-control form-control-sm" style="display:inline-block; width:auto;">
+          @if (syrList != null && syrList.Rows.Count > 0)
+         {
+       foreach (System.Data.DataRow row in syrList.Rows)
+           {
+  var syr = row["SYR"].ToString();
+ <option value="@syr" @(syr == selectedSyr ? "selected" : "")>@syr 年度</option>
+      }
+           }
+           else
+           {
+ <option value="">尚未建立年度</option>
+           }
+          </select>
+        </span>
+
+            @* 3.1.4rev3：業主指示「要有[新增]當年月份的功能，預設當年度最後一個月月往後加一個月，
+               如果當年度沒有值就從 01 加起」。對應舊系統 TDE0020B043.aspx.cs 的 Get_SYR_SMN_TDDPCOS。 *@
+            <span class="ms-auto d-flex align-items-center gap-1">
+                <button type="button" class="btn btn-light btn-sm btn-add-month" onclick="addMonth();"
+                        title="在目前年度接著新增下一個月份的填報列">
+                    <i class="fa-solid fa-plus me-1"></i>新增當年月份
+                </button>
+            </span>
+            </div>
+        </div>
+ <div class="card-body">
+        @if (!hasMscd)
+        {
+            @* 3.1.4rev3：空清單只寫「無資料」，業主不知道要怎麼產生 → 直接把作法寫在畫面上 *@
+            <div class="alert alert-warning" id="emptyHint">
+                <i class="fa-solid fa-circle-info me-1"></i>
+                @if (string.IsNullOrEmpty(selectedPid))
+                {
+                    <text>請先在上方「經費來源」點選一個計畫。</text>
+                }
+                else
+                {
+                    <text>
+                        這個計畫（民國 @selectedSyr 年度）還沒有地方預算執行數的填報資料。
+                        請按右上角的「新增當年月份」，系統會從 1 月開始建立，再按該列的「修改」填寫金額。
+                    </text>
+                }
+            </div>
+        }
+    <div class="table-scroll-wrapper">
+     <table class="table table-striped table-hover" id="mscdTable">
+        <thead>
+                @* 3.1.4rev3：業主指示資料來源為 TDDPCOS、「開這些欄位填報」＝舊系統 B043 的
+                   估驗未撥金額／當月預定支用數／當月實際支用數／累計分配數／累計實際支用數／
+                   累計應付未付數／節餘數。 *@
+                <tr>
+                    <th style="width:80px;">功能</th>
+                    <th style="width:80px;">年度</th>
+                    <th style="width:80px;">月份</th>
+                    <th class="text-end">估驗未撥金額</th>
+                    <th class="text-end">當月預定支用數</th>
+                    <th class="text-end">當月實際支用數</th>
+                    <th class="text-end">累計分配數</th>
+                    <th class="text-end">累計實際支用數</th>
+                    <th class="text-end">累計應付未付數</th>
+                    <th class="text-end">節餘數</th>
+                </tr>
+          </thead>
+           <tbody id="mscdTableBody">
+                @if (mscdData != null && mscdData.Rows.Count > 0)
+                {
+                    foreach (System.Data.DataRow row in mscdData.Rows)
+                    {
+                        var id = row["ID"] != DBNull.Value ? row["ID"].ToString() : "";
+                        var syr = row["SYR"] != DBNull.Value ? row["SYR"].ToString() : "";
+                        var smn = row["SMN"] != DBNull.Value ? row["SMN"].ToString() : "";
+                        var eccUpayFee = row["ECC_UPAY_FEE"] != DBNull.Value ? Convert.ToDecimal(row["ECC_UPAY_FEE"]).ToString("N0") : "0";
+                        var preCost = row["PRE_COST"] != DBNull.Value ? Convert.ToDecimal(row["PRE_COST"]).ToString("N0") : "0";
+                        var relCost = row["REL_COST"] != DBNull.Value ? Convert.ToDecimal(row["REL_COST"]).ToString("N0") : "0";
+                        var lPlnCost = row["L_PLN_COST"] != DBNull.Value ? Convert.ToDecimal(row["L_PLN_COST"]).ToString("N0") : "0";
+                        var lRelCost = row["L_REL_COST"] != DBNull.Value ? Convert.ToDecimal(row["L_REL_COST"]).ToString("N0") : "0";
+                        var lUnpayCost = row["L_UNPAY_COST"] != DBNull.Value ? Convert.ToDecimal(row["L_UNPAY_COST"]).ToString("N0") : "0";
+                        var saveFee = row["SAVE_FEE"] != DBNull.Value ? Convert.ToDecimal(row["SAVE_FEE"]).ToString("N0") : "0";
+                        <tr>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-warning btn-sm" onclick="editPcos('@id');">修改</button>
+                            </td>
+                            <td class="text-center">@syr</td>
+                            <td class="text-center">@smn</td>
+                            <td class="text-end">@eccUpayFee</td>
+                            <td class="text-end">@preCost</td>
+                            <td class="text-end">@relCost</td>
+                            <td class="text-end">@lPlnCost</td>
+                            <td class="text-end">@lRelCost</td>
+                            <td class="text-end">@lUnpayCost</td>
+                            <td class="text-end">@saveFee</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="10" class="text-center">無資料</td>
+                    </tr>
+                }
+            </tbody>
+     </table>
+         </div>
+        </div>
+  </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var TD_CODE = '@Model.TD_CODE';
+        var SELECTED_PID = '@selectedPid';
+        var PLAN_SYR = '@(ViewBag.SelectedSyr as string ?? "")';
+
+ // 顯示訊息
+        function showMessage(msg, isSuccess) {
+            var cls = isSuccess ? 'alert-success' : 'alert-danger';
+      $('#messageArea').html('<div class="alert ' + cls + ' alert-dismissible">' + msg +
+      '<button type="button" class="close" onclick="$(this).parent().hide();">&times;</button></div>');
+         if (isSuccess) {
+        setTimeout(function () { $('#messageArea .alert').fadeOut(); }, 3000);
+      }
+         else {
+             // 3.1.4rev3：錯誤訊息不自動消失，並捲到看得見的位置
+             try { document.getElementById('messageArea').scrollIntoView({ block: 'nearest' }); } catch (e) { }
+         }
+ }
+
+        // 3.1.4rev3：新增當年月份（業主規定：當年度最後一個月 +1；當年度沒有值就從 01 加起）
+        function addMonth() {
+            var pid = $('input[name=pidPick]:checked').val() || SELECTED_PID;
+            var syr = $('#syrSelect').val() || PLAN_SYR;
+            if (!pid) { showMessage('請先在上方「經費來源」點選一個計畫。', false); return; }
+            if (!syr) { showMessage('找不到年度，請確認這個計畫已有起始年度。', false); return; }
+            if (!confirm('確定要在民國 ' + syr + ' 年度新增下一個月份嗎？')) { return; }
+
+            $('.btn-add-month').prop('disabled', true);
+            $.post('@Url.Action("PAGE5_3_AddMonth", "TDE0045")', { TD_CODE: TD_CODE, PID: pid, SYR: syr })
+                .done(function (res) {
+                    if (res.success) {
+                        // 重新載入才看得到新的月份列，用 sessionStorage 把成功訊息帶過去
+                        try { sessionStorage.setItem('page5_3_added', res.message); } catch (e) { }
+                        location.href = '@Url.Action("PAGE5_3", "TDE0045")?TD_CODE=' + encodeURIComponent(TD_CODE) +
+                                        '&PID=' + encodeURIComponent(pid) + '&SYR=' + encodeURIComponent(res.syr);
+                    } else {
+                        showMessage(res.message, false);
+                        $('.btn-add-month').prop('disabled', false);
+                    }
+                })
+                .fail(function () {
+                    showMessage('新增失敗：連線或伺服器發生問題，請稍後再試一次。', false);
+                    $('.btn-add-month').prop('disabled', false);
+                });
+        }
+
+        // 3.1.4rev3：選擇上方的計畫（TDDPCOS 以工程＋計畫＋年度為鍵，換計畫要重載）
+        function selectPid(pid) {
+            if (!pid || pid === SELECTED_PID) { return; }
+            location.href = '@Url.Action("PAGE5_3", "TDE0045")?TD_CODE=' + encodeURIComponent(TD_CODE) +
+                            '&PID=' + encodeURIComponent(pid);
+        }
+
+        // 3.1.4rev3：地方預算執行數的單月填報（本頁專用，只開放 B043 那幾個金額欄位）
+        function editPcos(id) {
+            var url = '@Url.Action("PAGE5_3_PcosEdit", "TDE0045")' + '?ID=' + id;
+            if (top && typeof top.editPcos === 'function') {
+                top.editPcos(id);
+            } else {
+                window.open(url, 'editPcosWindow', 'width=760,height=620,scrollbars=yes,resizable=yes');
+            }
+        }
+
+        // 關閉編輯視窗後重新整理頁面
+        function closeEditDialog() {
+            location.reload();
+        }
+
+        // 切換年度查詢
+        function loadPcosBySyr(syr) {
+            var pid = $('input[name=pidPick]:checked').val() || SELECTED_PID;
+            $.ajax({
+                url: '@Url.Action("PAGE5_3_GetPcos", "TDE0045")',
+                type: 'POST',
+                data: { TD_CODE: TD_CODE, PID: pid, SYR: syr },
+                success: function (result) {
+                    if (result.success) {
+                        renderPcosTable(result.data);
+                    } else {
+                        showMessage('查詢失敗：' + result.message, false);
+                    }
+                },
+                error: function () {
+                    showMessage('查詢失敗：網路錯誤', false);
+                }
+            });
+        }
+
+        // 渲染分月填報表格（欄位與 Razor 初次渲染一致）
+        function renderPcosTable(data) {
+            var tbody = $('#mscdTableBody');
+            tbody.empty();
+
+            if (data && data.length > 0) {
+                for (var i = 0; i < data.length; i++) {
+                    var row = data[i];
+                    var tr = '<tr>' +
+                        '<td class="text-center"><button type="button" class="btn btn-warning btn-sm" onclick="editPcos(\'' + row.ID + '\');">修改</button></td>' +
+                        '<td class="text-center">' + (row.SYR || '') + '</td>' +
+                        '<td class="text-center">' + (row.SMN || '') + '</td>' +
+                        '<td class="text-end">' + formatNumber(row.ECC_UPAY_FEE) + '</td>' +
+                        '<td class="text-end">' + formatNumber(row.PRE_COST) + '</td>' +
+                        '<td class="text-end">' + formatNumber(row.REL_COST) + '</td>' +
+                        '<td class="text-end">' + formatNumber(row.L_PLN_COST) + '</td>' +
+                        '<td class="text-end">' + formatNumber(row.L_REL_COST) + '</td>' +
+                        '<td class="text-end">' + formatNumber(row.L_UNPAY_COST) + '</td>' +
+                        '<td class="text-end">' + formatNumber(row.SAVE_FEE) + '</td>' +
+                        '</tr>';
+                    tbody.append(tr);
+                }
+            } else {
+                tbody.append('<tr><td colspan="10" class="text-center">無資料</td></tr>');
+            }
+        }
+
+        // 數字格式化（整數）
+        function formatNumber(val) {
+            if (val === null || val === undefined || val === '') return '0';
+            return parseFloat(val).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+        $(document).ready(function () {
+            // 年度切換事件
+            $('#syrSelect').change(function () {
+                var syr = $(this).val();
+                if (!syr) { return; }
+                loadPcosBySyr(syr);
+            });
+
+            // 顯示上一動「新增當年月份」的結果
+            try {
+                var added = sessionStorage.getItem('page5_3_added');
+                if (added) {
+                    sessionStorage.removeItem('page5_3_added');
+                    showMessage(added, true);
+                }
+            } catch (e) { }
+   });
+    </script>
+</body>
+</html>

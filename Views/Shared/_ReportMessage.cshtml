@@ -1,0 +1,15 @@
+@* 報表訊息顯示：來源依序為 ViewBag.Message（controller 既有「查無資料」流程）、
+   Session["ReportMessage"]（ReportPrintExceptionFilter 攔截後端例外後帶入，讀後清除）。
+   有值時以紅字說明呈現（沿用舊版樣式）。用法：@Html.Partial("_ReportMessage") *@
+@{
+    var reportMsg = (ViewBag.Message as string);
+    if (string.IsNullOrEmpty(reportMsg) && Session["ReportMessage"] != null)
+    {
+        reportMsg = Session["ReportMessage"].ToString();
+        Session.Remove("ReportMessage");
+    }
+}
+@if (!string.IsNullOrEmpty(reportMsg))
+{
+    <p style="color:red">@reportMsg</p>
+}

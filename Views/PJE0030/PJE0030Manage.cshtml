@@ -1,0 +1,411 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0030Model
+@{ ViewBag.Title = "分支計畫案件管制";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head{
+    <style>
+        .pagination {
+            margin: 0;
+        }
+
+        .ui-dialog {
+            z-index: 4000;
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            計畫經費管制[1.1.3]
+            <small>案件管制</small>
+            <br /><small>@Model.CurrentProjectName</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page"> <i class="fa-solid fa-file"></i><a href="@Url.Content("~/")PJE0030">計畫經費管制[1.1.3]</a></li>
+
+            <li class="breadcrumb-item active" aria-current="page"><i class="fa-solid fa-file"></i>案件管制</li>
+        </ol>
+    </div>
+</div>
+@using(Html.BeginForm("", "PJE0030", FormMethod.Post, new { id = "mainForm" })) {
+
+
+
+    @Html.HiddenFor(x => x.PID, new { id = "PID" })
+    @Html.HiddenFor(x => x.SYR, new { id = "SYR" })
+    <input type="hidden" name="prePage" value="@Request.Params["page"]" />
+    <input type="hidden" name="page" value="@Model.page" />
+    <input type="hidden" name="TID" id="TID" value="@Model.TID" />
+    <table width="100%" class="table" style="overflow-x: auto; white-space: nowrap;">
+
+        <tr>
+            <td colspan="2">
+
+                <div class="card border-primary mb-3">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title">查詢 </h3>
+                    </div>
+                    <div class="card-body">
+                        <table>
+                            <tr>
+                                <td>
+
+                                    @{System.Data.DataTable selc = ViewBag.sels;}
+                                    @if(selc.Rows.Count > 0) {
+                                        if(Model.SEQ_NO != Convert.ToInt32(selc.Rows[0]["SEQ_NO"])) {
+                                            <script>
+                                                $(document).ready(function () {
+                                                    $('.bl').attr('disabled', 'disabled');
+
+                                                });
+                                            </script>
+                                        } else {
+                                            <script>
+                                                //alert(@Model.SEQ_NO);
+                                                $("#mSEQ_NO").val("@Model.SEQ_NO").change();
+                                            </script>
+
+                                        }
+
+                                    }
+
+
+                                    <select name="SEQ_NO" id="mSEQ_NO" class="form-select">
+                                        @foreach(System.Data.DataRow s in selc.Rows) {
+
+                                            <option @(Convert.ToInt32(s["SEQ_NO"]) == Model.SEQ_NO ? "selected" : "") value="@s["SEQ_NO"]">
+
+
+                                                @(Convert.ToInt32(s["SEQ_NO"]) == 0? "原預算": "第"+ s["SEQ_NO"]+"期修正" )
+
+
+                                            </option>
+                                        }
+                                    </select>
+
+
+
+
+                                </td>
+                                <td style="padding:1px;" colspan="3">
+                                    <button type="button" class="btn btn-primary" onclick="search();">查詢</button>
+                                    <button class="btn btn-secondary" name="action" type="submit" value="Print">列印</button>
+                                    <a class="btn btn-secondary" href="@Url.Content("~/")PJE0030">返回</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:1px;" colspan="4">
+                                    @Html.DropDownListFor(x => x.PJ_CATY_CODE, (SelectList)ViewBag.PJ_CATY_CODE, "計畫分項", new { @class = "form-control", form = "mainForm" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="padding:1px;">
+                                    @Html.TextBoxFor(x => x.TD_NAME, new { @class = "form-control", form = "mainForm", placeholder = "工程名稱" })
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td style="padding:1px;">
+                                    @Html.DropDownListFor(x => x.CITY, (SelectList)ViewBag.cities, "縣市", new { @class = "form-control", form = "mainForm", Onchange = "GetTowns(this.value, 'town')" })
+                                </td>
+                                <td style="padding:1px;">
+                                    @Html.DropDownListFor(x => x.TOWN, (SelectList)ViewBag.towns, "鄉鎮", new { id = "town", @class = "form-control", form = "mainForm" })
+                                </td>
+                                <td style="padding:1px;">
+                                    @Html.DropDownListFor(x => x.TD_CATY, (SelectList)ViewBag.TD_CATY, "類型", new { @class = "form-control", form = "mainForm" })
+                                </td>
+                                <td style="padding:1px;">
+                                    @Html.DropDownListFor(x => x.EXE_TYPE, (SelectList)ViewBag.EXE_TYPE, "執行方式", new { @class = "form-control", form = "mainForm" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:1px;">
+                                    @Html.DropDownListFor(x => x.IPJ_CODE, (SelectList)ViewBag.IPJ_CODE, "經費層級", new { @class = "form-control", form = "mainForm" })
+                                </td>
+                                <td style="padding:1px;">
+                                    @Html.DropDownListFor(x => x.N_IPJ_CODE, (SelectList)ViewBag.N_IPJ_CODE, "辦理層級", new { @class = "form-control", form = "mainForm" })
+                                </td>
+                                <td style="padding:1px;">
+                                    @Html.DropDownListFor(x => x.EMG_CATY, (SelectList)ViewBag.EMG_CATY, "分類(雨水用)", new { @class = "form-control", form = "mainForm" })
+                                </td>
+
+                                <td style="padding:1px;">
+                                    @Html.DropDownListFor(x => x.ACC_ID, (SelectList)ViewBag.ACC_ID, "會計科目", new { @class = "form-control", form = "mainForm" })
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <script>
+        function search() {
+            
+        var PID=@Model.PID;
+        var url = "@Url.Content("~/")PJE0030/Search?PID=" + PID;
+        url += "&PJ_CATY_CODE=" + $("#PJ_CATY_CODE").val();
+        url += "&TD_NAME=" + $("#TD_NAME").val();
+        url += "&CITY=" + $("#CITY").val();
+            url += "&TOWN=" + $("#town").val();
+        url += "&TD_CATY=" + $("#TD_CATY").val();
+        url += "&EXE_TYPE=" + $("#EXE_TYPE").val();
+        url += "&IPJ_CODE=" + $("#IPJ_CODE").val();
+        url += "&N_IPJ_CODE=" + $("#N_IPJ_CODE").val();
+        url += "&EMG_CATY=" + $("#EMG_CATY").val();
+            url += "&ACC_ID=" + $("#ACC_ID").val();
+            url += "&SEQ_NO=" + $("#mSEQ_NO").val();//
+        url += "&zero=1";
+        $("#info").attr("src", url);
+    }
+    </script>
+
+    <iframe id="info" src="@Url.Content("~/")PJE0030/ManageInfo?PID=@Model.PID&SEQ=@Model.SEQ_NO&SYR=@Model.SYR" style="border:0px; width:100%;height:1020px;"></iframe>
+
+
+    <div id="dialog" title="編輯" style="color:#ffffff;">
+        <fieldset>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>陳報文號</label>
+                        @Html.TextBoxFor(x => x.PJDFDCR.AP_FN, new { @class = "form-control pjdfdcr", id = "PJDFDCR_AP_FN", placeholder = "陳報文號", AutoComplete = "Off", tabindex = "9", form = "mainForm" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+
+                    <div class="form-group">
+                        <label>陳報日期</label>
+                        @Html.TextBoxFor(x => x.PJDFDCR.AP_DT, new { @class = "form-control pjdfdcr", id = "PJDFDCR_AP_DT", placeholder = "陳報日期", AutoComplete = "Off", form = "mainForm" })
+                    </div>
+                </div>
+
+            </div>
+
+        </fieldset>
+    </div>
+
+    <div id="editFrame" title="編輯" style="padding:5px; color:#ffffff;">
+        <iframe id="editor" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+    <div id="rdfSelDialog" title="引用" style="color:#ffffff;">
+        @*<iframe id="rdfSel" src="RefSelectFrame" style="border:0px; width:100%; height:100%;"></iframe>*@
+        <iframe id="rdfSel" src="" style="border:0px; width:100%; height:100%;"></iframe>
+    </div>
+
+    <div id="batchFrame" title="轉入核定提案" style="padding:0px; color:#ffffff;">
+        <iframe id="rdbatch" src="" style="border: 0px; width: 100%; height: 100%;" scrolling="yes"></iframe>
+    </div>
+
+    <div id="retainage" title="保留款" style="padding:0px; color:#ffffff;">
+        <iframe id="reta" src="" style="border: 0px; width: 100%; height: 100%;" scrolling="yes"></iframe>
+    </div>
+
+    <script>
+        function refselClose() {
+            $("#rdfSelDialog").dialog("close");
+        }
+
+        function refsel() {
+            $("#rdfSel").attr("src", "@Url.Content("~/PJE0030/")RefSelectFrame");
+            $("#rdfSelDialog").dialog("open");
+        }
+
+        function reBatch(pid, syr) {
+            //alert(syr);
+            $("#rdbatch").attr("src", "@Url.Content("~/PJE0030/")RefBatchFrame?PID="+pid+"&SYR="+syr);
+            $("#batchFrame").dialog("open");
+        }
+    </script>
+}
+<script>
+
+    $(function () {
+        var h = $(window).height();
+        var w = $(window).width();
+
+        $("#dialog").dialog({
+            autoOpen: false,
+            show: {
+                //effect: "blind",
+                //effect: "drop",
+                duration: 1000
+            },
+            hide: {
+                //effect: "explode",
+                //effect: "drop",
+                duration: 1000
+            },
+            autoOpen: false,
+            maxWidth: 800,
+            maxHeight: 500,
+            width: 800,
+            height: 500,
+            modal: true
+        });
+
+        //$("#rdbatch").width(w *0.7);
+        //$("#rdbatch").height(h - 90);
+
+        $("#editFrame").dialog({
+            autoOpen: false,
+            show: {
+                duration: 1000
+            },
+            hide: {
+                duration: 1000
+            },
+            autoOpen: false,
+            //maxWidth: w,
+            //maxHeight: h,
+            width: w,
+            height: h *0.9,
+            modal: true
+        });
+
+        //批次外框
+        $("#batchFrame").dialog({
+            autoOpen: false,
+            show: {
+                duration: 1000
+            },
+            hide: {
+                duration: 1000
+            },
+            autoOpen: false,
+            width: w*0.8,
+            height: h * 0.9,
+            modal: true
+        });
+        $('#batchFrame').on('dialogclose', function (event) {
+            location.reload();
+        });
+
+
+        $("#rdfSelDialog").dialog({
+            autoOpen: false,
+            show: {
+                duration: 1000
+            },
+            hide: {
+                //effect: "explode",
+                //effect: "drop",
+                duration: 1000
+            },
+            autoOpen: false,
+            //maxWidth: 800,
+            //maxHeight: 500,
+            width: w * 0.7,
+            height: h * 0.9,
+            modal: true
+        });
+
+        $("#retainage").dialog({
+            autoOpen: false,
+            show: {
+                //effect: "blind",
+                //effect: "drop",
+                duration: 1000
+            },
+            hide: {
+                //effect: "explode",
+                //effect: "drop",
+                duration: 1000
+            },
+            autoOpen: false,
+            //maxWidth: 1000,
+            //maxHeight: 1000,
+            width: w * 0.7,
+            height: h * 0.9,
+            modal: true
+        });
+
+
+
+
+    });
+
+    function editRetainage(pid, tid, seq_no) {
+        $("#reta").attr("src", "@Url.Content("~/PJE0030/")EditCRDMNDS?TID=" +  tid +"&PID="+pid);
+        $("#retainage").dialog("open");
+    }
+
+
+    function GetTowns(city) {
+
+$("#TOWN").html("");
+    $.ajax({
+        url: '@Url.Content("~/")ASYNC/GetTowns',
+        method: 'post',
+        data: { "city": city },
+        success: function (d) {
+            var p = jQuery.parseJSON(d);
+            $("#TOWN").prepend("<option value=''>鄉鎮</option>");
+            for (i = 0; i < p.length; i++) {
+                $("#TOWN").append("<option value='" + p[i].TOWN + "'>" + p[i].TOWN + "</option>");
+            }
+        }
+    });
+}
+
+    function GetTowns(city, id) {
+
+    $("#"+id).html("");
+    $.ajax({
+        url: '@Url.Content("~/")ASYNC/GetTownsOldandNew',
+        method: 'post',
+        data: { "city": city },
+        success: function (d) {
+            var p = jQuery.parseJSON(d);
+            $("#"+id).prepend("<option value=''>鄉鎮</option>");
+            for (i = 0; i < p.length; i++) {
+                $("#"+id).append("<option value='" + p[i].TOWN + "'>" + p[i].TOWN + "</option>");
+            }
+        }
+    });
+    }
+
+    function importPrj() {
+        $("#dialog").dialog("open");
+    }
+
+    function editPrj(pid, tid, seq_no) {
+        //alert(pid);
+        $("#editor").attr("src", "@Url.Content("~/PJE0030/")EditMnd?PID="+pid+"&TID="+tid+"&SEQ_NO="+seq_no);
+        $("#editFrame").dialog("open");
+    }
+
+    function addPrj(pid, tid, seq_no) {
+        //$("#editor").attr("src", "@Url.Content("~/PJE0030/")EditMnd?PID="+pid+"&TID="+tid+"&SEQ_NO="+seq_no);
+        $("#editor").attr("src", "@Url.Content("~/PJE0030/")AddMnd?PID=" + pid + "&TID=" + tid + "&SEQ_NO=" + seq_no);
+        $("#editFrame").dialog("open");
+    }
+
+    function closeEdit() {
+        $("#editFrame").dialog("close");
+        location.reload();
+    }
+
+    function closeRet() {
+        $("#retainage").dialog("close");
+        //http://localhost:56885/SEPMIS2/PJE0030/ManageList3?PJ_CATY_CODE=&TD_NAME=&CITY=&TOWN=&TD_CATY=&EXE_TYPE=&IPJ_CODE=&N_IPJ_CODE=&EMG_CATY=&ACC_ID=&PID=279&page=1&SEQ_NO=4&PJ_CATY_CODE=&TD_NAME=&CITY=&Model.TOWN=&TD_CATY=&EXE_TYPE=&IPJ_CODE=&N_IPJ_CODE=&EMG_CATY=&ACC_ID=
+        //location.reload();
+    }
+</script>
+
+@section scripts{
+
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+
+
+}

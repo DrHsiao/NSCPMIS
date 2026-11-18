@@ -1,0 +1,284 @@
+﻿@model WCals.ViewModels.NewModels.SUG0010Model
+@{
+    ViewBag.Title = "編輯建議案";
+    Layout = null;
+    bool isEdit = Model.SUG_ID > 0;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .btn-toolbar {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .file-section {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .file-section h5 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        .file-list table {
+            width: 100%;
+            font-size: 13px;
+        }
+        .file-list table th {
+            background: #eee;
+        }
+    </style>
+</head>
+<body>
+    <div id="saveMessage" class="alert alert-success" style="display:none; position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:9999;">
+        <i class="fa-solid fa-check"></i> 已儲存
+    </div>
+
+    <form id="editForm">
+        <input type="hidden" id="SUG_ID" name="SUG_ID" value="@Model.SUG_ID" />
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    交辦日期
+                    <input type="text" id="INSTRUCT_DATE" name="INSTRUCT_DATE" class="form-control datepicker"
+                           value="@(Model.INSTRUCT_DATE.HasValue ? Model.INSTRUCT_DATE.Value.ToString("yyyy/MM/dd") : "")" placeholder="yyyy/MM/dd" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    交辦人
+                    <input type="text" id="INSTRUCT_NAME" name="INSTRUCT_NAME" class="form-control"
+                           value="@Model.INSTRUCT_NAME" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    建議日期
+                    <input type="text" id="SUG_DATE" name="SUG_DATE" class="form-control datepicker"
+                           value="@(Model.SUG_DATE.HasValue ? Model.SUG_DATE.Value.ToString("yyyy/MM/dd") : "")" placeholder="yyyy/MM/dd" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    建議人
+                    <input type="text" id="SUG_NAME" name="SUG_NAME" class="form-control"
+                           value="@Model.SUG_NAME" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    職稱
+                    <input type="text" id="SUG_JOB" name="SUG_JOB" class="form-control"
+                           value="@Model.SUG_JOB" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            建議內容
+            <textarea id="SUG_CONTENT" name="SUG_CONTENT" class="form-control" rows="5">@Model.SUG_CONTENT</textarea>
+        </div>
+
+        <div class="form-group">
+            關鍵字
+            <input type="text" id="KEYWORDS" name="KEYWORDS" class="form-control"
+                   value="@Model.KEYWORDS" placeholder="多個關鍵字請用逗號分隔" />
+        </div>
+
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary" onclick="saveData()"><i class="fa-solid fa-save"></i> 儲存</button>
+            <button type="button" class="btn btn-secondary" onclick="parent.closeDialogAndRefresh()"><i class="fa-solid fa-times"></i> 關閉</button>
+        </div>
+
+        <!-- 附件區塊 -->
+        <div class="file-section">
+            <h5>附件管理</h5>
+            @if (!isEdit)
+            {
+                <div class="alert alert-warning">請先儲存建議案後，才能上傳附件</div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col-md-8">
+                        <input type="file" id="fileInput" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-success btn-sm" onclick="uploadFile()"><i class="fa-solid fa-upload"></i> 上傳</button>
+                    </div>
+                </div>
+
+                <div class="file-list" style="margin-top:10px;">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>檔案名稱</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fileListBody">
+                            @if (Model.FileList != null)
+                            {
+                                foreach (System.Data.DataRow row in Model.FileList.Rows)
+                                {
+                                    <tr>
+                                        <td>@row["F_PATH"]</td>
+                                        <td>
+                                            <a href="@Url.Action("DownloadFile", "SUG0000", new { SUG_ID = Model.SUG_ID, F_ID = row["F_ID"] })"
+                                               class="btn btn-info btn-sm" target="_blank">
+                                                <i class="fa-solid fa-download"></i> 下載
+                                            </a>
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                    onclick="deleteFile('@row["F_ID"]')">
+                                                <i class="fa-solid fa-trash"></i> 刪除
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </form>
+
+    <script>
+        $(function () {
+            // 初始化日期選擇器 (jQuery UI)
+            $('.datepicker').datepicker({
+                dateFormat: 'yy/mm/dd',
+                changeMonth: true,
+                changeYear: true
+            });
+
+            // 檢查是否剛儲存完成
+            var urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('saved') === '1') {
+                $('#saveMessage').show().delay(3000).fadeOut();
+                // 通知父視窗重新整理列表
+                if (parent && parent.refreshCurrentTab) {
+                    parent.refreshCurrentTab();
+                }
+            }
+        });
+
+        // 儲存資料
+        function saveData() {
+            var data = {
+                SUG_ID: $('#SUG_ID').val(),
+                INSTRUCT_DATE: $('#INSTRUCT_DATE').val(),
+                INSTRUCT_NAME: $('#INSTRUCT_NAME').val(),
+                SUG_DATE: $('#SUG_DATE').val(),
+                SUG_JOB: $('#SUG_JOB').val(),
+                SUG_NAME: $('#SUG_NAME').val(),
+                SUG_CONTENT: $('#SUG_CONTENT').val(),
+                KEYWORDS: $('#KEYWORDS').val()
+            };
+
+            $.ajax({
+                url: '@Url.Action("Save", "SUG0000")',
+                type: 'POST',
+                data: data,
+                success: function (result) {
+                    if (result.success) {
+                        if ($('#SUG_ID').val() == '0' && result.SUG_ID > 0) {
+                            // 新增成功，跳轉到編輯模式
+                            window.location.href = '@Url.Action("Edit", "SUG0000")' + '?SUG_ID=' + result.SUG_ID + '&saved=1';
+                        } else {
+                            // 更新成功，重新整理頁面
+                            window.location.href = '@Url.Action("Edit", "SUG0000")' + '?SUG_ID=' + $('#SUG_ID').val() + '&saved=1';
+                        }
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('儲存失敗');
+                }
+            });
+        }
+
+        // 上傳附件
+        function uploadFile() {
+            var fileInput = document.getElementById('fileInput');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('請選擇檔案');
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('SUG_ID', $('#SUG_ID').val());
+            formData.append('file', fileInput.files[0]);
+
+            $.ajax({
+                url: '@Url.Action("UploadFile", "SUG0000")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('上傳失敗');
+                }
+            });
+        }
+
+        // 刪除附件
+        function deleteFile(fId) {
+            if (!confirm('確定要刪除此附件嗎？')) return;
+
+            $.ajax({
+                url: '@Url.Action("DeleteFile", "SUG0000")',
+                type: 'POST',
+                data: {
+                    SUG_ID: $('#SUG_ID').val(),
+                    F_ID: fId
+                },
+                success: function (result) {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('刪除失敗');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

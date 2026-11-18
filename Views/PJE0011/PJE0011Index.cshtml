@@ -1,0 +1,159 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0011Model
+@{ ViewBag.Title = "中長程計畫維護[2.1.1]";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            中長程計畫維護[2.1.1]
+            <small></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                中長程計畫維護[2.1.1]
+            </li>
+        </ol>
+    </div>
+</div>
+
+@using (Html.BeginForm("", "PJE0011", FormMethod.Post, new { id = "mainForm" }))
+{
+
+
+    <table width="100%">
+        <tr>
+            <td width="50%" align="left">
+
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <div class="input-group input-group">
+                                <span class="input-group-text" id="sizing-addon1">計畫名稱</span>
+                                @Html.TextBoxFor(x => x.keyword, new { @class = "form-control", placeholder = "計畫名稱", AutoComplete = "Off", tabindex = "1" })
+                                <span class="input-group-btn">
+                                    <button class="btn btn-secondary" name="action" type="submit" value="Search">查詢</button>
+                                </span>
+                            </div>
+                            @Html.HiddenFor(x => x.PPID)
+                            @Html.HiddenFor(x => x.page1)
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+            <td width="50%" align="right">
+
+                <div>
+                    @Html.PagedListPager(Model.MainList, page1 => Url.Action("",
+                        new
+                             {
+                                 page1 = page1,
+                                 tab = 1
+                             }),
+                        new PagedListRenderOptions
+                             {
+                            DisplayItemSliceAndTotal = true,
+                            DisplayPageCountAndCurrentLocation = true,
+                            DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                            DisplayLinkToIndividualPages = false,
+
+                            ItemSliceAndTotalFormat = "顯示第 {0} - {1}筆, 共{2}筆",
+                            PageCountAndCurrentLocationFormat = "第 {0}頁 / 共 {1}頁",
+                        }
+                    )
+                </div>
+            </td>
+        </tr>
+    </table>
+    <script>
+        $(window).on('load', function () {
+            $('#PID').val("");
+        });
+
+        function delCheck(pid) {
+            if (confirm('確定刪除?')) {
+                $('#PID').val(pid);
+            } else {
+                void ('')
+            }
+        }
+    </script>
+
+    <div class="card border-primary mb-3">
+
+        <div class="card-header bg-primary text-white">中長程計畫列表</div>
+        <div style="overflow-x: auto;">
+            <table class="table table-hover" style="width:100%; white-space: nowrap;">
+                <tr>
+                    <td>計畫編號</td>
+                    <td>計畫類型</td>
+                    <td>計畫名稱</td>
+                    <td>承辦單位</td>
+                    <td>承辦人  </td>
+                    <td>開始日期</td>
+                    <td>結束日期</td>
+                    <td></td>
+                </tr>
+
+
+                @foreach (System.Data.DataRow c in Model.MainList)
+                {
+                    <tr>
+                        <td>@c["PJ_CODE"]</td>
+                        @if (@c["STAT_NO"].ToString().Equals("S"))
+                        {
+                            <td>污水計畫</td>
+                        }
+                        @* 20260424 版本修改 => 新增 STAT_NO = "E" 環境改善計畫 *@
+                        else if (@c["STAT_NO"].ToString().Equals("R"))
+                        {
+                            <td>雨水計畫</td>
+                        }
+                        @* 20260424 版本修改 => 新增 STAT_NO = "E" 環境改善計畫 *@
+                        else if (@c["STAT_NO"].ToString().Equals("E"))
+                        {
+                            <td>環境改善計畫</td>
+                        }
+
+                        <td>@c["PJ_NAME"]</td>
+                        <td>@WCals.Helpers.WebSiteHelper.getDeptName(Convert.ToString(c["ADV_DP"]))</td>
+                        <td>@WCals.Helpers.WebSiteHelper.getUserName(Convert.ToString(c["ADV_UID"]))</td>
+                        <td>@c["STT_DT"]</td>
+                        <td>@c["END_DT"]</td>
+                        <td>
+                            <button class="btn btn-secondary" name="action" onclick="$('#PPID').val('@c["PPID"]')" type="submit" value="Edit">內容</button>
+                            <button class="btn btn-primary" name="action" type="submit" onclick="$('#PPID').val('@c["PPID"]')" value="ProposalManage">提案管理</button>
+
+                        </td>
+                    </tr>
+
+                }
+
+            </table>
+        </div>
+    </div>
+
+
+    @Html.PagedListPager(Model.MainList, page1 => Url.Action("",
+new
+     {
+        page1 = page1,
+        tab = 1
+
+}))
+
+
+
+
+
+
+
+
+
+}

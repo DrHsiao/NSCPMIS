@@ -1,0 +1,513 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0040Model
+@{ 
+    ViewBag.Title = "工程登記冊編輯";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- FontAwesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Scripts/plugins/bootstrap-fileinput/icon.mini.css" crossorigin="anonymous">
+    <link href="~/Scripts/plugins/bootstrap-fileinput/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <style>
+        body { 
+            background-color: #f8f9fa;
+            padding: 15px; 
+            font-family: "Inter", "Microsoft JhengHei", sans-serif;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #337ab7, #286090);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .input-group-text {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+            border-color: #cbd5e1;
+            min-width: 140px;
+            justify-content: flex-end;
+        }
+
+        .form-control, .form-select {
+            border-color: #cbd5e1;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #337ab7;
+            box-shadow: 0 0 0 0.2rem rgba(51, 122, 183, 0.25);
+        }
+
+        .ui-datepicker { 
+            z-index: 2200 !important; 
+            background: #ffffff; 
+            border: 1px solid #cccccc; 
+            border-radius: 4px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .section-card {
+            margin-bottom: 20px;
+            border: 0;
+            border-radius: 8px;
+        }
+
+        .section-card .card-header {
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+        }
+    </style>
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container-fluid pb-5">
+        @if(TempData["Success"] != null) {
+            <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if(TempData["Error"] != null) {
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                <i class="fa-solid fa-circle-exclamation me-2"></i> @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @using(Html.BeginForm("PAGE1", "TDE0040", FormMethod.Post, new { data_toggle = "validator", role = "form", id = "mainForm", enctype = "multipart/form-data" })) {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.TDMFORM.TD_CODE)
+
+            <!-- 標題與操作區 -->
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-2 border-primary position-sticky top-0 bg-light py-2" style="z-index: 1000;">
+                <h4 class="mb-0 text-primary fw-bold">
+                    <i class="fa-solid fa-clipboard-list me-2"></i> @Model.TDMFORM.TD_NAME
+                    <span class="fs-6 text-secondary ms-2 fw-normal">工程登記冊編輯</span>
+                </h4>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary shadow-sm" id="btnSave">
+                        <i class="fa-solid fa-floppy-disk me-1"></i>儲存
+                    </button>
+                    <button type="button" onclick="parent.close1();" class="btn btn-outline-secondary shadow-sm">
+                        <i class="fa-solid fa-xmark me-1"></i>關閉
+                    </button>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- 左側：基本與位置 -->
+                <div class="col-xl-6">
+                    <!-- 基本資料 Section -->
+                    <div class="card section-card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <i class="fa-solid fa-circle-info"></i> 基本資料
+                        </div>
+                        <div class="card-body bg-white">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">工程編號</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.TD_CODE, new { @class = "form-control bg-light", @readonly = "readonly" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">預算成立年度</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.CRT_YR, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="input-group">
+                                        <span class="input-group-text">工程名稱</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.TD_NAME, new { @class = "form-control fw-bold" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">工程類型</span>
+                                        @Html.DropDownListFor(m => m.TDMFORM.TD_CATY, ViewBag.TD_CATY as SelectList, "請選擇", new { @class = "form-select" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">核定經費(元)</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.TD_FUND, new { @class = "form-control text-end text-primary fw-bold" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">預估工期</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.PRE_PRD, new { @class = "form-control", placeholder = "工期天數" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">工期單位</span>
+                                        @Html.DropDownListFor(m => m.TDMFORM.PRD_TP, new SelectList(new[] {
+                                            new { value = "01", text = "日曆天" },
+                                            new { value = "02", text = "工作天" },
+                                            new { value = "03", text = "限期完工" }
+                                        }, "value", "text"), new { @class = "form-select" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">預算核準日期</span>
+                                        <i class="fa-regular fa-calendar position-absolute" style="z-index: 10; right: 10px; top: 10px; color: #6c757d;"></i>
+                                        @Html.TextBoxFor(m => m.TDMFORM.VRF_DT, new { @class = "form-control dt pe-4" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">預算核準文號</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.VRF_FN, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">污水系統</span>
+                                        @if(ViewBag.SYS_ID != null) {
+                                            @Html.DropDownListFor(m => m.TDMFORM.SYS_ID, ViewBag.SYS_ID as SelectList, "請選擇", new { @class = "form-select" })
+                                        } else {
+                                            <select name="TDMFORM.SYS_ID" class="form-select"><option value="">請選擇</option></select>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">實施計畫</span>
+                                        @if(ViewBag.PJ_ID != null) {
+                                            @Html.DropDownListFor(m => m.TDMFORM.PJ_ID, ViewBag.PJ_ID as SelectList, "請選擇", new { @class = "form-select" })
+                                        } else {
+                                            <select name="TDMFORM.PJ_ID" class="form-select"><option value="">請選擇</option></select>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">基設核定經費(元)</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.START_FUND, new { @class = "form-control text-end" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group align-items-center px-3 border rounded border-light bg-light">
+                                        @Html.HiddenFor(m => m.TDMFORM.TD_FINISH, new { value = "" })
+                                        <div class="form-check form-switch py-1">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="TD_FINISH_Checkbox" value="true" @(Model.TDMFORM.TD_FINISH == true ? "checked" : "") onchange="$('#TDMFORM_TD_FINISH').val(this.checked ? 'true' : '')" />
+                                            <label class="form-check-label fw-bold ms-2" for="TD_FINISH_Checkbox">專案已結案</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 人員聯絡 Section -->
+                    <div class="card section-card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <i class="fa-solid fa-address-book"></i> 人員聯絡
+                        </div>
+                        <div class="card-body bg-white">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">防護/承辦姓名</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.ADM_CONT, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa-solid fa-phone me-2"></i>承辦電話</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.ADM_TEL, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa-solid fa-envelope me-2"></i>承辦 Email</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.ADM_EMAIL, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">執行機關代碼</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.EXE_MCH, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">監造督導管理人員</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.ADV_CHIEF, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右側：其他 -->
+                <div class="col-xl-6">
+                    <!-- 工程位置 Section -->
+                    <div class="card section-card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <i class="fa-solid fa-map-location-dot"></i> 工程位置
+                        </div>
+                        <div class="card-body bg-white">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text">縣市別</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.TD_CITY, new { @class = "form-control bg-light", @readonly = "readonly" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text">鄉鎮別</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.TD_TOWN, new { @class = "form-control bg-light", @readonly = "readonly" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text">節餘款</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.SAVE_FEE, new { @class = "form-control text-end" })
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="input-group">
+                                        <span class="input-group-text">工程地點</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.TD_LINE, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">X 座標(TWD97)</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.GIS_X, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Y 座標(TWD97)</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.GIS_Y, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 設計監造 & 承商資訊 Section -->
+                    <div class="card section-card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <i class="fa-solid fa-compass-drafting"></i> 參與廠商與設計監造
+                        </div>
+                        <div class="card-body bg-white">
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <div class="input-group">
+                                        <span class="input-group-text">承攬廠商名稱</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.BUSS_NAME, new { @class = "form-control bg-light fw-bold text-primary", @readonly = "readonly" })
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="input-group">
+                                        <span class="input-group-text">廠商地址</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.BUSS_ADDR, new { @class = "form-control bg-light", @readonly = "readonly" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">廠商聯絡人</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.BUSS_CT_CONT, new { @class = "form-control bg-light", @readonly = "readonly" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">聯絡人電話</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.BUSS_CT_CONTEL, new { @class = "form-control bg-light", @readonly = "readonly" })
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12"><hr class="my-1 text-muted"></div>
+
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">設計案編號</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.DSGTD_CODE, new { @class = "form-control bg-light", @readonly = "readonly" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">工程會標案編碼</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.PCCTD_CODE, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="input-group">
+                                        <span class="input-group-text">設計單位</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.DSG_BUSS_NAME, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">設計承辦姓名</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.DSG_CONT, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">設計承辦電話</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.DSG_CONTEL, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="input-group">
+                                        <span class="input-group-text">監造單位</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.SVY_BUSS_NAME, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">監造承辦姓名</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.SVY_CONT, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">監造承辦電話</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.SVY_CONTEL, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 水文資料 Section -->
+                    <div class="card section-card shadow-sm mb-0">
+                        <div class="card-header bg-primary text-white">
+                            <i class="fa-solid fa-water"></i> 水文資料與工程內容
+                        </div>
+                        <div class="card-body bg-white">
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <div class="input-group">
+                                        <span class="input-group-text align-items-start pt-2">工程內容</span>
+                                        @Html.TextAreaFor(m => m.TDMFORM.TD_NOTE, new { @class = "form-control", rows = "3" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">計畫接管戶數</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.HOUSEHOLD, new { @class = "form-control text-end" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">實際累計數</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.TOTAL_HOUSEHOLD, new { @class = "form-control text-end" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text" style="font-size: 0.9em;">雨水新建長度(m)</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.WTR_PL_NEW_LEN, new { @class = "form-control text-end" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text" style="font-size: 0.9em;">雨水修繕長度(m)</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.WTR_PL_REP_LEN, new { @class = "form-control text-end" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">滯洪量(m³)</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.WTR_FLOOD, new { @class = "form-control text-end" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">總抽水量(CMS)</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.WTR_TOTAL_PUMP, new { @class = "form-control text-end" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">水位計站數</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.WTR_GU_STA, new { @class = "form-control text-end" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">工務組系統代碼</span>
+                                        @Html.TextBoxFor(m => m.TDMFORM.TDM_TD_CODE, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- BS5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/fileinput.js"></script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/zh-TW.js"></script>
+    <script src="~/Scripts/validator.min.js"></script>
+    <script>
+        // 日期選擇器初始化
+        $(".dt").datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: '68:168',
+            dateFormat: 'yymmdd'
+        });
+
+        $(".dt").datepickerTW({
+            onSelect: function (dateText) {
+                $('#mainForm').validator('validate');
+            }
+        });
+
+        $('.dt').click(function () {
+            $(this).delay(600).val("");
+        });
+
+        // 成功訊息自動消失
+        $(document).ready(function() {
+            if ($('.alert').length) {
+                window.scrollTo(0, 0);
+                setTimeout(function() {
+                    $('.alert').fadeOut();
+                }, 4000);
+            }
+        });
+
+        // 提交按鈕防連點與特效
+        $('#mainForm').on('submit', function() {
+            var btn = $('#btnSave');
+            btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-1"></i>儲存中...');
+            return true;
+        });
+    </script>
+</body>
+</html>

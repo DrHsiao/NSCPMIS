@@ -1,0 +1,172 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0040Model
+@{ ViewBag.Title = "抽水站工程";
+    Layout = null;
+
+    // 取得資料
+ var data = ViewBag.Data as System.Data.DataRow;
+    bool isNew = ViewBag.IsNew ?? true;
+
+    // 預設值
+    string defaultPSC3 = @"(1) 抽水站名稱：___
+(2) 設計抽水量：___ CMS
+(3) 抽水機組數：___ 組
+(4) 抽水機馬力：___ HP × ___ 台
+(5) 工程總經費：___ 元。";
+
+    string defaultPE3 = @"後續可供用戶接管___戶，提升___污水系統用戶接管率___%，提升全縣(市)普及率___%。";
+
+    string defaultPPI3 = @"(1) 主辦機關：___縣（市）政府
+(2) 代辦機關：〈國土署下水道工程分署〉
+(3) 補助機關：內政部國土管理署
+(4) 設計監造單位：_____公司
+(5) 經費來源：（特別預算名稱）中央___元、地方___元。
+(6) 施工期程：__日曆天（工作天），___年___月___日開工，預計___年___月___日完工。";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Scripts/plugins/bootstrap-fileinput/icon.mini.css" crossorigin="anonymous">
+    <link href="~/Scripts/plugins/bootstrap-fileinput/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+  <style>
+.table-form th {
+     text-align: right;
+ vertical-align: middle !important;
+  white-space: nowrap;
+      background-color: #f5f7fa;
+        }
+
+        .table-form textarea {
+   resize: vertical;
+     }
+
+     .alert {
+    margin: 10px 0;
+        }
+
+    .status-bar {
+     background-color: #337ab7;
+     color: white;
+  padding: 8px 15px;
+margin-bottom: 10px;
+        border-radius: 4px;
+        }
+
+        .status-bar .btn-group {
+float: right;
+        }
+    
+        /* 表格框線與排版美化 */
+        .table-bordered { border: 0 !important; }
+        .table-bordered th, .table-bordered td { border: 0 !important; border-bottom: 1px solid #e2e8f0 !important; }
+        .table > thead > tr > th { 
+            border-bottom: 2px solid #337ab7 !important; 
+            background-color: #f8fafc; 
+            color: #334155; 
+        }
+        .table > tbody > tr:last-child > td { border-bottom: 0 !important; }
+</style>
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+<body style="padding: 10px;">
+    @if(TempData["Success"] != null) {
+        <div class="alert alert-success alert-dismissible" role="alert">
+          <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+      @TempData["Success"]
+        </div>
+    }
+ @if(TempData["Error"] != null) {
+        <div class="alert alert-danger alert-dismissible" role="alert">
+ <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+  @TempData["Error"]
+  </div>
+    }
+    @if(ViewBag.TableError != null) {
+        <div class="alert alert-warning" role="alert">
+    @ViewBag.TableError
+     </div>
+    }
+
+ @using(Html.BeginForm("PAGE9_3_Save", "TDE0049", FormMethod.Post, new { data_toggle = "validator", role = "form", id = "mainForm", enctype = "multipart/form-data" })) {
+
+        @Html.AntiForgeryToken()
+  <input type="hidden" name="TD_CODE" value="@ViewBag.TD_CODE" />
+     <input type="hidden" name="IsNew" value="@isNew.ToString().ToLower()" />
+
+        @* 3.1.4rev2：移除「編輯模式/新增模式/修改狀態」標記；配置與同模組其他頁籤一致
+           （頂部狀態列＝工程編號＋儲存＋關閉，表格下方再放一組相同按鈕） *@
+        <div class="status-bar">
+            <span><i class="fa-solid fa-hashtag me-1"></i> 工程編號：@ViewBag.TD_CODE</span>
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-floppy-disk me-1"></i> 儲存
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="top.close9();">
+                    <i class="fa-solid fa-xmark me-1"></i> 關閉
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-sm table-form">
+              <colgroup>
+     <col style="width:25%">
+            <col style="width:75%">
+     </colgroup>
+           <tbody>
+      <tr>
+     <th>
+    計畫範圍及內容：
+  </th>
+          <td>
+         <textarea class="form-control" name="P_S_C_3" rows="6">@(data != null && data["P_S_C_3"] != DBNull.Value ? data["P_S_C_3"].ToString() : defaultPSC3)</textarea>
+             </td>
+          </tr>
+
+             <tr>
+   <th>
+    預期效益<br>
+         <small>（面積、人口或環境改善效益）：</small>
+        </th>
+              <td>
+   <textarea class="form-control" name="P_E_3" rows="3">@(data != null && data["P_E_3"] != DBNull.Value ? data["P_E_3"].ToString() : defaultPE3)</textarea>
+              </td>
+          </tr>
+
+         <tr>
+         <th>工程基本資訊：</th>
+        <td>
+        <textarea class="form-control" name="P_P_I_3" rows="7">@(data != null && data["P_P_I_3"] != DBNull.Value ? data["P_P_I_3"].ToString() : defaultPPI3)</textarea>
+    </td>
+        </tr>
+           </tbody>
+        </table>
+        </div>
+
+        @* 3.1.4rev2：表格下方的按鈕列，與頂部一致 *@
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-floppy-disk me-1"></i> 儲存
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="top.close9();">
+                    <i class="fa-solid fa-xmark me-1"></i> 關閉
+                </button>
+            </div>
+        </div>
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script src="~/Scripts/validator.min.js"></script>
+</body>
+</html>

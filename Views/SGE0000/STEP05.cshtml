@@ -1,0 +1,627 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.SGE0000Model
+@{ ViewBag.Title = "SGE0000EditAPMFORM";
+    //Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+    <link rel="stylesheet" href="~/Scripts/plugins/bootstrap-fileinput/icon.mini.css" crossorigin="anonymous">
+    <link href="~/Scripts/plugins/bootstrap-fileinput/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        .readonly-select {
+            pointer-events: none;
+            background-color: #e9ecef;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+<body style="padding:5px;">
+    @using (Html.BeginForm("", "SGE0000", FormMethod.Post, new { id = "mainForm", enctype = "multipart/form-data" }))
+    {
+        @Html.HiddenFor(x => x.AID)
+        <a class="btn btn-secondary" href="@Url.Content("~/SGE0000/STEP04")?aid=@Model.AID">上一頁</a>
+        <a class="btn btn-secondary" href="@Url.Content("~/SGE0000/STEP06")?aid=@Model.AID">下一頁</a>
+
+        <br>
+        <br />
+        <div class="card with-nav-tabs border-primary">
+            @if (ViewBag.dis == null)
+            {
+                <div class="card-header bg-primary text-white">
+                    <ul class="nav nav-tabs">
+                        <li id="li1" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP01")?aid=@Model.AID" class="nav-link">申請內容基本資料</a></li>
+                        <li id="li2" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP02")?aid=@Model.AID" class="nav-link">實施區域</a></li>
+                        <li id="li3" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP03")?aid=@Model.AID" class="nav-link">實行內容</a></li>
+                        <li id="li4" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP04")?aid=@Model.AID" class="nav-link">勘察評估事項</a></li>
+                        <li id="li5" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP05")?aid=@Model.AID" class="nav-link active">財源分配</a></li>
+                        <li id="li6" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP06")?aid=@Model.AID" class="nav-link">檢附資料</a></li>
+                        <li id="li7" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP07")?aid=@Model.AID" class="nav-link">自評分數</a></li>
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <div class="card-header bg-primary text-white">
+                    <ul class="nav nav-tabs">
+                        <li id="li1" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP01")?aid=@Model.AID&dis=true" class="nav-link">申請內容基本資料</a></li>
+                        <li id="li2" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP02")?aid=@Model.AID&dis=true" class="nav-link">實施區域</a></li>
+                        <li id="li3" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP03")?aid=@Model.AID&dis=true" class="nav-link">實行內容</a></li>
+                        <li id="li4" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP04")?aid=@Model.AID&dis=true" class="nav-link">勘察評估事項</a></li>
+                        <li id="li5" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP05")?aid=@Model.AID&dis=true" class="nav-link active">財源分配</a></li>
+                        <li id="li6" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP06")?aid=@Model.AID&dis=true" class="nav-link">檢附資料</a></li>
+                        <li id="li7" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP07")?aid=@Model.AID&dis=true" class="nav-link">自評分數</a></li>
+                    </ul>
+                </div>
+            }
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="tab4" style="padding:5px;">
+                    <button class="btn btn-warning" name="action" type="submit" value="STEP05Save">儲存</button>
+                    @*@{
+                            var validStatus = new HashSet<string> { "-1", "00", "Z1", "Z2" };
+                        }
+                        @if (Model.APMFORM.AP_STAT != null && validStatus.Contains(Model.APMFORM.AP_STAT))
+                        {
+                            <button class="btn btn-warning" name="action" type="submit" value="STEP05Save">儲存</button>
+                        }
+                        else
+                        {
+                            <script>
+                                $(document).ready(function () {
+                                    $(":input").prop("disabled", true);
+                                });
+                            </script>
+                        }*@
+                    <table class="table">
+                        <thead class="table-light">
+                            <tr>
+                                <th colspan="4" id="th_total_fund">工程總經費</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td align="right">中央補助款(元)</td>
+
+                                <td>
+                                    @Html.TextBoxFor(
+                                   x => x.APMFORM.TCEN_FUND,
+                                   "{0:0}",   // 格式化字串，四捨五入到整數
+                                   new { @readonly = "readonly", id = "t1", @class = "form-control", AutoComplete = "Off" }
+                                   )
+
+
+                                </td>
+
+
+                                <td align="right">地方配合款(元)</td>
+                                <td>@Html.TextBoxFor(x => x.APMFORM.TLOC_FUND, "{0:0}", new { @readonly = "readonly", id = "t2", @class = "form-control", AutoComplete = "Off" })</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" id="lbl_past_year">以前年度已編列</td>
+                            </tr>
+                            <tr>
+                                <td align="right" id="lbl_r_cen">中央補助款(元)</td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.APMFORM.RCEN_FUND, "{0:0}", new { oninput = "this.value = this.value.replace(/[^0-9]/g, ''); count();", @class = "form-control tt1", AutoComplete = "Off" })
+                                </td>
+                                <td align="right" id="lbl_r_loc">地方配合款(元)</td>
+                                <td>@Html.TextBoxFor(x => x.APMFORM.RLOC_FUND, "{0:0}", new { oninput = "this.value = this.value.replace(/[^0-9]/g, ''); count();", @class = "form-control tt2", AutoComplete = "Off" })</td>
+                            </tr>
+                        </tbody>
+                        <tbody id="FFUND">
+                            <tr>
+                                <td colspan="4" id="lbl_future_year">以後年度已編列</td>
+                            </tr>
+                            <tr>
+                                <td align="right" id="lbl_f_cen">中央補助款(元)</td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.APMFORM.FCEN_FUND, "{0:0}", new { oninput = "this.value = this.value.replace(/[^0-9]/g, ''); count();", @class = "form-control tt1", AutoComplete = "Off" })
+                                </td>
+                                <td align="right" id="lbl_f_loc">地方配合款(元)</td>
+                                <td>@Html.TextBoxFor(x => x.APMFORM.FLOC_FUND, "{0:0}", new { oninput = "this.value = this.value.replace(/[^0-9]/g, ''); count();", @class = "form-control tt2", AutoComplete = "Off" })</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <hr>
+                    @*<button type="button" class="btn btn-success" onclick="cpFund()"><span class="fa-solid fa-plus" aria-hidden="true"></span> 新增</button>*@
+                    <button class="btn btn-warning" name="action" type="submit" value="STEP05Save">儲存</button>
+
+                    <table class="table">
+                        <thead class="table-light">
+                            <tr>
+                                <th nowrap>年度</th>
+                                <th nowrap>經費層級</th>
+                                <th nowrap>需求經費(元)</th>
+                                <th nowrap>經費描述</th>
+                                @*<th nowrap>刪除</th>*@
+                            </tr>
+                        </thead>
+                        @{ System.Data.DataTable APDFUND = ViewBag.APDFUND;
+
+                        }
+                        <tbody id="fund_table_target">
+                            @if (APDFUND != null && APDFUND.Rows.Count > 0)
+                            {
+                                foreach (System.Data.DataRow d in APDFUND.Rows)
+                                {
+                                    string fitCode = d["FIT_CODE"] != DBNull.Value ? Convert.ToString(d["FIT_CODE"]) : "00";
+                                    string syr = d["SYR"] != DBNull.Value ? Convert.ToString(d["SYR"]) : "";
+                                    string fid = d["FID"] != DBNull.Value ? Convert.ToString(d["FID"]) : "";
+                                    decimal fund = 0;
+                                    try
+                                    {
+                                        fund = d["FUND"] != DBNull.Value ? Convert.ToDecimal(d["FUND"]) : 0;
+                                    }
+                                    catch (Exception)
+                                    {
+                                        fund = 0;
+                                    }
+                                    string fundDesc = d["FUND_DESC"] != DBNull.Value ? Convert.ToString(d["FUND_DESC"]) : "";
+
+                                    <tr>
+                                        <td>
+                                            <input type="text" name="SYRS" value="@syr" class="form-control readonly-select" style="width:100px;" />
+                                            <input type="hidden" name="APDFUND_FID" value="@fid" />
+                                            <input type="hidden" name="DEL_FG" id="DEL_FG_@fid" />
+                                        </td>
+                                        <td>
+                                            <select name="FIT_CODE" id="FIT_CODE_@fid" class="form-select ck readonly-select" style="width:150px;" onChange="count()">
+                                                <option value="00" @(fitCode == "00" ? "selected" : "")>中央補助款</option>
+                                                <option value="11" @(fitCode == "11" ? "selected" : "")>地方配合款</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" id="FUND_@fid" class="form-control cv" oninput="this.value = this.value.replace(/[^0-9]/g, ''); count();" style="width:200px;" value="@fund" name="FUND" />
+                                        </td>
+                                        <td width="100%">
+                                            <input type="text" value="@fundDesc" name="FUND_DESC" class="form-control" />
+                                        </td>
+                                        @*<td>
+                                                <button onclick="dec('@fid'); $('#DEL_FG_@fid').val('*');" class="btn btn-danger" name="action" type="submit" value="STEP05Del">刪除</button>
+                                            </td>*@
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+
+
+                </div>
+
+
+
+
+
+            </div>
+        </div>
+
+        <table style="display:none;">
+            <tbody id="fund_table">
+                <tr>
+                    <td>
+                        <input type="hidden" name="APDFUND_FID" />
+                        <input type="hidden" name="DEL_FG" />
+                        <input type="text" name="SYRS" class="form-control" value="@Model.SYR" style="width:100px;" />
+                    </td>
+                    <td>
+                        <select name="FIT_CODE" class="form-select ck" style="width:150px;" onChange="count()">
+                            <option value="00">中央補助款</option>
+                            <option value="11">地方配合款</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="FUND" class="form-control cv" oninput="this.value = this.value.replace(/[^0-9]/g, ''); count();" /></td>
+                    <td width="100%">
+                        <input type="text" name="FUND_DESC" class="form-control" />
+
+                    </td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    }
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+
+
+
+
+
+
+    @if (ViewBag.msg != null)
+    {
+        <script>
+        alert("@ViewBag.msg");
+        </script>
+
+
+
+    }
+    <script>
+
+        function dec(fid) {
+            //刪除列
+            alert($("#FIT_CODE_" + fid).val());
+
+            alert($("#FUND_" + fid).val());
+
+            if ($("#FIT_CODE_" + fid).val() == "00") {
+                $("#t1").val(parseFloat($("#t1").val()) - parseFloat($("#FUND_" + fid).val()));
+            }
+
+            if ($("#FIT_CODE_" + fid).val() == "11") {
+                $("#t2").val(parseFloat($("#t2").val()) - parseFloat($("#FUND_" + fid).val()));
+            }
+        }
+
+
+        $(".dt").datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: '68:168',
+            dateFormat: 'yymmdd',
+            //defaultDate: null,
+        });
+        $(".dt").datepickerTW({
+            onSelect: function (dateText) {
+                $('#mainForm').validator('validate');
+            }
+        });
+
+
+        $('.dt').click(function () {
+            //消掉前次輸入自帶的回期
+            $(this).delay(600).val("");
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            //初始進入
+            isNormal();
+        });
+    </script>
+    @if (Model.APMFORM.PJ_CATY_CODE.Equals("CA") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("CB") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("CC") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("CD") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("CE"))
+    {
+
+        <script>
+            //選擇CA,CB, CC, CD, CE五項中的一項時5項更名, 4項新欄位
+            $(document).ready(function () {
+                isCA_BCDE()
+            });
+        </script>
+
+    }
+
+    @if (Model.APMFORM.PJ_CATY_CODE.Equals("EA") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("EB") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("EC"))
+    {
+
+        <script>
+            // 選擇EA,EB,EC時，觸發專屬的更名與必填規則
+            $(document).ready(function () {
+                isEA_EB_EC();
+            });
+        </script>
+    }
+
+    @if (Model.APMFORM.PJ_CATY_CODE.Equals("PA") ||
+    Model.APMFORM.PJ_CATY_CODE.Equals("PB"))
+    {
+
+        <script>
+            //選擇PA,PB, 2項中的一項時勘查評估頁籤不顯示
+            $(document).ready(function () {
+                isPA_PB();
+            });
+        </script>
+    }
+
+    @if (Model.APMFORM.PJ_CATY_CODE.Equals("PA"))
+    {
+        <script>
+            //選擇PA
+            $(document).ready(function () {
+                isPA()
+            });
+        </script>
+    }
+
+    @if (Model.APMFORM.PJ_CATY_CODE.Equals("PB"))
+    {
+        <script>
+            //選擇PB
+            $(document).ready(function () {
+                isPB()
+            });
+        </script>
+    }
+
+    @if (Model.APMFORM.PJ_CATY_CODE.Equals("OA") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("OB") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("OC"))
+    {
+
+        <script>
+            //選擇PA,PB, 2項中的一項時勘查評估頁籤不顯示
+            $(document).ready(function () {
+                isOA_OB_OC()
+            });
+        </script>
+    }
+    <script>
+        //CA, CB, CC, CD, CE 9項變動
+        function isCA_BCDE() {
+            isNormal();//復原
+            $("#C_START_DT").html("辦理期程開始時間");
+            $("#C_AP_PJ_NAME").html("雨水下水道系統及幹線名稱");
+            $("#C_EXE_MCH").html("執行機關");
+            $("#C_END_DT").html("辦理期程完成時間");
+            //$("#C_ABCDE").show("slow");//水系、改善、保護、檢討
+            $("#S_WSYS_NAME").show("slow");
+            $("#S_IMPFLDAREA").show("slow");
+            $("#S_PRTPOPS").show("slow");
+            $("#S_REXM_PRJ").show("slow");
+            //水系、改善、保護、檢討
+            $("#C_BENEFITS").hide("slow");//隱藏或不輸出預期效益欄位
+            $("#C_IMPFLDAREA").html("改善淹水面積(ha)");
+            $("#li7").show("slow");//自評
+        }
+
+        // 針對 EA, EB, EC 改變文字、選項與必填屬性
+        function isEA_EB_EC() {
+            // 💡 加入這行：替換大標題
+            $("#th_total_fund").html("總經費需求");
+
+            // 1. 修改大標題
+            $("#lbl_past_year").html("過去年度已支用金額");
+            $("#lbl_future_year").html("以後年度");
+
+            // 2. 修改標籤文字，並加上紅星號讓使用者知道是必填
+            $("#lbl_r_cen").html("中央補助款(元)&nbsp;<span class='text-danger'>*</span>");
+            $("#lbl_r_loc").html("地方配合款(元)&nbsp;<span class='text-danger'>*</span>");
+            $("#lbl_f_cen").html("中央補助款(元)&nbsp;<span class='text-danger'>*</span>");
+            $("#lbl_f_loc").html("地方配合款(元)&nbsp;<span class='text-danger'>*</span>");
+
+            // 3. 設定這四個欄位為必填 (透過 input id)
+            $("#APMFORM_RCEN_FUND, #APMFORM_RLOC_FUND, #APMFORM_FCEN_FUND, #APMFORM_FLOC_FUND").prop("required", true);
+
+            // 4. 將畫面上所有下拉選單(FIT_CODE)的"中央補助款"選項改名為"中央補助當年度"
+            $('select[name="FIT_CODE"] option[value="00"]').text('中央補助當年度');
+        }
+
+        // 恢復一般狀態 (移除必填、改回原字)
+        function resetEA_EB_EC() {
+            // 💡 加入這行：復原大標題
+            $("#th_total_fund").html("工程總經費");
+
+            $("#lbl_past_year").html("以前年度已編列");
+            $("#lbl_future_year").html("以後年度已編列");
+
+            $("#lbl_r_cen").html("中央補助款(元)");
+            $("#lbl_r_loc").html("地方配合款(元)");
+            $("#lbl_f_cen").html("中央補助款(元)");
+            $("#lbl_f_loc").html("地方配合款(元)");
+
+            $("#APMFORM_RCEN_FUND, #APMFORM_RLOC_FUND, #APMFORM_FCEN_FUND, #APMFORM_FLOC_FUND").prop("required", false);
+
+            $('select[name="FIT_CODE"] option[value="00"]').text('中央補助款');
+        }
+
+        function isPA() {
+            isPA_PB();
+            $("#S_NPSD_SYR").show("slow");
+        }
+
+        function isPB() {
+            isPA_PB();
+            $("#S_OPSD_SYR").show("slow");
+            $("#S_PPSD_SYR").show("slow");
+        }
+
+        function isOA_OB_OC() {
+            isNormal();//復原
+            $("#li4").hide("slow");//勘查評估頁籤不顯示
+            $("#S_WSYS_NAME").show("slow");//水系名稱
+            $("#C_AP_NAME").html("非工程措施名稱");
+            $("#C_AP_ALL_NOTE").html("辦理內容");
+            $("#C_REXM_PRJ").html("其他補充說明");
+            $("#li7").show("slow");//自評
+        }
+
+        function isPA_PB() {
+            isNormal();//復原
+            $("#li4").hide("slow");//勘查評估頁籤不顯示
+            $("#S_WSYS_NAME").show("slow");//水系名稱
+            $("#S_IMPFLDAREA").show("slow");//規劃(檢討)面積(ha)
+            $("#S_IMPALLAREA").show("slow");//規劃總面積(ha)
+            $("#C_IMPFLDAREA").html("規劃(檢討)面積(ha)");
+            $("#C_IMPALLAREA").html("規劃總面積(ha) ");
+            $("#C_BENEFITS").hide("slow");//隱藏或不輸出預期效益欄位
+            $("#li7").show("slow");//自評
+        }
+
+        //一般
+        function isNormal() {
+            $("#C_AP_NAME").html("工程名稱");
+            $("#C_AP_ALL_NOTE").html("工程內容");
+            //CA,CB, CC, CD, CE 9項
+            $("#C_START_DT").html("預定開始日期");
+            $("#C_AP_PJ_NAME").html("實施計畫名稱");
+            $("#C_EXE_MCH").html("預定執行單位");
+            $("#C_END_DT").html("預定完成日期");
+            //$("#C_ABCDE").hide("slow");//水系、改善、保護、檢討
+            $("#S_WSYS_NAME").hide("slow");//水系名稱
+            $("#S_IMPFLDAREA").hide("slow");//規劃(檢討)面積(ha)
+            $("#S_IMPALLAREA").hide("slow");//規劃總面積(ha)
+            $("#S_PRTPOPS").hide("slow");
+            $("#S_REXM_PRJ").hide("slow");
+            //水系、改善、保護、檢討
+            $("#C_BENEFITS").show("slow");//預期效益
+            //CA,CB, CC, CD, CE 9項
+
+            //選擇PA,PB, OA, OB, O
+            $("#li4").show("slow");//堪查評估事項
+            $("#li7").hide("slow");//自評
+            $("#C_REXM_PRJ").html("雨水下水道(重新)檢討規劃名稱");
+            $("#S_NPSD_SYR").hide("slow");
+            $("#S_OPSD_SYR").hide("slow");
+            $("#S_PPSD_SYR").hide("slow");
+            $("#FFUND").hide("slow");
+
+            // 💡 加入這行：確保回到一般狀態時，取消 EA/EB/EC 的必填和文字變更
+            resetEA_EB_EC();
+        }
+
+        $("#PJ_CATY_CODE").on("change", function () {
+            var c = $(this).val();
+            //選擇CA,CB, CC, CD, CE五項中的一項時5項更名, 4項新欄位
+            if (c == "CA" || c == "CB" || c == "CC" || c == "CD" || c == "CE") {
+                isCA_BCDE();
+            }
+            //選擇PA,PB中的一項
+            if (c == "PA" || c == "PB") {
+                //堪查評估事項
+                isPA_PB();
+            }
+            if (c == "PA") {
+                isPA();
+            }
+            if (c == "PB") {
+                //堪查評估事項
+                isPB();
+            }
+            //選擇OA, OB, OC中的一項
+            if (c == "OA" || c == "OB" || c == "OC") {
+                isOA_OB_OC();
+            }
+
+            // 💡 加入這段：選擇EA, EB, EC中的一項
+            if (c == "EA" || c == "EB" || c == "EC") {
+                isEA_EB_EC();
+            }
+        });
+        //動態判斷END/
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#FFUND").show("slow");//之後款
+        });
+    </script>
+
+
+
+
+    <script>
+        //統一顯示與加總"元"→"汙水"計畫不用自動加總請移除(雨水的保留不用移除)
+        function count() {
+
+
+
+            let t1 = 0;
+            let t2 = 0;
+
+            $('.tt1').each(function () {
+                let val1 = parseFloat($(this).val());
+                if (!isNaN(val1)) {
+                    t1 += val1;
+                }
+            });
+
+            $('.tt2').each(function () {
+                let val2 = parseFloat($(this).val());
+                if (!isNaN(val2)) {
+                    t2 += val2;
+                }
+            });
+
+
+            //勾選添加
+            $('.ck').each(function (index) {
+                let inputVal = parseFloat($('.cv').eq(index).val());
+                if (!isNaN(inputVal)) {
+                    if ($(this).val() === '00') {
+                        t1 += inputVal;
+                    } else {
+                        t2 += inputVal;
+                    }
+                }
+
+            });
+
+
+
+            $("#t1").val(t1);
+
+            $("#t2").val(t2);
+        }
+
+
+    </script>
+
+    @if (ViewBag.dis != null)
+    {
+        <script>
+            //初審複審
+            $(document).ready(function () {
+                $('#mainForm :input').prop('disabled', true);
+                $('button[type="submit"]').hide("slow");
+                $('.btn-secondary').hide("slow");
+            });
+        </script>
+    }
+    @if (ViewBag.isE == true)
+    {
+        <script>
+            //==E的
+            $(document).ready(function () {
+                $("#li7").show("slow");//自評
+            });
+        </script>
+    }
+    else if (ViewBag.isR == null)
+    {
+        <script>
+            //!=R的
+            $(document).ready(function () {
+                $("#li7").hide("slow");//自評
+            });
+        </script>
+    }
+    else
+    {
+        <script>
+            //==R的
+            $(document).ready(function () {
+                $("#li7").show("slow");//自評
+            });
+        </script>
+    }
+    <script src="~/Scripts/plugins/bootstrap-fileinput/fileinput.js"></script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/zh-TW.js"></script>
+    <script src="~/Scripts/SGE0000.js"></script>
+</body>
+</html>

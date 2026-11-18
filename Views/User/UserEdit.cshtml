@@ -1,0 +1,126 @@
+﻿@model WCals.Models.CMBASEModels.UserViewModel
+
+@{
+    ViewBag.Title = "修改使用者";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<div class="model-form">
+
+    <h3 style="text-align:left;">修改使用者:</h3>
+
+    <form method="post" action="@Url.Action("UserEdit","User")">
+        <table class="table table-bordered table-hover" style="text-align: left; width:70%">
+            <tr>
+                <td>使用者帳號:</td>
+                <td>
+                    <input type="text" name="User" value="@ViewBag.choose" readonly />
+                    <a href="@Url.Action("ChooseUser","User")" class="btn btn-secondary">選擇使用者</a>
+                </td>
+                <td>使用者名稱:</td>
+                <td>
+                    <input type="text" name="UserName" value="@ViewBag.chooseName" readonly />
+                </td>
+            </tr>
+
+            @*<tr>
+                    <td id="D">縣市區鄉鎮分區:</td>
+                    <td colspan="2">
+                        @Html.RadioButton("Site", "北區", true)北區 @Html.RadioButton("Site", "中區")中區 @Html.RadioButton("Site", "南區")南區
+                    </td>
+
+                </tr>*@
+            <tr>
+                <td>縣市資料權限:</td>
+                <td colspan="2">
+                    @for (int i = 0; i < 23; i++)
+                    {
+                        if (i == 7 || i == 14 || i == 21)
+                        {
+                            <br />
+                        }
+                        foreach (var item in Model.SECCITY)
+                        {
+                            if (item.CITY == Model.SMCPOSTN[i].CITY)
+                            {
+                                <input type="checkbox" name="CityCheckbox" value="@Model.SMCPOSTN[i].CITY" data-city="@Model.SMCPOSTN[i].CITY" checked onclick="handleCityCheckbox(this,'@Model.SMCPOSTN[i].CITY')">
+                                <a href="#" onclick="changeCityValue('@Model.SMCPOSTN[i].CITY')">@Model.SMCPOSTN[i].CITY</a>
+                                goto ContinueOuterLoop;
+                            }
+                        }
+                        <input type="checkbox" name="CityCheckbox" value="@Model.SMCPOSTN[i].CITY" data-city="@Model.SMCPOSTN[i].CITY" onclick="handleCityCheckbox(this,'@Model.SMCPOSTN[i].CITY')">
+                        <a href="#" onclick="changeCityValue('@Model.SMCPOSTN[i].CITY')">@Model.SMCPOSTN[i].CITY</a>
+                        ContinueOuterLoop: continue;
+                        }
+                </td>
+
+                <td rowspan="3">
+                    <input type="submit" value="修改" class="btn btn-secondary" /><a href="@Url.Action("Index","User")" class="btn btn-primary">返回</a>@Html.ActionLink("刪除", "UserDelete",
+new { choose = ViewBag.choose },
+new { onclick = "return confirm('確定刪除嗎?');", @class = "btn btn-danger" })
+                    <br />
+                    <br />
+                    <div style="color:red">@ViewBag.Errorr</div>
+                </td>
+            </tr>
+            <tr id="Second">
+                <td id="C">縣市區鄉鎮權限:</td>
+                <td id="TOWN" colspan="2">
+                    @for (int i = 0; i < Model.SMCPOSTN.Count(); i++)
+                    {
+
+                        var city = Model.SMCPOSTN[i].CITY;
+
+                        {
+                            <div id="@city" class="town-container" style="@(city == "台中市" ? "" : "display: none;")">
+                                <button type="button" id="selectAll" onclick="toggleCheckboxes('@city')" style="cursor: pointer;">全選紐</button>
+                                <br />
+                                <div style="height: 0.5em;"></div>
+                                @for (int w = 0; w < Model.ALLSMCPOSTN.Where(m => m.CITY == city).Count(); w++)
+                                {
+
+                                    if (w != 0 && w % 7 == 0)
+                                    {
+                                        <div style="height: 0.3em;"></div>
+                                    }
+
+                                    var targetTown = Model.ALLSMCPOSTN.Where(m => m.CITY == city).ToList()[w].TOWN;
+
+                                    bool areTownsEqual = Model.SECCITY
+                                        .Where(m => m.CITY == city)
+                                        .Select(m => m.TOWN)
+                                        .All(town => town == targetTown);
+
+                                    for (int s = 0; s < Model.SECCITY.Where(m => m.CITY == city).ToList().Count(); s++)
+                                    {
+                                        if (Model.ALLSMCPOSTN.Where(m => m.CITY == city).ToList()[w].TOWN == Model.SECCITY.Where(m => m.CITY == city).ToList()[s].TOWN)
+                                        {
+                                            <input type="checkbox" name="SelectedboxTOWN" value="@city@Model.ALLSMCPOSTN.Where(m=>m.CITY == city).ToList()[w].TOWN" checked>
+                                            <span> </span>
+                                            @Model.ALLSMCPOSTN.Where(m => m.CITY == city).ToList()[w].TOWN
+                                            <span> </span>
+                                            goto ContinueOuterLoop;
+                                        }
+                                    }
+
+                                    <input type="checkbox" name="SelectedboxTOWN" value="@city@Model.ALLSMCPOSTN.Where(m=>m.CITY == city).ToList()[w].TOWN">
+
+                                    <span> </span>
+                                    @Model.ALLSMCPOSTN.Where(m => m.CITY == city).ToList()[w].TOWN
+                                    <span> </span>
+                                    ContinueOuterLoop: continue;
+                                    }
+                            </div>
+                        }
+                    }
+                </td>
+            </tr>
+
+        </table>
+    </form>
+
+</div>
+
+@section scripts {
+    <script src="~/Scripts/User/city-switcher.js" type="text/javascript"></script>
+}

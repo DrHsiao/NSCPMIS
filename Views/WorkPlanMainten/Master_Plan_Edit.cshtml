@@ -1,0 +1,129 @@
+﻿@model WCals.ViewModels.NewModelsCMEPMSModels.PJMFORM
+@{
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<div class="card mb-3"><div class="card-body">
+    <div class="form-horizontal">
+        <form action="@Url.Action("Master_Plan_Edit","WorkPlanMainten")">
+            <h1>主計畫</h1>
+            <hr />
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫名稱</span>
+                <div class="col-md-3">
+                    <select id="P" name="PJ_NAME" required="required" class="form-select">
+                        <option value="@Model.PJ_NAME">@Model.PJ_NAME</option>
+                        @*@foreach (var item in ViewBag.PJ_NAME)
+                        {
+                            <option>@item.PJ_NAME</option>
+                        }*@
+                    </select>
+                </div>
+            </div>
+            @{ string SYR_Period = Model.SYR + "~" + Model.END_SYR;}
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫年度區間</span>
+                <div class="col-md-3">
+                    <select id="SYR" name="PJ_SYR" required="required" class="form-select">
+                        <option>@SYR_Period</option>
+                    </select>
+                </div>
+                <div class="col-md-7">
+                    @*<input type="submit" value="分支計畫維護" class="btn btn-danger" />*@
+                    @*<a href="@Url.Action("branchPlan","WorkPlanMainten", new {PJ_NAME =  , PJ_SYR = })" class="btn btn-danger">分支計畫維護</a>*@
+                </div>
+            </div>
+        </form>
+        <br />
+        <h1>主計畫內容</h1>
+        <hr />
+        <form id="CRUD_FORM" action="@Url.Action("Master_Plan_Edit_Function","WorkPlanMainten")">
+
+
+            <div class="form-group" hidden>
+                <span class="col-form-label col-md-2">PID</span>
+                <div class="col-md-3">
+                    <input id="PID" name="PID" value="@Model.PID" type="text" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">起始年度</span>
+                <div class="col-md-3">
+                    <input id="start_Year" name="SYR" type="text" readonly value="@Model.SYR" class="form-control" required/>
+                </div>
+                <div class="col-md-7">
+                    <input type="submit" value="存檔" class="btn btn-secondary" />
+                    <a href="@Url.Action("Index","WorkPlanMainten")" class="btn btn-primary">返回</a>
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">終止年度</span>
+                <div class="col-md-3">
+                    <input id="end_Year" name="END_SYR" value="@Model.END_SYR" type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫名稱</span>
+                <div class="col-md-3">
+                    <input id="PJ_NAME" name="PJ_NAME" value="@Model.PJ_NAME" type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">工作計畫編號</span>
+                <div class="col-md-3">
+                    <input id="WK_CODE" name="WK_CODE" value="@Model.WK_CODE" type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">年度預算</span>
+                <div class="col-md-3">
+                    <input id="FUND" name="PJ_FUND" value="@Model.PJ_FUND" type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經管單位</span>
+                <div class="col-md-3">
+                    <input id="DEPT" name="ADV_DP_NAME" readonly value="@ViewBag.ADV_DP_NAME" type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經管人員</span>
+                <div class="col-md-3">
+                    <input id="USER" name="APV_UID_NAME" readonly value="@ViewBag.APV_UID_NAME" type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            @*<div class="form-group">
+            <span class="col-form-label col-md-2">主計畫種類</span>
+            <div class="col-md-3">
+                <input id="TYPE" name="Water_Type" type="text" class="form-control" />
+            </div>
+        </div>*@
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經管單位 ID</span>
+                <div class="col-md-3">
+                    <input id="DEPT_ID" name="ADV_DP" readonly value="@ViewBag.UserID" type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經管人員 ID</span>
+                <div class="col-md-3">
+                    <input id="USER_ID" name="ADV_UID" readonly value="@ViewBag.DeptID" type="text" class="form-control" required/>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</div></div>

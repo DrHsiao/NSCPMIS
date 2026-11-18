@@ -1,0 +1,315 @@
+﻿@model  WCals.Models.PJDCATYOGCDEPTOGCUSERVIEWMODEL
+@{
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@{
+    if (ViewBag.message!= null)
+    {
+        <script>
+            var message = @Html.Raw(Json.Encode(ViewBag.message));
+            alert(message);
+            message = null;
+        </script>
+    }
+}
+
+
+
+<div class="card mb-3"><div class="card-body">
+    <form action="@Url.Action("Item_content_CRUD","BranchPlanMainten")">
+
+        <h1>分支計畫</h1>
+        <hr />
+        <div class="form-horizontal">
+            <div class="form-group">
+                <span class="col-form-label col-md-2">分支計畫名稱</span>
+                <div class="col-md-3">
+                    <input id="branch_plan" name="branch_plan" value="@ViewBag.branch_plan" type="text" readonly class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫年分</span>
+                <div class="col-md-3">
+                    <input id="branch_SYR" name="branch_SYR" value="@ViewBag.branch_SYR" type="text" readonly class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <input id="PID" hidden value="@ViewBag.PID" name="PID">
+
+        <br />
+        <h1>分項內容</h1>
+
+        <table class="table" style="width:95%">
+            <tr>
+                <th>序號</th>
+                <th>經費編碼序號</th>
+                <th>內容</th>
+                <th>經營單位</th>
+                <th>經管人員</th>
+                <th>經費(元)</th>
+                <th>會計科目</th>
+                <th>經資門</th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr>
+                <td><input name="CATY_CODE" class="form-control" /></td>
+                <td><input maxlength="2" name="FCATY_CODE" class="form-control" /></td>
+                <td><input name="CATY_NAME" class="form-control" /></td>
+                <td>
+                    <select id="ADV_DP_NAME" name="ADV_DP" class="form-select" required>
+
+                        <option selected disabled>請選擇</option>
+                        @foreach (var item in ViewBag.DEPT)
+                        {
+                            <option>@item.DEPT_NAME</option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <select id="ADV_UID_NAME" name="ADV_UID"  class="form-select" required>
+                    </select>
+                </td>
+                <td><input name="CATY_FUND" class="form-control" /></td>
+                <td>
+                    <select name="ACC_ID" class="form-select">
+                        <option disabled selected>請選擇</option>
+                        <option value="0200">業務費</option>
+                        <option value="0300">設備及投資</option>
+                        <option value="0400">獎補助費</option>
+                    </select>
+                </td>
+                <td>
+                    <select name="CATY_TYPE" class="form-select">
+                        <option disabled selected>請選擇</option>
+                        <option value="01">資本門</option>
+                        <option value="02">經常門</option>
+                    </select>
+                </td>
+                <td><input type="submit" name="type" value="新增" onclick="warm_check" class="btn btn-primary" /></td>
+
+            </tr>
+            @foreach (var item in Model.PJDCATY)
+            {
+                <tr id="@item.PID-@item.CATY_CODE">
+                    <td name="CATY_CODE">@item.CATY_CODE</td>
+                    <td name="FCATY_CODE">@item.FCATY_CODE</td>
+                    <td name="CATY_NAME">@item.CATY_NAME</td>
+                    @{ item.ADV_DP = Model.OGCDEPT.Where(m => m.DEPT_NO == item.ADV_DP).FirstOrDefault().DEPT_NAME;}
+                    <td name="ADV_DP">@item.ADV_DP</td>
+                    @{ item.ADV_UID = Model.OGCUSER.Where(m => m.USR_ID == item.ADV_UID).FirstOrDefault().USR_NAME;}
+                    <td name="ADV_UID">@item.ADV_UID</td>
+                    <td name="CATY_FUND">@item.CATY_FUND</td>
+                    @if (item.ACC_ID == "0200")
+                    {
+                        item.ACC_ID = "業務費";
+                    }
+                    @if (item.ACC_ID == "0300")
+                    {
+                        item.ACC_ID = "設備及投資";
+                    }
+                    @if (item.ACC_ID == "0400")
+                    {
+                        item.ACC_ID = "獎補助費";
+                    }
+                    <td name="ACC_ID">@item.ACC_ID</td>
+                    @if (item.CATY_TYPE == "01")
+                    {
+                        item.CATY_TYPE = "資本門";
+                    }
+                    @if (item.CATY_TYPE == "02")
+                    {
+                        item.CATY_TYPE = "經常門";
+                    }
+                    <td name="CATY_TYPE">@item.CATY_TYPE</td>
+                    <td><input type="button" name="type" id="EDIT" class="btn btn-secondary" onclick="edit_function('@item.PID-@item.CATY_CODE')" value="編輯" /></td>
+                    <td><input type="button" name="type" class="btn btn-danger" onclick="del0ete_function('@item.CATY_CODE')" value="刪除" /></td>
+
+                </tr>
+            }
+        </table>
+    </form>
+</div></div>
+
+
+
+<script>
+    $('#ADV_DP_NAME').change(function () {
+        var DEPT_NAME = $('#ADV_DP_NAME').val();
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Branch_Plan_DEPTNAME_AJAX", "WorkPlanMainten")',
+            data: { DEPT_NAME: DEPT_NAME },
+            success: function (data1) {
+                var data = JSON.parse(data1);
+                if (data.length > 0) {
+                    $('#ADV_UID_NAME').empty();
+                    $('#ADV_UID_NAME').append($('<option value="" selected disabled></option>').val('').text('請選擇'));
+                    $.each(data, function (i, item) {
+                        $('#ADV_UID_NAME').append($('<option></option>').val(item.USER_NAME).text(item.USER_NAME));
+                    })
+                }
+                else {
+                    $('#ADV_UID_NAME').empty();
+                    $('#ADV_UID_NAME').append($('<option></option>').val('').text('------'));
+                }
+            }
+        });
+    })
+</script>
+
+<script>
+    function UpdateUID(element) {
+        var DEPT_ELEMENT_ID = element.id;
+        var USER_ELEMENT_ID = DEPT_ELEMENT_ID.replace("ADV_DP_NAME", "ADV_UID_NAME");
+        var DEPT_ELEMENT_VAULE = element.value;
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Branch_Plan_DEPTNAME_AJAX", "WorkPlanMainten")',
+            data: { DEPT_NAME: DEPT_ELEMENT_VAULE },
+            success: function (data1) {
+                var data = JSON.parse(data1);
+                if (data.length > 0) {
+                    $('#' + USER_ELEMENT_ID).empty();
+                    $('#' + USER_ELEMENT_ID).append($('<option value="" selected disabled></option>').val('').text('請選擇'));
+                    $.each(data, function (i, item) {
+                        $('#' + USER_ELEMENT_ID).append($('<option></option>').val(item.USER_ID).text(item.USER_NAME));
+                    })
+                }
+                else {
+                    $('#' + USER_ELEMENT_ID).empty();
+                    $('#' + USER_ELEMENT_ID).append($('<option></option>').val('').text('------'));
+                }
+            }
+        });
+    }
+</script>
+
+
+
+<script>
+    function delete_function(CATY_CODE) {
+        var PID = $('#PID').val();
+        var button = '刪除';
+        var branch_plan = $('#branch_plan').val();
+        var branch_SYR = $('#branch_SYR').val();
+        debugger;
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Item_content_CRUD", "BranchPlanMainten")',
+            data: { type: button, PID: PID, CATY_CODE: CATY_CODE, branch_plan: branch_plan, branch_SYR: branch_SYR },
+            success: function (data1) {
+                debugger;
+            }
+        })
+    }
+</script>
+
+<script>
+    function edit_function(ID) {
+        var item = $('#' + ID);
+        var item_Mertrix = ID.split('-');
+        var CATYCODE = item.find("td[name='CATY_CODE']").text();
+        var FCATY_CODE = item.find("td[name='FCATY_CODE']").text();
+        var CATY_NAME = item.find("td[name='CATY_NAME']").text();
+        var ADV_DP = item.find("td[name='ADV_DP']").text();
+        var ADV_UID = item.find("td[name='ADV_UID']").text();
+        var CATY_FUND = item.find("td[name='CATY_FUND']").text();
+        var ACC_ID = item.find("td[name='ACC_ID']").text();
+        var CATY_TYPE = item.find("td[name='CATY_TYPE']").text();
+
+       
+
+        item.find("td[name='CATY_CODE']").html("<input type='text' readonly id='CATY_CODE-" + item_Mertrix[1] + " ' name='CATY_CODE' class='form-control' value='" + CATYCODE + "'>");
+        item.find("td[name='FCATY_CODE']").html("<input type='text' name='FCATY_CODE' class='form-control' value='" + FCATY_CODE + "'>");
+        item.find("td[name='CATY_NAME']").html("<input type='text' name='CATY_NAME' class='form-control' value='" + CATY_NAME + "'>");
+        //item.find("td[name='ADV_DP']").html("<input type='text' name='ADV_DP' class='form-control' value='" + ADV_DP + "'>");
+
+        var ADV_DP_NAME_COUNT = 'ADV_DP_NAME' + "-" + item_Mertrix[1];
+
+        var selectElement = $("<select id=" + "'" + ADV_DP_NAME_COUNT + "'" + " name='ADV_DP' onchange='UpdateUID(this)'  class='form-control' required></select>");
+
+        var DEPT_NAME = '@ViewBag.DEPT_NAME';
+        var DEPT_ID = '@ViewBag.DEPT_ID';
+
+        var DEPT_NAME_Matrix = DEPT_NAME.split(',');
+
+        // Assuming ViewBag.DEPT is an array of objects with DEPT_NAME property
+        for (var i = 0; DEPT_NAME_Matrix.length > i ; i++) {
+            var option = $("<option></option>").text(DEPT_NAME_Matrix[i]);
+            if (DEPT_NAME_Matrix[i] === ADV_DP) {
+                option.attr("selected", "selected");
+            }
+            selectElement.append(option);
+        }
+        var a = "<option value='0200'>業務費</option>";;
+        var b = "<option value='0300'>設備及投資</option>";
+        var c = "<option value='0400'>獎補助費</option>";
+        if (ACC_ID == "業務費") {
+            a = "<option value='0200' selected>業務費</option>";
+        }
+        if (ACC_ID == "設備及投資") {
+            b = "<option value='0300' selected>設備及投資</option>";
+        }
+        if (ACC_ID == "獎補助費") {
+            c = "<option value='0400' selected>獎補助費</option>";
+        }
+
+        var d = "<option value='01'>資本門</option>";;
+        var e = "<option value='02'>經常門</option>";
+        if (CATY_TYPE == "資本門") {
+            d = "<option value='01' selected>資本門</option>";
+        }
+        if (CATY_TYPE == "經常門") {
+            e = "<option value='02' selected>經常門</option>";
+        }
+       
+        var ADV_UID_NAME_COUNT = 'ADV_UID_NAME'+"-"+ item_Mertrix[1];
+        item.find("td[name='ADV_DP']").html(selectElement);
+        item.find("td[name='ADV_UID']").html("<select id= "+ "'" + ADV_UID_NAME_COUNT + "'" + " name='ADV_UID' class='form-control'><option>" + ADV_UID + "</option></select>");
+        item.find("td[name='CATY_FUND']").html("<input type='text' name='CATY_FUND' class='form-control' value='" + CATY_FUND + "'>");
+        item.find("td[name='ACC_ID']").html(
+            "<select name='ACC_ID' class='form-control'>"+a+b+c+"</select>"
+        );
+        item.find("td[name='CATY_TYPE']").html("<select name='CATY_TYPE' class='form-control'>" + d + e + "</select>");
+        item.find("input[name='type']").parent('td').remove();
+        //item.find("input[name='type']").remove();
+        item.append("<td><input type='button' onclick='SAVE(this)' name='type' value='存檔' class='btn btn-primary'/></td>");
+    }
+</script>
+
+<script>
+    function SAVE(event) {
+        var trElement = event.closest('tr');
+        var PIDCATYCODE = trElement.id;
+        var PID = (PIDCATYCODE.split("-"))[0];
+        var CATY_CODE = (PIDCATYCODE.split("-"))[1];
+        var FCATY_CODE = trElement.querySelector('input[name="FCATY_CODE"]').value;
+        var CATY_NAME = trElement.querySelector('input[name="CATY_NAME"]').value;
+        var ADV_DP_NAME = trElement.querySelector('select[name="ADV_DP"]').value;
+        var ADV_UID_NAME = trElement.querySelector('select[name="ADV_UID"]').value;
+        var CATY_FUND = trElement.querySelector('input[name="CATY_FUND"]').value;
+        var ACC_ID = trElement.querySelector('select[name="ACC_ID"]').value;
+        var CATY_TYPE = trElement.querySelector('select[name="CATY_TYPE"]').value;
+
+        var branch_plan = $('#branch_plan').val();
+        var branch_SYR = $('#branch_SYR').val();
+        var type = "修改";
+
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Item_content_CRUD", "BranchPlanMainten")',
+            data: { PID: PID, CATY_CODE: CATY_CODE, FCATY_CODE: FCATY_CODE, CATY_NAME: CATY_NAME, ADV_DP: ADV_DP_NAME, ADV_UID: ADV_UID_NAME, CATY_FUND: CATY_FUND, ACC_ID: ACC_ID, CATY_TYPE: CATY_TYPE, branch_plan: branch_plan, branch_SYR: branch_SYR, type: type },
+            success: function (data1)
+            {
+                window.location.reload();
+            }
+        })
+  
+    }
+</script>

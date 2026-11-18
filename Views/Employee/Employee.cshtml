@@ -1,0 +1,73 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model IPagedList<WCals.Models.CMBASEModels.OGCUSER>
+
+@{
+    ViewBag.Title = "人員管理";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head {
+    <link rel="stylesheet" href="~/Content/views/group.css">
+
+    <link rel="stylesheet" href="~/Content/PagedList.css" />
+}
+
+<div class="model-form">
+    <br />
+    <div style="display: flex; align-items: center;">
+        <h2 style="margin: 0;">人員管理　</h2>
+        <a href="@Url.Action("Create", "Employee")" class="btn btn-primary">新增</a>
+    </div>
+    <br />
+    <div>
+        <div>
+            @using (Html.BeginForm("Employee", "Employee", FormMethod.Get))
+            {
+                <p>
+                    員工編號: @Html.TextBox("USR_ID_search")
+                    員工姓名: @Html.TextBox("USR_NAME_search")
+                    <input type="submit" value="查詢" />
+                </p>
+            }
+        </div>
+        <br />
+        <div class="table-responsive" style="max-width: 1000px;">
+
+            <table class="table table">
+
+                <tr style="background-color:lightskyblue;">
+                    <th></th>
+                    <th style="text-align:left">
+                        員工編號
+                    </th>
+                    <th style="text-align:left">
+                        員工姓名
+                    </th>
+                    <th style="text-align:left">
+                        在職狀況
+                    </th>
+                </tr>
+
+                @foreach (var item in Model)
+                {
+                    <tr style="background-color:white;">
+                        <td style="vertical-align: middle"><a href="@Url.Action("Employee", "Employee")?chooseSelect=@item.USR_ID" class="btn btn-primary">選取</a></td>
+                        <td style="vertical-align: middle">
+                            @Html.DisplayFor(modelItem => item.USR_ID)
+                        </td>
+                        <td style="vertical-align: middle">
+                            @Html.DisplayFor(modelItem => item.USR_NAME)
+                        </td>
+                        <td style="vertical-align: middle">
+                            <input id="" type="checkbox" name="" checked="@item.USR_STAT" disabled="disabled">
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+
+        <table>@Html.PagedListPager(Model, page => Url.Action("Employee", new { page }))</table>
+
+    </div>
+</div>

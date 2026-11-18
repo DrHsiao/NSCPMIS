@@ -1,0 +1,277 @@
+﻿@model WCals.ViewModels.NewModels.TDE0040Model
+@{
+    ViewBag.Title = "接管戶數統計";
+    Layout = null;
+
+    System.Data.DataTable dtList = ViewBag.List1 as System.Data.DataTable;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <style>
+        body {
+            padding: 10px;
+        }
+        .section-header {
+            background-color: #f5f5f5;
+            border-left: 4px solid #0275d8;
+            padding: 10px 15px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .table th {
+            background-color: #558DCC;
+            color: white;
+            text-align: center;
+            font-size: 12px;
+        }
+        .table td {
+            font-size: 12px;
+            vertical-align: middle;
+        }
+        .form-control-sm {
+            font-size: 12px;
+            padding: 2px 5px;
+            height: 28px;
+        }
+        .btn-sm {
+            font-size: 11px;
+            padding: 3px 8px;
+        }
+        .add-row {
+            background-color: #f9f9f9;
+        }
+        .add-row td {
+            padding: 8px 4px;
+        }
+        .required-field {
+            color: red;
+        }
+        .num-input {
+            text-align: right;
+            width: 100px;
+        }
+    
+        /* 表格框線與排版美化 */
+        .table-bordered { border: 0 !important; }
+        .table-bordered th, .table-bordered td { border: 0 !important; border-bottom: 1px solid #e2e8f0 !important; }
+        .table > thead > tr > th { 
+            border-bottom: 2px solid #337ab7 !important; 
+            background-color: #f8fafc; 
+            color: #334155; 
+        }
+        .table > tbody > tr:last-child > td { border-bottom: 0 !important; }
+</style>
+</head>
+<body>
+    <div id="messageDiv"></div>
+
+    <button type="button" onclick="top.closePage6_6();" class="btn btn-outline-secondary shadow-sm"><i class="fa-solid fa-xmark me-1"></i> 關閉</button>
+
+    <h4 class="page-header">接管戶數統計</h4>
+    <p>工程編號：@ViewBag.TD_CODE</p>
+
+    <div class="section-header">接管戶數統計列表</div>
+
+    <div class="table-responsive">
+        <table class="table table-sm" id="dataTable">
+            <thead>
+                <tr>
+                    <th style="width: 80px;"><span class="required-field">*</span>年度</th>
+                    <th style="width: 60px;">月份</th>
+                    <th style="width: 100px;">設計接管戶數</th>
+                    <th style="width: 100px;">預計接管戶數</th>
+                    <th style="width: 100px;">實際接管戶數</th>
+                    <th style="width: 100px;">減作戶數</th>
+                    <th style="width: 100px;">自拆戶數</th>
+                    <th style="width: 100px;">強拆戶數</th>
+                    <th style="width: 100px;">操作</th>
+                </tr>
+            </thead>
+            <tbody id="dataBody">
+                <tr class="add-row">
+                    <td><input type="text" id="new_SYR" class="form-control form-control-sm" style="width: 70px;" maxlength="3" /></td>
+                    <td><input type="text" id="new_SMN" class="form-control form-control-sm" style="width: 50px;" maxlength="2" /></td>
+                    <td><input type="number" id="new_YEAR_PRE_CON_COUNT_01" class="form-control form-control-sm num-input" value="0" /></td>
+                    <td><input type="number" id="new_PRE_CON_COUNT_01" class="form-control form-control-sm num-input" value="0" /></td>
+                    <td><input type="number" id="new_REL_CON_COUNT_01" class="form-control form-control-sm num-input" value="0" /></td>
+                    <td><input type="number" id="new_CON_DIFF" class="form-control form-control-sm num-input" value="0" /></td>
+                    <td><input type="number" id="new_SELF_REMOVE_COUNT_01" class="form-control form-control-sm num-input" value="0" /></td>
+                    <td><input type="number" id="new_FOCUS_REMOVE_COUNT_01" class="form-control form-control-sm num-input" value="0" /></td>
+                    <td style="text-align: center;">
+                        <button type="button" class="btn btn-success btn-sm" onclick="addRow();">新增</button>
+                    </td>
+                </tr>
+                @if(dtList != null && dtList.Rows.Count > 0) {
+                    foreach(System.Data.DataRow row in dtList.Rows) {
+                        string eid = row["EID"] != DBNull.Value ? row["EID"].ToString() : "";
+                        string syr = row["SYR"] != DBNull.Value ? row["SYR"].ToString() : "";
+                        string smn = row["SMN"] != DBNull.Value ? row["SMN"].ToString() : "";
+                        decimal yearPreConCount01 = row["YEAR_PRE_CON_COUNT_01"] != DBNull.Value ? Convert.ToDecimal(row["YEAR_PRE_CON_COUNT_01"]) : 0;
+                        decimal preConCount01 = row["PRE_CON_COUNT_01"] != DBNull.Value ? Convert.ToDecimal(row["PRE_CON_COUNT_01"]) : 0;
+                        decimal relConCount01 = row["REL_CON_COUNT_01"] != DBNull.Value ? Convert.ToDecimal(row["REL_CON_COUNT_01"]) : 0;
+                        decimal conDiff = row["CON_DIFF"] != DBNull.Value ? Convert.ToDecimal(row["CON_DIFF"]) : 0;
+                        decimal selfRemoveCount01 = row["SELF_REMOVE_COUNT_01"] != DBNull.Value ? Convert.ToDecimal(row["SELF_REMOVE_COUNT_01"]) : 0;
+                        decimal focusRemoveCount01 = row["FOCUS_REMOVE_COUNT_01"] != DBNull.Value ? Convert.ToDecimal(row["FOCUS_REMOVE_COUNT_01"]) : 0;
+
+                        <tr data-eid="@eid">
+                            <td><input type="text" value="@syr" class="form-control form-control-sm edit-field" data-field="SYR" style="width: 70px;" maxlength="3" /></td>
+                            <td><input type="text" value="@smn" class="form-control form-control-sm edit-field" data-field="SMN" style="width: 50px;" maxlength="2" /></td>
+                            <td><input type="number" value="@yearPreConCount01" class="form-control form-control-sm num-input edit-field" data-field="YEAR_PRE_CON_COUNT_01" /></td>
+                            <td><input type="number" value="@preConCount01" class="form-control form-control-sm num-input edit-field" data-field="PRE_CON_COUNT_01" /></td>
+                            <td><input type="number" value="@relConCount01" class="form-control form-control-sm num-input edit-field" data-field="REL_CON_COUNT_01" /></td>
+                            <td><input type="number" value="@conDiff" class="form-control form-control-sm num-input edit-field" data-field="CON_DIFF" /></td>
+                            <td><input type="number" value="@selfRemoveCount01" class="form-control form-control-sm num-input edit-field" data-field="SELF_REMOVE_COUNT_01" /></td>
+                            <td><input type="number" value="@focusRemoveCount01" class="form-control form-control-sm num-input edit-field" data-field="FOCUS_REMOVE_COUNT_01" /></td>
+                            <td style="text-align: center;">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="updateRow(this);"><i class="fa-solid fa-floppy-disk me-1"></i> 儲存</button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(this);">刪除</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <table class="table">
+        <tr>
+            <td>
+                <button type="button" onclick="top.closePage6_6();" class="btn btn-outline-secondary shadow-sm"><i class="fa-solid fa-xmark me-1"></i> 關閉</button>
+            </td>
+        </tr>
+    </table>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var TD_CODE = '@Model.TD_CODE';
+
+        function showMessage(type, message) {
+            var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            var html = '<div class="alert ' + alertClass + ' alert-dismissible" role="alert">' +
+                '<button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                message + '</div>';
+            $('#messageDiv').html(html);
+            setTimeout(function () {
+                $('#messageDiv').html('');
+            }, 3000);
+        }
+
+        // 新增資料
+        function addRow() {
+            var syr = $('#new_SYR').val();
+
+            // 驗證必填欄位
+            if (!syr) {
+                showMessage('error', '請填寫年度');
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("PAGE6_6_Add", "TDE0046")',
+                type: 'POST',
+                data: {
+                    TD_CODE: TD_CODE,
+                    SYR: syr,
+                    SMN: $('#new_SMN').val(),
+                    YEAR_PRE_CON_COUNT_01: $('#new_YEAR_PRE_CON_COUNT_01').val() || 0,
+                    PRE_CON_COUNT_01: $('#new_PRE_CON_COUNT_01').val() || 0,
+                    REL_CON_COUNT_01: $('#new_REL_CON_COUNT_01').val() || 0,
+                    CON_DIFF: $('#new_CON_DIFF').val() || 0,
+                    SELF_REMOVE_COUNT_01: $('#new_SELF_REMOVE_COUNT_01').val() || 0,
+                    FOCUS_REMOVE_COUNT_01: $('#new_FOCUS_REMOVE_COUNT_01').val() || 0
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                        location.reload();
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function (e) {
+                    showMessage('error', '新增失敗：' + e.statusText);
+                }
+            });
+        }
+
+        // 更新資料
+        function updateRow(btn) {
+            var row = $(btn).closest('tr');
+            var eid = row.data('eid');
+            var syr = row.find('[data-field="SYR"]').val();
+
+            // 驗證必填欄位
+            if (!syr) {
+                showMessage('error', '請填寫年度');
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("PAGE6_6_Update", "TDE0046")',
+                type: 'POST',
+                data: {
+                    EID: eid,
+                    SYR: syr,
+                    SMN: row.find('[data-field="SMN"]').val(),
+                    YEAR_PRE_CON_COUNT_01: row.find('[data-field="YEAR_PRE_CON_COUNT_01"]').val() || 0,
+                    PRE_CON_COUNT_01: row.find('[data-field="PRE_CON_COUNT_01"]').val() || 0,
+                    REL_CON_COUNT_01: row.find('[data-field="REL_CON_COUNT_01"]').val() || 0,
+                    CON_DIFF: row.find('[data-field="CON_DIFF"]').val() || 0,
+                    SELF_REMOVE_COUNT_01: row.find('[data-field="SELF_REMOVE_COUNT_01"]').val() || 0,
+                    FOCUS_REMOVE_COUNT_01: row.find('[data-field="FOCUS_REMOVE_COUNT_01"]').val() || 0
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function () {
+                    showMessage('error', '更新失敗');
+                }
+            });
+        }
+
+        // 刪除資料
+        function deleteRow(btn) {
+            if (!confirm('確定要刪除此筆接管戶數統計紀錄嗎？')) {
+                return;
+            }
+
+            var row = $(btn).closest('tr');
+            var eid = row.data('eid');
+
+            $.ajax({
+                url: '@Url.Action("PAGE6_6_Delete", "TDE0046")',
+                type: 'POST',
+                data: {
+                    EID: eid
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                        row.remove();
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function () {
+                    showMessage('error', '刪除失敗');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

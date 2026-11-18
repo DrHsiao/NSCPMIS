@@ -1,0 +1,80 @@
+﻿@model WCals.ViewModels.HomeIndexViewModel
+@{
+    ViewBag.Title = Model.dataSMCNEWS.HEADLINE;
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            下水道工程管理系統
+            <small> 訊息公告及檔案下載</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa fa-dashboard"></i>
+                <a href="@Url.Content("~/Home")" title="home">首頁</a>
+            </li>
+            <li class="active">
+                <i class="fa fa-dashboard"></i> @Model.dataSMCNEWS.HEADLINE
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="mb-3">
+            <label>公告主旨</label>
+            @Html.TextBoxFor(f => f.dataSMCNEWS.HEADLINE, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+        <div class="mb-3">
+            <label>公告日期</label>
+            @Html.TextBoxFor(f => f.dataSMCNEWS.STARTDATE, "{0:yyyy/MM/dd}", new { @class = "form-control", @readonly = "readonly" })
+        </div>
+        <div class="mb-3">
+            <label>公告人員</label>
+            @Html.TextBoxFor(f => f.dataSMCNEWS.UPD_UID, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+        <div class="mb-3">
+            <label>公告期限</label>
+            @Html.TextBoxFor(f => f.dataSMCNEWS.ENDDATE, "{0:yyyy/MM/dd}", new { @class = "form-control", @readonly = "readonly" })
+
+        </div>
+        <div class="mb-3">
+            <label>公告內容</label>
+            @*@Html.TextAreaFor(f => f.dataSMCNEWS.BODY, new { @class = "form-control", rows = "15", @readonly = "readonly" })*@
+
+            <div class="card">
+                <div class="card-body">
+                    @Html.Raw(Model.dataSMCNEWS.BODY)
+                </div>
+            </div>
+        </div>
+        @if (Model.dataSMCNEWS.TYPE == "02")
+        {
+            <div class="form-group">
+                <label>公告檔案</label>
+                @foreach (var item in Model.ListSMCNEWSDOC)
+                {
+                    <br />
+                    <a href="@Url.Action("DownloadNewsFile", "News", new { id = Model.dataSMCNEWS.NEWSID, fid = item.FILID })">@item.FILE_PATH</a>
+                }
+            </div>
+        }
+        <a class="btn btn-secondary" href="@Url.Content("~/Home")"> 返回</a>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            $("#hrefFileName").click(function (e) {
+                e.preventDefault();  //stop the browser from following
+                var hrefFileName = $("#hfFileName").val();
+                var fileName = $("#hfDesp").val();
+                window.location.href = '/WSMC0706/DownloadFile?hrefFileName=' + hrefFileName + '&fileName=' + encodeURIComponent(fileName);
+            });
+        });
+
+    </script>
+}

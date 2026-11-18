@@ -1,0 +1,321 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0020Model
+@{ ViewBag.Title = "3.1.2每月辦理情形整批填報";
+    Layout = "~/Views/Shared/_Layout2.cshtml"; }
+
+
+@section head{
+    <link href="~/Content/bootstrap-select.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/themes/base/jquery-ui.theme.css" rel="stylesheet" />
+    
+
+    <script>
+        function fIn() {
+            // 直接顯示當前頁面的遮罩
+            $("#loadingMask").css("display", "flex").hide().fadeIn();
+            // 如果外層還有主框架，順便顯示外層的
+            if (window.parent && window.parent !== window && typeof window.parent.$ === 'function') {
+                window.parent.$("#loadingMask").fadeIn();
+            }
+            $("#mainList").show("slow");
+            $("li").removeClass("active");
+            $("#firstLis").addClass("active");
+        }
+    </script>
+
+    <style>
+        #loadingMask {
+            position: fixed;
+            top: -20px;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+        }
+    </style>
+}
+
+<div id="loadingMask" style="display:none;">載入中...</div>
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            3.1.2每月辦理情形整批填報
+            <small></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="active">
+                <i class="fa fa-file"></i>
+                <a href="@Url.Content("~/")TDE0020">3.1.2每月辦理情形整批填報 </a>
+            </li>
+
+        </ol>
+    </div>
+</div>
+
+@using(Html.BeginForm("", "TDE0020", FormMethod.Post, new { id = "mainForm" })) {
+
+
+
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">查詢</div>
+        <table class="table table-bordered">
+            <!-- 第一列 -->
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">年度計畫</span>
+                                @Html.DropDownList(
+                                    "pid",                         // name
+                                    new SelectList(Model.pids, "Value", "Text"),
+                                    
+                                    new { @class = "form-control", id = "pid" }
+                                )
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">縣市別</span>
+                                @Html.DropDownList("city", (SelectList)ViewBag.cities, "縣市", new { @class = "form-control", form = "mainForm", Onchange = "GetTowns(this.value)" })
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">鄉鎮別</span>
+                                @Html.DropDownList("town", (SelectList)ViewBag.towns, "鄉鎮", new { @class = "form-control", form = "mainForm" })
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- 第二列 -->
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="input-group">
+                                <span class="input-group-addon">填報年度</span>
+                                <select name="year" id="year" class="form-control">
+                                    @{
+                                        int thisYear = DateTime.Now.Year;
+                                        thisYear -= 1911;
+                                        for(int y = thisYear; y >= thisYear - 2; y--) {
+                                            <option value="@y" @(y == thisYear ? "selected" : "")>@y 年</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group">
+                                <span class="input-group-addon">填報月份</span>
+                                <select name="month" id="month" class="form-control">                                    
+                                    @*<option value="1">1月</option>
+                                    <option value="2">2月</option>
+                                    <option value="3">3月</option>
+                                    <option value="4">4月</option>
+                                    <option value="5">5月</option>
+                                    <option value="6">6月</option>
+                                    <option value="7">7月</option>
+                                    <option value="8">8月</option>
+                                    <option value="9">9月</option>
+                                    <option value="10">10月</option>
+                                    <option value="11">11月</option>
+                                    <option value="12">12月</option>*@
+                                    @{
+                                        int currentMonth = DateTime.Now.Month;
+                                        for (int m = 1; m <= 12; m++)
+                                        {
+                                            <option value="@m" @(m == currentMonth ? "selected" : "")>@m 月</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">工程編號</span>
+                                <input type="text" name="td_code" id="td_code" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">工程名稱</span>
+                                <input type="text" name="td_name" id="td_name" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <button class="btn btn-primary" name="action" onclick="fIn();getMF('@Url.Action("/")TAB1', 'C')" type="button">查詢</button>
+                        </div>
+                    </div>
+
+
+                </td>
+            </tr>
+
+        </table>
+    </div>
+
+
+    <div class="panel with-nav-tabs panel-primary" style="display:none;" id="mainList">
+        <div class="panel-heading">
+            <ul class="nav nav-tabs">
+                <li id="firstLis" class="active"><a href="#tab1" onclick="fIn();getMF('@Url.Action("/")TAB1', 'C')" data-toggle="tab">設計及工程類</a></li>
+                <li><a href="#tab2" onclick=" fIn();getMF('@Url.Action("/")TAB1','L')" data-toggle="tab">用地類</a></li>
+                <li><a href="#tab3" onclick=" fIn();getMF('@Url.Action("/")TAB1','P')" data-toggle="tab">規劃類</a></li>
+                <li><a href="#tab4" onclick=" fIn();getMF('@Url.Action("/")TAB1','M')" data-toggle="tab">PCM類</a></li>
+                <li><a href="#tab5" onclick=" fIn();getMF('@Url.Action("/")TAB1','J')" data-toggle="tab">BOT促參規劃類</a></li>
+                <li><a href="#tab6" onclick=" fIn();getMF('@Url.Action("/")TAB1','K')" data-toggle="tab">BOT促參類</a></li>
+                <li><a href="#tab7" onclick=" fIn();getMF('@Url.Action("/")TAB1','S')" data-toggle="tab">其他類</a></li>
+            </ul>
+        </div>
+        <div class="panel-body">
+            <div class="tab-content">
+                <div class="tab-pane fade in active" id="tab1">
+                    <iframe id="mf" src="" style="width:100%; height:640px; border:0px;" onload="closeMasks()"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+
+
+
+@section scripts{
+
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+    <script type="text/javascript" src="~/Scripts/bootstrap-multiselect.min.js"></script>
+    <script>
+	   function closeMasks() {
+            // 1. 關閉父頁面自己的遮罩
+            $("#loadingMask").fadeOut();
+
+            // 2. 如果外面還有更外層的主系統框架，順便一起關掉
+            if (window.parent && window.parent !== window && typeof window.parent.$ === 'function') {
+                window.parent.$("#loadingMask").fadeOut();
+            }
+        }        
+        
+        function resizeIframe(obj) {
+            obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+        }
+        function getMF(url, type) {
+            var town = $("#town").val();    // 取選單 value
+            var city = $("#city").val();
+            var td_code = $("#td_code").val();
+            var td_name = $("#td_name").val();
+            var pid = $("#pid").val();
+            var year = $("#year").val();
+            var month = $("#month").val();
+
+            //alert("pid="+$("#pid").val());
+
+            url += "?1";
+            url += "&town=" + encodeURIComponent(town);
+            url += "&city=" + encodeURIComponent(city);
+            url += "&td_code=" + encodeURIComponent(td_code);
+            url += "&td_name=" + encodeURIComponent(td_name);
+            url += "&pid=" + encodeURIComponent(pid);
+            url += "&year=" + encodeURIComponent(year);
+            url += "&month=" + encodeURIComponent(month);
+            url += "&type="+type;
+            url += "&_t=" + new Date().getTime(); // 防止 iframe 快取
+
+            $("#mf").attr("src", url);
+        }
+
+        $(document).ready(function () {
+            $(".optgroup").multiselect();
+            // 確保父頁面剛載入時，遮罩是關閉的
+            $("#loadingMask").fadeOut();
+            if (window.parent && window.parent !== window && typeof window.parent.$ === 'function') {
+                window.parent.$("#loadingMask").fadeOut();
+            }
+
+            // 🔥 全自動消失的核心機制：
+            // 監聽 iframe (id="mf")，只要它一載入完成（不管是查詢、換頁籤、還是點分頁），就自動隱藏遮罩
+            $("#mf").on("load", function () {
+                $("#loadingMask").fadeOut();
+                if (window.parent && window.parent !== window && typeof window.parent.$ === 'function') {
+                    window.parent.$("#loadingMask").fadeOut();
+                }
+            });
+        });
+
+        function getUnit(lid) {
+            alert(lid)
+
+            $(".optgroup1").html("");
+            for (i = 0; i < units.length; i++) {
+                if (units[i].AN_DEPT_NO==lid)
+                    $(".optgroup1").append("<option value='" + units[i].DEPT_NO + "'>" + units[i].DEPT_NAME + "</option>");
+
+            }
+        }
+
+
+
+
+        function GetTowns(city) {  
+            
+        $("#town").html("");
+            $.ajax({
+                url: '@Url.Content("~/")ASYNC/GetTowns',
+                method: 'post',
+                data: { "city": city },
+                success: function (d) {
+                    var p = jQuery.parseJSON(d);
+                    $("#town").prepend("<option value=''>鄉鎮</option>");
+                    for (i = 0; i < p.length; i++) {
+                        $("#town").append("<option value='" + p[i].TOWN + "'>" + p[i].TOWN + "</option>");
+                    }
+                }
+            });
+        }
+
+
+
+
+        $(".dt").datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: '68:168',
+            dateFormat: 'yymmdd',
+            //defaultDate: new Date()
+        });
+        $('#PJDFDCR_APROV_DT').datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            dateFormat: 'yymmdd',
+            yearRange: '88:168',
+
+        });
+
+
+    </script>
+
+}
+
+
+

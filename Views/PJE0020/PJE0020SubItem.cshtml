@@ -1,0 +1,229 @@
+﻿@using PagedList.Mvc
+@using System.Data
+@model WCals.ViewModels.NewModels.PJE0020Model
+@{ ViewBag.Title = "分支計畫維護 [1.1.2]";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            分支計畫維護 [1.1.2]
+            <small>分項維護</small>
+            <br /><small>@Model.CurrentProjectName</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")PJE0020">分支計畫維護 [1.1.2]</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                分項維護
+            </li>
+        </ol>
+    </div>
+</div>
+<table style="display:none;">
+    <tbody id="cp">
+        <tr>
+            <td>
+                <input type="hidden" name="PIDS" value="" class="form-control" />
+                <input type="hidden" name="CIDS" value="" class="form-control" />
+                <div class="form-group has-feedback">
+
+                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                    <div class="help-block with-errors"></div>
+                </div>
+
+            </td>
+            <td><input type="text" name="CATY_CODES" class="form-control" required /></td>
+            <td><input type="text" name="CATY_NAMES" class="form-control" required /></td>
+            <td><input type="text" name="CATY_FUNDS" class="form-control" required /></td>
+            <td>
+                <select name="ACC_IDS" showname="會計科目" class="form-select" required>
+                    <option value="0200">業務費</option>
+                    <option value="0300">設備及投資</option>
+                    <option value="0400">獎補助費</option>
+                </select>
+            </td>
+            <td>
+                <select name="CATY_TYPES" showname="經資門" class="form-select" required>
+                    <option value="01">資本門</option>
+                    <option value="02">經常門</option>
+                </select>
+            </td>
+            <td nowrap>
+                
+            </td>
+        </tr>
+    </tbody>
+</table>
+@using(Html.BeginForm("", "PJE0020", FormMethod.Post, new { role = "form", id = "mainForm" })) {
+
+    <input type ="hidden" name ="dPID" id ="dPID" /><input type="hidden" name="dCID" id="dCID" />
+    <div class="card border-primary mb-3">
+        <div class="card-header bg-primary text-white">分項內容</div>
+        <div class="card-body">
+            <button class="btn btn-success btn-lg" type="button" onclick="$('#tg').prepend($('#cp').html());">新增</button>
+            <button class="btn btn-warning btn-lg" name="action" type="submit" value="SubItemSave">儲存</button>
+            <a class="btn btn-secondary btn-lg" href="PJE0020?page=@Model.page">返回列表</a>
+            @Html.HiddenFor(f => f.PID)
+            @Html.HiddenFor(f => f.page)
+            @Html.HiddenFor(f => f.CID)
+
+        <table cellpadding="20" class="table table-hover" style="width:auto;">
+            <thead class="table-light">
+                <tr>
+                    <th nowrap>序號</th>
+                    <th nowrap>經費編碼序號</th>
+                    <th nowrap>內容</th>
+                    <th nowrap>經費(元)</th>
+                    <th nowrap>會計科目</th>
+                    <th nowrap>經資門</th>
+                    <th nowrap></th>
+                </tr>
+            </thead>
+            <tbody id="tg">
+
+                @{
+                    DataTable list = ViewBag.list;
+
+                }
+                @foreach(DataRow c in list.Rows) {
+
+                    <tr>
+                        <td width="100" align="center">
+                            <input type="hidden" name="PIDS" class="ids" value="@c["PID"]" class="form-control" />
+                            <input type="hidden" name="CIDS" value="@c["CID"]"  class="form-control" />
+                            @c["CID"]
+                        </td>
+                        <td>
+                            <div class="form-group has-feedback">
+                                <input type="text" name="CATY_CODES" value="@c["CATY_CODE"]" class="form-control" required readonly/>
+                                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group has-feedback">
+                                <input type="text" name="CATY_NAMES" value="@c["CATY_NAME"]" class="form-control" />
+                                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </td>
+                        <td>                        
+                            <div class="form-group has-feedback">
+                                <input type="text" name="CATY_FUNDS" value="@c["CATY_FUND"]" class="form-control" required />
+                                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group has-feedback">
+                                <select name="ACC_IDS" class="form-select" required>
+                                    @if(Convert.ToString(c["ACC_ID"]).Equals("0200")) {
+                                        <option selected value="0200">業務費</option>
+                                    } else {
+                                        <option value="0200">業務費</option>
+                                    }
+                                    @if(Convert.ToString(c["ACC_ID"]).Equals("0300")) {
+                                        <option selected value="0300">設備及投資</option>
+                                    } else {
+                                        <option value="0300">設備及投資</option>
+                                    }
+                                    @if(Convert.ToString(c["ACC_ID"]).Equals("0400")) {
+                                        <option selected value="0400">獎補助費</option>
+                                    } else {
+                                        <option value="0400">獎補助費</option>
+                                    }
+                                </select>
+                                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                <div class="help-block with-errors"></div>
+                            </div>                            
+                        </td>
+                        <td>
+                            <div class="form-group has-feedback">
+                                <select name="CATY_TYPES" class="form-select" required>
+                                    @if(Convert.ToString(c["CATY_TYPE"]).Equals("01")) {
+                                        <option selected value="01">資本門</option>
+                                    } else {
+                                        <option value="01">資本門</option>
+                                    }
+                                    @if(Convert.ToString(c["CATY_TYPE"]).Equals("02")) {
+                                        <option selected value="02">經常門</option>
+                                    } else {
+                                        <option value="02">經常門</option>
+                                    }
+                                </select>
+                                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </td>
+                        <td nowrap>
+                            <button type="submit" name="action" value="SubItemDel" class="btn btn-danger btn-sm"
+                                    onclick="CheckId('@c["PID"]', '@c["CID"]'); return confirm('確定刪除?');">
+                                刪除
+                            </button>                            
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+
+
+    
+}
+<script>
+    function CheckId(pid, cid) {
+        //alert(pid)
+        $("#dPID").val(pid);
+        $("#dCID").val(cid);
+    }
+    function GetUsers(id, DEPT_NO) {
+        //alert(DEPT_NO)
+        $("#" + id).html("");
+        $.ajax({
+            url: '@Url.Content("~/")ASYNC/GetUsers',
+            method: 'post',
+            data: { "DEPT_NO": DEPT_NO },
+            success: function (d) {
+                var p = jQuery.parseJSON(d);
+                $("#" + id).prepend("<option value=''>請選擇</option>");
+                for (i = 0; i < p.length; i++) {
+                    $("#" + id).append("<option value='" + p[i].USR_ID + "'>" + p[i].USR_NAME + "</option>");
+                }
+            }
+        });
+    }
+
+    function GetDUsers(id, DEPT_NO, v) {
+        //alert(v)
+        $("#" + id).html("");
+        $.ajax({
+            url: '@Url.Content("~/")ASYNC/GetUsers',
+            method: 'post',
+            data: { "DEPT_NO": DEPT_NO },
+            success: function (d) {
+                var p = jQuery.parseJSON(d);
+                $("#" + id).prepend("<option value=''>請選擇</option>");
+                for (i = 0; i < p.length; i++) {
+
+                    if (p[i].USR_ID == v) {
+                        $("#" + id).append("<option selected value='" + p[i].USR_ID + "'>" + p[i].USR_NAME + "</option>");
+                    } else {
+                        $("#" + id).append("<option value='" + p[i].USR_ID + "'>" + p[i].USR_NAME + "</option>");
+                    }
+
+                }
+            }
+        });
+
+    }
+</script>

@@ -1,0 +1,215 @@
+﻿@model WCals.Models.CMBASEModels.state9ViewModel
+
+@{
+    ViewBag.Title = "例行性管考報表：A-4.跨年度細項執行情形表";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head{
+    <link rel="stylesheet" href="~/Content/views/report.css">
+
+    <link rel="stylesheet" href="~/Content/views/loading-spinner.css">
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            例行性管考報表[0.1.1]
+
+            <small> </small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/Home")"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                例行性管考報表
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                A-4.跨年度細項執行情形表
+            </li>
+        </ol>
+    </div>
+</div>
+
+<form method="post" action="@Url.Action("ReportPrint4")" class="my-text" id="myForm">
+    @*<h2>例行性管考報表:</h2>*@
+
+    報表類型:
+    <select id="choose">
+        <option value="1" @{if (ViewBag.State == "1") { <text> selected</text> }}>A-1.一億元以上工程計畫執行情形表</option>
+        <option value="2" @{if (ViewBag.State == "2") { <text> selected</text> }}>A-2.細項執行情形表</option>
+        <option value="3" @{if (ViewBag.State == "3") { <text> selected</text> }}>A-3.跨年度一億元以上工程計畫執行情形表</option>
+        <option value="4" @{if (ViewBag.State == "4") { <text> selected</text> }}>A-4.跨年度細項執行情形表</option>
+        <option value="5" @{if (ViewBag.State == "5") { <text> selected</text> }}>A-5.細項執行情形表(前瞻計畫)</option>
+        <option value="6" @{if (ViewBag.State == "6") { <text> selected</text> }}>B-1.修正預算作業表</option>
+        <option value="7" @{if (ViewBag.State == "7") { <text> selected</text> }}>C-1.99年振興經濟表格</option>
+        <option value="8" @{if (ViewBag.State == "8") { <text> selected</text> }}>D-1.公共建設推動會報執行情形表</option>
+        <option value="9" @{if (ViewBag.State == "9") { <text> selected</text> }}>E-1.工程細項執行表(自訂欄位)</option>
+        <option value="10" @{if (ViewBag.State == "10") { <text> selected</text> }}>F-1.相關計畫年度補助經費表</option>
+        <option value="12" @{if (ViewBag.State == "12") { <text> selected</text> }}>H-1.在建工程抽查/查核/督導統計表</option>
+    </select>
+    <br />
+
+    <table class="table table-bordered table-hover" style="text-align: left; width:95%">
+        <tr>
+            <td class="fixed-column">
+                年度區間:
+            </td>
+            <td id="Year" colspan="4">
+                <select name="StartYear" id="yearStart">
+                    <option value="" selected disabled>選擇</option>
+
+                    @foreach (var year in ViewBag.year2)
+                    {
+                        <option value="@year.SYR">@year.SYR</option>
+                    }
+                </select>
+                <label>年度~</label>
+                <select name="EndYear" id="yearEnd">
+                    @foreach (var year in ViewBag.year)
+                    {
+                        <option value="@year.SYR">@year.SYR</option>
+                    }
+                </select>
+                <label>年度</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                計畫名稱:
+            </td>
+            <td id="Plan" colspan="4">
+                @foreach (var item in Model.PJV_PJDPCAT)
+                {
+                    <div class="plan-item" data-id="@item.SYR" hidden>
+
+                        <input type="checkbox" data-id="@item.SYR" name="plan" value="@item.AN_PJ_NAME+@item.PJ_NAME" class="Plan-checkbox" />
+                        <span>@item.AN_PJ_NAME-@item.PJ_NAME</span>
+                        <br />
+                    </div>
+                }
+            </td>
+        </tr>
+        <tr>
+            <td>
+                縣市別:
+            </td>
+            <td colspan="4" id="City">
+                <input type="checkbox" id="selectAll" onclick="toggleCheckboxes()">
+                全選框
+                <br />
+
+                @for (int i = 0; i < 23; i++)
+                {
+                    if (i == 7 || i == 14 || i == 21)
+                    {
+                        <br />
+                    }
+                    <input type="checkbox" name="CITY" value="@Model.SMCPOSTN[i].CITY" class="city-checkbox" />
+                    <span> </span>
+                    @Model.SMCPOSTN[i].CITY
+                    <span> </span>
+                }
+            </td>
+        </tr>
+        <tr>
+            <td rowspan="18">
+                顯示欄位:
+            </td>
+            <td colspan="4">
+                <input type="checkbox" id="selectAll2" onclick="toggleCheckboxes2()">
+                全選框
+                <br />
+            </td>
+        </tr>
+
+        @for (int i = 0; i < 36; i++)
+        {
+            if (i > 1 && i % 4 == 0)
+            {
+                @:<tr>
+                }
+                if (Model.OGCTITLE[i].TITLE == "工程地點(址)" || Model.OGCTITLE[i].TITLE == "當年度核定數")
+                {
+                    <td>
+                        <input type="checkbox" name="COLUMN1" checked="checked" value="@Model.OGCTITLE[i].TITLE" hidden />
+                    </td>
+
+                }
+                else
+                {
+                    <td>
+                        <input type="checkbox" name="COLUMN1" value="@Model.OGCTITLE[i].TITLE" class="column-checkbox" />
+                        <span> </span>
+                        @Model.OGCTITLE[i].TITLE
+                        <span> </span>
+                    </td>
+                }
+                if (i % 4 == 3)
+                {
+                @:</tr>
+            }
+        }
+        <tr>
+            <td colspan="5" align="center">
+                <button type="submit"> EXCEL匯出</button>
+                <button type="submit" name="pdf" value="1">ODS匯出</button>
+            </td>
+        </tr>
+    </table>
+</form>
+
+@section scripts {
+    <script type="text/javascript">
+        var reportUrl = '@Url.Action("ReportPrint4", "Report")';
+        var stateUrl = '@Url.Action("ChooseState", "Report")';
+    </script>
+
+    <script src="~/Scripts/Report/State4.js" type="text/javascript"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            // 當起點年度或終點年度變更時，觸發篩選
+            $('#yearStart, #yearEnd').on('change', function () {
+                filterPlans();
+            });
+
+            function filterPlans() {
+                // 取得選取的起點與終點年度數字
+                var startYear = parseInt($('#yearStart').val());
+                var endYear = parseInt($('#yearEnd').val());
+
+                // 如果使用者還沒選好完整的區間，就維持全部隱藏
+                if (isNaN(startYear) || isNaN(endYear)) {
+                    $('.plan-item').attr('hidden', true);
+                    return;
+                }
+
+                // 如果起點大於終點，做個簡單的防呆交換，或是提示使用者
+                if (startYear > endYear) {
+                    alert('起點年度不能大於終點年度');
+                    return;
+                }
+
+                // 跑迴圈檢查每一個計劃項目
+                $('.plan-item').each(function () {
+                    var planYear = parseInt($(this).data('id')); // 取得該計劃的年度
+
+                    // 判斷計劃年度是否落在選取的區間內
+                    if (planYear >= startYear && planYear <= endYear) {
+                        $(this).removeAttr('hidden'); // 在區間內，顯示
+                    } else {
+                        $(this).attr('hidden', true);  // 不在區間內，隱藏
+
+                        // 【防呆】如果該項目被隱藏了，順便取消勾選，避免送出隱藏的資料
+                        $(this).find('.Plan-checkbox').prop('checked', false);
+                    }
+                });
+            }
+        });
+    </script>
+}

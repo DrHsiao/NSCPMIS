@@ -1,0 +1,178 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.SUG0010Model
+@{
+    ViewBag.Title = "建議案管理";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 5px;
+        }
+        .table th, .table td {
+            white-space: nowrap;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .table td.content-cell {
+            text-align: left;
+            white-space: normal;
+            max-width: 300px;
+        }
+        .pagination {
+            margin: 10px 0;
+        }
+        .btn-sm {
+            padding: 1px 5px;
+            font-size: 12px;
+        }
+    </style>
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+<body>
+    @{
+        int currentTab = Model.tab;
+        string pageName = "";
+        switch (currentTab)
+        {
+            case 1: pageName = "列管中"; break;
+            case 2: pageName = "已結案"; break;
+        }
+    }
+
+    <div class="card shadow-sm border-0 mb-4 h-100">
+        <div class="card-header bg-primary text-white fw-bold">@pageName</div>
+        <div class="card-body" style="overflow-x: auto;">
+
+            @* 頁籤1: 列管中 *@
+            @if (currentTab == 1)
+            {
+                if (Model.List_Tab1 != null && Model.List_Tab1.Count > 0)
+                {
+                    @Html.PagedListPager(Model.List_Tab1, page => Url.Action("Tab",
+                        new { tab = 1, INSTRUCT_NAME = Model.INSTRUCT_NAME, SUG_NAME = Model.SUG_NAME, SUG_CONTENT = Model.SUG_CONTENT, START_DATE = Model.START_DATE, END_DATE = Model.END_DATE, page1 = page }))
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>操作</th>
+                                <th>案件編號</th>
+                                <th>交辦日期</th>
+                                <th>交辦人</th>
+                                <th>建議日期</th>
+                                <th>建議人</th>
+                                <th>職稱</th>
+                                <th>建議內容</th>
+                                <th>附件</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (System.Data.DataRow row in Model.List_Tab1)
+                            {
+                                var sugId = Convert.ToDecimal(row["SUG_ID"]);
+                                <tr>
+                                    <td>
+                                        <button type="button" class="btn btn-primary btn-sm" onclick="parent.openEdit(@sugId)" title="編輯"><i class="fa-solid fa-edit"></i> 編輯</button>
+                                        <button type="button" class="btn btn-warning btn-sm" onclick="parent.openClose(@sugId)" title="結案"><i class="fa-solid fa-check"></i> 結案</button>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="parent.deleteSug(@sugId)" title="刪除"><i class="fa-solid fa-trash"></i> 刪除</button>
+                                    </td>
+                                    <td>@row["SUG_ID"]</td>
+                                    <td>@(row["INSTRUCT_DATE"] != DBNull.Value ? Convert.ToDateTime(row["INSTRUCT_DATE"]).ToString("yyyy/MM/dd") : "")</td>
+                                    <td>@row["INSTRUCT_NAME"]</td>
+                                    <td>@(row["SUG_DATE"] != DBNull.Value ? Convert.ToDateTime(row["SUG_DATE"]).ToString("yyyy/MM/dd") : "")</td>
+                                    <td>@row["SUG_NAME"]</td>
+                                    <td>@row["SUG_JOB"]</td>
+                                    <td class="content-cell">@row["SUG_CONTENT"]</td>
+                                    <td>@(row["FILE_COUNT"] != DBNull.Value ? row["FILE_COUNT"].ToString() : "0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-info">目前無列管中案件</div>
+                }
+            }
+
+            @* 頁籤2: 已結案 *@
+            @if (currentTab == 2)
+            {
+                if (Model.List_Tab2 != null && Model.List_Tab2.Count > 0)
+                {
+                    @Html.PagedListPager(Model.List_Tab2, page => Url.Action("Tab",
+                        new { tab = 2, INSTRUCT_NAME = Model.INSTRUCT_NAME, SUG_NAME = Model.SUG_NAME, SUG_CONTENT = Model.SUG_CONTENT, START_DATE = Model.START_DATE, END_DATE = Model.END_DATE, page2 = page }))
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>操作</th>
+                                <th>案件編號</th>
+                                <th>交辦日期</th>
+                                <th>交辦人</th>
+                                <th>建議日期</th>
+                                <th>建議人</th>
+                                <th>職稱</th>
+                                <th>建議內容</th>
+                                <th>最終處理內容</th>
+                                <th>滿意度</th>
+                                <th>關鍵字</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (System.Data.DataRow row in Model.List_Tab2)
+                            {
+                                var sugId = Convert.ToDecimal(row["SUG_ID"]);
+                                <tr>
+                                    <td>
+                                        <button type="button" class="btn btn-primary btn-sm" onclick="parent.openEdit(@sugId)" title="檢視"><i class="fa-solid fa-eye"></i> 檢視</button>
+                                    </td>
+                                    <td>@row["SUG_ID"]</td>
+                                    <td>@(row["INSTRUCT_DATE"] != DBNull.Value ? Convert.ToDateTime(row["INSTRUCT_DATE"]).ToString("yyyy/MM/dd") : "")</td>
+                                    <td>@row["INSTRUCT_NAME"]</td>
+                                    <td>@(row["SUG_DATE"] != DBNull.Value ? Convert.ToDateTime(row["SUG_DATE"]).ToString("yyyy/MM/dd") : "")</td>
+                                    <td>@row["SUG_NAME"]</td>
+                                    <td>@row["SUG_JOB"]</td>
+                                    <td class="content-cell">@row["SUG_CONTENT"]</td>
+                                    <td class="content-cell">@row["FINAL_CONTENT"]</td>
+                                    <td>
+                                        @if (row["AGREE"] != DBNull.Value)
+                                        {
+                                            if (Convert.ToBoolean(row["AGREE"]))
+                                            {
+                                                <span class="badge bg-success shadow-sm">滿意</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger shadow-sm">不滿意</span>
+                                            }
+                                        }
+                                    </td>
+                                    <td>@row["KEYWORDS"]</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-info">目前無已結案案件</div>
+                }
+            }
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+﻿@using PagedList.Mvc;
+@model WCals.ViewModels.UsrComponentListViewModel
+
+@using (Html.BeginForm("QueryUsr", "UserComponent", FormMethod.Post, new { id = "modalForm" }))
+{
+    <div class="col-md-12">
+        <div class="form-inline">
+            <div class="form-group">
+                <label>使用者代碼：</label>
+                @Html.EditorFor(f => f.SearchParameter.USR_ID, new { htmlAttributes = new { @id="txtUserId", @class = "form-control", maxlength = "20" } })
+            </div>
+
+            <div class="form-group">
+                <label>AD帳號：</label>
+                @Html.EditorFor(f => f.SearchParameter.AD_USR_ID, new { htmlAttributes = new { @id="txtADUserId", @class = "form-control", maxlength = "20" } })
+            </div>
+
+            <div class="form-group">
+                <label>使用者名稱：</label>
+                @Html.EditorFor(f => f.SearchParameter.USR_NAME, new { htmlAttributes = new { @id = "txtUserName", @class = "form-control", maxlength = "20" } })
+            </div>
+
+            <div class="form-group">
+                <label>部門名稱：</label>
+                @Html.EditorFor(f => f.SearchParameter.DEPT_NAME, new { htmlAttributes = new { @id="txtDeptNo", @class = "form-control", maxlength = "20" } })
+            </div>
+            <input type="button" class="btn btn-primary"  value="查詢" onclick="javascript:getSearchResult()" />
+        </div>
+    </div>
+}
+<br />
+<br />
+<div class="row">
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-lg-12 table-responsive">
+                <div class="card shadow-sm border-0 mb-4 h-100">
+                    <table class="table table-bordered table-striped table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>使用者代碼</th>
+                                <th>AD帳號</th>
+                                <th>使用者名稱</th>
+                                <th>部門名稱</th>
+                                <th>#</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OGCUSER)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.OGCUSER.USR_ID
+                                    </td>
+                                    <td>
+                                        @item.OGCUSER.AD_USR_ID
+                                    </td>
+                                    <td>
+                                        @item.OGCUSER.USR_NAME
+                                    </td>
+                                    <td>
+                                        @item.DEPT_NAME
+                                    </td>
+                                    <td>
+                                        <input type="button" class="btn btn-secondary" value="選擇" onclick="selectUsr('@item.OGCUSER.USR_ID', '@item.OGCUSER.USR_NAME', '@item.DEPT_NAME')"/>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div id="modalPager">
+                    @Html.PagedListPager(Model.OGCUSER, page => Url.Action("QueryUsrPage", new { USR_ID= Model.SearchParameter.USR_ID, AD_USR_ID= Model.SearchParameter.AD_USR_ID, USR_NAME=Model.SearchParameter.USR_NAME, DEPT_NAME=Model.SearchParameter.DEPT_NAME, page }))
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#modalPager').on('click', 'a', function (e) {
+        e.preventDefault();
+        if ($(this).parent().is(':not(.active, .disabled, .PagedList-ellipses)')) {
+            $.ajax({
+                url: this.href,
+                type: 'GET',
+                cache: false,
+                success: function (partialResult) {
+                    $('#modalFormContainer').html(partialResult);
+                }
+            });
+            return false;
+        }
+    });
+
+    function selectUsr(usrId, usrName, deptName)
+    {
+        $('#selectedUsrId').val(usrId);
+        $('#selectedUsrDept').val(deptName);
+        $('#selectedUsrInfo').val(usrName + '(' + usrId + ')');
+        $('#searcUsrModal').modal('hide');
+
+        $('#selectedUsrId').trigger('change');
+    }
+
+    function getSearchResult() {
+        var userid = $('#txtUserId').val();
+        var adUserId = $('#txtADUserId').val();
+        var username = $('#txtUserName').val();
+        var deptno = $('#txtDeptNo').val();
+
+        getSearchUserContent(userid, adUserId, username, deptno);
+    }
+
+</script>

@@ -1,0 +1,36 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>拿資料</title>
+
+</head>
+
+<body>
+    <form method="post" action="@Url.Action("Index")">
+        <div>
+            跟吳老闆那拿資料
+        </div>
+        <br />
+        <input name="SYR1" />年分至 <input name="SYR2" />年分
+        <br />
+        <br />
+        <div>區間:</div>
+        <input name="SMN1" />月分至 <input name="SMN2" />月分
+        <br />
+        <br />
+        <input type="submit" class="btn-block" name="btn" value="點此拿資料" />
+    </form>
+
+    <br />
+    <br />
+    <div style="color:red">@ViewBag.Message</div>
+
+</body>
+</html>

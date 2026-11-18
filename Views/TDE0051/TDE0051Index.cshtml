@@ -1,0 +1,403 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0051Model
+@{
+    ViewBag.Title = "執行異常管理";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head{
+<link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+<style>
+    .ui-dialog {
+        z-index: 4000;
+    }
+
+    .card.with-nav-tabs {
+        display: flex;
+        flex-direction: column;
+        min-height: 600px;
+    }
+
+    .card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .tab-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tab-pane {
+        flex: 1;
+        display: none;
+    }
+
+        .tab-pane.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-pane iframe {
+            flex: 1;
+            width: 100%;
+            min-height: 500px;
+            border: 0;
+        }
+
+        /* 頁籤顏色修正 */
+        .card-header-tabs .nav-link:not(.active) {
+            color: #ffffff !important;
+            opacity: 0.85;
+        }
+        .card-header-tabs .nav-link:not(.active):hover {
+            opacity: 1;
+            color: #ffffff !important;
+        }
+        .card-header-tabs .nav-link.active {
+            color: #337ab7 !important;
+            font-weight: bold;
+        }
+</style>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            3.3.1 執行異常管理
+            <small></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content(" ~ /")Home"> 首頁</a>
+            </li>
+            <li class="active">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content(" ~ /")TDE0051">執行異常管理</a>
+            </li>
+        </ol>
+    </div>
+</div>
+
+@using(Html.BeginForm("Search", "TDE0051", FormMethod.Post, new { id = "mainForm" }))
+{
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-primary text-white fw-bold">查詢條件</div>
+    <table class="table table-striped table-hover align-middle mb-0">
+     <tr>
+ <td>
+ <div class="row">
+    <div class="col-md-3">
+      <div class="input-group">
+   <span class="input-group-text">工程編號</span>
+@Html.TextBoxFor(x => x.TD_CODE, new { @class = "form-control", placeholder = "工程編號" })
+            </div>
+</div>
+           <div class="col-md-3">
+    <div class="input-group">
+     <span class="input-group-text">工程名稱</span>
+     @Html.TextBoxFor(x => x.TD_NAME, new { @class = "form-control", placeholder = "工程名稱" })
+ </div>
+       </div>
+       <div class="col-md-3">
+   <div class="input-group">
+      <span class="input-group-text">縣市別</span>
+   @Html.DropDownListFor(x => x.CITY, (SelectList)ViewBag.cities, "縣市", new { @class = "form-control", id = "CITY", onchange = "GetTowns(this.value)" })
+       </div>
+   </div>
+      <div class="col-md-3">
+          <div class="input-group">
+              <span class="input-group-text">年度</span>
+              @Html.DropDownList("SYR", (SelectList)ViewBag.SYRS, "依年度搜尋", new { @class = "form-control", id = "SYR", onchange = "GetPids(this.value)" })
+          </div>
+      </div>
+      <div class="col-md-3">
+          <div class="input-group">
+              <span class="input-group-text">年度計畫</span>
+              @Html.DropDownList("pid", (SelectList)ViewBag.emptyPIDs, "請選擇年度計畫", new { @class = "form-control", id = "pid" })
+          </div>
+      </div>
+      @*<div class="col-md-3">
+              <div class="input-group">
+            <span class="input-group-text">鄉鎮別</span>
+                 @Html.DropDownListFor(x => x.TOWN, (SelectList)ViewBag.towns, "鄉鎮", new { @class = "form-control", id = "TOWN" })
+  </div>
+   </div>*@
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+  <div class="row">
+            <div class="col-md-3">
+           <button class="btn btn-primary" type="button" onclick="searchData()">查詢</button>
+            <button class="btn btn-secondary" type="button" onclick="clearForm()">清除</button>
+     </div>
+       </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<!-- 頁籤區域 -->
+<div class="card shadow-sm border-0 mb-4 with-nav-tabs">
+    <div class="card-header bg-primary text-white fw-bold">
+        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+            <li id="li1" role="presentation"  class="nav-item"><button type="button" class="nav-link active" data-bs-target="#tab1"    aria-controls="tab1" role="tab"  data-bs-toggle="tab">統計表</button></li>
+            <li id="li2" role="presentation" class="nav-item"><button type="button" class="nav-link" data-bs-target="#tab2"    aria-controls="tab2" role="tab"  data-bs-toggle="tab">資料設定</button></li>
+            <li id="li3" role="presentation" class="nav-item"><button type="button" class="nav-link" data-bs-target="#tab3"    aria-controls="tab3" role="tab"  data-bs-toggle="tab">資料設定</button></li>
+            <li id="li4" role="presentation" class="nav-item"><button type="button" class="nav-link" data-bs-target="#tab4"    aria-controls="tab4" role="tab"  data-bs-toggle="tab">資料設定</button></li>
+            <li id="li5" role="presentation" class="nav-item"><button type="button" class="nav-link" data-bs-target="#tab5"    aria-controls="tab5" role="tab"  data-bs-toggle="tab">資料設定</button></li>
+        </ul>
+    </div>
+
+    <div class="card-body">
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="tab1">
+                <iframe id="iframe1" src="@Url.Content("~/TDE0051/Tab")?tab=1"></iframe>
+            </div>
+            <div class="tab-pane fade" id="tab2">
+                <iframe id="iframe2" src=""></iframe>
+            </div>
+            <div class="tab-pane fade" id="tab3">
+                <iframe id="iframe3" src=""></iframe>
+            </div>
+            <div class="tab-pane fade" id="tab4">
+                <iframe id="iframe4" src=""></iframe>
+            </div>
+            <div class="tab-pane fade" id="tab5">
+                <iframe id="iframe5" src=""></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 編輯 Dialog -->
+<div id="editDialog" title="開/完工日編輯" style="padding:5px;">
+    <iframe id="editFrame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+</div>
+
+<!-- 編輯 Dialog2 (進度填報) -->
+<div id="editDialog2" title="進度填報編輯" style="padding:5px;">
+    <iframe id="editFrame2" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+</div>
+
+<!-- 編輯 Dialog3 (進度異常) -->
+<div id="editDialog3" title="進度異常編輯" style="padding:5px;">
+    <iframe id="editFrame3" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+</div>
+
+<!-- 編輯 Dialog4 (經費填報) -->
+<div id="editDialog4" title="工程經費編輯" style="padding:5px;">
+    <iframe id="editFrame4" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+</div>
+
+<!-- 編輯 Dialog5 (連續落後) -->
+<div id="editDialog5" title="連續落後進度編輯" style="padding:5px;">
+    <iframe id="editFrame5" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+</div>
+}
+
+@section scripts{
+<script>
+    var h = $(window).height();
+    var w = $(window).width();
+
+ // 縣市鄉鎮動態對應
+    function GetTowns(city) {
+        $("#TOWN").html("");
+        $.ajax({
+            url: '@Url.Content("~/")ASYNC/GetTowns',
+   method: 'post',
+  data: { "city": city },
+success: function (d) {
+      var p = jQuery.parseJSON(d);
+   $("#TOWN").prepend("<option value=''>鄉鎮</option>");
+     for (i = 0; i < p.length; i++) {
+      $("#TOWN").append("<option value='" + p[i].TOWN + "'>" + p[i].TOWN + "</option>");
+            }
+            }
+        });
+    }
+
+    // 初始化編輯 Dialog
+    $("#editDialog").dialog({
+        autoOpen: false,
+        show: { duration: 500 },
+        hide: { duration: 500 },
+        width: w * 0.7,
+        height: h * 0.7,
+        modal: true
+    });
+
+    // 初始化編輯 Dialog2 (進度填報)
+    $("#editDialog2").dialog({
+        autoOpen: false,
+        show: { duration: 500 },
+        hide: { duration: 500 },
+        width: w * 0.7,
+        height: h * 0.7,
+        modal: true
+    });
+
+    // 初始化編輯 Dialog3 (進度異常)
+    $("#editDialog3").dialog({
+        autoOpen: false,
+        show: { duration: 500 },
+        hide: { duration: 500 },
+        width: w * 0.6,
+        height: h * 0.7,
+        modal: true
+    });
+
+    // 初始化編輯 Dialog4 (經費填報)
+    $("#editDialog4").dialog({
+        autoOpen: false,
+        show: { duration: 500 },
+        hide: { duration: 500 },
+        width: w * 0.5,
+        height: h * 0.5,
+        modal: true
+    });
+
+    // 初始化編輯 Dialog5 (連續落後)
+    $("#editDialog5").dialog({
+        autoOpen: false,
+        show: { duration: 500 },
+        hide: { duration: 500 },
+        width: w * 0.8,
+        height: h * 0.7,
+        modal: true
+    });
+
+    // 開啟編輯 Dialog
+    function openEditDialog(tdCode) {
+        $("#editFrame").attr("src", "@Url.Content("~/TDE0051/Edit")?TD_CODE=" + tdCode);
+        $("#editDialog").dialog("open");
+    }
+
+    // 關閉編輯 Dialog
+    function closeEditDialog() {
+        $("#editDialog").dialog("close");
+    }
+
+    // 開啟編輯 Dialog2 (進度填報)
+    function openEditDialog2(tdCode) {
+        $("#editFrame2").attr("src", "@Url.Content("~/TDE0051/Edit2")?TD_CODE=" + tdCode);
+        $("#editDialog2").dialog("open");
+    }
+
+    // 關閉編輯 Dialog2
+    function closeEditDialog2() {
+        $("#editDialog2").dialog("close");
+    }
+
+    // 開啟編輯 Dialog3 (進度異常)
+    function openEditDialog3(tdCode) {
+        $("#editFrame3").attr("src", "@Url.Content("~/TDE0051/Edit3")?TD_CODE=" + tdCode);
+        $("#editDialog3").dialog("open");
+    }
+
+    // 關閉編輯 Dialog3
+    function closeEditDialog3() {
+        $("#editDialog3").dialog("close");
+    }
+
+    // 開啟編輯 Dialog4 (經費填報)
+    function openEditDialog4(tdCode) {
+        $("#editFrame4").attr("src", "@Url.Content("~/TDE0051/Edit4")?TD_CODE=" + tdCode);
+        $("#editDialog4").dialog("open");
+    }
+
+    // 關閉編輯 Dialog4
+    function closeEditDialog4() {
+        $("#editDialog4").dialog("close");
+    }
+
+    // 開啟編輯 Dialog5 (連續落後)
+    function openEditDialog5(tdCode) {
+        $("#editFrame5").attr("src", "@Url.Content("~/TDE0051/Edit5")?TD_CODE=" + tdCode);
+        $("#editDialog5").dialog("open");
+    }
+
+    // 關閉編輯 Dialog5
+    function closeEditDialog5() {
+        $("#editDialog5").dialog("close");
+    }
+
+    // 重新整理當前頁籤
+    function refreshCurrentTab() {
+        var activeTab = $('.nav-tabs button.active').attr('data-bs-target').replace('#tab', '');
+        loadIframe(activeTab);
+    }
+
+    // 頁籤切換時載入對應 iframe
+    $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+        // 樣式切換 logic
+        
+        
+
+        var target = $(e.target).attr("data-bs-target");
+        var tabNo = target.replace('#tab', '');
+        var iframe = $('#iframe' + tabNo);
+
+        // 如果 iframe 尚未載入，則載入
+        if (!iframe.attr('src') || iframe.attr('src') === '') {
+            loadIframe(tabNo);
+        }
+    });
+
+    function loadIframe(tabNo) {
+        var url = '@Url.Content("~/TDE0051/Tab")';
+        url += '?tab=' + tabNo;
+        url += '&TD_CODE=' + encodeURIComponent($('#TD_CODE').val());
+        url += '&TD_NAME=' + encodeURIComponent($('#TD_NAME').val());
+        url += '&CITY=' + encodeURIComponent($('#CITY').val());
+        url += '&TOWN=' + encodeURIComponent($('#TOWN').val() || '');
+        url += '&PID=' + encodeURIComponent($('#pid').val() || 0);
+        url += '&_t=' + new Date().getTime();
+
+        $('#iframe' + tabNo).attr('src', url);
+    }
+
+    function searchData() {
+        // 取得當前頁籤
+        var activeTab = $('.nav-tabs button.active').attr('data-bs-target').replace('#tab', '');
+        loadIframe(activeTab);
+    }
+
+    function clearForm() {
+        $('#TD_CODE').val('');
+        $('#TD_NAME').val('');
+        $('#CITY').val('');
+        $('#TOWN').val('');
+        $('#SYR').val('');
+        $('#pid').html('<option value="">請選擇年度計畫</option>');
+        // 重新載入當前頁籤
+        searchData();
+    }
+
+    // 年度 -> 年度計畫 動態對應
+    function GetPids(syr) {
+        $("#pid").html("<option value=''>請選擇年度計畫</option>");
+        if (!syr) return;
+        $.ajax({
+            url: '@Url.Content("~/TDE0020")/GetPidsBySyr',
+            method: 'post',
+            data: { "syr": syr },
+            success: function (d) {
+                // TDE0020 端點回傳已解析的物件陣列；若為字串則自行解析
+                var p = (typeof d === 'string') ? JSON.parse(d) : d;
+                for (var i = 0; i < p.length; i++) {
+                    $("#pid").append("<option value='" + p[i].PID + "'>" + p[i].SYR_PJ_NAME + "</option>");
+                }
+            },
+            error: function () { alert("計畫資料載入失敗！"); }
+        });
+    }
+</script>
+}

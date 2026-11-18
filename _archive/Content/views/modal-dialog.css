@@ -1,0 +1,62 @@
+﻿/* Dialog 外框 */
+dialog {
+    border: none;
+    border-radius: 5px;
+    padding: 0;
+    box-shadow: 0 3px 20px rgba(0,0,0,0.4);
+    font-family: Arial, sans-serif;
+    width: 50%;
+    max-width: 600px;
+}
+
+    /* 半透明背景 */
+    dialog::backdrop {
+        background: rgba(0,0,0,0.3);
+    }
+
+/* 標題列 */
+.dialog-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    font-weight: bold;
+    color: white;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: #007bff; /*#dc3545; /* 預設紅色警告 */
+}
+
+    .dialog-header .icon {
+        margin-right: 8px;
+        font-size: 1.2em;
+    }
+
+/* 文字區域 */
+.dialog-content {
+    padding: 15px;
+}
+
+.content-area {
+    max-height: 200px; /* 多筆資料時會滾動 */
+    overflow-y: auto;
+    text-align: left;
+}
+
+/* 按鈕區 */
+.dialog-footer {
+    padding: 10px 15px;
+    text-align: center;
+}
+
+button {
+    margin: 0 5px;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.dialog-button {
+    background-color: #007bff;
+    color: white;
+}

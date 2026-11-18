@@ -1,0 +1,64 @@
+﻿@model WCals.Models.CMBASEModels.GroupChooseViewModel
+
+@{
+    ViewBag.Title = "群組管理";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head {
+    <link rel="stylesheet" href="~/Content/views/group.css">
+}
+
+<div class="model-form">
+    <h2 style="color:cornflowerblue">群組詳細資料</h2>
+
+    <table style="text-align:left">
+        <tr>
+            <th>
+                @Html.ActionLink("編輯", "Edit", new { DEPT_NO = TempData["DEPTNO"] }, new { @class = "btn btn-primary" })
+                @Html.ActionLink("刪除", "Delete",
+                    new { DEPT_NO = TempData["DEPTNO"] },
+                    new { onclick = "return confirm('確定刪除嗎?');", @class = "btn btn-danger" }
+               )
+                <input type="button" class="btn btn-secondary" onclick="history.back()" value="返回">
+                <br />
+                <br />
+            </th>
+        </tr>
+        <tr>
+            <th>
+                群組編號:
+                @Model.ChooseDEPT.DEPT_NO
+            </th>
+            <th>
+                群組名稱:
+                @Model.ChooseDEPT.DEPT_NAME
+            </th>
+        </tr>
+    </table>
+    @*/////////////////這是選取後的顯示/////////////////////////////*@
+    <br />
+
+    <table class="table table-hover" style="width:50%">
+        <tr><th>群組使用者:</th></tr>
+        <tr style="background-color:deepskyblue;">
+            <th>
+                使用者編號
+            </th>
+            <th>
+                使用者名稱
+            </th>
+        </tr>
+
+        @if (ViewBag.GROUPUSER != null)
+        {
+            foreach (var item in ViewBag.GROUPUSER)
+            {
+                <tr style="background-color:white">
+                    <td>@item.USER.USR_ID</td>
+                    <td>@item.USER.USR_NAME</td>
+                </tr>
+            }
+        }
+    </table>
+</div>

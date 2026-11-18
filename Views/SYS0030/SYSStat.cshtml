@@ -1,0 +1,62 @@
+﻿
+@{Layout = null;}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>系統狀態</title>
+    <meta charset="utf-8" />
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body { padding: 15px; background-color: #f8f9fa; }
+    </style>
+</head>
+<body>
+    @using(Html.BeginForm("", "SYS0030", FormMethod.Post, new { id = "mainForm" })) {
+        <div class="container-fluid mt-3">
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-4 col-form-label text-danger fw-bold text-end">縣市別：</label>
+                <div class="col-sm-8">
+                    <select class="form-select">
+                        <option>台北市</option>
+                        <option>新北市</option>
+                        <option>桃園市</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-4 col-form-label text-danger fw-bold text-end">污水下水道系統：</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" value="台北市污水下水道系統">
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-4 col-form-label text-danger fw-bold text-end">建設情形：</label>
+                <div class="col-sm-8">
+                    <select class="form-select">
+                        <option>建設中</option>
+                        <option>已完成</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-4 col-form-label fw-bold text-end">是否為補助：</label>
+                <div class="col-sm-8">
+                    <select class="form-select">
+                        <option>是</option>
+                        <option>否</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

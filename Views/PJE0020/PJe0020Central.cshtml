@@ -1,0 +1,77 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0020Model
+@{ ViewBag.Title = "分支計畫維護 [1.1.2]";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+@using(Html.BeginForm("", "PJE0020", FormMethod.Post, new { id = "mainForm" })) {
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="h2 border-bottom pb-2 mb-3">
+                分支計畫維護 [1.1.2]
+                <small>中央款比例</small>
+                <br /><small>@Model.CurrentProjectName</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <i class="fa-solid fa-file"></i>
+                    <a href="PJE0020">分支計畫維護 [1.1.2]</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <i class="fa-solid fa-file"></i>
+                    中央款比例
+                </li>
+            </ol>
+        </div>
+    </div>
+    <button class="btn btn-warning btn-lg" name="action" type="submit" value="CentralSave">儲存</button>
+    <a class="btn btn-secondary btn-lg" href="PJE0020?page=@Model.page">返回列表</a>
+    @Html.HiddenFor(f => f.PID)
+    @Html.HiddenFor(f => f.page)
+
+    <br /><br />
+    <div class="card border-primary mb-3">
+        <div class="card-header bg-primary text-white">中央款比例</div>
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th nowrap width="1">縣市別</th>
+                    <th>比例(%)</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    System.Data.DataTable list = ViewBag.list;
+
+                }
+                @foreach(System.Data.DataRow c in list.Rows) {
+                    <tr>
+
+                        <td><input type="text" readonly name="CITYS" class="form-control" value="@c["CITY"]" style="width:200px;" /></td>
+                        <td><input type="text" name="SUP_RATIOS" class="form-control" value="@c["SUP_RATIO"]" /></td>
+
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+    </div>
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

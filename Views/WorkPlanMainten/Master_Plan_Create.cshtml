@@ -1,0 +1,102 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<div class="card mb-3"><div class="card-body">
+    <div class="form-horizontal">
+       
+        <br />
+        <h1>主計畫新增</h1>
+        <hr />
+        <form action="@Url.Action("Master_Plan_Create_Function","WorkPlanMainten")">
+            <div class="form-group">
+                <span class="col-form-label col-md-2">起始年度</span>
+                <div class="col-md-3">
+                    <input id="start_Year" name="SYR" value="@ViewBag.SYR" type="text" class="form-control" required/>
+                </div>
+                <div class="col-md-7">
+                    <input type="submit" value="存檔" class="btn btn-secondary" />
+                    <a href="@Url.Action("Index","WorkPlanMainten")" class="btn btn-primary">返回</a>
+
+
+                </div>
+            </div>
+            <div class="form-group">
+                <span class="col-form-label col-md-2">終止年度</span>
+                <div class="col-md-3">
+                    <input id="end_Year" name="END_SYR" type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫名稱</span>
+                <div class="col-md-3">
+                    <input id="PJ_NAME" name="PJ_NAME" type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">工作計畫編號</span>
+                <div class="col-md-3">
+                    <input id="WK_CODE" name="WK_CODE" type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">年度預算</span>
+                <div class="col-md-3">
+                    <input id="FUND" name="PJ_FUND" type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經管單位</span>
+                <div class="col-md-3">
+                    <input id="DEPT" name="ADV_DP_NAME" value="@ViewBag.DEPT" readonly type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經管人員</span>
+                <div class="col-md-3">
+                    <input id="USER" name="APV_UID_NAME" value="@ViewBag.USER" readonly type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">主計畫種類</span>
+                <div class="col-md-3">
+                    <select id="TYPE" name="Water_Type" class="form-select" required>
+                        <option disabled selected>
+                            請選擇
+                        </option>
+                        <option>
+                            雨水使用
+                        </option>
+                        <option>
+                            污水使用
+                        </option>
+                        <option>
+                            營管使用
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" hidden>
+                <span class="col-form-label col-md-2">經管單位 ID</span>
+                <div class="col-md-3">
+                    <input id="DEPT_ID" name="ADV_DP" value="@ViewBag.UserID"  type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group" hidden>
+                <span class="col-form-label col-md-2">經管人員 ID</span>
+                <div class="col-md-3">
+                    <input id="USER_ID" name="ADV_UID" value="@ViewBag.DeptID" type="text" class="form-control" required/>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div></div>

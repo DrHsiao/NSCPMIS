@@ -1,0 +1,76 @@
+﻿@model WCals.ViewModels.OGCUSEREditViewModel
+
+@{
+                /**/
+
+                ViewBag.Title = "新增使用者";
+                Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            新增使用者
+
+            <small> 提供新增使用者的內容</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="active">
+                <i class="fa-solid fa-file"></i>
+                <a href="/WSMC0702/Index"> 使用者管理 [0702]</a>
+            </li>
+            <li class="fa fa-file">
+                <i class="fa-solid fa-file"></i>
+                新增使用者
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        @using (Html.BeginForm("New", "WSMC0702", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label>使用者代碼<span style="color:red;">*</span></label>
+                @Html.TextBoxFor(model => model.VALIDATE_USR_ID, new { @class = "form-control", placeholder = "使用者編號", maxlength = "50" })
+                @Html.ValidationMessageFor(f => f.VALIDATE_USR_ID, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>AD帳號</label>
+                @Html.EditorFor(model => model.VALIDATE_AD_USR_ID, new { htmlAttributes = new { @class = "form-control", placeholder = "AD帳號", maxlength = "50" } })
+                @Html.ValidationMessageFor(f => f.VALIDATE_AD_USR_ID, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>使用者名稱</label>
+                @Html.EditorFor(model => model.OGCUSER.USR_NAME, new { htmlAttributes = new { @class = "form-control", placeholder = "使用者名稱", maxlength = "200" } })
+            </div>
+            @*<div class="form-group">
+                    <label>密碼</label>
+                    @Html.EditorFor(model => model.USR_PSW, new { htmlAttributes = new { @class = "form-control", placeholder = "密碼" } })
+                </div>*@
+            <div class="form-group">
+                <label>電子郵件</label>
+                @Html.EditorFor(model => model.OGCUSER.EMAIL, new { htmlAttributes = new { @class = "form-control", placeholder = "電子郵件", maxlength = "50" } })
+            </div>
+            <div class="form-group">
+                <label>電話</label>
+                @Html.EditorFor(model => model.OGCUSER.TEL_O, new { htmlAttributes = new { @class = "form-control", placeholder = "電話", maxlength = "50" } })
+            </div>
+            <div class="form-group">
+                <label>行動電話</label>
+                @Html.EditorFor(model => model.OGCUSER.TEL_M, new { htmlAttributes = new { @class = "form-control", placeholder = "行動電話", maxlength = "50" } })
+            </div>
+            <div class="form-group">
+                <label>傳真電話</label>
+                @Html.EditorFor(model => model.OGCUSER.TEL_F, new { htmlAttributes = new { @class = "form-control", placeholder = "傳真電話", maxlength = "50" } })
+            </div>
+            <input type="submit" value="儲存" class="btn btn-primary" />
+            @Html.ActionLink("返回", "PagedIndex", new { page = TempData.Peek(WCals.Controllers.Constants.PAGE_NUMBER_KEY) }, new { @class = "btn btn-secondary" })
+        }
+    </div>
+</div>

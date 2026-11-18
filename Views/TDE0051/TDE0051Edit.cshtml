@@ -1,0 +1,276 @@
+﻿@model WCals.ViewModels.NewModels.TDE0051Model
+@{
+    ViewBag.Title = "開/完工日編輯";
+    Layout = null;
+
+    string tdName = Model.TD_NAME ?? "";
+    System.Data.DataTable dtList = ViewBag.List1 as System.Data.DataTable;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .section-header {
+            background-color: #f5f5f5;
+            border-left: 4px solid #0275d8;
+            padding: 10px 15px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body style="padding:5px;">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible" role="alert" id="successAlert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible" role="alert" id="errorAlert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            @TempData["Error"]
+        </div>
+    }
+
+    <div id="messageDiv"></div>
+
+    <button type="button" onclick="top.closeEditDialog();" class="btn btn-secondary btn-lg">關閉</button>
+
+    <h1 class="page-header">開/完工日填報 - @tdName</h1>
+
+    <div class="section-header">開/完工日期列表 (IT_TYPE='M')</div>
+
+    <div class="table-responsive">
+        <table class="table table-sm" id="dataTable">
+            <thead>
+                <tr>
+                    <th style="width: 100px;">項目代碼</th>
+                    <th style="width: 150px;">項目名稱</th>
+                    <th style="width: 150px;">預定日期</th>
+                    <th style="width: 150px;">實際日期</th>
+                    <th style="width: 100px;">操作</th>
+                </tr>
+            </thead>
+            <tbody id="dataBody">
+                @if (dtList != null && dtList.Rows.Count > 0)
+                {
+                    foreach (System.Data.DataRow row in dtList.Rows)
+                    {
+                        string itCode = row["IT_CODE"] != DBNull.Value ? row["IT_CODE"].ToString() : "";
+                        string itName = "";
+                        switch (itCode)
+                        {
+                            case "TK106": itName = "開工日期"; break;
+                            case "TK107": itName = "完工日期"; break;
+                            default: itName = itCode; break;
+                        }
+                        string preEdt = row["PRE_EDT"] != DBNull.Value ? row["PRE_EDT"].ToString() : "";
+                        string relEdt = row["REL_EDT"] != DBNull.Value ? row["REL_EDT"].ToString() : "";
+
+                        <tr data-itcode="@itCode">
+                            <td style="text-align: center;">@itCode</td>
+                            <td>@itName</td>
+                            <td>
+                                <input type="text" name="PRE_EDT" value="@preEdt" class="form-control form-control-sm dt edit-field" data-field="PRE_EDT" placeholder="YYYMMDD" />
+                            </td>
+                            <td>
+                                <input type="text" name="REL_EDT" value="@relEdt" class="form-control form-control-sm dt edit-field" data-field="REL_EDT" placeholder="YYYMMDD" />
+                            </td>
+                            <td style="text-align: center;">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="updateRow(this);">儲存</button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(this);">刪除</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr id="noDataRow">
+                        <td colspan="5" style="text-align:center;">無資料</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr class="add-row">
+                    <td style="text-align: center; font-weight: bold;">
+                        <select id="new_IT_CODE" class="form-control form-control-sm">
+                            <option value="">請選擇</option>
+                            <option value="TK106">TK106</option>
+                            <option value="TK107">TK107</option>
+                        </select>
+                    </td>
+                    <td>
+                        <span id="new_IT_NAME">-</span>
+                    </td>
+                    <td>
+                        <input type="text" id="new_PRE_EDT" class="form-control form-control-sm dt" placeholder="YYYMMDD" />
+                    </td>
+                    <td>
+                        <input type="text" id="new_REL_EDT" class="form-control form-control-sm dt" placeholder="YYYMMDD" />
+                    </td>
+                    <td style="text-align: center;">
+                        <button type="button" class="btn btn-success btn-sm" onclick="addRow();">新增</button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <table class="table">
+        <tr>
+            <td>
+                <button type="button" onclick="top.closeEditDialog();" class="btn btn-secondary btn-lg">關閉</button>
+            </td>
+        </tr>
+    </table>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+    <script>
+        var TD_CODE = '@Model.TD_CODE';
+
+        $(document).ready(function () {
+            initDatePicker();
+
+            // IT_CODE 選擇變更時顯示名稱
+            $('#new_IT_CODE').change(function () {
+                var code = $(this).val();
+                var name = '';
+                switch (code) {
+                    case 'TK106': name = '開工日期'; break;
+                    case 'TK107': name = '完工日期'; break;
+                    default: name = '-'; break;
+                }
+                $('#new_IT_NAME').text(name);
+            });
+        });
+
+        function initDatePicker() {
+            $(".dt").datepickerTW({
+                changeYear: true,
+                changeMonth: true,
+                yearRange: '80:150',
+                dateFormat: 'yyymmdd'
+            });
+        }
+
+        function showMessage(type, message) {
+            var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            var html = '<div class="alert ' + alertClass + ' alert-dismissible" role="alert">' +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                message + '</div>';
+            $('#messageDiv').html(html);
+            setTimeout(function () {
+                $('#messageDiv').html('');
+            }, 3000);
+        }
+
+        // 新增資料
+        function addRow() {
+            var itCode = $('#new_IT_CODE').val();
+            var preEdt = $('#new_PRE_EDT').val();
+            var relEdt = $('#new_REL_EDT').val();
+
+            if (!itCode) {
+                showMessage('error', '請選擇項目代碼');
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("EditAdd", "TDE0051")',
+                type: 'POST',
+                data: {
+                    TD_CODE: TD_CODE,
+                    IT_CODE: itCode,
+                    PRE_EDT: preEdt || null,
+                    REL_EDT: relEdt || null
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                        location.reload();
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function (e) {
+                    showMessage('error', '新增失敗：' + e.statusText);
+                }
+            });
+        }
+
+        // 更新資料
+        function updateRow(btn) {
+            var row = $(btn).closest('tr');
+            var itCode = row.data('itcode');
+            var preEdt = row.find('[data-field="PRE_EDT"]').val();
+            var relEdt = row.find('[data-field="REL_EDT"]').val();
+
+            $.ajax({
+                url: '@Url.Action("EditUpdate", "TDE0051")',
+                type: 'POST',
+                data: {
+                    TD_CODE: TD_CODE,
+                    IT_CODE: itCode,
+                    PRE_EDT: preEdt || null,
+                    REL_EDT: relEdt || null
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function () {
+                    showMessage('error', '更新失敗');
+                }
+            });
+        }
+
+        // 刪除資料
+        function deleteRow(btn) {
+            if (!confirm('確定要刪除此筆資料嗎？')) {
+                return;
+            }
+
+            var row = $(btn).closest('tr');
+            var itCode = row.data('itcode');
+
+            $.ajax({
+                url: '@Url.Action("EditDelete", "TDE0051")',
+                type: 'POST',
+                data: {
+                    TD_CODE: TD_CODE,
+                    IT_CODE: itCode
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                        row.remove();
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function () {
+                    showMessage('error', '刪除失敗');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

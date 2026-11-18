@@ -1,0 +1,2612 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\Microsoft.Net.Compilers.2.7.0\build\Microsoft.Net.Compilers.props" Condition="Exists('packages\Microsoft.Net.Compilers.2.7.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E7B7E2AD-D42A-4F55-AC84-ED44A73EF18E}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WCals</RootNamespace>
+    <AssemblyName>WCals</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <TargetFrameworkProfile />
+    <Use64BitIISExpress />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AntiXssLibrary, Version=4.3.0.0, Culture=neutral, PublicKeyToken=d127efab8a9c114f, processorArchitecture=MSIL">
+      <HintPath>packages\AntiXSS.4.3.0\lib\net40\AntiXssLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Cells, Version=19.11.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Aspose.Cells.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Words, Version=19.11.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Aspose.Words.dll</HintPath>
+    </Reference>
+    <Reference Include="CpcClass, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\CpcClass.dll</HintPath>
+    </Reference>
+    <Reference Include="CPCObj, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\CPCObj.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlSanitizationLibrary, Version=4.3.0.0, Culture=neutral, PublicKeyToken=d127efab8a9c114f, processorArchitecture=MSIL">
+      <HintPath>packages\AntiXSS.4.3.0\lib\net40\HtmlSanitizationLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=9.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.9.0.1\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Syncfusion.Compression.Base, Version=16.1450.0.24, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\Syncfusion.Compression.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.DocIO.Base, Version=16.1450.0.24, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\Syncfusion.DocIO.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.DocToPdfConverter.Base, Version=16.1450.0.24, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\Syncfusion.DocToPdfConverter.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.ExcelChartToImageConverter.Web, Version=16.1450.0.24, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\Syncfusion.ExcelChartToImageConverter.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.ExcelChartToImageConverter.WPF, Version=16.1450.0.24, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\Syncfusion.ExcelChartToImageConverter.WPF.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.ExcelToPDFConverter.Base, Version=16.1450.0.24, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\Syncfusion.ExcelToPDFConverter.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Pdf.Base, Version=16.1450.0.24, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\Syncfusion.Pdf.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.XlsIO.Base, Version=16.1450.0.24, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\Syncfusion.XlsIO.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Pipelines, Version=9.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.IO.Pipelines.9.0.1\lib\net462\System.IO.Pipelines.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Text.Encodings.Web, Version=9.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Text.Encodings.Web.9.0.1\lib\net462\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=9.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Text.Json.9.0.1\lib\net462\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Cors, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.Cors.5.2.7\lib\net45\System.Web.Cors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebPages.3.3.0\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.Cors, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebApi.Cors.5.2.7\lib\net45\System.Web.Http.Cors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebApi.WebHost.5.2.7\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.Mvc.5.3.0\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.Razor.3.3.0\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebPages.3.3.0\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebPages.3.3.0\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebPages.3.3.0\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Web.Infrastructure">
+      <HintPath>packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- 3.3.4：TDE0070 用戶接管普及率及汙水處理率統計 的 Excel 報表範本(取自舊系統 CMETMS\Template) -->
+    <Content Include="Template\TDE0070.xlsx" />
+    <Content Include="Template\TDE0070_104.xlsx" />
+    <Content Include="Aspose\Aspose.Cells.dll" />
+    <Content Include="Aspose\Aspose.HTML.dll" />
+    <Content Include="Aspose\Aspose.Page.dll" />
+    <Content Include="Aspose\Aspose.PDF.dll" />
+    <Content Include="Aspose\Aspose.Slides.dll" />
+    <Content Include="Aspose\Aspose.Words.dll" />
+    <Content Include="bin\Aspose.Cells.dll" />
+    <Content Include="bin\Aspose.Words.dll" />
+    <Content Include="bin\CpcClass.dll" />
+    <Content Include="bin\CPCObj.dll" />
+    <Content Include="bin\EntityFramework.dll" />
+    <Content Include="bin\EntityFramework.SqlServer.dll" />
+    <Content Include="bin\Microsoft.Web.Infrastructure.dll" />
+    <Content Include="bin\Newtonsoft.Json.dll" />
+    <Content Include="bin\PagedList.dll" />
+    <Content Include="bin\PagedList.Mvc.dll" />
+    <Content Include="bin\Syncfusion.Compression.Base.dll" />
+    <Content Include="bin\Syncfusion.DocIO.Base.dll" />
+    <Content Include="bin\Syncfusion.DocToPdfConverter.Base.dll" />
+    <Content Include="bin\Syncfusion.ExcelChartToImageConverter.Web.dll" />
+    <Content Include="bin\Syncfusion.ExcelChartToImageConverter.WPF.dll" />
+    <Content Include="bin\Syncfusion.ExcelToPDFConverter.Base.dll" />
+    <Content Include="bin\Syncfusion.Pdf.Base.dll" />
+    <Content Include="bin\Syncfusion.XlsIO.Base.dll" />
+    <Content Include="bin\System.Net.Http.Formatting.dll" />
+    <Content Include="bin\System.Web.Cors.dll" />
+    <Content Include="bin\System.Web.Helpers.dll" />
+    <Content Include="bin\System.Web.Http.Cors.dll" />
+    <Content Include="bin\System.Web.Http.dll" />
+    <Content Include="bin\System.Web.Http.WebHost.dll" />
+    <Content Include="bin\System.Web.Mvc.dll" />
+    <Content Include="bin\System.Web.Razor.dll" />
+    <Content Include="bin\System.Web.WebPages.Deployment.dll" />
+    <Content Include="bin\System.Web.WebPages.dll" />
+    <Content Include="bin\System.Web.WebPages.Razor.dll" />
+    <Content Include="Aspose\Aspose.Total.lic" />
+    <None Include="Connected Services\CpaEna\configuration.svcinfo" />
+    <None Include="Connected Services\CpaEna\configuration91.svcinfo" />
+    <None Include="Connected Services\CpaEna\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference1.cs</LastGenOutput>
+    </None>
+    <Content Include="Content\bootstrap-datetimepicker.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\glyphicons.css" />
+    <Content Include="Content\bs3-compat.css" />
+    <Content Include="Content\bootstrap-nav-panel.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\tom-select.bootstrap5.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\fonts\glyphicons-halflings-regular.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\img\body_bg.png" />
+    <Content Include="Content\img\serialrules.png" />
+    <Content Include="Content\jquery-ui.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\PagedList.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Site.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\themes\base\accordion.css" />
+    <Content Include="Content\themes\base\all.css" />
+    <Content Include="Content\themes\base\autocomplete.css" />
+    <Content Include="Content\themes\base\base.css" />
+    <Content Include="Content\themes\base\button.css" />
+    <Content Include="Content\themes\base\core.css" />
+    <Content Include="Content\themes\base\datepicker.css" />
+    <Content Include="Content\themes\base\dialog.css" />
+    <Content Include="Content\themes\base\draggable.css" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_d0e5f5_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_85_dfeffc_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_inset-hard_100_f5f8f9_1x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_inset-hard_100_fcfdfd_1x100.png" />
+    <Content Include="Content\themes\base\images\ui-icons_217bc0_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_444444_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_469bdd_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_555555_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_6da8d5_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_777620_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_777777_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cc0000_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_d8e7f3_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_f9bd01_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Content\themes\base\jquery-ui.css" />
+    <Content Include="Content\themes\base\jquery-ui.min.css" />
+    <Content Include="Content\themes\base\jquery-ui.theme.css" />
+    <Content Include="Content\themes\base\menu.css" />
+    <Content Include="Content\themes\base\progressbar.css" />
+    <Content Include="Content\themes\base\resizable.css" />
+    <Content Include="Content\themes\base\selectable.css" />
+    <Content Include="Content\themes\base\selectmenu.css" />
+    <Content Include="Content\themes\base\slider.css" />
+    <Content Include="Content\themes\base\sortable.css" />
+    <Content Include="Content\themes\base\spinner.css" />
+    <Content Include="Content\themes\base\tabs.css" />
+    <Content Include="Content\themes\base\theme.css" />
+    <Content Include="Content\themes\base\tooltip.css" />
+    <Content Include="Content\themes\jstree-default\32px.png" />
+    <Content Include="Content\themes\jstree-default\40px.png" />
+    <Content Include="Content\themes\jstree-default\style.css" />
+    <Content Include="Content\themes\jstree-default\style.min.css" />
+    <Content Include="Content\themes\jstree-default\throbber.gif" />
+    <Content Include="Content\views\common.css" />
+    <Content Include="Content\views\fuzzy-input-search.css" />
+    <Content Include="Content\views\group.css" />
+    <Content Include="Content\views\loading-spinner.css" />
+    <Content Include="Content\views\report.css" />
+    <Content Include="Content\views\tree-view.css" />
+    <Content Include="Content\views\user.css" />
+    <Content Include="Error404.html" />
+    <Content Include="font-awesome\css\font-awesome.css" />
+    <Content Include="font-awesome\css\font-awesome.min.css" />
+    <Content Include="font-awesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Models\CMBASEModels\CMBASE.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CMBASE.edmx</DependentUpon>
+      <LastGenOutput>CMBASE.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\CMBASEModels\CMBASE.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CMBASE.edmx</DependentUpon>
+      <LastGenOutput>CMBASE.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\CMEDOCModels\CMEDOC.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CMEDOC.edmx</DependentUpon>
+      <LastGenOutput>CMEDOC.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\CMEDOCModels\CMEDOC.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CMEDOC.edmx</DependentUpon>
+      <LastGenOutput>CMEDOC.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\CMEMQAModels\CMEMQA.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CMEMQA.edmx</DependentUpon>
+      <LastGenOutput>CMEMQA.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\CMEMQAModels\CMEMQA.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CMEMQA.edmx</DependentUpon>
+      <LastGenOutput>CMEMQA.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\CMEPMSModels\CMEPMS.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CMEPMS.edmx</DependentUpon>
+      <LastGenOutput>CMEPMS.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\CMEPMSModels\CMEPMS.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CMEPMS.edmx</DependentUpon>
+      <LastGenOutput>CMEPMS.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\CMETMSModels\CMETMS.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CMETMS.edmx</DependentUpon>
+      <LastGenOutput>CMETMS.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\CMETMSModels\CMETMS.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CMETMS.edmx</DependentUpon>
+      <LastGenOutput>CMETMS.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\CMPSGSModels\CMPSGS.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CMPSGS.edmx</DependentUpon>
+      <LastGenOutput>CMPSGS.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\CMPSGSModels\CMPSGS.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CMPSGS.edmx</DependentUpon>
+      <LastGenOutput>CMPSGS.cs</LastGenOutput>
+    </Content>
+    <Content Include="Scripts\ajaxfileupload.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-tw.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker_zh-tw.js" />
+    <Content Include="Scripts\bootstrap-multiselect.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\esm\popper-utils.js" />
+    <Content Include="Scripts\esm\popper-utils.min.js" />
+    <Content Include="Scripts\esm\popper.js" />
+    <Content Include="Scripts\esm\popper.min.js" />
+    <Content Include="Scripts\esm\popper.min.js.map" />
+    <Content Include="Scripts\esm\popper.js.map" />
+    <Content Include="Scripts\esm\popper-utils.min.js.map" />
+    <Content Include="Scripts\esm\popper-utils.js.map" />
+    <Content Include="font-awesome\fonts\fontawesome-webfont.eot" />
+    <Content Include="font-awesome\fonts\fontawesome-webfont.ttf" />
+    <Content Include="font-awesome\fonts\fontawesome-webfont.woff" />
+    <Content Include="font-awesome\fonts\FontAwesome.otf" />
+    <Content Include="font-awesome\less\bordered-pulled.less" />
+    <Content Include="font-awesome\less\core.less" />
+    <Content Include="font-awesome\less\fixed-width.less" />
+    <Content Include="font-awesome\less\font-awesome.less" />
+    <Content Include="font-awesome\less\icons.less" />
+    <Content Include="font-awesome\less\larger.less" />
+    <Content Include="font-awesome\less\list.less" />
+    <Content Include="font-awesome\less\mixins.less" />
+    <Content Include="font-awesome\less\path.less" />
+    <Content Include="font-awesome\less\rotated-flipped.less" />
+    <Content Include="font-awesome\less\spinning.less" />
+    <Content Include="font-awesome\less\stacked.less" />
+    <Content Include="font-awesome\less\variables.less" />
+    <Content Include="font-awesome\scss\font-awesome.scss" />
+    <Content Include="font-awesome\scss\_bordered-pulled.scss" />
+    <Content Include="font-awesome\scss\_core.scss" />
+    <Content Include="font-awesome\scss\_fixed-width.scss" />
+    <Content Include="font-awesome\scss\_icons.scss" />
+    <Content Include="font-awesome\scss\_larger.scss" />
+    <Content Include="font-awesome\scss\_list.scss" />
+    <Content Include="font-awesome\scss\_mixins.scss" />
+    <Content Include="font-awesome\scss\_path.scss" />
+    <Content Include="font-awesome\scss\_rotated-flipped.scss" />
+    <Content Include="font-awesome\scss\_spinning.scss" />
+    <Content Include="font-awesome\scss\_stacked.scss" />
+    <Content Include="font-awesome\scss\_variables.scss" />
+    <Content Include="bin\Aspose.Total.lic">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <EntityDeploy Include="Models\CMBASEModels\CMBASE.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>CMBASE.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\CMBASEModels\CMBASE.edmx.diagram">
+      <DependentUpon>CMBASE.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="Models\CMEDOCModels\CMEDOC.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>CMEDOC.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\CMEDOCModels\CMEDOC.edmx.diagram">
+      <DependentUpon>CMEDOC.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="Models\CMEPMSModels\CMEPMS.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>CMEPMS.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\CMEPMSModels\CMEPMS.edmx.diagram">
+      <DependentUpon>CMEPMS.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="Models\CMETMSModels\CMETMS.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>CMETMS.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\CMETMSModels\CMETMS.edmx.diagram">
+      <DependentUpon>CMETMS.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="Models\CMPSGSModels\CMPSGS.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>CMPSGS.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\CMPSGSModels\CMPSGS.edmx.diagram">
+      <DependentUpon>CMPSGS.edmx</DependentUpon>
+    </Content>
+    <None Include="Connected Services\CpaEna\CpaEna_WS1.wsdl" />
+    <Content Include="Connected Services\CpaEna\WCals.CpaEna.xGet_EybKPyxResponse.datasource" />
+    <Content Include="Connected Services\CpaEna\WCals.CpaEna.xGet_EybPTxxResponse.datasource" />
+    <Content Include="Connected Services\CpaEna\WCals.CpaEna.xGet_EybPTyxResponse.datasource" />
+    <Content Include="Connected Services\CpaEna\WCals.CpaEna.xGet_EybPTyxV2Response.datasource" />
+    <Content Include="Connected Services\CpaEna\WCals.CpaEna.xGet_EybPTyyResponse.datasource" />
+    <Content Include="Connected Services\CpaEna\WCals.CpaEna.xGet_EybPTyyV2Response.datasource" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.eot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\fonts\glyphicons-halflings-regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\fonts\glyphicons-halflings-regular.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\fonts\glyphicons-halflings-regular.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <EntityDeploy Include="Models\CMEMQAModels\CMEMQA.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>CMEMQA.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\CMEMQAModels\CMEMQA.edmx.diagram">
+      <DependentUpon>CMEMQA.edmx</DependentUpon>
+    </Content>
+    <Content Include="connections.config" />
+    <None Include="Properties\PublishProfiles\WCals.pubxml">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Scripts\Feedback\create.js" />
+    <Content Include="Scripts\Feedback\details.js" />
+    <Content Include="Scripts\JavaScript.js" />
+    <Content Include="Scripts\jquery.datepick.js" />
+    <Content Include="Scripts\jquery.datepick.tw.js" />
+    <Content Include="Scripts\jstree.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\jstreetable.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\moment-taiwan.js" />
+    <Content Include="Scripts\MyDatepickerJ.js" />
+    <Content Include="Scripts\tom-select.complete.min.js" />
+    <Content Include="Scripts\News\edit.js" />
+    <Content Include="Scripts\News\list.js" />
+    <Content Include="Scripts\plugins\bootstrap-fileinput\fileinput.js" />
+    <Content Include="Scripts\plugins\bootstrap-fileinput\fileinput.min.css" />
+    <Content Include="Scripts\plugins\bootstrap-fileinput\icon.mini.css" />
+    <Content Include="Scripts\plugins\bootstrap-fileinput\zh-TW.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\plugins\flot\excanvas.min.js" />
+    <Content Include="Scripts\plugins\flot\flot-data.js" />
+    <Content Include="Scripts\plugins\flot\jquery.flot.js" />
+    <Content Include="Scripts\plugins\flot\jquery.flot.pie.js" />
+    <Content Include="Scripts\plugins\flot\jquery.flot.resize.js" />
+    <Content Include="Scripts\plugins\flot\jquery.flot.tooltip.min.js" />
+    <Content Include="Scripts\plugins\morris\morris-data.js" />
+    <Content Include="Scripts\plugins\morris\morris.js" />
+    <Content Include="Scripts\plugins\morris\morris.min.js" />
+    <Content Include="Scripts\plugins\morris\raphael.min.js" />
+    <Content Include="Scripts\RainReport\Index.js" />
+    <Content Include="Scripts\RainReport\State10_2.js" />
+    <Content Include="Scripts\RainReport\State12_2.js" />
+    <Content Include="Scripts\RainReport\State2_2.js" />
+    <Content Include="Scripts\RainReport\State6_2.js" />
+    <Content Include="Scripts\RainReport\State9_2.js" />
+    <Content Include="Scripts\Report\State1.js" />
+    <Content Include="Scripts\Report\State10.js" />
+    <Content Include="Scripts\Report\State11.js" />
+    <Content Include="Scripts\Report\State12.js" />
+    <Content Include="Scripts\Report\State2.js" />
+    <Content Include="Scripts\Report\State3.js" />
+    <Content Include="Scripts\Report\State4.js" />
+    <Content Include="Scripts\Report\State5.js" />
+    <Content Include="Scripts\Report\State6.js" />
+    <Content Include="Scripts\Report\State7.js" />
+    <Content Include="Scripts\Report\State8.js" />
+    <Content Include="Scripts\Report\State9.js" />
+    <Content Include="Scripts\SGE0000.js" />
+    <Content Include="Scripts\SYS0030\index.js" />
+    <Content Include="Scripts\SYS0030\info-edit.js" />
+    <Content Include="Scripts\SYS0030\manager-edit.js" />
+    <Content Include="Scripts\umd\popper-utils.js" />
+    <Content Include="Scripts\umd\popper-utils.min.js" />
+    <Content Include="Scripts\umd\popper.js" />
+    <Content Include="Scripts\umd\popper.min.js" />
+    <Content Include="Scripts\User\city-switcher.js" />
+    <Content Include="Scripts\User\create-handler.js" />
+    <Content Include="Scripts\User\tree-view.js" />
+    <Content Include="Scripts\utils\file-utils.js" />
+    <Content Include="Scripts\utils\fuzzy-input-search.js" />
+    <Content Include="Scripts\utils\menu-click.js" />
+    <Content Include="Scripts\utils\nav-adjust.js" />
+    <Content Include="Scripts\utils\number-utils.js" />
+    <Content Include="Scripts\validator.min.js" />
+    <Content Include="Templates\PJV0010_04_STT.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Temp\.gitignore" />
+    <Content Include="Views\Home\Logon.cshtml" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Scripts\umd\popper.min.js.map" />
+    <Content Include="Scripts\umd\popper.js.map" />
+    <Content Include="Scripts\umd\popper-utils.min.js.map" />
+    <Content Include="Scripts\umd\popper-utils.js.map" />
+    <Content Include="Scripts\README.md" />
+    <Content Include="Scripts\popper.min.js.map" />
+    <Content Include="Scripts\popper.js.map" />
+    <Content Include="Scripts\popper-utils.min.js.map" />
+    <Content Include="Scripts\popper-utils.js.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="Filters\ReportPrintExceptionFilter.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="classes\john\util.cs" />
+    <Compile Include="classes\john\xmlutil.cs" />
+    <Compile Include="Connected Services\CpaEna\Reference.cs" />
+    <Compile Include="Connected Services\CpaEna\Reference1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\0.1.1-0.1.4\PictureWordController.cs" />
+    <Compile Include="Controllers\0.1.1-0.1.4\RainReportController.cs" />
+    <Compile Include="Controllers\0.1.1-0.1.4\ReportController.cs" />
+    <Compile Include="Controllers\1.1.1-1.1.4\BranchPlanMaintenController.cs" />
+    <Compile Include="Controllers\1.1.1-1.1.4\WorkPlanMaintenController.cs" />
+    <Compile Include="Controllers\2.2.1-2.2.5\PlanController.cs" />
+    <Compile Include="Controllers\2.2.1-2.2.5\ProposalRequestController.cs" />
+    <Compile Include="Controllers\3.1.4\TDTextController.cs" />
+    <Compile Include="Controllers\99.1.1-99.1.5\AuthController.cs" />
+    <Compile Include="Controllers\99.1.1-99.1.5\DeptController.cs" />
+    <Compile Include="Controllers\99.1.1-99.1.5\DpurAuthController.cs" />
+    <Compile Include="Controllers\99.1.1-99.1.5\EmployeeController.cs" />
+    <Compile Include="Controllers\99.1.1-99.1.5\GroupController.cs" />
+    <Compile Include="Controllers\99.1.1-99.1.5\UserController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\FeedbackController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LogActionAttribute .cs" />
+    <Compile Include="Controllers\LogController.cs" />
+    <Compile Include="Controllers\MemberController.cs" />
+    <Compile Include="Controllers\NewsController.cs" />
+    <Compile Include="Controllers\NSPMIS\ADDFUNCController.cs" />
+    <Compile Include="Controllers\NSPMIS\PJE0010Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\PJE0011Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\PJE0020Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\PJE0030Controller.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Controllers\NSPMIS\PJE0040Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\PJE0050Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\PJEController.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Controllers\NSPMIS\SGE0000Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\SGE0010Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\SGE0060Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\SGEController.cs" />
+    <Compile Include="Controllers\NSPMIS\SUG0000Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\SUG0010Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\SYS0030AController.cs" />
+    <Compile Include="Controllers\NSPMIS\SYS0030Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\TDE0020Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\TDE0040Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\TDE0042Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\TDE0043Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\TDE0045Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\TDE0046Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\TDE0047Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\TDE0048Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\TDE0049Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\TDE0051Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\TDE0070Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\TDE0110Controller.cs" />
+    <Compile Include="Controllers\NSPMIS\TDE0130Controller.cs" />
+    <Compile Include="Controllers\UserComponentController.cs" />
+    <Compile Include="Controllers\WSMC0701Controller.cs" />
+    <Compile Include="Controllers\WSMC0702Controller.cs" />
+    <Compile Include="Controllers\WSMC0706Controller.cs" />
+    <Compile Include="Controllers\WSMC0709Controller.cs" />
+    <Compile Include="Exceptions\BusinessException.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="ExtentionMethods\ExtensionMethods.cs" />
+    <Compile Include="Helpers\AntiSpamHelper.cs" />
+    <Compile Include="Helpers\EnvHelper.cs" />
+    <Compile Include="Helpers\PriceAnalysisCalculate.cs" />
+    <Compile Include="Helpers\RainReport_Source.cs" />
+    <Compile Include="Helpers\Report_Source.cs" />
+    <Compile Include="Helpers\TenderHelper.cs" />
+    <Compile Include="Helpers\Tools.cs" />
+    <Compile Include="Helpers\Utilities.cs" />
+    <Compile Include="Helpers\WebSiteHelper.cs" />
+    <Compile Include="Models\CMBASEModels\AuthViewModel.cs" />
+    <Compile Include="Models\CMBASEModels\ATWLOGR.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\CBWEMAL.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\CBWSMSR.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\CMBASE.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMBASE.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\CMBASE.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\CMBASE.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMBASE.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\DSMLIST.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\dtproperties.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\MACPOST.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\OGCDEPT.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\OGCDPUR.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\OGCORIGI.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\OGCTITLE.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\OGCUATH.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\OGCUSER.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\OTCDEPT.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\OTCDPUR.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\OTCUSER.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SECCITY.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMCAUTH.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMCCODE.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMCFILETMP.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMCLOGS.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMCMENU2.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMCNEWS.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMCNEWSCODE.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMCNEWSDOC.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMCPOST.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMCPOSTN.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMCPROG.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMCROAD.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMCSYSC.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMV_SMCCITY.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\SMV_SMCTOWN.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\UMCLOGR.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMBASEModels\UMCUSER_TEMP.cs">
+      <DependentUpon>CMBASE.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEDOCModels\CMEDOC.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMEDOC.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEDOCModels\CMEDOC.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMEDOC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEDOCModels\CMEDOC.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMEDOC.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEDOCModels\TDDDCOB.cs">
+      <DependentUpon>CMEDOC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEDOCModels\TDV_TDDDCOB.cs">
+      <DependentUpon>CMEDOC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEMQAModels\CMEMQA.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMEMQA.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEMQAModels\CMEMQA.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMEMQA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEMQAModels\CMEMQA.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMEMQA.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEMQAModels\MQAFILE.cs">
+      <DependentUpon>CMEMQA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEMQAModels\MQAFORM.cs">
+      <DependentUpon>CMEMQA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEMQAModels\MQAMAIN.cs">
+      <DependentUpon>CMEMQA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEMQAModels\SMCCODE_CMEMQA.cs">
+      <DependentUpon>CMEMQA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\ATWLOGR_CMEPMS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\B1DtBack.cs" />
+    <Compile Include="Models\CMEPMSModels\B1DtFooter.cs" />
+    <Compile Include="Models\CMEPMSModels\BOTGOVER.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\BOTPIPEB.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\BOTPIPEH.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\BOTRUST.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CMEPMS.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMEPMS.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CMEPMS.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CMEPMS.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMEPMS.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CRDMNDS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CRWFDSP.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CTDI.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CTDITFD.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\ctditfd_49_20110708.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CTDITFD_BAK.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CTDMNDL.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CTDMNDS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CTDMNDSmergeTDV_TDDCFTS.cs" />
+    <Compile Include="Models\CMEPMSModels\CTDMNDS_BAK.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CTDUPRC.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\ctduprc_20110708.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CTHITFD.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CTHMNDS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\CTWMNDS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\DtBackViewModel.cs" />
+    <Compile Include="Models\CMEPMSModels\dtproperties_CMEPMS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\fd22.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\FLOWLOG.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\FREFORM.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\FRELIST.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\FUMHIST.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\fund.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\FUNFILE.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\FUNFORM.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\FUNLIST.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\MAinDataViewModel.cs" />
+    <Compile Include="Models\CMEPMSModels\PBMLIST_CMEPMS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PERSONB.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PERSONH.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PJDAUTH.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PJDCATY_CMEPMS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PJDCTSP.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PJDFACT.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PJDFDCR.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PJDFDDS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PJDUPDJ.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PJHCATY.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PJHFACT.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PJMFORM_BAK.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PJMFORM_CMEPMS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PJV_PJDCATY.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PJV_PJDPCAT.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\PJV_PJMFORM.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\RAINFORM.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\Report10ViewModel.cs" />
+    <Compile Include="Models\CMEPMSModels\RPMFORM_CMEPMS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\RTDMNDS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\RTDSTRF.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\RTMFORM.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\S3.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\Sheet1.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\SHT1.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\SMCCODE_CMEPMS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\SMCPROG_CMEPMS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\SMCYACC.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\SMWSDTP_CMEPMS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\TDDALOT.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\TDDSTCF_CMEPMS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\TDDSTCF_INSERT_CLOMNS.cs" />
+    <Compile Include="Models\CMEPMSModels\TDDSTCF_TEST.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\TDDSTLF.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\TDDSTRF_CMEPMS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\TDV_CTDMNDS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\TDV_TDDCFLS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\TDV_TDDCFTS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\TDV_TDHCFTS.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\TDWACLG.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\temp20120213_.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\tmp20110413.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\UMCMENU.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\UMCPROG.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\UMCUATH.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\UMCWKGP.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMEPMSModels\UMWUSER.cs">
+      <DependentUpon>CMEPMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\ACV_TDMBASC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\BAS_SMCCACC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\BAS_SMCFITC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\CCDMCNT.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\CCEMCNT.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\CCV_CCDMCNT.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\checkv.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\CHECK_.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\CHK.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\CMETMS.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMETMS.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\CMETMS.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\CMETMS.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMETMS.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\CPMFORM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\CRV_DAMREFN.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\CTV_DAMREFN.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\DGS_RTDXFEE.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\docTDs.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\dtproperties_CMETMS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\dt_getpropertiesbyid_Result.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\dt_getpropertiesbyid_u_Result.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\FCDJOUR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\FCWPOOL.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\FCWTEMP.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\FRPFORM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\FRPFORM2.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\GRNDATA.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\GRNUNIT.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\MECHANIC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\MMWPOOL.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\OBV_OBWDESC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\o_TDDACPR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\PJCFILE.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\PJCFORM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\PJCSYST.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\PMS_CTDMNDS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\PMS_CTWMNDS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\PMS_PJDUPDJ.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\PMS_PJMCATY.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\PMS_PJMFORM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\QRDCDFN.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\QRDCDFN_T.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\QRDCDPN.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\QRDCDQN.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\QRDPSND.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\QRMVLST.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\QRV_CRMYRFD.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\QRV_CTMYRFD.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\QRV_TDMFSIM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\QRV_TDMINFO.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\QRV_TDMSCHD.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\RPFIELD.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\RPMFORM_CMETMS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\SGS_CATY_CODE.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\SGS_PJMFORM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\SGS_TDDFITD.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\SGS_TDDTITD.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\SGS_TDMFORM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\SMCCODE_CMETMS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\SMCGNUM_CMETMS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\SMCPROG_CMETMS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\SMWSDTP_CMETMS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\SP_DCV0010_PJDYRF_Result.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\SP_DCV0010_TDDELY_Result.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\SP_DCV0010_TDDSTW_Result.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\SP_TDE0050_TDGWBM_Result.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDACPR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDARGR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDBDCM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDBDRC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDBGAC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDBGDS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDBGLS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDBGRC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDBUGR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDCOSR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDCOST.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDDRCR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDDSCD.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDECCD.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDECCM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDECCR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDECRF.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDECWT.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDEXTR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDFDCT.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDFDIS_CMETMS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDFDMD.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDFDRC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDFDSV.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDFSFC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDFSRD.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDMCM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDMSCD.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDMUSR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDPCOS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDPEPL.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDPICS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDPMCM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDPMUSR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDPPAR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDPPAY.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDREVF.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDSDWB.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDSDWB_BAK.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDSEVL.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDSPRS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDSTCF_CMETMS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDSTRF_CMETMS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDSTWR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDSUPM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDVALS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDWBMS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDWKLS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDWORK.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDWPIC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDWQTY.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDWRBK.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDWRIM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDDWRTR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDMADMC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDMADMU.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDMCNSM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDMFEXE.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDMFORM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDMFORM_BAK.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDMRAFILE.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDMRANOTE.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDMSWFILE.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDMSWNOTE.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_DAMFORM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDACPR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDBGRC_C.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDBIFO.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDCNDL.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDCNFD.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDCNSD.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDCOSR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDCOST.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDECCM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDECCR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDFSRC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDFUND.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDMSCD.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDMSCD_Lite.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDPMUSR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDPPAR.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDPPAY.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDSPRS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDWLST.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDWORK.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDDWPIC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDHWPRC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDMAUTH.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDMBASC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDMDATA.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDMFORM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDMFORM_P.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDMSDCT.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDMSDCT_20100408.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TDMSGSC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_TOCPAPMS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDV_YRTLIST.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TDWLOGS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\temp20111116.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\temp20120321.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\temp20130221.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\test.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\tmp20111216.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TMS_TDCCATY.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\TMS_TDCIPJC.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\ttmp20120321.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\tttp20120321.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\VW_PJCFORM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\VW_PJCSYST.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\VW_TDDBGLS.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMETMSModels\VW_TDMforPJM.cs">
+      <DependentUpon>CMETMS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\APDBGLS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\APDFILE.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\APDFUND.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\APDLOCP.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\APDPICS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\APDPROC.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\APDWQTY.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\APMADMC.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\APMFORM.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\CMPSGS.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMPSGS.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\CMPSGS.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\CMPSGS.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CMPSGS.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\DADFILE.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\DADFUND.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\DADLOCP.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\DADSDWB.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\DADTCOD.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\DADWQTY.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\DAMFORM.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\dtproperties_CMPSGS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\FundList.cs" />
+    <Compile Include="Models\CMPSGSModels\ItemList.cs" />
+    <Compile Include="Models\CMPSGSModels\Medium_Long_PlanViewModel.cs" />
+    <Compile Include="Models\CMPSGSModels\PBMLIST_CMPSGS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJCFLST.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJDCATY_CMPSGS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJDCMCT.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJDDOCS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJDFDIS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJDFILE.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJDFUND.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJDMDRC.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJDSDWB.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJDSUBC.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJDSUPD.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJDSYRC.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJDWKCP.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJHFDIS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJMFORM_CMPSGS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJOFDIS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\PJWFILE.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\SMCCODE_CMPSGS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\SMCGNUM_CMPSGS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\SMCPROG_CMPSGS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\SMWSDWB_CMPSGS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\T.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\TDDCTFD.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\TDDFDIS_CMPSGS.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\TDDFILE.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\TDDSDWB.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\TDMFORM.cs">
+      <DependentUpon>CMPSGS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMPSGSModels\TownList.cs" />
+    <Compile Include="Models\CMBASEModels\DeptViewModel.cs" />
+    <Compile Include="Models\CMBASEModels\GroupChooseViewModel.cs" />
+    <Compile Include="Models\CMBASEModels\MenuViewModel.cs" />
+    <Compile Include="Models\PJDCATYOGCDEPTOGCUSERVIEWMODEL.cs" />
+    <Compile Include="ViewModels\FeedbackViewModel.cs" />
+    <Compile Include="ViewModels\LogViewModel.cs" />
+    <Compile Include="ViewModels\NewModels\PJEModel.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Models\ProposalRequestViewModel.cs" />
+    <Compile Include="Models\ReportViewModel.cs" />
+    <Compile Include="Models\State10ViewModel.cs" />
+    <Compile Include="Models\CMBASEModels\UserViewModel.cs" />
+    <Compile Include="Models\YearCheckboxViewModel.cs" />
+    <Compile Include="ViewModels\ADAccountViewModel.cs" />
+    <Compile Include="ViewModels\AnnounceListViewModel.cs" />
+    <Compile Include="ViewModels\AutoNumViewModel.cs" />
+    <Compile Include="ViewModels\DeptUsersViewModel.cs" />
+    <Compile Include="ViewModels\NewModels\SGEModels.cs" />
+    <Compile Include="ViewModels\NewModels\SYSModels.cs" />
+    <Compile Include="ViewModels\NewModels\TDEModel.cs" />
+    <Compile Include="ViewModels\NewModels\SUGModel.cs" />
+    <Compile Include="ViewModels\NewsViewModel.cs" />
+    <Compile Include="ViewModels\UsrComponentSearchViewModel.cs" />
+    <Compile Include="ViewModels\UsrComponentListViewModel.cs" />
+    <Compile Include="ViewModels\LogSearchViewModel.cs" />
+    <Compile Include="ViewModels\AnnounceSearchViewModel.cs" />
+    <Compile Include="ViewModels\OGCDPUREditModel.cs" />
+    <Compile Include="ViewModels\OGCUSEREditViewModel.cs" />
+    <Compile Include="ViewModels\OGCUSERValidateADAttribute.cs" />
+    <Compile Include="ViewModels\OGCUSERItemViewModel.cs" />
+    <Compile Include="ViewModels\OGCUSERValidateIDAttribute.cs" />
+    <Compile Include="ViewModels\OGCUSERListViewModel.cs" />
+    <Compile Include="ViewModels\OGCUSERSearchViewModel.cs" />
+    <Compile Include="ViewModels\UsrIdAdValidateAttribute.cs" />
+    <Compile Include="ViewModels\UsrIdValidateAttribute.cs" />
+    <Compile Include="ViewModels\ValidateSYRAttribute.cs" />
+    <Compile Include="ViewModels\ManageViewModel.cs" />
+    <Compile Include="ViewModels\OGCDEPTEditViewModel.cs" />
+    <Compile Include="ViewModels\OGCDEPTItemViewModel.cs" />
+    <Compile Include="ViewModels\OGCDEPTListViewModel.cs" />
+    <Compile Include="ViewModels\OGCDEPTSearchViewModel.cs" />
+    <Compile Include="ViewModels\SMCOGLSSearchViewModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\AUTHViewModel.cs" />
+    <Compile Include="ViewModels\HomeIndexViewModel.cs" />
+    <Compile Include="ViewModels\LogonViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\Header.cshtml" />
+    <Content Include="Views\Shared\SideBar.cshtml" />
+    <Content Include="Views\WSMC0702\Index.cshtml" />
+    <Content Include="Views\WSMC0702\Edit.cshtml" />
+    <Content Include="Views\WSMC0701\Index.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Home\LogonAD.cshtml" />
+    <Content Include="Views\Home\Docs.cshtml" />
+    <Content Include="Views\WSMC0702\New.cshtml" />
+    <Content Include="Views\WSMC0701\SubMenu.cshtml" />
+    <Content Include="Views\WSMC0701\Edit.cshtml" />
+    <Content Include="Views\Home\ConnectADOK.cshtml" />
+    <Content Include="Templates\113.1工程基本資料表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\113.2採購契約變更統計表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\116.廠商別待請金額明細表_body.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\116.廠商別待請金額明細表_header.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\117.工程實支數彙計表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\118.工程執行進度表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\119.會計科目經費調整表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\120.每週月實支數.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\121.工程項目管控表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\122.年度累計預定實際.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\123.執行情形.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\124.半月報表_預算.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\125.半月報表_竣工與決算.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\126-2.XXX計畫支出預算執行狀況表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\126-3.XXX計畫各單位工程預算設計情形一覽表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\127-1.管線工程工程預算表%28總表%29.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\127-2.管線工程工程預算表%28單位別%29.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\128.專案工程施工狀態調查表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\129.月執行率檢討表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\130.年度各計畫統計表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\131-1.區處別OOO年全生命週期表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\141-1.廠商基本資料表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\WSMC0709\Index.cshtml" />
+    <Content Include="Templates\110.核定後計畫工程備查表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\109.預定計畫工程評比表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\111.無自來水計畫工程執行進度月報表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\112.開口契約執行一覽表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\122.年度累計預定 實際.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\126-1.預算執行狀況表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\131-2.區處別OOO年全生命週期表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\132.列管計畫預估達成率一覽表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\133.列管計畫執行彙總表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\134-1進度與預算執行情形.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\134-2進度與預算執行情形.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\135.水基金投資水資源公司執行情形表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\136-1.列管計畫發包情形一覽表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\137.列管計畫發包情形5000萬以上.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\138.執行情形總表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\139.WR非計畫型執行狀況.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\140.有價材料折價費統計表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\141.廠商基本資料表%28不用%29.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\142.不良廠商名單%28不用%29.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\143.優良廠商名單%28不用%29.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\144.台灣各地營建物價各月份基準表列印.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\145.代碼資料列印.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\146.安全衛生危害鑑別風險評鑑表.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\147.公共工程生態檢核勾選表.doc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\供水區域資料明細表.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\單位部門代碼資料明細表.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\機關代碼資料明細表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\縣市代碼資料明細表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\物價指數資料明細表.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\系統代碼資料明細表.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\EditorTemplates\Boolean.cshtml" />
+    <Content Include="Views\Shared\_UserQueryComponent.cshtml" />
+    <Content Include="Templates\148.污染防治費彙整表%28查核金額以上%29.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Templates\149.預算編製單價資訊彙整表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\150.年度竣工結算報表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\114.進度數位版.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\126-3.WR計畫各單位工程預算設計情形一覽表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\PEdit.cshtml" />
+    <Content Include="Templates\151.案件查詢.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\152.計畫提案工程案件統計.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\136-3.列管計畫年度全生命週期表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\136-2.列管計畫年度工程標案發包情形一覽表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\147.公共工程生態檢核勾選表.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Auth\Create.cshtml" />
+    <Content Include="Views\Auth\Edit.cshtml" />
+    <Content Include="Views\Auth\Index.cshtml" />
+    <Content Include="Views\BranchPlanMainten\annual_distribution.cshtml" />
+    <Content Include="Views\BranchPlanMainten\Branch_Plan_Create.cshtml" />
+    <Content Include="Views\BranchPlanMainten\Branch_Plan_Edit.cshtml" />
+    <Content Include="Views\BranchPlanMainten\centralfunds_proportion.cshtml" />
+    <Content Include="Views\BranchPlanMainten\Index.cshtml" />
+    <Content Include="Views\BranchPlanMainten\Item_content.cshtml" />
+    <Content Include="Views\Dept\Create.cshtml" />
+    <Content Include="Views\Dept\Edit.cshtml" />
+    <Content Include="Views\Dept\TreeVieww.cshtml" />
+    <Content Include="Views\GetWebApi\Index.cshtml" />
+    <Content Include="Views\GetWebApi\LookTableSource.cshtml" />
+    <Content Include="Views\Group\choose.cshtml" />
+    <Content Include="Views\Group\Create.cshtml" />
+    <Content Include="Views\Group\Edit.cshtml" />
+    <Content Include="Views\Group\Index.cshtml" />
+    <Content Include="Views\PictureWord\Index.cshtml" />
+    <Content Include="Views\Plan\Index.cshtml" />
+    <Content Include="Views\Plan\Test.cshtml" />
+    <Content Include="Views\ProposalRequest\Index.cshtml" />
+    <Content Include="Views\RainReport\Index.cshtml" />
+    <Content Include="Views\RainReport\State10_2.cshtml" />
+    <Content Include="Views\RainReport\State12_2.cshtml" />
+    <Content Include="Views\RainReport\State2_2.cshtml" />
+    <Content Include="Views\RainReport\State6_2.cshtml" />
+    <Content Include="Views\RainReport\State9_2.cshtml" />
+    <Content Include="Views\Report\Index.cshtml" />
+    <Content Include="Views\Report\State1.cshtml" />
+    <Content Include="Views\Report\State10.cshtml" />
+    <Content Include="Views\Report\State11.cshtml" />
+    <Content Include="Views\Report\State12.cshtml" />
+    <Content Include="Views\Report\State2.cshtml" />
+    <Content Include="Views\Report\State3.cshtml" />
+    <Content Include="Views\Report\State4.cshtml" />
+    <Content Include="Views\Report\State5.cshtml" />
+    <Content Include="Views\Report\State6.cshtml" />
+    <Content Include="Views\Report\State7.cshtml" />
+    <Content Include="Views\Report\State8.cshtml" />
+    <Content Include="Views\Report\State9.cshtml" />
+    <Content Include="Views\TDTEXT\Index.cshtml" />
+    <Content Include="Views\User\ChooseUser.cshtml" />
+    <Content Include="Views\User\Dept.cshtml" />
+    <Content Include="Views\User\DeptCreate.cshtml" />
+    <Content Include="Views\User\DeptEdit.cshtml" />
+    <Content Include="Views\User\Index.cshtml" />
+    <Content Include="Views\User\UserCreate.cshtml" />
+    <Content Include="Views\User\UserEdit.cshtml" />
+    <Content Include="Views\WorkPlanMainten\BranchPlan.cshtml" />
+    <Content Include="Views\WorkPlanMainten\Branch_Plan_Create.cshtml" />
+    <Content Include="Views\WorkPlanMainten\Branch_Plan_Edit.cshtml" />
+    <Content Include="Views\WorkPlanMainten\Index.cshtml" />
+    <Content Include="Views\WorkPlanMainten\Master_Plan_Create.cshtml" />
+    <Content Include="Views\WorkPlanMainten\Master_Plan_Edit.cshtml" />
+    <Content Include="Templates\cd_01.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\cd_011.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\CD_16.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\CD_16.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PJV0010_02.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PJV0010_02.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PJV0010_03.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PJV0010_03.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PJV0010_04.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PJV0010_04.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PJV0010_08.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PJV0010_08.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PJV0010_09.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PJV0010_09.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PJV0050.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PJV0051.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PJV0052.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PJV0052_20190904.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\source.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\表1.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\表2.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\表3.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\PJE0010\PJE0010Index.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\PJE0010\PJE0010Edit.cshtml" />
+    <Content Include="Views\PJE0010\PJE0010Branch.cshtml" />
+    <Content Include="Views\PJE0010\PJE0010BranchEdit.cshtml" />
+    <Content Include="Views\PJE0020\PJE0020Index.cshtml" />
+    <Content Include="Views\PJE0010\PJE0010BranchAssign.cshtml" />
+    <Content Include="Views\PJE0020\PJE0020SubItem.cshtml" />
+    <Content Include="Views\PJE0020\PJE0020Monthly.cshtml" />
+    <Content Include="Views\PJE0030\PJE0030Index.cshtml" />
+    <Content Include="Views\PJE0030\PJE0030Maintain.cshtml" />
+    <Content Include="Views\PJE0030\PJE0030BudgetCount.cshtml" />
+    <Content Include="Views\PJE0030\PJE0030BudgetEdit.cshtml" />
+    <Content Include="Views\SGEAP\SGEAPIndex.cshtml" />
+    <Content Include="Views\SGE0010\SGE0010Index.cshtml" />
+    <Content Include="Views\PJE0011\PJE0011Index.cshtml" />
+    <Content Include="Views\SGE0000\SGE0000Index.cshtml" />
+    <Content Include="Views\SGE0060\SGE0060Index.cshtml" />
+    <Content Include="Views\SGE0025\SGE0025Index.cshtml" />
+    <Content Include="Views\SGE0035\SGE0035Index.cshtml" />
+    <Content Include="Views\PJE0020\PJe0020Central.cshtml" />
+    <Content Include="Views\PJE0030\PJE0030Manage.cshtml" />
+    <Content Include="Views\PJE0040\PJE0040BudgetCount.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\PJE0040\PJE0040BudgetEdit.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\PJE0040\PJE0040Index.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\PJE0040\PJE0040Maintain.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\PJE0040\PJE0040Manage.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\PJE0011\PJE0011Edit.cshtml" />
+    <Content Include="Views\PJE0011\PJE0011ProposalManage.cshtml" />
+    <Content Include="Views\SGE0010\SGE0010Review.cshtml" />
+    <Content Include="Views\SGE0035\SGE0035Review.cshtml" />
+    <Content Include="Views\SGE0025\SGE0025Review.cshtml" />
+    <Content Include="Views\SGE0000\SGE0000Review.cshtml" />
+    <Content Include="Views\SGE0010\SGE0010ProposalManage.cshtml" />
+    <Content Include="Views\SGE0060\SGE0060Review.cshtml" />
+    <Content Include="Views\PJE0050\PJE0050Index.cshtml" />
+    <Content Include="Views\PJE0011\PJE0011ProposaDetaillManage.cshtml" />
+    <Content Include="Views\SGE0000\SGE0000ProposalDetailList.cshtml" />
+    <Content Include="Views\PJE0030\PJE0030ManageEdit.cshtml" />
+    <Content Include="Views\PJE0050\PJE0050BudgetCount.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\PJE0050\PJE0050BudgetEdit.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\PJE0050\PJE0050Maintain.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\PJE0050\PJE0050Manage.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\PJE0050\PJE0050ManageEdit.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\PJE0020\PJE0020ProposalManage.cshtml" />
+    <Content Include="Views\SGE0060\SGE0060ProposalManage.cshtml" />
+    <Content Include="Views\PJE0030\PJE0030ManageAdd.cshtml" />
+    <Content Include="Views\SGE0000\SGE0000AddAPMFORM.cshtml" />
+    <Content Include="Scripts\plugins\bootstrap-fileinput\fonts\bootstrap-icons.woff2" />
+    <Content Include="Scripts\plugins\bootstrap-fileinput\fonts\bootstrap-icons.woff" />
+    <Content Include="Views\SGE0000\SGE0000EditAPMFORM.cshtml" />
+    <Content Include="Views\SGE0000\SGE0000ViewAPMFORM.cshtml" />
+    <Content Include="Views\PJE0011\EditPJDCATY.cshtml" />
+    <Content Include="Views\PJE0011\EditPJDCMCT.cshtml" />
+    <Content Include="Views\PJE0011\EditPJDFUND.cshtml" />
+    <Content Include="Views\PJE0011\EditPJDDOCS.cshtml" />
+    <Content Include="Views\PJE0011\EditPJDSUPD.cshtml" />
+    <Content Include="Views\PJE0011\EditPJDSYRC.cshtml" />
+    <Content Include="Views\SGE0000\STEP01.cshtml" />
+    <Content Include="Views\SGE0000\STEP02.cshtml" />
+    <Content Include="Views\SGE0000\STEP03.cshtml" />
+    <Content Include="Views\SGE0000\STEP04.cshtml" />
+    <Content Include="Views\SGE0000\STEP05.cshtml" />
+    <Content Include="Views\SGE0000\STEP06.cshtml" />
+    <Content Include="Views\PJE0040\PJE0040PAGE1.cshtml" />
+    <Content Include="Views\PJE0030\RefSelectFrame.cshtml" />
+    <Content Include="Views\Shared\header2.cshtml" />
+    <Content Include="Views\Shared\SideBar2.cshtml" />
+    <Content Include="Views\PJE0030\PJE0030ManageRefAdd.cshtml" />
+    <Content Include="Views\PJE0030\RefBatchFrame.cshtml" />
+    <Content Include="Views\SGE0060\EditAdvice.cshtml" />
+    <Content Include="Views\SGE0010\EditAdvice.cshtml" />
+    <Content Include="Templates\110.核定後計畫工程備查表.ods">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\113.3工程底價預估表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\147.公共工程生態檢核勾選表_.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\C113.1工程基本資料表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\營建物價資料明細表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Employee\Choose.cshtml" />
+    <Content Include="Views\Employee\Create.cshtml" />
+    <Content Include="Views\Employee\Edit.cshtml" />
+    <Content Include="Views\Employee\Employee.cshtml" />
+    <Content Include="Views\PJE0030\PJE0030ManageInfo.cshtml" />
+    <Content Include="Templates\SGE0010.xlsx" />
+    <Content Include="Templates\PJE0030.xlsx" />
+    <Content Include="Templates\SGE0035.xlsx" />
+    <Content Include="Templates\SGE0035Base.xlsx" />
+    <Content Include="Templates\SGE0035_NEW.xlsx" />
+    <Content Include="Templates\SGE0040.xlsx" />
+    <Content Include="Views\PJE0030\PJE0030EditCRDMNDS.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\PJE0050\PJE0050ManageInfo.cshtml" />
+    <Content Include="Views\SGE0000\STEP07.cshtml" />
+    <Content Include="Templates\SGE0000\01.提案&amp;初審評比表_工程V2.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\SGE0000\02.提案&amp;初審評比表_規劃%28檢討%29V2.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\SGE0000\03.提案&amp;初審評比表_非工程V2.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\SGE0000\雨水計畫提案報表.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0020\TDE0020Index.cshtml" />
+    <Content Include="Scripts\moment.min.js.map" />
+    <Content Include="Scripts\moment-with-locales.min.js.map" />
+    <Content Include="Views\TDE0020\TDE0020IndexTab1.cshtml" />
+    <Content Include="Views\SYS0030\SYS0030Index.cshtml" />
+    <Content Include="Views\SYS0030\SYSManager.cshtml" />
+    <Content Include="Views\SYS0030\SYSStat.cshtml" />
+    <Content Include="Views\TDE0040\TDE0040Index.cshtml" />
+    <Content Include="Templates\SGE0060\SGE0035_NEW.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\SGE0060\SGE0035Base.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\SYS0030A\SYS0030AIndex.cshtml" />
+    <Content Include="Views\SYS0030A\SYSManagerA.cshtml" />
+    <Content Include="Views\SYS0030A\SYSStatA.cshtml" />
+    <Content Include="Views\SYS0030A\SYSInfoA.cshtml" />
+    <Content Include="Views\SYS0030\SYSInfo.cshtml" />
+    <Content Include="Views\SYS0030\SYSInfo_new.cshtml" />
+    <Content Include="Views\SYS0030A\SYSManager.cshtml" />
+    <Content Include="Views\TDE0040\PAGE1.cshtml" />
+    <Content Include="Views\TDE0040\PAGE1.cshtml.bak" />
+    <Content Include="Views\TDE0040\PAGE4.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0040\PAGE5.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0040\PAGE6.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0040\PAGE6_1.cshtml" />
+    <Content Include="Views\TDE0040\PAGE6_2.cshtml" />
+    <Content Include="Views\TDE0040\PAGE6_3.cshtml" />
+    <Content Include="Views\TDE0040\PAGE6_4.cshtml" />
+    <Content Include="Views\TDE0040\PAGE6_5.cshtml" />
+    <Content Include="Views\TDE0040\PAGE6_6.cshtml" />
+    <Content Include="Views\TDE0040\PAGE6_7.cshtml" />
+    <Content Include="Views\TDE0040\PAGE6_8.cshtml" />
+    <Content Include="Views\TDE0040\PAGE6_2_1.cshtml" />
+    <Content Include="Views\TDE0040\PAGE6_2_2.cshtml" />
+    <Content Include="Views\TDE0040\PAGE6_2_3.cshtml" />
+    <Content Include="Views\TDE0040\PAGE6_2_Edit.cshtml" />
+    <Content Include="Views\TDE0042\PAGE2.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0042\PAGE2_1_1.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0042\PAGE2_1_2.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0042\PAGE2_2.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0042\PAGE2_2_1.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0042\PAGE2_2_2.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0042\PAGE2_1_2_Fund.cshtml" />
+    <Content Include="Views\TDE0045\PAGE5.cshtml" />
+    <Content Include="Views\TDE0045\PAGE5_1.cshtml" />
+    <Content Include="Views\TDE0045\PAGE5_2.cshtml" />
+    <Content Include="Views\TDE0045\PAGE5_3.cshtml" />
+    <Content Include="Views\TDE0043\PAGE3.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0043\PAGE3_1.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0043\PAGE3_1_EDIT.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0043\PAGE3_1_EDIT_C.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0043\PAGE3_1_EDIT_D.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0043\PAGE3_1_EDIT_E.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0047\PAGE7.cshtml" />
+    <Content Include="Views\TDE0051\TDE0051Index.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0051\TDE0051Tab.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0051\TDE0051Edit.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0051\TDE0051Edit2.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0051\TDE0051Edit3.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0051\TDE0051Edit4.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0051\TDE0051Edit5.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0070\TDE0070Index.cshtml" />
+    <Content Include="Views\TDE0070\TDE0070Edit.cshtml" />
+    <Content Include="Views\TDE0070\TDE0070Edit2.cshtml" />
+    <Content Include="Views\TDE0070\TDE0070Tab.cshtml" />
+    <Content Include="Views\TDE0130\TDE0130Index.cshtml" />
+    <Content Include="Views\TDE0130\TDE0130Tab.cshtml" />
+    <Content Include="Views\SUG0010\SUG0010Close.cshtml" />
+    <Content Include="Views\SUG0010\SUG0010Edit.cshtml" />
+    <Content Include="Views\SUG0010\SUG0010Index.cshtml" />
+    <Content Include="Views\SUG0010\SUG0010Reply.cshtml" />
+    <Content Include="Views\SUG0010\SUG0010ReplyRenew.cshtml" />
+    <Content Include="Views\SUG0010\SUG0010Tab.cshtml" />
+    <Content Include="Views\SUG0000\SUG0000Close.cshtml" />
+    <Content Include="Views\SUG0000\SUG0000Edit.cshtml" />
+    <Content Include="Views\SUG0000\SUG0000Index.cshtml" />
+    <Content Include="Views\SUG0000\SUG0000Tab.cshtml" />
+    <Content Include="Views\TDE0049\PAGE9.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0049\PAGE9_1.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0049\PAGE9_2.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0049\PAGE9_3.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0048\PAGE8.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0048\PAGE8_1.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0048\PAGE8_2.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0048\PAGE8_3.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0046\PAGE6.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0046\PAGE6_1.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0046\PAGE6_2.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0046\PAGE6_2_1.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0046\PAGE6_2_2.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0046\PAGE6_2_3.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0046\PAGE6_2_Edit.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0046\PAGE6_3.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0046\PAGE6_4.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0046\PAGE6_5.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0046\PAGE6_6.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0046\PAGE6_7.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0046\PAGE6_8.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\TDE0042\PAGE2_1.cshtml" />
+    <Content Include="Views\TDE0042\PAGE2_1_Add.cshtml" />
+    <Content Include="Views\TDE0045\PAGE5_2_Edit.cshtml" />
+    <Content Include="Views\TDE0045\PAGE5_3_Edit.cshtml" />
+    <Content Include="Views\TDE0045\PAGE5_3_PcosEdit.cshtml" />
+    <Content Include="Views\TDE0110\TDE0110Index.cshtml" />
+    <Content Include="Views\TDE0110\Edit.cshtml" />
+    <Content Include="Views\TDE0110\Create.cshtml" />
+    <Content Include="Views\PJE0050\PJE0050EditCRDMNDS.cshtml" />
+    <Content Include="Views\PJE0050\PJE0050ManageRefAdd.cshtml" />
+    <Content Include="Views\PJE0050\RefBatchFrame.cshtml" />
+    <Content Include="Views\PJE0050\RefSelectFrame.cshtml" />
+    <Content Include="Views\PJE0050\PJE0050ManageAdd.cshtml" />
+    <Content Include="Views\WSMC0706\Edit.cshtml" />
+    <Content Include="Views\WSMC0706\Index.cshtml" />
+    <Content Include="Views\WSMC0706\New.cshtml" />
+    <Content Include="Views\Home\News.cshtml" />
+    <Content Include="Templates\SGE0060\SGE0060Details_R.xlsx" />
+    <Content Include="Templates\SGE0060\SGE0060Score_R.xlsx" />
+    <Content Include="Views\News\NewsEdit.cshtml" />
+    <Content Include="Views\News\NewsList.cshtml" />
+    <Content Include="Views\Shared\_AntiSpamFields.cshtml" />
+    <Content Include="Templates\實支數匯入範例格式說明.pptx" />
+    <Content Include="Templates\實支數匯入範例檔案.xlsx" />
+    <Content Include="Views\ADDFUNC\Rainfunc.cshtml" />
+    <Content Include="Views\ADDFUNC\Sewfunc.cshtml" />
+    <Content Include="Views\Feedback\FeedbackCreate.cshtml" />
+    <Content Include="Views\Feedback\FeedbackDetails.cshtml" />
+    <Content Include="Views\Feedback\FeedbackList.cshtml" />
+    <Content Include="Views\Log\LogList.cshtml" />
+    <Content Include="Views\RainReport\State4_2.cshtml" />
+    <Content Include="Templates\SGE0060\PJV0053.xlsx" />
+    <Content Include="Templates\SGE0060\PJV0054.xlsx" />
+    <Content Include="Templates\SGE0060\PJV0055.docx" />
+    <Content Include="Templates\PJV0010_03%28Rain%29.xlsx" />
+    <Content Include="Views\SGE0000\STEP08.cshtml" />
+    <Content Include="Views\SYS0030\PrtSysPopup.cshtml" />
+    <Content Include="Views\Shared\_Layout2_v2.cshtml" />
+    <Content Include="Views\Shared\_ReportMessage.cshtml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="bin\zh-Hant\" />
+    <Folder Include="Docs\" />
+    <Folder Include="File\Doc\" />
+    <Folder Include="File\PJDoc\" />
+    <Folder Include="Lib\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>56885</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:56885/SEPMIS2/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>此專案參考這部電腦上所缺少的 NuGet 封裝。請啟用 NuGet 封裝還原，以下載該封裝。如需詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的檔案是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\Microsoft.Net.Compilers.2.7.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Net.Compilers.2.7.0\build\Microsoft.Net.Compilers.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

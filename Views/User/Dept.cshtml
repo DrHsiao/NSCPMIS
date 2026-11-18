@@ -1,0 +1,48 @@
+﻿@model IEnumerable<WCals.Models.CMBASEModels.DeptCityViewModel>
+
+@{
+    ViewBag.Title = "部門權限管理";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head {
+    <link rel="stylesheet" href="~/Content/views/user.css">
+}
+
+<div class="model-form">
+    <div style="text-align:left;">
+
+        <h3>部門權限管理 :</h3>
+
+        <a href="@Url.Action("Index","User")" class="buttom">依使用者</a>
+
+        <a href="@Url.Action("Dept","User")" class="buttom2">依部門</a>
+
+        <a href="@Url.Action("DeptCreate","User")" class="btn btn-secondary" style="margin-left:30px">新增部門</a>
+
+    </div>
+
+    <br />
+
+    <form method="get" action="@Url.Action("Dept","User")">
+        <div style="text-align: left;">部門名稱:   <input name="DeptName" type="text" /> <input type="submit" value="查詢" class="btn btn-secondary" style="width:55px; height:30px" /></div>
+    </form>
+
+    <br />
+    <table class="table table-bordered table-hover" style="text-align: left; width:30%">
+        <tr>
+            <th>選擇</th>
+            <th>部門編號</th>
+            <th>部門名稱</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td style="vertical-align:middle"><a href="@Url.Action("DeptEdit","User")?choose=@item.oGCDEPT.DEPT_NAME" class="btn btn-primary">選擇</a></td>
+                <td style="vertical-align:middle">@item.sECCITY.DEPT_NO</td>
+                <td style="vertical-align:middle">@item.oGCDEPT.DEPT_NAME</td>
+            </tr>
+        }
+    </table>
+
+</div>

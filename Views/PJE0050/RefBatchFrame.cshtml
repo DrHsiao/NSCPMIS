@@ -1,0 +1,406 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0030Model
+@{ ViewBag.Title = "計畫經費管制[1.1.3] ";
+    //Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <style>
+        .ui-dialog {
+            z-index: 4000;
+        }
+    </style>
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+<body style="padding:10px;">
+
+    @using(Html.BeginForm("", "PJE0030", FormMethod.Post, new { @class = "form form-inline", id = "mainForm" })) {
+        @Html.HiddenFor(x => x.SYR)
+        @Html.HiddenFor(x => x.NO1)
+        @Html.HiddenFor(x => x.NO2)
+        @Html.HiddenFor(x => x.NO3)
+        if(ViewBag.apmforms != null) {
+
+
+            <table class="table" width="100%">
+                <tr>
+                    <td>@Html.DropDownListFor(x => x.PPID, (SelectList)ViewBag.PPIDS, "請選擇", new { onChange = "GetPJDSYRC(this.value)", @class = "form-control", form = "mainForm" })</td>
+                    <td width="400">
+                        @Html.DropDownListFor(x => x.PJDSYRC, (SelectList)ViewBag.PJDSYRC, "請選擇", new { style = "width:250px;", @class = "form-control", form = "mainForm" })
+                    </td>
+                    <td width="100%">
+                        <input type="hidden" name="PID" id="PID" value="@Model.PID" />
+                        <button name="action" type="submit" value="RefBatchSearch" id="RefBatchSearch" class="btn btn-secondary">查詢</button>
+                        <button name="action" type="button" class="btn btn-secondary" onclick="parent.closeEdit();">返回列表</button>
+                    </td>
+                </tr>
+
+            </table>
+
+        }
+
+
+
+        if(ViewBag.apmforms != null) {
+
+            <script>
+    function genCode(aid) {
+
+        var no1 ='@Model.NO1';
+        var no2 ='@Model.NO2';
+        var no3 = '@Model.NO3';
+
+        var no4 = $("#PJ_CATY_CODE_P_" + aid).val();//分項計畫
+
+        var no5 = $("#CITY_" + aid).val();
+        var no5_1 = $("#TOWN_" + aid).val();
+
+        var no6 = $("#F_TYPE_" + aid).val();//費用別
+        //var no7 = $("#PJ_CATY_CODE_" + aid).val();//費用別
+        var no7 = $("#S1_" + aid).val();//序碼1
+        var no8 = $("#S2_" + aid).val();//序碼1
+
+        //var tcode = no1 + "-" + no2 + "-" + no3+no4+"-"+(no5+no5_1)+"-"+(no6+no7+no8);
+        //var tcode = no1 + no2 + no3 + no4 + (no5 + no5_1) + no6 + (no6 + no7 + no8);
+        //var fcode = no1 + no2 + no3 + no4 + (no5 + no5_1) + no6 + (no6 + no7 + no8);
+        var tcode = no1 + no2 + no3 + no4 + (no5 + no5_1) + no6 + (no7 + no8);
+        var fcode = no1 + no2 + no3 + no4 + (no5 + no5_1) + no6 + (no7 + no8);
+
+
+        $("#TD_CODE_" + aid).val(tcode);
+        $("#FD_CODE_" + aid).val(fcode);
+        //alert(tcode);
+    }
+
+
+
+
+
+    function GetTown4Add(aid, city) {
+        $("#TOWN_"+aid).html("");
+        $.ajax({
+            url: '@Url.Content("~/")ASYNC/GetTownsById',
+            method: 'post',
+            data: { "city": city },
+            success: function (d) {
+
+                var p = jQuery.parseJSON(d);
+                //$("#TOWN_" + aid).prepend("<option value=''>鄉鎮</option>");
+                for (i = 0; i < p.length; i++) {
+                    $("#TOWN_" + aid).append("<option value='" + p[i].TOWN_ID + "'>" + p[i].TOWN + "</option>");
+                }
+            }
+        });
+    }
+
+
+
+
+
+            </script>
+
+
+
+
+            <div style="overflow: auto;">
+                <table class="table table-striped table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th></th>
+                            <th nowrap></th>
+                            <th nowrap>鄉鎮別</th>
+                            <th width="100%" nowrap>提案工程名稱</th>
+                            <th nowrap>工程編號</th>
+                            <th nowrap>經費編號</th>
+                            <th nowrap>分項計畫</th>
+                            <th nowrap>費用別</th>
+                            <th nowrap>序碼</th>
+                            <th nowrap>案件類型</th>
+                            <th nowrap>經費層級</th>
+                            <th nowrap>工程類別</th>
+                            <th nowrap>工作類別</th>
+                            
+                            <th nowrap>中央款(元)</th>
+                            <th nowrap>地方款(元)</th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @{
+                            System.Data.DataTable apmforms = ViewBag.apmforms;
+                            System.Data.DataTable cities = ViewBag.cities;
+                            System.Data.DataTable towns = ViewBag.towns;
+                            System.Data.DataTable pjcatycode = ViewBag.pjcatycode;
+                            System.Data.DataTable catycod = ViewBag.catycod;
+                            System.Data.DataTable ipjcode = ViewBag.ipjcode;
+
+                            System.Data.DataTable tdcaty = ViewBag.tdcaty;
+                            System.Data.DataTable yrworks = ViewBag.yrworks;
+
+                        }
+                        @foreach(System.Data.DataRow r in apmforms.Rows) {
+
+                            <tr>
+                                <td>
+                                    <button type="button" onclick="save('@r["AID"]');" class="btn btn-secondary">匯入</button>
+                                </td>
+                                <td nowrap>
+                                    <select name="CITY_P" class="form-select" id="CITY_@r["AID"]" onchange="GetTown4Add('@r["AID"]', this.value); genCode('@r["AID"]');">
+                                        @foreach(System.Data.DataRow c in cities.Rows) {
+                                            if(Convert.ToString(@c["CITY"]).Equals(Convert.ToString(r["CITY"]))) {
+                                                <option selected value="@c["CITY_ID"]">@c["CITY"]</option>
+                                            } else {
+                                                <option value="@c["CITY_ID"]">@c["CITY"]</option>
+                                            }
+                                        }
+                                    </select>
+                                </td>
+
+                                <td nowrap>
+                                    <select name="TOWN_P" class="form-select" id="TOWN_@r["AID"]" onmousemove="GetTown4Add('@r["AID"]', $('#CITY_@r["AID"]').val());" onchange="genCode('@r["AID"]');">
+                                        @foreach(System.Data.DataRow c in towns.Rows) {
+                                            if(Convert.ToString(@c["TOWN"]).Equals(Convert.ToString(r["TOWN"]))) {
+                                                <option selected value="@c["CPA_TOWN_ID"]">@c["TOWN"]</option>
+                                            } else {
+                                                <option value="@c["CPA_TOWN_ID"]">@c["TOWN"]</option>
+                                            }
+                                        }
+                                    </select>
+                                </td>
+                                <td width="100%">
+                                    <textarea rows="1" id="TD_NAME_@r["AID"]" class="form-control" style="width:250px;">@r["AP_NAME"]</textarea>
+                                </td>
+                                <td nowrap><input readonly type="text" name="TD_CODE_P" id="TD_CODE_@r["AID"]" value="@Model.NO1-@Model.NO2-@Model.NO3" class="form-control" style="width:200px;" /></td>
+                                <td nowrap><input readonly type="text" name="FD_CODE_P" id="FD_CODE_@r["AID"]" value="@Model.NO1@Model.NO2@Model.NO3" class="form-control" style="width:200px;" /></td>
+                                <td nowrap>
+                                    <select class="form-select" id="PJ_CATY_CODE_P_@r["AID"]" onchange="genCode('@r["AID"]');">
+                                        @foreach(System.Data.DataRow c in pjcatycode.Rows) {
+                                            if(Convert.ToString(@c["id"]).Equals(Convert.ToString(r["PJ_CATY_CODE"]))) {
+                                                <option selected value="@c["id"]">@c["name"]</option>
+                                            } else {
+                                                <option value="@c["id"]">@c["name"]</option>
+                                            }
+                                        }
+                                    </select>
+                                </td>
+
+
+                                <td>
+                                    <select class="form-select" id="F_TYPE_@r["AID"]" onchange="genCode('@r["AID"]');">
+                                        <option value="0">業務</option>
+                                        <option value="1">工程</option>
+                                        <option value="2">用地</option>
+                                    </select>
+                                </td>
+
+
+                                <td nowrap>
+
+                                    <input maxlength="1" type="text" id="S1_@r["AID"]" value="" class="form-control" style="width:40px;" onkeyup="genCode('@r["AID"]');" />
+                                    <input maxlength="2" type="text" id="S2_@r["AID"]" value="" class="form-control" style="width:40px;" onkeyup="genCode('@r["AID"]');" />
+                                </td>
+                                <td nowrap>
+
+                                    <select name="CATY_COD_P" class="form-select" id="CATY_CODE_P_@r["AID"]">
+                                        @foreach(System.Data.DataRow c in catycod.Rows) {
+                                            if(Convert.ToString(@c["id"]).Equals(Convert.ToString(r["CATY_CODE"]))) {
+                                                <option selected value="@c["id"]">@c["name"]</option>
+                                            } else {
+                                                <option value="@c["id"]">@c["name"]</option>
+                                            }
+                                        }
+                                    </select>
+                                </td>
+                                <td nowrap>
+                                    <select name="IPJ_CODE_P" class="form-select" id="IPJ_CODE_@r["AID"]">
+                                        @foreach(System.Data.DataRow c in ipjcode.Rows) {
+                                            if(Convert.ToString(@c["id"]).Equals(Convert.ToString(r["IPJ_CODE"]))) {
+                                                <option selected value="@c["id"]">@c["name"]</option>
+                                            } else {
+                                                <option value="@c["id"]">@c["name"]</option>
+                                            }
+                                        }
+                                    </select>
+
+
+                                </td>
+                                <td nowrap>
+                                    <select name="TD_CATY_P" class="form-select" id="TD_CATY_@r["AID"]">
+                                        <option value=""></option>
+                                        @foreach(System.Data.DataRow c in tdcaty.Rows) {
+                                            <option value="@c["id"]">@c["name"]</option>
+                                        }
+                                    </select>
+
+                                </td>
+                                <td nowrap>
+                                    <select name="YR_WORK_P" class="form-select" id="YR_WORK_@r["AID"]">
+                                        <option value=""></option>
+                                        @foreach(System.Data.DataRow c in yrworks.Rows) {
+                                            <option value="@c["id"]">@c["name"]</option>
+                                        }
+                                    </select>
+
+                                </td>
+                                @*<td>
+                                    @{
+                                        var aid = r["AID"];
+                                        var elementId = "CATY_CODE_P_" + aid;
+                                    }
+
+                                    @Html.DropDownList("CATY_CODE_P", (SelectList)ViewBag.CATY_COD, "請選擇", new { id =  elementId, @class = "form-control" })
+                                    
+                                </td>*@
+                                <td><input type="text" name="" id="F00_@r["AID"]" class="form-control" style="width:100px;" /></td>
+                                <td>
+                                    <input type="text" id="F11_@r["AID"]" class="form-control" style="width: 100px;" />
+                                    <input type="hidden" id="ADV_DP_@r["AID"]" value="@r["ADV_DP"]"  />
+                                    <input type="hidden" id="ADV_UID_@r["AID"]" value="@r["ADV_UID"]" />
+                                </td>
+
+                            </tr>
+
+
+                        }
+
+
+
+                    </tbody>
+
+
+
+                </table>
+            </div>
+
+
+            <script>
+                function save(aid) {
+                    
+                    if ($("#CATY_CODE_P_" + aid).val() == "") {
+                        alert("案件類型不可空白，新增失敗");
+                        return;
+                    }
+                    var selectedText = $("#CITY_" + aid + " option:selected").text();
+                    var selectedTown = $("#TOWN_" + aid + " option:selected").text();
+                    
+                    var req = {
+                    "TD_CODE": $("#TD_CODE_" + aid).val(),
+                    "FD_CODE": $("#FD_CODE_" + aid).val(),
+                    "CATY_CODE": $("#CATY_CODE_P_" + aid).val(),
+                    
+                    "PID": '@Model.PID',
+                    "TID": '@Model.TID',
+                    "TD_NAME": $("#TD_NAME_" + aid).val(),
+                    "PJ_CATY_CODE": $("#PJ_CATY_CODE_P_" + aid).val(),
+                    "TD_CATY": $("#TD_CATY_" + aid).val(),
+                    "IPJ_CODE": $("#IPJ_CODE_" + aid).val(),
+                    "CITY": selectedText,
+                    "TOWN": selectedTown,
+                    "YR_WORK": $("#YR_WORK_" + aid).val(),
+            
+                    "F00": $("#F00_" + aid).val(),
+                    "F11": $("#F11_" + aid).val(),
+                    "SYR":"@Model.SYR",
+                    "YEAR": "@Model.SYR",
+                    "ADV_DP": $("#ADV_DP_" + aid).val(),
+                    "ADV_UID": $("#ADV_UID_" + aid).val()
+                    }                    
+
+    $.ajax({
+        url: '@Url.Content("~/")PJE0030/RefBatchAddOne',
+        method: 'post',
+        data: { "data": JSON.stringify(req) },
+
+        success: function (d) {
+
+            alert(d.msg);
+            /*if (d == 0) {
+                alert("新增失敗");
+            } else {
+                alert("已新增(" + d.id +"):"+$("#TD_CODE_" + aid).val());
+            }*/
+
+
+
+        }
+    });
+
+
+
+
+
+
+}
+            </script>
+
+
+
+
+
+        }
+
+
+
+
+
+        <script>
+    function GetPJDSYRC(ppid) {
+
+
+        $("#PJDSYRC").html("");
+         $.ajax({
+             url: '@Url.Content("~/")ASYNC/GetPJDSYRC',
+           method: 'post',
+           data: { "PPID": ppid },
+           success: function (d) {
+               var p = jQuery.parseJSON(d);
+               $("#PJDSYRC").prepend("<option value=''>請選擇</option>");
+               for (i = 0; i < p.length; i++) {
+                   $("#PJDSYRC").append("<option value='" + p[i].YRC_ID + "'>" + p[i].PSG_NAME + "</option>");
+               }
+           }
+       });
+   }
+        </script>
+
+
+
+
+
+
+
+
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+        <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+        <script src="~/Scripts/validator.min.js"></script>
+        if(ViewBag.msg != null) {
+            <script>
+                alert("@ViewBag.msg");
+            </script>
+        }
+
+
+    }
+
+
+
+
+</body>
+</html>

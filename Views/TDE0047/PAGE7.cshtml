@@ -1,0 +1,617 @@
+﻿@model WCals.ViewModels.NewModels.TDE0040Model
+@{
+    ViewBag.Title = "查核缺失";
+    Layout = null;
+
+    string tdName = "";
+    if(Model.TDMFORM != null) {
+        tdName = Model.TDMFORM.TD_NAME;
+    }
+
+    System.Data.DataTable dtList = ViewBag.List1 as System.Data.DataTable;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- FontAwesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body { 
+            background-color: #f8f9fa;
+            padding: 15px; 
+            font-family: "Inter", "Microsoft JhengHei", sans-serif;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #337ab7, #286090);
+            color: #fff;
+        }
+
+        .table-responsive { 
+            overflow-x: auto; 
+            border-radius: 0 0 0.375rem 0.375rem;
+        }
+
+        .table th {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            vertical-align: middle;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .table td {
+            vertical-align: middle;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        /* 展開按鈕 */
+        .expand-btn { 
+            cursor: pointer; 
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+        .expand-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* 輸入框美化 */
+        .edit-field {
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            padding: 4px 8px;
+            font-size: 13px;
+        }
+        .edit-field:focus {
+            border-color: #337ab7;
+            box-shadow: 0 0 0 0.2rem rgba(51, 122, 183, 0.25);
+            outline: 0;
+        }
+
+        /* 明細列設計 */
+        .detail-row {
+            background-color: #f8fafc;
+            border-bottom: 2px solid #337ab7;
+        }
+        .detail-row > td {
+            padding: 1.5rem !important;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.03);
+        }
+
+        .detail-section { 
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0; 
+            margin-bottom: 15px; 
+            padding: 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .detail-section-title { 
+            font-weight: 700; 
+            color: #337ab7; 
+            margin-bottom: 12px; 
+            border-bottom: 2px solid #f1f5f9; 
+            padding-bottom: 8px; 
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-table { width: 100%; margin: 0; }
+        .detail-table tr { border-bottom: 1px dashed #e2e8f0; }
+        .detail-table tr:last-child { border-bottom: none; }
+        .detail-table td { padding: 6px; vertical-align: middle; }
+        .detail-table label { 
+            font-weight: 600; 
+            margin-bottom: 0; 
+            font-size: 13px; 
+            color: #64748b;
+            text-align: right;
+            display: block;
+        }
+
+        /* 新增列 */
+        .add-row { background-color: #f1f8ff; }
+
+        .btn-action {
+            padding: 2px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+    
+        /* 表格框線與排版美化 */
+        .table-bordered { border: 0 !important; }
+        .table-bordered th, .table-bordered td { border: 0 !important; border-bottom: 1px solid #e2e8f0 !important; }
+        .table > thead > tr > th { 
+            border-bottom: 2px solid #337ab7 !important; 
+            background-color: #f8fafc; 
+            color: #334155; 
+        }
+        .table > tbody > tr:last-child > td { border-bottom: 0 !important; }
+</style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- 狀態提醒 -->
+        <div id="messageDiv" class="mb-3">
+            @if(TempData["Success"] != null) {
+                <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if(TempData["Error"] != null) {
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="fa-solid fa-circle-exclamation me-2"></i> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-2 border-primary">
+            <h4 class="mb-0 text-primary fw-bold">
+                <i class="fa-solid fa-clipboard-check me-2"></i> @tdName
+                <span class="fs-6 text-secondary ms-2 fw-normal">查核缺失管理</span>
+            </h4>
+            <button type="button" onclick="closeDialog();" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-xmark me-1"></i>關閉
+            </button>
+        </div>
+
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.TD_CODE)
+
+        <!-- 列表卡片 -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-primary text-white fw-bold d-flex align-items-center">
+                <i class="fa-solid fa-list-ul me-2"></i>查核缺失列表
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover  mb-0" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 50px;">展開</th>
+                            <th style="width: 70px;">次數</th>
+                            <th style="width: 130px;">督導日期</th>
+                            <th style="width: 80px;">成績</th>
+                            <th style="width: 70px;">等級</th>
+                            <th style="width: 90px;">預定進度</th>
+                            <th style="width: 90px;">實際進度</th>
+                            <th style="min-width: 150px;">抽查結果</th>
+                            <th class="text-center" style="width: 120px;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataBody">
+                        @if(dtList != null && dtList.Rows.Count > 0) {
+                            int rowIndex = 0;
+                            foreach(System.Data.DataRow row in dtList.Rows) {
+                                // 基本欄位
+                                string spid = row.Table.Columns.Contains("SPID") && row["SPID"] != DBNull.Value ? row["SPID"].ToString() : "";
+                                string spSeq = row.Table.Columns.Contains("SP_SEQ") && row["SP_SEQ"] != DBNull.Value ? row["SP_SEQ"].ToString() : "";
+                                string spDt = row.Table.Columns.Contains("SP_DT") && row["SP_DT"] != DBNull.Value ? Convert.ToDateTime(row["SP_DT"]).ToString("yyyy-MM-dd") : "";
+                                string spDept = row.Table.Columns.Contains("SP_DEPT") && row["SP_DEPT"] != DBNull.Value ? row["SP_DEPT"].ToString() : "";
+                                string spAllScore = row.Table.Columns.Contains("SP_ALL_SCORE") && row["SP_ALL_SCORE"] != DBNull.Value ? Convert.ToDecimal(row["SP_ALL_SCORE"]).ToString("0.##") : "";
+                                string spLevel = row.Table.Columns.Contains("SP_LEVEL") && row["SP_LEVEL"] != DBNull.Value ? row["SP_LEVEL"].ToString() : "";
+                                string spPreSchd = row.Table.Columns.Contains("SP_PRE_SCHD") && row["SP_PRE_SCHD"] != DBNull.Value ? Convert.ToDecimal(row["SP_PRE_SCHD"]).ToString("0.##") : "";
+                                string spRelSchd = row.Table.Columns.Contains("SP_REL_SCHD") && row["SP_REL_SCHD"] != DBNull.Value ? Convert.ToDecimal(row["SP_REL_SCHD"]).ToString("0.##") : "";
+                                string spResult = row.Table.Columns.Contains("SP_RESULT") && row["SP_RESULT"] != DBNull.Value ? row["SP_RESULT"].ToString() : "";
+
+                                // 詳細欄位
+                                string spS = row.Table.Columns.Contains("SP_S") && row["SP_S"] != DBNull.Value ? row["SP_S"].ToString() : "";
+                                string spW = row.Table.Columns.Contains("SP_W") && row["SP_W"] != DBNull.Value ? row["SP_W"].ToString() : "";
+                                string spItem = row.Table.Columns.Contains("SP_ITEM") && row["SP_ITEM"] != DBNull.Value ? row["SP_ITEM"].ToString() : "";
+                                string spScore = row.Table.Columns.Contains("SP_SCORE") && row["SP_SCORE"] != DBNull.Value ? Convert.ToDecimal(row["SP_SCORE"]).ToString("0.##") : "";
+                                string spTestItem = row.Table.Columns.Contains("SP_TEST_ITEM") && row["SP_TEST_ITEM"] != DBNull.Value ? row["SP_TEST_ITEM"].ToString() : "";
+                                string spItemResult = row.Table.Columns.Contains("SP_ITEM_RESULT") && row["SP_ITEM_RESULT"] != DBNull.Value ? row["SP_ITEM_RESULT"].ToString() : "";
+                                string spNote = row.Table.Columns.Contains("SP_NOTE") && row["SP_NOTE"] != DBNull.Value ? row["SP_NOTE"].ToString() : "";
+
+                                // 評分欄位
+                                string qcScore = row.Table.Columns.Contains("QC_SCORE") && row["QC_SCORE"] != DBNull.Value ? Convert.ToDecimal(row["QC_SCORE"]).ToString("0.#") : "";
+                                string execScore = row.Table.Columns.Contains("EXEC_SCORE") && row["EXEC_SCORE"] != DBNull.Value ? Convert.ToDecimal(row["EXEC_SCORE"]).ToString("0.#") : "";
+                                string admScore = row.Table.Columns.Contains("ADM_SCORE") && row["ADM_SCORE"] != DBNull.Value ? Convert.ToDecimal(row["ADM_SCORE"]).ToString("0.#") : "";
+                                string cusScore = row.Table.Columns.Contains("CUS_SCORE") && row["CUS_SCORE"] != DBNull.Value ? Convert.ToDecimal(row["CUS_SCORE"]).ToString("0.#") : "";
+                                string qtScore = row.Table.Columns.Contains("QT_SCORE") && row["QT_SCORE"] != DBNull.Value ? Convert.ToDecimal(row["QT_SCORE"]).ToString("0.#") : "";
+                                string wkScore = row.Table.Columns.Contains("WK_SCORE") && row["WK_SCORE"] != DBNull.Value ? Convert.ToDecimal(row["WK_SCORE"]).ToString("0.#") : "";
+                                string mtestScore = row.Table.Columns.Contains("MTEST_SCORE") && row["MTEST_SCORE"] != DBNull.Value ? Convert.ToDecimal(row["MTEST_SCORE"]).ToString("0.#") : "";
+                                string scurScore = row.Table.Columns.Contains("SCUR_SCORE") && row["SCUR_SCORE"] != DBNull.Value ? Convert.ToDecimal(row["SCUR_SCORE"]).ToString("0.#") : "";
+                                string wkschdScore = row.Table.Columns.Contains("WKSCHD_SCORE") && row["WKSCHD_SCORE"] != DBNull.Value ? Convert.ToDecimal(row["WKSCHD_SCORE"]).ToString("0.#") : "";
+                                string acTest = row.Table.Columns.Contains("AC_TEST") && row["AC_TEST"] != DBNull.Value ? row["AC_TEST"].ToString() : "";
+                                string upMthd = row.Table.Columns.Contains("UP_MTHD") && row["UP_MTHD"] != DBNull.Value ? row["UP_MTHD"].ToString() : "";
+
+                                // 新增欄位
+                                string category = row.Table.Columns.Contains("CATEGORY") && row["CATEGORY"] != DBNull.Value ? row["CATEGORY"].ToString() : "";
+                                string impDt = row.Table.Columns.Contains("IMP_DT") && row["IMP_DT"] != DBNull.Value ? row["IMP_DT"].ToString() : "";
+                                string finDt = row.Table.Columns.Contains("FIN_DT") && row["FIN_DT"] != DBNull.Value ? row["FIN_DT"].ToString() : "";
+                                string hiatus = row.Table.Columns.Contains("HIATUS") && row["HIATUS"] != DBNull.Value ? row["HIATUS"].ToString() : "";
+                                string hiatus2 = row.Table.Columns.Contains("HIATUS2") && row["HIATUS2"] != DBNull.Value ? row["HIATUS2"].ToString() : "";
+                                string construction = row.Table.Columns.Contains("CONSTRUCTION") && row["CONSTRUCTION"] != DBNull.Value ? Convert.ToDecimal(row["CONSTRUCTION"]).ToString("0") : "";
+                                string supervision = row.Table.Columns.Contains("SUPERVISION") && row["SUPERVISION"] != DBNull.Value ? Convert.ToDecimal(row["SUPERVISION"]).ToString("0") : "";
+                                string hiatusPay = row.Table.Columns.Contains("HIATUS_PAY") && row["HIATUS_PAY"] != DBNull.Value ? Convert.ToDecimal(row["HIATUS_PAY"]).ToString("0") : "";
+                                string extendDt = row.Table.Columns.Contains("EXTEND_DT") && row["EXTEND_DT"] != DBNull.Value ? row["EXTEND_DT"].ToString() : "";
+                                string extend = row.Table.Columns.Contains("EXTEND") && row["EXTEND"] != DBNull.Value ? row["EXTEND"].ToString() : "";
+                                string conFn = row.Table.Columns.Contains("CON_FN") && row["CON_FN"] != DBNull.Value ? row["CON_FN"].ToString() : "";
+                                string supFn = row.Table.Columns.Contains("SUP_FN") && row["SUP_FN"] != DBNull.Value ? row["SUP_FN"].ToString() : "";
+                                string conDt = row.Table.Columns.Contains("CON_DT") && row["CON_DT"] != DBNull.Value ? row["CON_DT"].ToString() : "";
+                                string conFee = row.Table.Columns.Contains("CON_FEE") && row["CON_FEE"] != DBNull.Value ? Convert.ToDecimal(row["CON_FEE"]).ToString("0") : "";
+                                string supDt = row.Table.Columns.Contains("SUP_DT") && row["SUP_DT"] != DBNull.Value ? row["SUP_DT"].ToString() : "";
+                                string supFee = row.Table.Columns.Contains("SUP_FEE") && row["SUP_FEE"] != DBNull.Value ? Convert.ToDecimal(row["SUP_FEE"]).ToString("0") : "";
+                                string exaUnit = row.Table.Columns.Contains("EXA_UNIT") && row["EXA_UNIT"] != DBNull.Value ? row["EXA_UNIT"].ToString() : "";
+
+                                <tr data-spid="@spid" data-row="@rowIndex" class="align-middle bg-white">
+                                    <td class="text-center">
+                                        <i class="fa-solid fa-square-plus text-primary fs-5 expand-btn" onclick="toggleDetail(@rowIndex);"></i>
+                                    </td>
+                                    <td><input type="number" value="@spSeq" class="form-control edit-field w-100 px-1" data-field="SP_SEQ" /></td>
+                                    <td><input type="date" value="@spDt" class="form-control edit-field w-100 px-1" data-field="SP_DT" /></td>
+                                    <td><input type="number" value="@spAllScore" class="form-control edit-field w-100 px-1 text-end text-primary fw-bold" data-field="SP_ALL_SCORE" /></td>
+                                    <td><input type="text" value="@spLevel" class="form-control edit-field w-100 px-1" data-field="SP_LEVEL" /></td>
+                                    <td><input type="number" value="@spPreSchd" class="form-control edit-field w-100 px-1 text-end" data-field="SP_PRE_SCHD" step="0.01" /></td>
+                                    <td><input type="number" value="@spRelSchd" class="form-control edit-field w-100 px-1 text-end" data-field="SP_REL_SCHD" step="0.01" /></td>
+                                    <td><input type="text" value="@spResult" class="form-control edit-field w-100 px-2" data-field="SP_RESULT" /></td>
+                                    <td class="text-center">
+                                        <div class="btn-group shadow-sm">
+                                            <button type="button" class="btn btn-primary btn-action" onclick="updateRow(this);" title="儲存"><i class="fa-solid fa-floppy-disk"></i></button>
+                                            <button type="button" class="btn btn-outline-danger btn-action" onclick="deleteRow(this);" title="刪除"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <!-- 明細展開列 -->
+                                <tr class="detail-row" id="detail-@rowIndex" style="display: none;" data-spid="@spid">
+                                    <td colspan="9">
+                                        <div class="row g-3">
+                                            <!-- 基本資訊 & 試驗資訊 -->
+                                            <div class="col-xl-6">
+                                                <div class="detail-section h-100">
+                                                    <div class="detail-section-title"><i class="fa-solid fa-circle-info"></i> 基本資訊</div>
+                                                    <table class="detail-table">
+                                                        <tr>
+                                                            <td style="width: 80px;"><label>督導單位：</label></td>
+                                                            <td><input type="text" value="@spDept" class="form-control edit-field" data-field="SP_DEPT" /></td>
+                                                            <td style="width: 80px;"><label>抽查項目：</label></td>
+                                                            <td><input type="text" value="@spItem" class="form-control edit-field" data-field="SP_ITEM" /></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><label>優點：</label></td>
+                                                            <td colspan="3"><textarea class="form-control edit-field bg-light" data-field="SP_S" rows="2">@spS</textarea></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><label>缺點：</label></td>
+                                                            <td colspan="3"><textarea class="form-control edit-field bg-light" data-field="SP_W" rows="2">@spW</textarea></td>
+                                                        </tr>
+                                                    </table>
+
+                                                    <div class="detail-section-title mt-4"><i class="fa-solid fa-flask"></i> 試驗資訊</div>
+                                                    <table class="detail-table">
+                                                        <tr>
+                                                            <td style="width: 80px;"><label>試驗項目：</label></td>
+                                                            <td><input type="text" value="@spTestItem" class="form-control edit-field" data-field="SP_TEST_ITEM" /></td>
+                                                            <td style="width: 80px;"><label>試驗結果：</label></td>
+                                                            <td><input type="text" value="@spItemResult" class="form-control edit-field" data-field="SP_ITEM_RESULT" /></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <!-- 評分資訊 -->
+                                            <div class="col-xl-6">
+                                                <div class="detail-section h-100">
+                                                    <div class="detail-section-title"><i class="fa-solid fa-star"></i> 評分資訊</div>
+                                                    <table class="detail-table">
+                                                        <tr>
+                                                            <td style="width: 100px;"><label>分數計分：</label></td>
+                                                            <td><input type="number" value="@spScore" class="form-control edit-field" data-field="SP_SCORE" /></td>
+                                                            <td style="width: 100px;"><label>品質管理：</label></td>
+                                                            <td><input type="number" value="@qcScore" class="form-control edit-field" data-field="QC_SCORE" step="0.1" /></td>
+                                                            <td style="width: 100px;"><label>施工品質：</label></td>
+                                                            <td><input type="number" value="@qtScore" class="form-control edit-field" data-field="QT_SCORE" step="0.1" /></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><label>主辦單位：</label></td>
+                                                            <td><input type="number" value="@execScore" class="form-control edit-field" data-field="EXEC_SCORE" step="0.1" /></td>
+                                                            <td><label>監造單位：</label></td>
+                                                            <td><input type="number" value="@admScore" class="form-control edit-field" data-field="ADM_SCORE" step="0.1" /></td>
+                                                            <td><label>承攬廠商：</label></td>
+                                                            <td><input type="number" value="@cusScore" class="form-control edit-field" data-field="CUS_SCORE" step="0.1" /></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><label>工程施工：</label></td>
+                                                            <td><input type="number" value="@wkScore" class="form-control edit-field" data-field="WK_SCORE" step="0.1" /></td>
+                                                            <td><label>材料試驗：</label></td>
+                                                            <td><input type="number" value="@mtestScore" class="form-control edit-field" data-field="MTEST_SCORE" step="0.1" /></td>
+                                                            <td><label>安全衛生：</label></td>
+                                                            <td><input type="number" value="@scurScore" class="form-control edit-field" data-field="SCUR_SCORE" step="0.1" /></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><label>施工進度：</label></td>
+                                                            <td><input type="number" value="@wkschdScore" class="form-control edit-field" data-field="WKSCHD_SCORE" step="0.1" /></td>
+                                                            <td><label>混凝土試驗：</label></td>
+                                                            <td colspan="3"><input type="text" value="@acTest" class="form-control edit-field w-50" data-field="AC_TEST" maxlength="1" /></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <!-- 工程資訊 -->
+                                            <div class="col-xl-6">
+                                                <div class="detail-section h-100 mb-0">
+                                                    <div class="detail-section-title"><i class="fa-solid fa-helmet-safety"></i> 工程資訊</div>
+                                                    <table class="detail-table">
+                                                        <tr>
+                                                            <td style="width: 80px;"><label>類別：</label></td>
+                                                            <td><input type="text" value="@category" class="form-control edit-field" data-field="CATEGORY" maxlength="2" /></td>
+                                                            <td style="width: 80px;"><label>開工日期：</label></td>
+                                                            <td><input type="text" value="@impDt" class="form-control edit-field" data-field="IMP_DT" maxlength="7" placeholder="yyyMMdd" /></td>
+                                                            <td style="width: 80px;"><label>完工日期：</label></td>
+                                                            <td><input type="text" value="@finDt" class="form-control edit-field" data-field="FIN_DT" maxlength="7" placeholder="yyyMMdd" /></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><label>停工1：</label></td>
+                                                            <td><input type="text" value="@hiatus" class="form-control edit-field" data-field="HIATUS" maxlength="2" /></td>
+                                                            <td><label>停工2：</label></td>
+                                                            <td><input type="text" value="@hiatus2" class="form-control edit-field" data-field="HIATUS2" maxlength="2" /></td>
+                                                            <td><label>停工費用：</label></td>
+                                                            <td><input type="number" value="@hiatusPay" class="form-control edit-field" data-field="HIATUS_PAY" /></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><label>施工費用：</label></td>
+                                                            <td><input type="number" value="@construction" class="form-control edit-field" data-field="CONSTRUCTION" /></td>
+                                                            <td><label>監造費用：</label></td>
+                                                            <td><input type="number" value="@supervision" class="form-control edit-field" data-field="SUPERVISION" /></td>
+                                                            <td><label>檢驗單位：</label></td>
+                                                            <td><input type="text" value="@exaUnit" class="form-control edit-field" data-field="EXA_UNIT" /></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><label>展延日期：</label></td>
+                                                            <td><input type="text" value="@extendDt" class="form-control edit-field" data-field="EXTEND_DT" maxlength="7" /></td>
+                                                            <td><label>展延：</label></td>
+                                                            <td><input type="text" value="@extend" class="form-control edit-field" data-field="EXTEND" maxlength="2" /></td>
+                                                            <td colspan="2"></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <!-- 合約資訊 & 其他 -->
+                                            <div class="col-xl-6">
+                                                <div class="detail-section h-100 mb-0">
+                                                    <div class="detail-section-title"><i class="fa-solid fa-file-contract"></i> 合約與其他</div>
+                                                    <table class="detail-table">
+                                                        <tr>
+                                                            <td style="width: 80px;"><label>施工文號：</label></td>
+                                                            <td><input type="text" value="@conFn" class="form-control edit-field" data-field="CON_FN" /></td>
+                                                            <td style="width: 80px;"><label>施工日期：</label></td>
+                                                            <td><input type="text" value="@conDt" class="form-control edit-field" data-field="CON_DT" maxlength="7" /></td>
+                                                            <td style="width: 80px;"><label>施工金額：</label></td>
+                                                            <td><input type="number" value="@conFee" class="form-control edit-field" data-field="CON_FEE" /></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><label>監造文號：</label></td>
+                                                            <td><input type="text" value="@supFn" class="form-control edit-field" data-field="SUP_FN" /></td>
+                                                            <td><label>監造日期：</label></td>
+                                                            <td><input type="text" value="@supDt" class="form-control edit-field" data-field="SUP_DT" maxlength="7" /></td>
+                                                            <td><label>監造金額：</label></td>
+                                                            <td><input type="number" value="@supFee" class="form-control edit-field" data-field="SUP_FEE" /></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><label>改善結果：</label></td>
+                                                            <td colspan="5"><textarea class="form-control edit-field bg-light mt-2" data-field="UP_MTHD" rows="2">@upMthd</textarea></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><label>備註：</label></td>
+                                                            <td colspan="5"><textarea class="form-control edit-field bg-light" data-field="SP_NOTE" rows="2">@spNote</textarea></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                rowIndex++;
+                            }
+                        }
+                    </tbody>
+                    <tfoot class="border-top border-primary border-2">
+                        <tr class="add-row">
+                            <td class="text-center align-middle">
+                                <span class="badge bg-success shadow-sm rounded-pill px-3 py-2"><i class="fa-solid fa-plus me-1"></i>新增</span>
+                            </td>
+                            <td><input type="number" id="new_SP_SEQ" class="form-control edit-field w-100 px-1" placeholder="次數" /></td>
+                            <td><input type="date" id="new_SP_DT" class="form-control edit-field w-100 px-1" /></td>
+                            <td><input type="number" id="new_SP_ALL_SCORE" class="form-control edit-field w-100 px-1" placeholder="成績" /></td>
+                            <td><input type="text" id="new_SP_LEVEL" class="form-control edit-field w-100 px-1" placeholder="等級" /></td>
+                            <td><input type="number" id="new_SP_PRE_SCHD" class="form-control edit-field w-100 px-1" step="0.01" placeholder="預定" /></td>
+                            <td><input type="number" id="new_SP_REL_SCHD" class="form-control edit-field w-100 px-1" step="0.01" placeholder="實際" /></td>
+                            <td><input type="text" id="new_SP_RESULT" class="form-control edit-field w-100 px-2" placeholder="抽查結果" /></td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-success btn-sm w-100 shadow-sm" onclick="addRow();">
+                                    <i class="fa-solid fa-plus me-1"></i>建立
+                                </button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- BS5 & jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script>
+        var TD_CODE = '@Model.TD_CODE';
+
+        function showMessage(type, message) {
+            var icon = type === 'success' ? '<i class="fa-solid fa-circle-check me-2"></i>' : '<i class="fa-solid fa-circle-exclamation me-2"></i>';
+            var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            var html = '<div class="alert ' + alertClass + ' alert-dismissible fade show shadow-sm" role="alert">' +
+                       icon + message +
+                       '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+            
+            $('#messageDiv').html(html);
+            setTimeout(function () { 
+                var alertNode = document.querySelector('.alert');
+                if(alertNode) {
+                    var bsAlert = new bootstrap.Alert(alertNode);
+                    bsAlert.close();
+                }
+            }, 3500);
+        }
+
+        function toggleDetail(rowIndex) {
+            var detailRow = $('#detail-' + rowIndex);
+            var btn = $('[data-row="' + rowIndex + '"] .expand-btn');
+            
+            if (detailRow.is(':visible')) {
+                detailRow.fadeOut(150);
+                btn.removeClass('fa-square-minus text-warning').addClass('fa-square-plus text-primary');
+                $('[data-row="' + rowIndex + '"]').removeClass('bg-light');
+            } else {
+                detailRow.fadeIn(200);
+                btn.removeClass('fa-square-plus text-primary').addClass('fa-square-minus text-warning');
+                $('[data-row="' + rowIndex + '"]').addClass('bg-light');
+            }
+        }
+
+        function collectRowData(mainRow, detailRow) {
+            var data = { TD_CODE: TD_CODE };
+            mainRow.find('.edit-field').each(function () {
+                var field = $(this).data('field');
+                var value = $(this).val();
+                data[field] = value || null;
+            });
+            if (detailRow && detailRow.length) {
+                detailRow.find('.edit-field').each(function () {
+                    var field = $(this).data('field');
+                    var value = $(this).val();
+                    data[field] = value || null;
+                });
+            }
+            return data;
+        }
+
+        function addRow() {
+            var data = {
+                TD_CODE: TD_CODE,
+                SP_SEQ: $('#new_SP_SEQ').val() || null,
+                SP_DT: $('#new_SP_DT').val() || null,
+                SP_ALL_SCORE: $('#new_SP_ALL_SCORE').val() || null,
+                SP_LEVEL: $('#new_SP_LEVEL').val() || null,
+                SP_PRE_SCHD: $('#new_SP_PRE_SCHD').val() || null,
+                SP_REL_SCHD: $('#new_SP_REL_SCHD').val() || null,
+                SP_RESULT: $('#new_SP_RESULT').val() || null
+            };
+
+            var btn = $(event.currentTarget);
+            btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i>');
+
+            $.ajax({
+                url: '@Url.Action("PAGE7_Add", "TDE0047")',
+                type: 'POST',
+                data: data,
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                        setTimeout(function(){ location.reload(); }, 800);
+                    } else {
+                        showMessage('error', result.message);
+                        btn.prop('disabled', false).html('<i class="fa-solid fa-plus me-1"></i>建立');
+                    }
+                },
+                error: function (e) {
+                    showMessage('error', '新增失敗：' + e.statusText);
+                    btn.prop('disabled', false).html('<i class="fa-solid fa-plus me-1"></i>建立');
+                }
+            });
+        }
+
+        function updateRow(btn) {
+            var mainRow = $(btn).closest('tr');
+            var spid = mainRow.data('spid');
+            var rowIndex = mainRow.data('row');
+            var detailRow = $('#detail-' + rowIndex);
+            var btnEl = $(btn);
+
+            var originalHtml = btnEl.html();
+            btnEl.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i>');
+
+            var data = collectRowData(mainRow, detailRow);
+            data.SPID = spid;
+
+            $.ajax({
+                url: '@Url.Action("PAGE7_Update", "TDE0047")',
+                type: 'POST',
+                data: data,
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                    btnEl.prop('disabled', false).html(originalHtml);
+                },
+                error: function () {
+                    showMessage('error', '更新失敗');
+                    btnEl.prop('disabled', false).html(originalHtml);
+                }
+            });
+        }
+
+        function deleteRow(btn) {
+            if (!confirm('確定要永久刪除此筆資料嗎？此操作無法復原。')) return;
+
+            var mainRow = $(btn).closest('tr');
+            var spid = mainRow.data('spid');
+            var rowIndex = mainRow.data('row');
+            var detailRow = $('#detail-' + rowIndex);
+            var btnEl = $(btn);
+            
+            btnEl.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i>');
+
+            $.ajax({
+                url: '@Url.Action("PAGE7_Delete", "TDE0047")',
+                type: 'POST',
+                data: { SPID: spid },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                        mainRow.fadeOut(300, function() { $(this).remove(); });
+                        detailRow.fadeOut(300, function() { $(this).remove(); });
+                    } else {
+                        showMessage('error', result.message);
+                        btnEl.prop('disabled', false).html('<i class="fa-solid fa-trash"></i>');
+                    }
+                },
+                error: function () {
+                    showMessage('error', '刪除失敗');
+                    btnEl.prop('disabled', false).html('<i class="fa-solid fa-trash"></i>');
+                }
+            });
+        }
+
+        function closeDialog() {
+            var topWindow = window;
+            while (topWindow.parent && topWindow.parent !== topWindow) {
+                topWindow = topWindow.parent;
+                if (typeof topWindow.close7 === 'function') {
+                    topWindow.close7();
+                    return;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

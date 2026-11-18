@@ -1,0 +1,147 @@
+﻿@model WCals.ViewModels.FeedbackDataViewModel
+
+@{
+    ViewBag.Title = "使用者意見留言表單";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    ViewBag.CONTROLLER_NAME = this.ViewContext.RouteData.Values["controller"].ToString();
+}
+
+@section head{
+    <link rel="stylesheet" href="~/Content/views/common.css">
+}
+
+@{
+    // 檔案類型限制
+    var acceptFileTypes = new[] { ".jpg", ".jpeg", ".png" };
+    var acceptFileString = string.Join(",", acceptFileTypes);
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            @ViewBag.Title
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa fa-dashboard"></i>
+                <a href="@Url.Content("~")"> 首頁</a>
+            </li>
+            <li class="active">
+                <i class="fa fa-file"></i>
+                <a href="@Url.Action("FeedbackList", new { page = @TempData[WCals.Controllers.Constants.MQA_PAGE_NUMBER_KEY], edit = 1 })">使用者意見留言和查詢</a>
+            </li>
+            <li class="active">
+                <i class="fa fa-file"></i>
+                @ViewBag.Title
+            </li>
+        </ol>
+    </div>
+</div>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    var queHeadDisplayName = ViewData.ModelMetadata.Properties.First(p => p.PropertyName == "QUE_HEAD").GetDisplayName();
+    var quedataDisplayName = ViewData.ModelMetadata.Properties.First(p => p.PropertyName == "QUE_DATA").GetDisplayName();
+    var userTelDisplayName = ViewData.ModelMetadata.Properties.First(p => p.PropertyName == "USER_TEL").GetDisplayName();
+    var userMailDisplayName = ViewData.ModelMetadata.Properties.First(p => p.PropertyName == "USER_MAIL").GetDisplayName();
+
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title h5 mb-0">@ViewBag.Title</h3>
+        </div>
+
+        <div class="card-body">
+            <div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="row mb-3">
+                    @Html.LabelFor(model => model.APL_TYPE, htmlAttributes: new { @class = "col-md-2 col-form-label is-required" })
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(model => model.APL_TYPE, (SelectList)ViewBag.FeedbackTypeList, new { @class = "form-control", @required = "required" })
+                        @Html.ValidationMessageFor(model => model.APL_TYPE, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    @Html.LabelFor(model => model.QUE_HEAD, htmlAttributes: new { @class = "col-md-2 col-form-label is-required" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.QUE_HEAD, new { htmlAttributes = new { @class = "form-control", @required = "required", maxlength = 50, autocomplete = "off", @placeholder = queHeadDisplayName } })
+                        @Html.ValidationMessageFor(model => model.QUE_HEAD, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    @Html.LabelFor(model => model.QUE_DATA, htmlAttributes: new { @class = "col-md-2 col-form-label is-required" })
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(x => x.QUE_DATA, new { @class = "form-control w-100 mw-100 resize-vertical", rows = 10, @required = "required", maxlength = 1000, @placeholder = quedataDisplayName })
+                        @Html.ValidationMessageFor(model => model.QUE_DATA, "", new { @class = "text-danger" })
+                        <small>(最多1000個字)</small>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    @Html.LabelFor(model => model.USER_TEL, htmlAttributes: new { @class = "col-md-2 col-form-label is-required" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.USER_TEL, new { htmlAttributes = new { @class = "form-control", @required = "required", maxlength = 20, @placeholder = userTelDisplayName, pattern = @"^(09\d{8}|0\d{1,2}-\d{6,8}(#\d{1,5})?)$" } })
+                        @Html.ValidationMessageFor(model => model.USER_TEL, "", new { @class = "text-danger" })
+                        <small>(例：0981234567 或 02 - 23456789#123)</small>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    @Html.LabelFor(model => model.USER_MAIL, htmlAttributes: new { @class = "col-md-2 col-form-label is-required" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.USER_MAIL, new { htmlAttributes = new { @class = "form-control", @required = "required", maxlength = 50, @placeholder = userMailDisplayName, pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$" } })
+                        @Html.ValidationMessageFor(model => model.USER_MAIL, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-md-2 col-form-label">相關檔案</label>
+                    <div class="col-md-8">
+
+                        <p>
+                            <button type="button" id="btn-add" class="btn btn-info">新增</button>
+                            <small>說明：上傳檔案（PDF/JPG/PNG，最大 20MB）</small>
+                        </p>
+
+                        <div class="table-responsive">
+                            <table class="table " style="min-width: unset !important;">
+                                <thead>
+                                    <tr>
+                                        <th>檔案說明</th>
+                                        <th>檔案名稱</th>
+                                        <th nowrap>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="uploadTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            @Html.Partial("_AntiSpamFields")
+
+            <p class="text-center">
+                <input type="submit" value="送出問題" class="btn btn-warning btn-lg" style="margin-right:15px;" />
+                <a href="@Url.Action("FeedbackList", new { page = @TempData[WCals.Controllers.Constants.MQA_PAGE_NUMBER_KEY], edit = 1 })" class="btn btn-secondary btn-lg always-enabled">返回</a>
+            </p>
+
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script>
+        const acceptFileString = "@acceptFileString";
+        const allowedExtensions = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(acceptFileTypes.Select(x => x.TrimStart('.')).ToArray()));
+    </script>
+
+    <script src="~/Scripts/utils/file-utils.js?v=@DateTime.Now.Ticks"></script>
+    <script src="~/Scripts/Feedback/create.js?v=@DateTime.Now.Ticks"></script>
+}

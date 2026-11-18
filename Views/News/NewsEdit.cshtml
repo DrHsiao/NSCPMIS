@@ -1,0 +1,227 @@
+﻿@model WCals.ViewModels.NewsDataViewModel
+
+@{
+    ViewBag.Title = "最新消息維護內容";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    ViewBag.CONTROLLER_NAME = this.ViewContext.RouteData.Values["controller"].ToString();
+}
+
+@section head{
+    <link rel="stylesheet" href="~/Content/views/common.css">
+}
+
+@{
+    // 若為true 表示顯示檢視畫面，false 表示編輯畫面
+    var isViewMode = Request.QueryString["view"] == "1";
+    var viewState = isViewMode ? "檢視" : "編輯";
+
+    // 檔案類型限制
+    var acceptFileTypes = new[] { ".pdf", ".doc", ".docx", ".xlsx", ".xls", ".zip", ".jpg", ".jpeg", ".png" };
+    var acceptFileString = string.Join(",", acceptFileTypes);
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="pb-2 mb-3 border-bottom">
+            @ViewBag.Title
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa fa-dashboard"></i><a href="@Url.Content("~/Home")"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active">
+                <i class="fa fa-file"></i>
+                <a href="@Url.Action("NewsList", new { page = @TempData[WCals.Controllers.Constants.NEWS_PAGE_NUMBER_KEY], edit = 1 })">最新消息維護</a>
+            </li>
+            <li class="breadcrumb-item active">
+                <i class="fa fa-file"></i>
+                @viewState
+            </li>
+        </ol>
+    </div>
+</div>
+
+@if (TempData["msg"] != null)
+{
+    <div id="msg-box" class="alert alert-success">
+        @TempData["msg"]
+    </div>
+
+    <script>
+        // 1秒後讓訊息淡出並消失
+        setTimeout(function () {
+            var msgBox = document.getElementById('msg-box');
+            if (msgBox) {
+                // 用淡出動畫 (jQuery方式)
+                if (window.jQuery) {
+                    $('#msg-box').fadeOut('slow');
+                } else {
+                    // 無 jQuery 就直接隱藏
+                    msgBox.style.display = 'none';
+                }
+            }
+        }, 1000);
+    </script>
+}
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title h5 mb-0">@ViewBag.Title</h3>
+        </div>
+        <div class="card-body">
+
+            <div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                @Html.HiddenFor(model => model.NEWSID)
+
+                <div class="row mb-3">
+                    @Html.LabelFor(model => model.TYPE, htmlAttributes: new { @class = "col-md-2 col-form-label is-required" })
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(model => model.TYPE, (SelectList)ViewBag.NewsTypeList, new { @class = "form-control", @required = "required" })
+                        @Html.ValidationMessageFor(model => model.TYPE, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                @{
+                    // 設定日期格式
+                    var startValueDate = Model.STARTDATE.HasValue
+                          ? Model.STARTDATE.Value
+                          : DateTime.Now.AddDays(1);
+                    string startFormattedDate = startValueDate.ToString("yyyy-MM-dd");
+
+                    var endValueDate = Model.ENDDATE.HasValue
+                          ? Model.ENDDATE.Value
+                          : DateTime.Now.AddMonths(1);
+                    string endFormattedDate = endValueDate.ToString("yyyy-MM-dd");
+
+                    string minDate = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
+                    string maxDate = DateTime.Now.AddYears(1).ToString("yyyy-MM-dd");
+                }
+
+                <div class="row mb-3">
+                    @Html.LabelFor(model => model.STARTDATE, htmlAttributes: new { @class = "col-md-2 col-form-label is-required" })
+                    <div class="col-md-4">
+                        <input type="date" id="STARTDATE" name="STARTDATE" class="form-control" value="@startFormattedDate" min="@minDate" max="@maxDate" required="required" @(ViewBag.IsAnnounced == true ? "readonly" : "") />
+                        @Html.ValidationMessageFor(model => model.STARTDATE, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    @Html.LabelFor(model => model.ENDDATE, htmlAttributes: new { @class = "col-md-2 col-form-label is-required" })
+                    <div class="col-md-4">
+                        <input type="date" id="ENDDATE" name="ENDDATE" class="form-control" value="@endFormattedDate" min="@minDate" max="@maxDate" required="required" />
+                        @Html.ValidationMessageFor(model => model.ENDDATE, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    @Html.LabelFor(model => model.HEADLINE, htmlAttributes: new { @class = "col-md-2 col-form-label is-required" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.HEADLINE, new { htmlAttributes = new { @class = "form-control", @required = "required", maxlength = 100, autocomplete = "off", placeholder = "標題" } })
+                        @Html.ValidationMessageFor(model => model.HEADLINE, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    @Html.LabelFor(model => model.BODY, htmlAttributes: new { @class = "col-md-2 col-form-label is-required" })
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(model => model.BODY, new { @class = "form-control", @rows = 10, cols = 50, @id = "BODY" })
+                        @Html.ValidationMessageFor(model => model.BODY, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="row mb-3" id="newsFiles">
+                    <label class="col-md-2 col-form-label">相關檔案</label>
+                    <div class="col-md-8">
+                        @{List<WCals.Models.CMBASEModels.SMCNEWSDOC> newsFiles = ViewBag.NewsFiles;}
+
+                        <p>
+                            <button type="button" class="btn btn-success" onclick="NewsModule.addFileUploadRow()"><span class="fa fa-plus" aria-hidden="true"></span>新增</button>
+                            <small>說明：上傳檔案（PDF/EXCEL/WORD/ZIP/圖片檔案，最多 20MB）</small>
+                        </p>
+
+                        <div class="table-responsive">
+                            <table class="table" style="min-width: unset !important;">
+                                <thead>
+                                    <tr>
+                                        <th>檔案</th>
+                                        <th>檔案大小</th>
+                                        <th nowrap>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="file_table_target">
+                                    @if (newsFiles != null && newsFiles.Count > 0)
+                                    {
+                                        foreach (WCals.Models.CMBASEModels.SMCNEWSDOC f in newsFiles)
+                                        {
+                                            <tr id="row-@f.FILID">
+                                                <td>
+                                                    <input type="hidden" name="FID" value="@f.FILID" />
+                                                    <input type="hidden" name="DEL_FG" id="DEL_FG_@f.FILID" />
+                                                    <input name="UploadedFiles" type="file" accept="@string.Join(",", acceptFileTypes.Select(ext => ext))" onchange="NewsModule.validateFile(this)" />
+                                                    <span name="fileError" class="text-danger"></span>
+                                                    <a target="_blank" href="@Url.Content("~/")@ViewBag.CONTROLLER_NAME/DownloadNewsFile?id=@Model.NEWSID&fid=@f.FILID">@f.FILE_PATH</a>
+                                                </td>
+                                                <td>@f.FILE_BODY.Length bytes</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="@f.FILID">刪除</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <table style="display:none;">
+                            <tbody id="file_table">
+                                <tr>
+                                    <td>
+                                        <input type="hidden" name="FID" />
+                                        <input type="hidden" name="DEL_FG" />
+                                        <input name="UploadedFiles" type="file" accept="@string.Join(",", acceptFileTypes.Select(ext => ext))" onchange="NewsModule.validateFile(this)" />
+                                        <span name="fileError" class="text-danger"></span>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            @Html.Partial("_AntiSpamFields")
+
+            <p class="text-center">
+                <input type="submit" value="儲存" class="btn btn-warning btn-lg" style="margin-right: 15px;" />
+                <a href="@Url.Action("NewsList", new { page = @TempData[WCals.Controllers.Constants.NEWS_PAGE_NUMBER_KEY], edit = 1 })" class="btn btn-secondary btn-lg always-enabled">返回</a>
+            </p>
+
+        </div>
+    </div>
+}
+
+@section scripts{
+    <!-- 引入 Summernote CSS & JS -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js" defer></script>
+
+    <script>
+        const isViewMode = @isViewMode.ToString().ToLower(); // 會輸出 true / false
+        const delNewsFileUrl = '@Url.Action("NewsFileDelete")';
+
+        const acceptFileString = "@acceptFileString";
+        const allowedExtensions = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(acceptFileTypes.Select(x => x.TrimStart('.')).ToArray()));
+    </script>
+
+    <script src="~/Scripts/utils/file-utils.js?v=@DateTime.Now.Ticks"></script>
+    <script src="~/Scripts/News/edit.js?v=@DateTime.Now.Ticks"></script>
+}

@@ -1,0 +1,183 @@
+﻿@using PagedList.Mvc;
+@model WCals.ViewModels.NewsListViewModel
+
+@{
+    ViewBag.Title = "最新消息維護";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    ViewBag.CONTROLLER_NAME = this.ViewContext.RouteData.Values["controller"].ToString();
+}
+
+@section head{
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            @ViewBag.Title
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa fa-dashboard"></i>
+                <a href="@Url.Content("~")"> 首頁</a>
+            </li>
+            <li class="active">
+                <i class="fa fa-file"></i>
+                @ViewBag.Title
+            </li>
+        </ol>
+    </div>
+</div>
+
+@using (Html.BeginForm("NewsList", (string)ViewBag.CONTROLLER_NAME, FormMethod.Post))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title h5 mb-0">查詢</h3>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <div class="mb-3">
+                            訊息類別：
+                            @Html.DropDownListFor(f => f.NewsSearch.TYPE, (SelectList)ViewBag.NewsTypeList, new { @class = "form-control" })
+                        </div>
+                        <p />
+                        <div class="mb-3">
+                            標題：
+                            @Html.EditorFor(f => f.NewsSearch.HEADLINE, new { htmlAttributes = new { @type = "search", @placeholder = "標題", @class = "form-control", maxlength = "50", autocomplete = "off" } })
+                        </div>
+                        <p />
+                        <div class="mb-3">
+                            內容：
+                            @Html.EditorFor(f => f.NewsSearch.SUMMARY, new { htmlAttributes = new { @type = "search", @placeholder = "內容", @class = "form-control", maxlength = "50", autocomplete = "off" } })
+                        </div>
+                        <p />
+                        <div class="mb-3">
+                            查詢期間：
+                            @Html.EditorFor(f => f.NewsSearch.STARTDATE, new { htmlAttributes = new { @class = "form-control", id = "dateFrom", type = "date" } })
+                            至
+                            @Html.EditorFor(f => f.NewsSearch.ENDDATE, new { htmlAttributes = new { @class = "form-control", id = "dateTo", type = "date" } })
+                            <small>(預設顯示三個月內的資料)</small>
+                        </div>
+                        <p />
+                        <p>
+                            <input type="submit" class="btn btn-primary" value="查詢" />
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-6 text-left" style="margin: 20px 0;">
+        @Html.ActionLink("新增公告", "NewsEdit", null, new { @class = "btn btn-success btn-lg" })
+    </div>
+    <div class="col-6 text-right">
+        @Html.PagedListPager(Model.NewsList, page => Url.Action("NewsList",
+                                                                             new
+                                                                             {
+                                                                                 page,
+                                                                                 edit = 1
+                                                                             }),
+                                                                             new PagedListRenderOptions
+                                                                             {
+                                                                                 DisplayItemSliceAndTotal = true,
+                                                                                 DisplayPageCountAndCurrentLocation = true,
+                                                                                 DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                                                                                 DisplayLinkToIndividualPages = false,
+
+                                                                                 ItemSliceAndTotalFormat = "顯示第 {0} - {1}筆, 共{2}筆",
+                                                                                 PageCountAndCurrentLocationFormat = "第 {0}頁 / 共 {1}頁",
+                                                                             }
+                                                                         )
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 text-muted small">
+        ※<span class="bg-warning">黃色底</span>表示該筆資料目前為公告中
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="text-nowrap">
+                        <th>訊息類別</th>
+                        <th>標題</th>
+                        <th>內容</th>
+                        <th>開始日期</th>
+                        <th>結束日期</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.NewsList == null || !Model.NewsList.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center">沒有符合條件的資料</td>
+                        </tr>
+                    }
+                    @foreach (var item in Model.NewsList)
+                    {
+                        <tr id="row-@item.NEWSID" class="@(item.IsAnnounced == "T" ? "warning" : "")" title="@(item.IsAnnounced == "T" ? "公告中" : "")">
+                            <td>@item.TYPE_NAME</td>
+                            <td>@item.HEADLINE</td>
+                            <td>@item.SUMMARY</td>
+                            @{if (@item.STARTDATE.HasValue)
+                                {
+                                    <td>@item.STARTDATE.Value.ToShortDateString()</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                if (@item.ENDDATE.HasValue)
+                                {
+                                    <td>@item.ENDDATE.Value.ToShortDateString()</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            }
+                            <td class="text-nowrap">
+                                @{
+                                    var IsEnd = item.ENDDATE.HasValue && item.ENDDATE.Value < DateTime.Now;
+                                    if (IsEnd)
+                                    {
+                                        @Html.ActionLink("檢視", "NewsEdit", new { id = item.NEWSID, view = 1 }, new { @class = "btn btn-sm btn-primary" })
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("修改", "NewsEdit", new { id = item.NEWSID }, new { @class = "btn btn-sm btn-primary" })
+                                    }
+                                }
+                                <button class="btn btn-sm btn-danger btn-delete mt-2"
+                                        title="@(item.IsAnnounced == "T" ? "公告中，無法刪除" : "")"
+                                        @(item.IsAnnounced == "T" ? "disabled" : "")
+                                        data-id="@item.NEWSID" data-status="@item.IsAnnounced">
+                                    刪除
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.PagedListPager(Model.NewsList, page => Url.Action("NewsList", new { page, edit = 1 }))
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        const delNewsUrl = '@Url.Action("NewsDelete")';
+    </script>
+
+    <script src="~/Scripts/News/list.js"></script>
+}

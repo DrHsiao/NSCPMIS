@@ -1,0 +1,1342 @@
+﻿@model WCals.ViewModels.NewModelsCMPSGSModels.PJMFORM
+@{
+    Layout = null;
+}
+
+<div class="content">
+    @Html.Action("SideBar", "Home")
+</div>
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    @*<script src="~/Scripts/jquery-3.7.1.min.js"></script>*@
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script>
+        $(function () {
+            $.datepicker.setDefaults($.datepicker.regional['zh-TW']);
+            $("#add_otdsgdt").datepicker({
+                dateFormat: 'yy/mm/dd'
+            });
+            $("#add_dsgrldt").datepicker({
+                dateFormat: 'yy/mm/dd'
+            });
+            $("#add_pccjdgdt").datepicker({
+                dateFormat: 'yy/mm/dd'
+            });
+            $("#add_indsgdt").datepicker({
+                dateFormat: 'yy/mm/dd'
+            });
+            $(".otdsgdt").datepicker({
+                dateFormat: 'yy/mm/dd'
+            });
+
+            $(".dsgrldt").datepicker({
+                dateFormat: 'yy/mm/dd'
+            });
+
+            $(".pccjdgdt").datepicker({
+                dateFormat: 'yy/mm/dd'
+            });
+
+            $(".indsgdt").datepicker({
+                dateFormat: 'yy/mm/dd'
+            });
+        });
+    </script>
+    <style>
+        /* === BS3 相容層（配色）v2：nav-tabs／分頁／藍色 header 頁籤，接軌系統主色 #337ab7 === */
+        .pagination { --bs-pagination-color: #337ab7; --bs-pagination-hover-color: #286090; --bs-pagination-focus-color: #286090; --bs-pagination-active-bg: #337ab7; --bs-pagination-active-border-color: #337ab7; margin: 10px 0; flex-wrap: wrap; }
+        .nav-tabs:not(.card-header-tabs) .nav-link { color: #337ab7; }
+        .nav-tabs:not(.card-header-tabs) .nav-link:hover, .nav-tabs:not(.card-header-tabs) .nav-link:focus { color: #286090; }
+        .nav-tabs:not(.card-header-tabs) .nav-link.active { color: #495057; font-weight: 600; }
+        .card-header.bg-primary { background-color: #337ab7 !important; color: #fff !important; border-bottom: 1px solid #ddd; padding: 10px 15px; font-weight: bold; }
+        .card-header .card-title { margin: 0; font-size: 1.1rem; }
+        .card-header-tabs { margin-bottom: -11px; border-bottom: none; }
+        .card-header-tabs .nav-item { margin-bottom: 0; }
+        .card-header-tabs .nav-link { border: 1px solid transparent; color: rgba(255,255,255,0.9) !important; margin-right: 2px; padding: 8px 15px; border-radius: 4px 4px 0 0; }
+        .card-header-tabs .nav-link:hover { background-color: rgba(255,255,255,0.15); border-color: transparent; }
+        .card-header-tabs .nav-link.active { background-color: #ffffff !important; color: #337ab7 !important; border-color: #dddddd #dddddd #ffffff !important; font-weight: bold; }
+    </style>
+    <script>
+        /* === BS3 相容層（裝飾器）v2：BS3 標記自動補 BS5 class，舊 view 免改標記 === */
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('ul.nav-tabs > li').forEach(function (li) {
+                li.classList.add('nav-item');
+                var a = li.querySelector(':scope > a');
+                if (!a) return;
+                a.classList.add('nav-link');
+                if (li.classList.contains('active')) { li.classList.remove('active'); a.classList.add('active'); }
+                if (a.getAttribute('data-toggle') === 'tab') { a.setAttribute('data-bs-toggle', 'tab'); a.removeAttribute('data-toggle'); }
+            });
+            document.querySelectorAll('ul.nav-tabs').forEach(function (ul) {
+                if (ul.closest('.card-header')) { ul.classList.add('card-header-tabs'); }
+            });
+            document.querySelectorAll('.tab-pane.in').forEach(function (p) { p.classList.remove('in'); p.classList.add('show'); });
+            document.querySelectorAll('ul.pagination > li').forEach(function (li) {
+                li.classList.add('page-item');
+                var el = li.querySelector(':scope > a, :scope > span');
+                if (el) el.classList.add('page-link');
+            });
+        });
+    </script>
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+
+<!DOCTYPE html>
+
+<style>
+    /*     original idea http://www.bootply.com/phf8mnMtpe */
+    .link-button {
+        background: none;
+        border: none;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
+        text-decoration: underline; /* 可以添加下劃線或其他樣式，以顯示它是一個連結 */
+        color: #566787; /* 文字顏色可以自行設定 */
+    }
+
+        .link-button[title="Collapse this branch"]:hover {
+            /* 添加你想要的样式 */
+            background-color: #eee;
+            color: #000;
+        }
+
+    .tree {
+        width: 350px; /* 设置你想要的宽度 */
+        min-height: 890px;
+        /*        padding: 19px;*/
+        /*        margin-bottom: 20px;*/
+        background-color: #fbfbfb;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    }
+
+        .tree li {
+            list-style-type: none;
+            margin: 0;
+            padding: 10px 15px 0 5px;
+            position: relative
+        }
+
+            .tree li::before, .tree li::after {
+                content: '';
+                left: -20px;
+                position: absolute;
+                right: auto
+            }
+
+            .tree li::before {
+                border-left: 1px solid #999;
+                bottom: 50px;
+                height: 100%;
+                top: 0;
+                width: 1px
+            }
+
+            .tree li::after {
+                border-top: 1px solid #999;
+                height: 20px;
+                top: 30px;
+                width: 25px
+            }
+
+            .tree li span {
+                -moz-border-radius: 5px;
+                -webkit-border-radius: 5px;
+                border: 1px solid #999;
+                border-radius: 5px;
+                display: inline-block;
+                padding: 3px 8px;
+                text-decoration: none;
+                font-size: 17px;
+            }
+
+            .tree li.parent_li > span {
+                cursor: pointer
+            }
+
+        .tree > ul > li::before, .tree > ul > li::after {
+            border: 0
+        }
+
+        .tree li:last-child::before {
+            height: 30px
+        }
+
+        .tree li.parent_li > span:hover, .tree li.parent_li > span:hover + ul li span {
+            background: #eee;
+            border: 1px solid #94a0b4;
+            color: #000
+        }
+    /*---------------------------------------------------------------------------------------------------------*/
+
+    body {
+        color: #566787;
+        background: #f5f5f5;
+        font-family: 'Varela Round', sans-serif;
+        font-size: 13px;
+    }
+
+    .table-wrapper {
+        background: #fff;
+        padding: 20px 25px;
+        margin: 30px 0;
+        border-radius: 3px;
+        box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    }
+
+    .table-title {
+        padding-bottom: 15px;
+        background: #435d7d;
+        color: #fff;
+        padding: 16px 30px;
+        margin: -20px -25px 10px;
+        border-radius: 3px 3px 0 0;
+    }
+
+        .table-title h2 {
+            margin: 5px 0 0;
+            font-size: 24px;
+        }
+
+        .table-title .btn-group {
+            float: right;
+        }
+
+        .table-title .btn {
+            color: #fff;
+            float: right;
+            font-size: 13px;
+            border: none;
+            min-width: 50px;
+            border-radius: 2px;
+            border: none;
+            outline: none !important;
+            margin-left: 10px;
+        }
+
+            .table-title .btn i {
+                float: left;
+                font-size: 21px;
+                margin-right: 5px;
+            }
+
+            .table-title .btn span {
+                float: left;
+                margin-top: 2px;
+            }
+
+    .tree {
+        float: left; /* 左侧树状结构容器 */
+    }
+
+    .table-container {
+        float: left; /*右侧表格容器 */
+        width: 75%; /* 调整宽度以适应布局 */
+    }
+    /* -------------------------------------------------------------------------------------- */
+
+    /* 卡片样式 */
+    .card {
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .card:hover {
+            background-color: #f0f0f0;
+        }
+
+    /* 列表样式 */
+    .card-list {
+        width: 200px;
+        padding: 10px;
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-right: 20px;
+        display: inline-block;
+        vertical-align: top;
+        max-height: 1000px; /* 调整为您希望的高度   這個是控制顯示條長度的 */
+        overflow-y: auto;
+    }
+
+        .card-list h2 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            text-align: center; /* 居中标题文本 */
+            background-color: #435D7D; /* 标题背景颜色 */
+            color: #fff; /* 标题文字颜色 */
+            padding: 5px 0; /* 增加标题上下内边距 */
+            border-radius: 5px 5px 0 0; /* 使标题的左上和右上角圆角 */
+        }
+    /* -------------------------------------------------------------------------------------- */
+
+    #exTab2 h3 {
+        color: black;
+        background-color: white;
+        padding: 5px 15px;
+    }
+
+    tr {
+        background: white;
+    }
+
+    .list-sortable {
+        min-height: 100px;
+    }
+
+        .list-sortable li {
+            cursor: move;
+        }
+
+            .list-sortable li:hover {
+                background-color: #f1f1f1;
+            }
+
+    .sortable-chosen {
+        box-shadow: none !important;
+    }
+
+</style>
+
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+
+<form method="post" action="@Url.Action("CRUD")" enctype="multipart/form-data">
+    <div class="model-form2">
+        <div>
+            <div id="collapseDVR3" class="panel-collapse collapse in">
+                <div class="tree">
+                    <ul>
+                        <li>
+                            <span>
+                                <i class="fa-solid fa-folder-open"></i> 內政部營建署下水道工程處
+                            </span>
+                            <ul>
+                                @foreach (var item in ViewBag.TreeView)
+                                {
+                                    <li>
+                                        @*<a href="#" id="@item.PJ_NAME" onclick="TreeViewClick(this.id)"><span><i></i>@item.PJ_NAME</span></a>*@
+                                        <button type="submit" name="TreeView_PPID" value="@item.PPID" class="link-button" title="Collapse this branch"><span><i></i>@item.PJ_NAME</span></button>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="table-container">
+            <div class="table-wrapper">
+                <div class="table-title">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h2>Manage <b>Employees</b></h2>
+                        </div>
+                        <div class="col-sm-6">
+                            <button type="submit" name="btn" value="0" class="btn btn-warning" data-bs-toggle="modal"><i class="material-icons">&#xf0ff;</i> <span>清除</span></button>
+                            <button type="submit" name="btn" value="1" class="btn btn-success" data-bs-toggle="modal"><i class="material-icons">&#xE147;</i> <span>新增</span></button>
+                            <button type="submit" name="btn" value="2" class="btn btn-danger" data-bs-toggle="modal" onclick="return confirm('確定要刪除嗎?')"><i class="material-icons">&#xE15C;</i> <span>刪除</span></button>
+                            <button type="submit" name="btn" value="3" class="btn btn-primary" data-bs-toggle="modal" onclick="return confirm('確定要修改嗎?')"><i class="material-icons">&#xE254;</i> <span>修改</span></button>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table  table-bordered table-hover " style="text-align: left;">
+                    <tr>
+                        <td>計畫名稱：</td>
+                        <td colspan="3">
+                            <input type="text" value="@((ViewBag.Plan != null) ? ViewBag.Plan.PJ_NAME : "")" name="PJ_NAME" />
+                            <input type="text" value="@ViewBag.PPID" name="PPID" hidden />
+                            <input type="text" value="@ViewBag.PPID" name="FID" hidden />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fixed-column">計畫編號：</td>
+                        <td colspan="3"><input type="text" value="@((ViewBag.Plan != null) ? ViewBag.Plan.PJ_CODE : "")" name="PJ_CODE" /></td>
+                    </tr>
+                    <tr>
+                        <td>樣板類型：</td>
+                        <td colspan="3"><input type="text" value="@((ViewBag.Plan != null) ? ViewBag.Plan.PJ_CATY : "")" name="PJ_CATY" /></td>
+                    </tr>
+                    <tr>
+                        <td>承辦單位：</td>
+                        <td><input type="text" value="@((ViewBag.Plan != null) ? ViewBag.Plan.ADV_DP : "")" name="ADV_DP" /></td>
+                        <td>承辦人：</td>
+                        <td><input type="text" value="@((ViewBag.Plan != null) ? ViewBag.Plan.ADV_UID : "")" name="ADV_UID" /></td>
+                    </tr>
+                    <tr>
+                        <td>實際計畫內容：</td>
+                        <td colspan="3"><input type="text" value="@((ViewBag.Plan != null) ? ViewBag.Plan.PJ_CONT : "")" name="PJ_CONT" /></td>
+                    </tr>
+                    <tr>
+                        <td>核定期程啟日：</td>
+                        <td><input type="text" value="@((ViewBag.Plan != null) ? ViewBag.Plan.STT_DT : "")" name="STT_DT" /></td>
+                        <td>核定期程啟日：</td>
+                        <td><input type="text" value="@((ViewBag.Plan != null) ? ViewBag.Plan.END_DT : "")" name="END_DT" /></td>
+                    </tr>
+                    <tr>
+                        <td>報局日期：</td>
+                        <td><input type="text" value="@((ViewBag.Plan != null) ? ViewBag.Plan.LEV1_DT : "")" name="LEV1_DT" /></td>
+                        <td>報局文號：</td>
+                        <td><input type="text" value="@((ViewBag.Plan != null) ? ViewBag.Plan.LEV1_FN : "")" name="LEV1_FN" /></td>
+                    </tr>
+                    <tr>
+                        <td>報局日期：</td>
+                        <td><input type="text" value="@((ViewBag.Plan != null) ? ViewBag.Plan.LEV2_DT : "")" name="LEV2_DT" /></td>
+                        <td>報局文號：</td>
+                        <td><input type="text" value="@((ViewBag.Plan != null) ? ViewBag.Plan.LEV2_FN : "")" name="LEV2_FN" /></td>
+                    </tr>
+                    <tr>
+                        <td>報局日期：</td>
+                        <td><input type="text" value="@((ViewBag.Plan != null) ? ViewBag.Plan.LEV3_DT : "")" name="LEV3_DT" /></td>
+                        <td>報局文號：</td>
+                        <td><input type="text" value="@((ViewBag.Plan != null) ? ViewBag.Plan.LEV3_FN : "")" name="LEV3_FN" /></td>
+                    </tr>
+                </table>
+            </div>
+            <div style="font-size:30px; color:red; text-align:center">@ViewBag.Message</div>
+            <div id="exTab2" class="container">
+                <ul class="nav nav-tabs">
+                    <li class="active" style="background:none;">
+                        <a href="#1" data-bs-toggle="tab" style="background:#435D7D; color:white;">系統別</a>
+                    </li>
+                    <li style="background:none;">
+                        <a href="#2" data-bs-toggle="tab" style="background:#435D7D; color:white;">申請執行內容分類</a>
+                    </li>
+                    <li style="background:none;">
+                        <a href="#3" data-bs-toggle="tab" style="background:#435D7D; color:white;">計畫核定經費</a>
+                    </li>
+                    <li style="background:none;">
+                        <a href="#4" data-bs-toggle="tab" style="background:#435D7D; color:white;">計畫相關文件</a>
+                    </li>
+                    <li style="background:none;">
+                        <a href="#5" data-bs-toggle="tab" style="background:#435D7D; color:white;">計畫可補助機關</a>
+                    </li>
+                    <li style="background:none;">
+                        <a href="#6" data-bs-toggle="tab" style="background:#435D7D; color:white;">申請開放管制</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content" style="width:1000px">
+                    <div class="tab-pane active" id="1">
+                        <table class="table table-bordered table-hover">
+                            <thead style="background: white;">
+                                <tr>
+                                    <td>
+                                        分類代碼
+                                    </td>
+                                    <td>
+                                        分類名稱
+                                    </td>
+                                    <td>
+                                        總工程司核定
+                                    </td>
+                                    <td>
+                                        委設招商日期
+                                    </td>
+                                    <td>
+                                        委設招商名稱
+                                    </td>
+                                    <td>
+                                        辦理設計原則日期
+                                    </td>
+                                    <td>
+                                        工程會審議日期
+                                    </td>
+                                    <td>
+                                        匡列經費
+                                    </td>
+                                    <td>
+                                        初步設計日期
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.Source1 != null)
+                                {
+
+                                    foreach (var item in ViewBag.Source1)
+                                    {
+                                        <tr>
+                                            <td data-id="@item.CID">
+                                                <label class="pjcatycode" style="width:80px;" value="@item.CID">@item.CID</label>
+                                            </td>
+                                            <td><input class="cattyname" type="text" style="width:80px;" value="@item.CATY_NAME" /></td>
+                                            <td style="text-align:center;"><input class="evrffg" type="checkbox" @(item.EVRF_FG ? "checked" : "") /></td>
+                                            <td><input class="otdsgdt" type="text" style="width:80px;" value="@item.OTDSG_DT" /></td>
+                                            <td><input class="otdsgbuss" type="text" style="width:80px;" value="@item.OTDSG_BUSS" /></td>
+                                            <td><input class="dsgrldt" type="text" style="width:80px;" value="@item.DSGRL_DT" /></td>
+                                            <td><input class="pccjdgdt" type="text" style="width:80px;" value="@item.PCCJDG_DT" /></td>
+                                            <td><input class="pccjdgfund" type="text" style="width:80px;" value="@item.PCCJDG_FUND" /></td>
+                                            <td><input class="indsgdt" type="text" style="width:80px;" value="@item.INIDSG_DT" /></td>
+                                            <td>
+                                                <input type="button" class="update_sys_type" value="儲存">
+                                                <input type="button" class="delete_sys_type" value="刪除">
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                <tr>
+                                    <td><label id="add_pjcatycode" style="width:80px;" /></td>
+                                    <td><input id="add_cattyname" type="text" style="width:80px;" /></td>
+                                    <td style="text-align:center;"><input id="add_evrffg" type="checkbox" ) /></td>
+                                    <td><input id="add_otdsgdt" type="text" style="width:80px;" /></td>
+                                    <td><input id="add_otdsgbuss" type="text" style="width:80px;" /></td>
+                                    <td><input id="add_dsgrldt" type="text" style="width:80px;" /></td>
+                                    <td><input id="add_pccjdgdt" type="text" style="width:80px;" /></td>
+                                    <td><input id="add_pccjdgfund" type="text" style="width:80px;" /></td>
+                                    <td><input id="add_indsgdt" type="text" style="width:80px;" /></td>
+                                    <td>
+                                        <input type="button" id="create_sys_type" value="新增">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane" id="2" style="width:940px">
+                        <table class="table table-bordered table-hover">
+                            <tr style="background: white;">
+                                <td>
+                                    項目代碼
+                                </td>
+                                <td>
+                                    項目名稱
+                                </td>
+                                <td>
+                                    單位別
+                                </td>
+                                <td>
+                                    備註說明
+                                </td>
+                                <td></td>
+                            </tr>
+                            @if (ViewBag.Source2 != null)
+                            {
+                                foreach (var item in ViewBag.Source2)
+                                {
+                                    <tr>
+                                        <td data-id="@item.CMS_CODE">
+                                            <input class="cmscode" type="text" style="width:80px;" value="@item.CMS_CODE" />
+                                        </td>
+                                        <td><input class="cmsname" type="text" style="width:80px;" value="@item.CMS_NAME" /></td>
+                                        <td><input class="cmsunit" type="text" style="width:80px;" value="@item.CMS_UNIT" /></td>
+                                        <td><input class="cmsnote" type="text" style="width:80px;" value="@item.CMS_NOTE" /></td>
+                                        <td>
+                                            <input type="button" class="update_apply_execution" value="儲存">
+                                            <input type="button" class="delete_apply_execution" value="刪除">
+                                        </td>
+                                        <td hidden="hidden"><input class="cmscode_key" value="@item.CMS_CODE" /></td>
+                                    </tr>
+                                }
+                            }
+
+                            <tr>
+                                <td><input id="add_cmscode" type="text" style="width:80px;" /></td>
+                                <td><input id="add_cmsname" type="text" style="width:80px;" /></td>
+                                <td><input id="add_cmsunit" type="text" style="width:80px;" /></td>
+                                <td><input id="add_cmsnote" type="text" style="width:80px;" /></td>
+                                <td>
+                                    <input type="button" id="create_apply_execution" value="新增">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="tab-pane" id="3" style="width:940px">
+                        <table class="table table-bordered table-hover">
+                            <tr style="background: white;">
+                                <td>
+                                    年度
+                                </td>
+                                <td>
+                                    經費層級
+                                </td>
+                                <td>
+                                    金額
+                                </td>
+                                <td>
+                                    經費說明
+                                </td>
+                                <td>
+                                    實際編列經費
+                                </td>
+                                <td></td>
+                            </tr>
+                            @if (ViewBag.Source3 != null)
+                            {
+                                foreach (var item in ViewBag.Source3)
+                                {
+                                    <tr>
+                                        <td data-id="@item.SYR"><input class="syr" type="text" style="width:80px;" value="@item.SYR" /></td>
+                                        <td>
+                                            <select class="codedesc" style="width:120px;">
+                                                @foreach (var selectitem in ViewBag.Source3_1)
+                                                {
+                                                    <option value="@selectitem.CATY_COD" @(selectitem.CODE_DESC == item.CODE_DESC ? "selected" : "")>@selectitem.CODE_DESC</option>
+                                                }
+                                            </select>
+                                        </td>
+                                        <td><input class="fund" type="text" style="width:80px;" value="@item.FUND" /></td>
+                                        <td><input class="funddesc" type="text" style="width:80px;" value="@item.FUND_DESC" /></td>
+                                        <td><input class="ybgfund" type="text" style="width:80px;" value="@item.YBG_FUND" /></td>
+                                        <td>
+                                            <input type="button" class="update_pj_fund" value="儲存">
+                                            <input type="button" class="delete_pj_fund" value="刪除">
+                                        </td>
+                                        <td hidden="hidden"><input class="ipjcode" value="@item.IPJ_CODE" /></td>
+                                    </tr>
+                                }
+                            }
+
+                        <tr>
+                            <td><input id="add_syr" type="text" style="width:80px;" /></td>
+                            <td>
+                                <select id="add_catycod" style="width:128px;" class="form-select">
+                                    @foreach (var selectitem in ViewBag.Source3_1)
+                                    {
+                                        <option value="@selectitem.CATY_COD">@selectitem.CODE_DESC</option>
+                                    }
+                                </select>
+                            </td>
+                            <td><input id="add_fund" type="text" style="width:80px;" /></td>
+                            <td><input id="add_funddesc" type="text" style="width:80px;" /></td>
+                            <td><input id="add_ybgfund" type="text" style="width:80px;" /></td>
+                            <td>
+                                <input type="button" id="create_pj_fund" value="新增">
+                            </td>
+                            <td hidden="hidden"><input id="add_ipjcode"  /></td>
+                        </tr>
+                        </table>
+                    </div>
+                    <div class="tab-pane" id="4" style="width:940px">
+                        <div id="fileUploadForm" enctype="multipart/form-data">
+                            <input type="file" name="file" id="inputFile" style="display:inline" onchange="savingFile()">
+                            檔案說明:
+                            <input type="text" name="FILE_DESC" />
+                            <button style="display: inline"> 上傳檔案 </button>
+                        </div>
+                        <table class="table table-bordered table-hover">
+                            <tr style="background: white;">
+                                <td>
+                                    檔案說明
+                                </td>
+                                <td>
+                                    檔案名稱
+                                </td>
+                                <td>
+                                    檔案大小(KB)
+                                </td>
+                                <td>
+                                    上傳日期
+                                </td>
+                                <td>
+                                    刪除
+                                </td>
+                            </tr>
+                            @foreach (var item in ViewBag.Source5)
+                            {
+                                <tr>
+                                    <td>@item.FILE_DESC</td>
+                                    <td>@item.FILE_NAME</td>
+                                    <td>@item.FILE_SIZE</td>
+                                    <td>@item.ADD_DT</td>
+                                    <td>
+                                        @Html.ActionLink("刪除", "CRUD", new { FILE_DELETE_NAME = item.FILE_NAME, FILE_DELETE_PPID = item.PPID }, new { onclick = "return confirm('確定刪除嗎?');", @class = "btn btn-danger" })
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                    <div class="tab-pane" id="5" style="width:940px; background-color:white">
+                        <div id="list1" class="card-list">
+                            <h2>未選取</h2> <!-- 添加标题 -->
+                            @{ int i = 1;}
+                            @foreach (var item in ViewBag.NotChoose)
+                            {
+                                <div class="card" id="@item.DEPT_NO" draggable="true" data-card-id="@i">@item.DEPT_NAME</div>
+                                i++;
+                            }
+                        </div>
+
+                        <div id="list2" class="card-list">
+                            <h2>已選取</h2> <!-- 添加标题 -->
+                            @{ int j = 1;}
+                            @foreach (var item in ViewBag.Choose)
+                            {
+                                <div class="card" id="@item.DEPT_NO" draggable="true" data-card-id="@i">@item.DEPT_NAME</div>
+                                j++;
+                            }
+                        </div>
+                        <button type="button" onclick="Save()" style="width:100px; height:30px;">儲存</button>
+                    </div>
+                    <div class="tab-pane" id="6" style="width:940px">
+                        <table class="table table-bordered table-hover">
+                            <tr style="background: white;">
+                                <td>
+                                    說明
+                                </td>
+                                <td>
+                                    起始年度
+                                </td>
+                                <td>
+                                    終止年度
+                                </td>
+                                <td>
+                                    開放否
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                            @if (ViewBag.Source6 != null)
+                            {
+                                foreach (var item in ViewBag.Source6)
+                                {
+                                    <tr>
+                                        <td><input class="psgname" type="text" style="width:80px;" value="@item.PSG_NAME" /></td>
+                                        <td><input class="bgnsyr" type="text" style="width:80px;" value="@item.BGN_SYR" /></td>
+                                        <td><input class="endsyr" type="text" style="width:80px;" value="@item.END_SYR" /></td>
+                                        <td style="text-align:center"><input class="openfg" type="checkbox" @(item.OPEN_FG ? "checked" : "") /></td>
+                                        <td>
+                                            <input type="button" class="update_apply_controller" value="儲存">
+                                            <input type="button" class="delete_apply_controller" value="刪除">
+                                        </td>
+                                        <td hidden>@item.YRC_ID</td>
+                                    </tr>
+                                }
+                            }
+
+                            <tr>
+                                <td><input id="add_psgname" type="text" style="width:80px;" /></td>
+                                <td><input id="add_bgnsyr" type="text" style="width:80px;" /></td>
+                                <td><input id="add_endsyr" type="text" style="width:80px;" /></td>
+                                <td style="text-align:center"><input id="add_openfg" type="checkbox" /></td>
+                                <td>
+                                    <input type="button" id="create_apply_controller" value="新增">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</form>
+
+
+
+<!-- Bootstrap core JavaScript
+    ================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+
+
+
+
+<script>
+    $(function () {
+        $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
+        $('.tree li.parent_li > span').on('click', function (e) {
+            var children = $(this).parent('li.parent_li').find(' > ul > li');
+            if (children.is(":visible")) {
+                children.hide('fast');
+                $(this).attr('title', 'Expand this branch').find(' > i').addClass('fa-plus-square').removeClass('fa-minus-square');
+            } else {
+                children.show('fast');
+                $(this).attr('title', 'Collapse this branch').find(' > i').addClass('fa-minus-square').removeClass('fa-plus-square');
+            }
+            e.stopPropagation();
+        });
+    });
+</script>
+
+<script>
+    const cards = document.querySelectorAll('.card');
+
+    cards.forEach(card => {
+        card.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', e.target.dataset.cardId);
+        });
+    });
+
+    const lists = document.querySelectorAll('.card-list');
+
+    lists.forEach(list => {
+        list.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        list.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const cardId = e.dataTransfer.getData('text/plain');
+            const card = document.querySelector(`[data-card-id="${cardId}"]`);
+            list.appendChild(card);
+        });
+    });
+</script>
+
+<script>
+    function GetSelectedDeptNos() {
+        var selectedDeptNos = [];
+
+        // 获取所有具有data-card-id属性的卡片元素
+        var cardElements = document.querySelectorAll('#list2 .card[data-card-id]');
+
+        cardElements.forEach(function (card) {
+            selectedDeptNos.push(card.getAttribute('id'));
+        });
+        // 现在，selectedDeptNos数组包含了list2下的所有已选择的item.DEPT_NO值
+        return selectedDeptNos;
+    }
+
+    function Save() {
+        var selectedDeptNos = GetSelectedDeptNos();
+        var hiddenField = document.querySelector('input[name="PPID"]');
+        var PPID = hiddenField.value;
+
+        // 在这里，您可以使用selectedDeptNos进行进一步的操作，如发送到服务器
+        // 例如，使用Ajax将这些值发送到服务器
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("CRUD", "Plan")',
+            cache: false,
+            async: false,
+            data: { DEPT_NO: selectedDeptNos , PPID:PPID },
+            dataType: 'json',
+            success: function (data) {
+                alert(data);
+            }
+        });
+    }
+$(document).ready(function () {
+    // 新增功能
+    $('#create_sys_type').click(function () {
+        var pjcatycode = $('#add_pjcatycode').val();
+        var cattyname = $('#add_cattyname').val();
+        var evrffg = $('#add_evrffg').prop('checked');
+        var otdsgdt = $('#add_otdsgdt').val();
+        var otdsgbuss = $('#add_otdsgbuss').val();
+        var dsgrldt = $('#add_dsgrldt').val();
+        var pccjdgdt = $('#add_pccjdgdt').val();
+        var pccjdgfund = $('#add_pccjdgfund').val();
+        var indsgdt = $('#add_indsgdt').val();
+        var ppid = '@ViewBag.PPID';
+        // 檢查必填欄位是否為空
+
+        if (ppid === '') {
+            alert('請點選左側計畫');
+            return;
+        }
+
+        if (cattyname === '' || otdsgdt === '' || otdsgbuss === '' || dsgrldt === '' || pccjdgdt === '' || pccjdgfund === '' || indsgdt === '') {
+            alert('請填寫全部欄位');
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("Create_Sys_type", "Plan")',
+            type: 'POST',
+            contentType: 'application/json',
+            cache: false,
+            async: false,
+            data: JSON.stringify({
+                pjcatycode: pjcatycode,
+                cattyname: cattyname,
+                evrffg: evrffg,
+                otdsgdt: otdsgdt,
+                otdsgbuss: otdsgbuss,
+                dsgrldt: dsgrldt,
+                pccjdgdt: pccjdgdt,
+                pccjdgfund: pccjdgfund,
+                indsgdt: indsgdt,
+                ppid: ppid
+            }),
+            success: function (response) {
+                alert('新增成功');
+                // 新增成功後，清空表單欄位
+                $('#add_pjcatycode').val('');
+                $('#add_cattyname').val('');
+                $('#add_evrffg').prop('checked', false);
+                $('#add_otdsgdt').val('');
+                $('#add_otdsgbuss').val('');
+                $('#add_dsgrldt').val('');
+                $('#add_pccjdgdt').val('');
+                $('#add_pccjdgfund').val('');
+                $('#add_indsgdt').val('');
+                // 重新載入資料
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert('新增失敗');
+            }
+        });
+    });
+
+    // 修改功能
+    $('.update_sys_type').click(function () {
+        var ppid = '@ViewBag.PPID';
+        var pjcatycode = $(this).closest('tr').find('.pjcatycode').text();
+        var cattyname = $(this).closest('tr').find('.cattyname').val();
+        var evrffg = $(this).closest('tr').find('.evrffg').is(':checked');
+        var otdsgdt = $(this).closest('tr').find('.otdsgdt').val();
+        var otdsgbuss = $(this).closest('tr').find('.otdsgbuss').val();
+        var dsgrldt = $(this).closest('tr').find('.dsgrldt').val();
+        var pccjdgdt = $(this).closest('tr').find('.pccjdgdt').val();
+        var pccjdgfund = $(this).closest('tr').find('.pccjdgfund').val();
+        var indsgdt = $(this).closest('tr').find('.indsgdt').val();
+        if (ppid === '') {
+            alert('請點選左側計畫');
+            return;
+        }
+        $.ajax({
+            url: '@Url.Action("Update_sys_type", "Plan")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                pjcatycode: pjcatycode,
+                ppid: ppid,
+                cattyname: cattyname,
+                evrffg: evrffg,
+                otdsgdt: otdsgdt,
+                otdsgbuss: otdsgbuss,
+                dsgrldt: dsgrldt,
+                pccjdgdt: pccjdgdt,
+                pccjdgfund: pccjdgfund,
+                indsgdt: indsgdt
+            }),
+            success: function (response) {
+                alert('修改成功');
+            },
+            error: function (xhr, status, error) {
+                alert('修改失敗');
+            }
+        });
+    });
+
+    // 刪除功能
+    $('.delete_sys_type').click(function () {
+        var ppid = '@ViewBag.PPID';
+        var pjcatycode = $(this).closest('tr').find('.pjcatycode').text();
+        if (ppid === '') {
+            alert('請點選左側計畫');
+            return;
+        }
+        $.ajax({
+            url: '@Url.Action("Delete_sys_type", "Plan")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                pjcatycode: pjcatycode,
+                ppid: ppid
+            }),
+            success: function (response) {
+                alert('刪除成功');
+                // 刪除成功後，從頁面中移除對應的行
+                $(this).closest('tr').remove();
+            }.bind(this),
+            error: function (xhr, status, error) {
+                alert('刪除失敗');
+            }
+        });
+    });
+        // 新增功能
+    $('#create_apply_execution').click(function () {
+        var cmscode = $('#add_cmscode').val();
+        var cmsname = $('#add_cmsname').val();
+        var cmsunit = $('#add_cmsunit').val();
+        var cmsnote = $('#add_cmsnote').val();
+        var ppid = '@ViewBag.PPID';
+        // 檢查必填欄位是否為空
+        if (ppid === '') {
+            alert('請點選左側計畫');
+            return;
+        }
+        if (cmsnote === '' || cmsname === '' || cmsunit === '') {
+            alert('請填寫必填欄位');
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("Create_Apply_Execution", "Plan")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                cmscode: cmscode,
+                cmsname: cmsname,
+                cmsunit: cmsunit,
+                cmsnote: cmsnote,
+                ppid: ppid
+            }),
+            success: function (response) {
+                if (response.success) {
+                    alert('新增成功');
+                    // 新增成功後，清空表單欄位並重新載入資料
+                    $('#add_cmscode').val('');
+                    $('#add_cmsname').val('');
+                    $('#add_cmsunit').val('');
+                    $('#add_cmsnote').val('');
+                    location.reload();
+                } else {
+                    alert('新增失敗');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert(error);
+            }
+        });
+    });
+
+    // 修改功能
+    $('.update_apply_execution').click(function () {
+        var cmscode = $(this).closest('tr').find('.cmscode').val();
+        var cmsname = $(this).closest('tr').find('.cmsname').val();
+        var cmsunit = $(this).closest('tr').find('.cmsunit').val();
+        var cmsnote = $(this).closest('tr').find('.cmsnote').val();
+        var cmscode_key = $(this).closest('tr').find('.cmscode_key').val();
+        var ppid = '@ViewBag.PPID';
+        if (ppid === '') {
+            alert('請點選左側計畫');
+            return;
+        }
+        $.ajax({
+            url: '@Url.Action("Update_Apply_Execution", "Plan")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                cmscode: cmscode,
+                cmsname: cmsname,
+                cmsunit: cmsunit,
+                cmsnote: cmsnote,
+                ppid: ppid,
+                cmscode_key: cmscode_key
+            }),
+            success: function (response) {
+                if (response.success) {
+                    alert('修改成功');
+                } else {
+                    alert('修改失敗');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('修改失敗');
+            }
+        });
+    });
+
+    // 刪除功能
+    $('.delete_apply_execution').click(function () {
+        var cmscode = $(this).closest('tr').find('.cmscode').val();
+        var ppid = '@ViewBag.PPID';
+        if (ppid === '') {
+            alert('請點選左側計畫');
+            return;
+        }
+        $.ajax({
+            url: '@Url.Action("Delete_Apply_Execution", "Plan")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                cmscode: cmscode,
+                ppid:ppid
+            }),
+            success: function (response) {
+                if (response.success) {
+                    alert('刪除成功');
+                    // 刪除成功後，從頁面中移除對應的行
+                    $(this).closest('tr').remove();
+                } else {
+                    alert('刪除失敗');
+                }
+            }.bind(this),
+            error: function (xhr, status, error) {
+                alert('刪除失敗');
+            }
+        });
+    });
+        // 新增功能
+    $('#create_pj_fund').click(function () {
+        var syr = $('#add_syr').val();
+        var catycod = $('#add_catycod').val();
+        var codedesc = $('#add_catycod option:selected').text();
+        var fund = $('#add_fund').val();
+        var funddesc = $('#add_funddesc').val();
+        var ybgfund = $('#add_ybgfund').val();
+        var ppid = '@ViewBag.PPID';
+        var ipjcode = $('#ipjcode').val();
+        // 檢查必填欄位是否為空
+        if (ppid === '') {
+            alert('請點選左側計畫');
+            return;
+        }
+        if (syr === '' || catycod === '' || fund === '') {
+            alert('請填寫必填欄位');
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("Create_PJ_Fund", "Plan")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                syr: syr,
+                catycod: catycod,
+                fund: fund,
+                funddesc: funddesc,
+                ybgfund: ybgfund,
+                ppid: ppid,
+                codedesc: codedesc,
+                ipjcode: ipjcode
+            }),
+            success: function (response) {
+                if (response.success) {
+                    alert('新增成功');
+                    // 新增成功後，清空表單欄位並重新載入資料
+                    $('#add_syr').val('');
+                    $('#add_catycod').val('');
+                    $('#add_fund').val('');
+                    $('#add_funddesc').val('');
+                    $('#add_ybgfund').val('');
+                    $('#add_ipjcode').val('');
+                    location.reload();
+                } else {
+                    alert('新增失敗');
+                }
+            },            error: function (xhr, status, error) {
+                alert(error);
+            }
+        });
+    });
+
+    // 修改功能
+    $('.update_pj_fund').click(function () {
+        var syr = $(this).closest('tr').find('.syr').val();
+        var codedesc = $(this).closest('tr').find('.codedesc').val();
+        var fund = $(this).closest('tr').find('.fund').val();
+        var funddesc = $(this).closest('tr').find('.funddesc').val();
+        var ybgfund = $(this).closest('tr').find('.ybgfund').val();
+        var ppid = '@ViewBag.PPID';
+        if (ppid === '') {
+            alert('請點選左側計畫');
+            return;
+        }
+        $.ajax({
+            url: '@Url.Action("Update_PJ_Fund", "Plan")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                syr: syr,
+                codedesc: codedesc,
+                fund: fund,
+                funddesc: funddesc,
+                ybgfund: ybgfund,
+                ppid: ppid
+            }),
+            success: function (response) {
+                if (response.success) {
+                    alert('修改成功');
+                } else {
+                    alert('修改失敗');                }
+            },
+            error: function (xhr, status, error) {
+                alert('修改失敗');
+            }
+        });
+    });
+
+    // 刪除功能
+    $('.delete_pj_fund').click(function () {
+        var syr = $(this).closest('tr').find('.syr').val();
+        var ppid = '@ViewBag.PPID';
+        if (ppid === '') {
+            alert('請點選左側計畫');
+            return;
+        }
+        $.ajax({
+            url: '@Url.Action("Delete_PJ_Fund", "Plan")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                syr: syr,
+                ppid:ppid
+            }),
+            success: function (response) {
+                if (response.success) {
+                    alert('刪除成功');
+                    // 刪除成功後，從頁面中移除對應的行
+                    $(this).closest('tr').remove();
+                } else {
+                    alert('刪除失敗');
+                }
+            }.bind(this),
+            error: function (xhr, status, error) {
+                alert('刪除失敗');
+            }
+        });
+    });
+        // 新增功能
+    $('#create_apply_controller').click(function () {
+        var psgname = $('#add_psgname').val();
+        var bgnsyr = $('#add_bgnsyr').val();
+        var endsyr = $('#add_endsyr').val();
+        var openfg = $('#add_openfg').prop('checked');
+        var ppid = '@ViewBag.PPID';
+        // 檢查必填欄位是否為空
+        if (ppid === '') {
+            alert('請點選左側計畫');
+            return;
+        }
+        if (psgname === '' || bgnsyr === '' || endsyr === '') {
+            alert('請填寫必填欄位');
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("Create_Apply_Controller", "Plan")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                psgname: psgname,
+                bgnsyr: bgnsyr,
+                endsyr: endsyr,
+                openfg: openfg,
+                ppid: ppid
+            }),
+            success: function (response) {
+                if (response.success) {
+                    alert('新增成功');
+                    // 新增成功後，清空表單欄位並重新載入資料
+                    $('#add_psgname').val('');
+                    $('#add_bgnsyr').val('');
+                    $('#add_endsyr').val('');
+                    $('#add_openfg').prop('checked', false);
+                    location.reload();
+                } else {
+                    alert('新增失敗');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('新增失敗');
+            }
+        });
+    });
+
+    // 修改功能
+    $('.update_apply_controller').click(function () {
+        var yrcid = $(this).closest('tr').find('td:last').text();
+        var psgname = $(this).closest('tr').find('.psgname').val();
+        var bgnsyr = $(this).closest('tr').find('.bgnsyr').val();
+        var endsyr = $(this).closest('tr').find('.endsyr').val();
+        var openfg = $(this).closest('tr').find('.openfg').prop('checked');
+        var ppid = '@ViewBag.PPID';
+        if (ppid === '') {
+            alert('請點選左側計畫');
+            return;
+        }
+        $.ajax({
+            url: '@Url.Action("Update_Apply_Controller", "Plan")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                yrcid: yrcid,
+                psgname: psgname,
+                bgnsyr: bgnsyr,
+                endsyr: endsyr,
+                openfg: openfg,
+                ppid: ppid
+            }),
+            success: function (response) {
+                if (response.success) {
+                    alert('修改成功');
+                } else {
+                    alert('修改失敗');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('修改失敗');
+            }
+        });
+    });
+
+    // 刪除功能
+    $('.delete_apply_controller').click(function () {
+        var yrcid = $(this).closest('tr').find('td:last').text();
+        var ppid = '@ViewBag.PPID';
+        if (ppid === '') {
+            alert('請點選左側計畫');
+            return;
+        }
+        $.ajax({
+            url: '@Url.Action("Delete_Apply_Controller", "Plan")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                yrcid: yrcid,
+                ppid: ppid
+            }),
+            success: function (response) {
+                if (response.success) {
+                    alert('刪除成功');
+                    // 刪除成功後，從頁面中移除對應的行
+                    $(this).closest('tr').remove();
+                } else {
+                    alert('刪除失敗');
+                }
+            }.bind(this),
+            error: function (xhr, status, error) {
+                alert('刪除失敗');
+            }
+        });
+    });
+});
+</script>
+@*<script>
+        function UploadFile() {
+            var fileInput = document.getElementById('inputFile');
+            var file = fileInput.files[0];
+
+            var formData = new FormData();
+            formData.append('file', file);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/Plan/Upload', true);
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    // 處理成功回應
+                    var response = xhr.responseText;
+                    console.log('回傳的訊息：', response);
+
+                    var messageElement = document.getElementById('uploadMessage');
+                    messageElement.innerHTML = response; // 设置消息内容
+
+                    // 根據回應執行其他操作，例如刷新頁面或顯示成功訊息
+                } else {
+                    // 處理錯誤回應
+                    console.error('檔案上傳失敗');
+                }
+            };
+            xhr.send(formData);
+        }
+    </script>*@
+

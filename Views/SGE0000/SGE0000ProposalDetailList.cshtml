@@ -1,0 +1,435 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.SGE0000Model
+@{ ViewBag.Title = "2.2.1 提案作業";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+@section head{
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <style>
+        .pagination {
+            margin: 0;
+        }
+
+        .ui-dialog {
+            z-index: 4000;
+        }
+    </style>
+
+}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            2.2.1 提案作業-
+            <small class="text-muted fs-6">@Model.PJMFORM.PJ_NAME </small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-gauge"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")SGE0000">2.2.1 提案作業</a>
+            </li>
+            <li class="breadcrumb-item active">
+                <i class="fa-solid fa-file"></i>
+                @ViewBag.stat
+            </li>
+        </ol>
+    </div>
+</div>
+
+
+@using (Html.BeginForm("", "SGE0000", FormMethod.Post, new { id = "mainForm" }))
+{
+
+
+
+    @Html.HiddenFor(x => x.page)
+    @Html.HiddenFor(x => x.PPID)
+    @Html.HiddenFor(x => x.AP_STAT)
+    @Html.HiddenFor(x => x.PJ_NAME)
+    @Html.HiddenFor(x => x.PSG_NAME)
+
+    @Html.HiddenFor(x => x.AID)
+    <div style="overflow-x: auto; display: flex; width: 100%">
+        <div style="width:50%; text-align:left;">
+
+            <table>
+                <tr>
+                    <td style="text-align: left; padding-right: 10px; vertical-align: top;">
+                        <button type="button" class="btn btn-success" onclick="batchSendForward()">批次送件</button>
+                    </td>
+
+                    <td style="padding-left:5px;">
+                        <div class="input-group">
+                            <span class="input-group-text">提案批次</span>
+                            @Html.DropDownListFor(x => x.YRC_ID, (SelectList)ViewBag.yrcs@*, "所有梯次"*@, new { @class = "form-select", form = "mainForm" })
+
+
+                            <span class="input-group-text">辦理狀態.</span>
+                            @Html.DropDownListFor(x => x.seqno,
+                            new List<SelectListItem>
+                            {
+                                new SelectListItem { Text = "全部", Value = "" },
+                                new SelectListItem { Text = "新建工程", Value = "0" },
+                                new SelectListItem { Text = "延續性工程", Value = "1" }
+                            },
+                            new { @class = "form-control", form = "mainForm" })
+
+
+
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary" name="action" type="submit" value="Search">查詢</button>
+
+                                @if (Model.PJMFORM.STAT_NO.Equals("R") && (Model.AP_STAT == "-1" || Model.AP_STAT == "00"))
+                                {
+                                    <button class="btn btn-secondary" name="action" type="submit" value="print1">明細表</button>
+                                    <button class="btn btn-secondary" name="action" type="submit" value="print2">評核表</button>
+                                }
+                                @* 20260427 版本修改 => "提案中" | "待收件" 新增 "明細表" | "評分表" *@
+                                else if (Model.PJMFORM.STAT_NO.Equals("E") && (Model.AP_STAT == "-1" || Model.AP_STAT == "00"))
+                                {
+                                    <button class="btn btn-secondary" name="action" type="submit" value="ExportEnvironmentDetailsToExcel">明細表</button>
+                                    <button class="btn btn-secondary" name="action" type="submit" value="ExportEnvironmentScoreToWord">評核表</button>
+                                }
+                                else if((Model.AP_STAT == "-1" || Model.AP_STAT == "00"))
+                                {
+                                    <button class="btn btn-secondary" name="action" type="submit" value="PrintSGE0010">列印</button>
+
+                                }
+
+                            </span>
+                        </div>
+                    </td>
+                    <td>&nbsp;<a href="@Url.Content("~/")SGE0000" class="btn btn-secondary">返回</a></td>
+                </tr>
+
+            </table>
+        </div>
+        <div style="width: 50%; text-align: right;">
+            @Html.PagedListPager(Model.List1, page => Url.Action("ProposalDetailList",
+                     new
+                          {
+                         page = page,
+                         tab = Request.Params["tab"],
+                         PPID = Model.PPID,
+                         YRC_ID = Model.YRC_ID,
+                         AP_STAT = Model.AP_STAT
+                     }),
+                     new PagedListRenderOptions
+                          {
+                         DisplayItemSliceAndTotal = true,
+                         DisplayPageCountAndCurrentLocation = true,
+                         DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                         DisplayLinkToIndividualPages = false,
+                         ItemSliceAndTotalFormat = "顯示第 {0} - {1}筆, 共{2}筆",
+                         PageCountAndCurrentLocationFormat = "第 {0}頁 / 共 {1}頁",
+                     }
+                 )
+        </div>
+    </div>
+
+
+    <br />
+    <div class="card border-primary">
+        <div class="card-header bg-primary text-white fw-bold">計畫列表</div>
+        <div class="card-body responsive-table-container">
+            <table width="100%" class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 40px; text-align: center;">
+                            <input type="checkbox" id="checkAll" />
+                        </th>
+                        <th></th>
+                        <th>提案計畫名稱</th>
+
+                        <th>提案工程名稱</th>
+                        <th>年度</th>
+                        <th>縣市別</th>
+                        <th>鄉鎮別</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (System.Data.DataRow c in Model.List1)
+                    {
+                        <tr>
+                            <td style="text-align: center; vertical-align: middle;">
+                                @if (c["AP_STAT"] != null && Convert.ToString(c["AP_STAT"]).Equals("-1"))
+                                {
+                                    <input type="checkbox" class="chkItem" value="@c["AID"]" />
+                                }
+                            </td>
+                            @*<td>@c["AP_CODE"], @c["AID"]</td>*@
+                            <td>@c["AP_PJ_NAME"] (@c["PJ_CATY_CODE"])</td>
+                            <td>@c["AP_NAME"]</td>
+                            <td>@c["SYR"]</td>
+                            <td>@c["CITY"]</td>
+                            <td>@c["TOWN"]</td>
+                            <td>
+                                @{
+                                    var validStatus = new HashSet<string> { "-1", "00", "Z1", "Z2" };
+                                }
+                                @if (c["AP_STAT"] != null && validStatus.Contains(c["AP_STAT"]))
+                                //@if (c["AP_STAT"] != null && Convert.ToString(c["AP_STAT"]).Equals("-1"))
+                                {
+                                    <button class="btn btn-primary" type="button" onclick="editAPMFORM('@c["AID"]')">內容</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-primary" type="button" onclick="viewAPMFORM('@c["AID"]')">內容</button>
+                                }
+
+
+
+                                @if (c["AP_STAT"] != null && Convert.ToString(c["AP_STAT"]).Equals("-1"))
+                                {
+                                    <button class="btn btn-success" name="action" onclick="$('#AID').val('@c["AID"]'); return (confirm('確定送件?')); void ('');" value="SendForward">送件</button>
+                                    <button class="btn btn-danger" name="action" onclick="$('#AID').val('@c["AID"]'); return (confirm('確定刪除?')); void ('');" value="SendDelete">刪除</button>
+                                }
+
+
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="editFrame" title="編輯*" style="padding:0px;">
+
+        <iframe id="editor" src="" style="border:0px;"></iframe>
+
+
+    </div>
+
+    <div id="resonFrame" title="原因" style="padding:0px;">
+        <table width="100%">
+            <tr>
+                <td><textarea name="PRC_NOTE" class="form-control" style="width:100%; height:260px;" form="mainForm"></textarea></td>
+            </tr>
+            <tr>
+                <td align="center" style="padding:5px;">
+                    <button class="btn btn-primary" name="action" id="SendBackward" value="SendBackward" form="mainForm">退件</button>
+                    <button class="btn btn-danger" name="action" id="SendDroppend" value="SendDroppend" form="mainForm">未過初審</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+
+    @Html.PagedListPager(Model.List1, page => Url.Action("ProposalDetailList",
+        new
+             {
+            page = page,
+            tab = Request.Params["tab"],
+            PPID = Model.PPID,
+            YRC_ID = Model.YRC_ID,
+            AP_STAT = Model.AP_STAT
+        }));
+
+
+
+}
+
+<div id="histFrame" title="歷程" style="padding:0px;">
+
+    <div style="overflow: auto;">
+        <table class="table">
+            <thead class="table-light">
+                <tr>
+                    <th>動作*</th>
+                    <th>新狀態</th>
+                    <th>執行人員</th>
+                    <th>執行時間</th>
+                    <th>備註</th>
+                </tr>
+            </thead>
+            <tbody id="hister"></tbody>
+        </table>
+        <button type="button" class="btn btn-secondary" onclick='$("#histFrame").dialog("close");'>關閉</button>
+    </div>
+
+</div>
+
+<script>
+    var h = $(window).height();
+    var w = $(window).width();
+    //w = w - (w *0.4);
+    $(function () {
+        $("#editor").width(w-200);
+        $("#editor").height(h);
+
+        $("#editFrame").dialog({
+            autoOpen: false,
+            show: {
+                //effect: "blind",
+                //effect: "drop",
+                duration: 1000
+            },
+            hide: {
+                //effect: "explode",
+                //effect: "drop",
+                duration: 1000
+            },
+            autoOpen: false,
+            //maxWidth: w,
+            //maxHeight: h,
+            width: w-200,
+            height: h-100,
+            modal: true
+        });
+
+        $("#resonFrame").dialog({
+            autoOpen: false,
+            show: {
+                //effect: "blind",
+                //effect: "drop",
+                duration: 1000
+            },
+            hide: {
+                //effect: "explode",
+                //effect: "drop",
+                duration: 1000
+            },
+            autoOpen: false,
+            maxWidth: 400,
+            maxHeight: 370,
+            width: 400,
+            height: 370,
+            modal: true
+        });
+
+        var h1 = h * 0.7;
+        var w1 = w * 0.7;
+        $("#histFrame").dialog({
+            autoOpen: false,
+            show: {
+                //effect: "blind",
+                //effect: "drop",
+                duration: 1000
+            },
+            hide: {
+                //effect: "explode",
+                //effect: "drop",
+                duration: 1000
+            },
+            autoOpen: false,
+            maxWidth: w,
+            maxHeight: h,
+            width: w1,
+            height: h1,
+            modal: true
+        });
+    });
+    function editAPMFORM(aid) {
+        $("#editor").attr("src","@Url.Content("~/SGE0000/EditAPMFORM")?aid="+aid+"&yrcid=0&ppid=0" );
+        $("#editFrame").dialog("open");
+    }
+
+    function viewAPMFORM(aid) {
+        //$("#editor").attr("src", "@Url.Content("~/SGE0000/ViewAPMFORM")?aid=" + aid + "&yrcid=0&ppid=0");
+        $("#editor").attr("src", "@Url.Content("~/SGE0000/STEP01")?aid=" + aid + "&dis=true");
+
+    $("#editFrame").dialog("open");
+}
+    $('#editFrame').on('dialogclose', function (event) {
+        location.reload(true);
+    });
+
+
+    function getAPDPROC(aid) {
+
+        $("#hister").html("");
+        $("#histFrame").dialog("open");
+
+        $.ajax({
+            url: '@Url.Content("~/")ASYNC/GetAPDPROC',
+            method: 'post',
+            data: { "aid": aid },
+            success: function (d) {
+                var p = jQuery.parseJSON(d);
+
+                for (i = 0; i < p.length; i++) {
+                    p[i].UPD_DT = p[i].UPD_DT.replace(/T/, ' ');
+                    $("#hister").append("<tr><td>" +
+                        p[i].PROC_ACT + "</td><td>" + p[i].NAP_STAT + "</td><td>" + p[i].USR_NAME + "</td><td>" + p[i].UPD_DT + "</td><td>" + p[i].PRC_NOTE + "</td></tr>");
+                }
+
+            }
+        });
+    }
+
+    // 全選 / 全不選 功能
+    function toggleAll(source) {
+        $('.chkItem').prop('checked', source.checked);
+    }
+
+    // 批次送件 功能
+    function batchSendForward() {
+        var selectedAids = [];
+
+        // 找出所有被勾選的 checkbox，並把它們的 value (AID) 塞進陣列
+        $('.chkItem:checked').each(function () {
+            selectedAids.push($(this).val());
+        });
+
+        // 檢查是否有勾選資料
+        if (selectedAids.length === 0) {
+            alert("請至少勾選一筆要送件的資料！");
+            return;
+        }
+
+        if (confirm("確定要將勾選的 " + selectedAids.length + " 筆資料批次送件嗎？")) {
+            // 將收集到的 AID 陣列轉成逗號分隔的字串 (例如 "1001,1002,1003")，塞入原本的隱藏欄位
+            $('#AID').val(selectedAids.join(','));
+
+            // 動態產生一個 hidden input 來指定 action 的 value
+            // 建議取一個新的名字 "SendForwardBatch"，方便後端 Controller 區分是單筆還是批次
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'action',
+                value: 'SendForwardBatch'
+            }).appendTo('#mainForm');
+
+            // 送出表單
+            $('#mainForm').submit();
+        }
+    }
+
+    $(function () {
+        // 當標題的全選勾選框被點擊時
+        $("#checkAll").click(function () {
+            // 取得標題勾選框目前的狀態 (勾選或不勾選)
+            var checkedStatus = this.checked;
+
+            // 找到表格內所有類別為 .chkItem 的勾選框，並設定與標題一致
+            $(".chkItem").each(function () {
+                $(this).prop("checked", checkedStatus);
+            });
+        });
+
+        // (選填) 防呆：如果下方手動取消任何一筆，標題的全選框也要取消勾選
+        $(document).on('click', '.chkItem', function () {
+            if (!$(this).prop("checked")) {
+                $("#checkAll").prop("checked", false);
+            } else {
+                // 如果全部都手動勾選了，標題也自動勾選
+                if ($(".chkItem:checked").length === $(".chkItem").length) {
+                    $("#checkAll").prop("checked", true);
+                }
+            }
+        });
+    });
+
+</script>
+@section scripts{
+
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+
+
+}

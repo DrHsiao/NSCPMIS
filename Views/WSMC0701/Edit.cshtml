@@ -1,0 +1,244 @@
+﻿@model WCals.ViewModels.AUTHViewModel
+
+@{
+    /**/
+
+    ViewBag.Title = "功能授權";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            功能授權
+            <small>提供功能授權管理維護</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa-solid fa-dashboard"></i><a href="\Home"> 首頁</a>
+            </li>
+            <li>
+                <i class="fa-solid fa-dashboard"></i><a href="\WSMC0701"> 功能授權管理 [0701]</a>
+            </li>
+            <li>
+                <i class="fa-solid fa-dashboard"></i><a href="\WSMC0701\SubMenu\@Model.DataSMCMENU.AN_SYS_ID"> 下層功能項目</a>
+            </li>
+            <li class="active">
+                <i class="fa-solid fa-file"></i>
+                @Model.DataSMCMENU.SYS_NAME
+            </li>
+        </ol>
+    </div>
+</div>
+<br />
+@using (Html.BeginForm("Edit", "WSMC0701", FormMethod.Post))
+{
+    @Html.HiddenFor(f => f.DataSMCMENU.SYS_ID, new { @id = "txtSYS_ID" })
+    @Html.HiddenFor(f => f.jsonSMCAUTH_D, new { @id = "txtSMCAUTH_D" })
+    @Html.HiddenFor(f => f.jsonSMCAUTH_G, new { @id = "txtSMCAUTH_G" })
+
+    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+        <li class="active"><a data-bs-toggle="tab" href="#home"> 部門</a></li>
+        <li><a data-bs-toggle="tab" href="#menu1"> 群組</a></li>
+    </ul>
+    <br />
+
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <div class="row">
+                <div class="col-lg-12 table-responsive">
+                    <div class="form-group">
+                        <div class="form-inline">
+                            @Html.DropDownList("ddlDEPT_NO", (SelectList)ViewBag.DEPT_NO_D, new { @class = "form-control" })
+                            <button type="button" id="btnSaveSMCAUTH" class="btn btn-primary" onclick="saveSMCAUTH_D()">新增部門</button>
+                        </div>
+                    </div>
+                    <div class="card shadow-sm border-0 mb-4 h-100">
+                        <table id="tbSMCAUTH_D" class="table table-bordered">
+                            <thead>
+                                <tr><th>部門編號</th><th>部門名稱</th><th>#</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="menu1" class="tab-pane fade">
+            <div class="row">
+                <div class="col-lg-12 table-responsive">
+                    <div class="form-group">
+                        <div class="form-inline">
+                            @Html.DropDownList("ddlDEPT_NO_G", (SelectList)ViewBag.DEPT_NO_G, new { @class = "form-control" })
+                            <button type="button" id="btnSaveSMCAUTH" class="btn btn-primary" onclick="saveSMCAUTH_G()">新增群組</button>
+                        </div>
+                    </div>
+                    <div class="card shadow-sm border-0 mb-4 h-100">
+                        <table id="tbSMCAUTH_G" class="table table-bordered">
+                            <thead>
+                                <tr><th>群組編號</th><th>群組名稱</th><th>#</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">確定</button>
+    <a class="btn btn-secondary" href="\WSMC0701"> 取消</a>
+}
+
+@section scripts
+{
+
+    <script type="text/javascript">
+
+        //function newSMCAUTH() {
+        //    $("#modalSMCAUTH").modal("show");
+        //}
+
+        function saveSMCAUTH_D() {
+            var jsonStr = $("#txtSMCAUTH_D").val();
+
+            var sample = null;
+            if (jsonStr == "") {
+                sample = [];
+            }
+            else {
+                sample = JSON.parse(jsonStr);
+            }
+
+            var deptNo = $("#ddlDEPT_NO :selected").val();
+            var verifyResult = validateDuplicate(sample, deptNo);
+
+            if ('add' == verifyResult) {
+                sample.push({
+                    "DEPT_NO": $("#ddlDEPT_NO").val(),
+                    "DEPT_NAME": $("#ddlDEPT_NO :selected").text(),
+                    "SYS_ID": $("#txtSYS_ID").val(),
+                    "DATA_TP": "D",
+                    "METHOD": "new"
+                });
+            }
+
+            if ('add' == verifyResult || 'refresh' == verifyResult) {
+
+                $("#txtSMCAUTH_D").val(JSON.stringify(sample));
+
+                showSMCAUTHDataToList();
+                //$("#modalSMCAUTH").modal("hide");
+            }
+        }
+
+        function saveSMCAUTH_G() {
+            var jsonStr = $("#txtSMCAUTH_G").val();
+            var sample = null;
+            if (jsonStr == "") {
+                sample = [];
+            }
+            else {
+                sample = JSON.parse(jsonStr);
+            }
+            var deptNo = $("#ddlDEPT_NO_G :selected").val();
+            var verifyResult = validateDuplicate(sample, deptNo);
+
+            if ('add' == verifyResult) {
+                sample.push({
+                    "DEPT_NO": $("#ddlDEPT_NO_G").val(),
+                    "DEPT_NAME": $("#ddlDEPT_NO_G :selected").text(),
+                    "SYS_ID": $("#txtSYS_ID").val(),
+                    "DATA_TP": "G",
+                    "METHOD": "new"
+                });
+            }
+
+            if ('add' == verifyResult || 'refresh' == verifyResult) {
+                $("#txtSMCAUTH_G").val(JSON.stringify(sample));
+
+                showSMCAUTHDataToList();
+                //$("#modalSMCAUTH").modal("hide");
+            }
+        }
+
+        function removeSMCAUTH(SYS_ID, DEPT_NO, type) {
+            if (confirm("確定要刪除嗎?") == true) {
+                var sample;
+                var sampleJsonStr;
+                if ('D' == type) {
+                    sampleJsonStr = $("#txtSMCAUTH_D").val()
+                } else {
+                    sampleJsonStr = $("#txtSMCAUTH_G").val()
+                }
+                if (sampleJsonStr != "") {
+                    sample = jQuery.parseJSON(sampleJsonStr);
+                    for (var i = 0; i < sample.length; i++) {
+                        if (sample[i].DEPT_NO == DEPT_NO && sample[i].SYS_ID == SYS_ID) {
+                            if (sample[i].METHOD == 'original') {
+                                sample[i].METHOD = "delete";
+                            } else if (sample[i].METHOD == 'new') {
+                                sample.splice(i, 1);
+                            }
+
+                        }
+                    }
+                    var jsonstr = JSON.stringify(sample);
+                    if ('D' == type) {
+                        $("#txtSMCAUTH_D").val(jsonstr);
+                    } else {
+                        $("#txtSMCAUTH_G").val(jsonstr);
+                    }
+
+                    showSMCAUTHDataToList();
+                }
+            }
+        }
+
+        function validateDuplicate(array, target) {
+
+            var result = 'add';
+
+            array.forEach(function (element) {
+                if (element.DEPT_NO == target) {
+                    if (element.METHOD != "delete") {
+                        alert("不可加入重複的部門或群組");
+                        result = 'stop';
+                    } else {
+                        element.METHOD = "original";
+                        result = 'refresh';
+                    }
+                }
+            });
+            return result;
+        }
+
+        function showSMCAUTHDataToList() {
+            $("#tbSMCAUTH_D tbody tr").remove();
+            $("#tbSMCAUTH_G tbody tr").remove();
+
+            var jsonStr = $("#txtSMCAUTH_D").val();
+            if (jsonStr != "") {
+                var sampleList = JSON.parse(jsonStr);
+                for (var i = 0; i < sampleList.length; i++) {
+                    if (sampleList[i].METHOD != "delete") {
+                        $("#tbSMCAUTH_D").find("tbody").append("<tr><td>" + sampleList[i].DEPT_NO + "</td><td>" + sampleList[i].DEPT_NAME + "</td><td><button type='button' class='btn btn-danger' onclick=\"removeSMCAUTH('" + sampleList[i].SYS_ID + "','" + sampleList[i].DEPT_NO + "', 'D')\" >刪除</button></td></tr>");
+                    }
+                }
+            }
+            jsonStr = $("#txtSMCAUTH_G").val();
+            if (jsonStr != "") {
+                var sampleList = JSON.parse(jsonStr);
+                for (var i = 0; i < sampleList.length; i++) {
+                    if (sampleList[i].METHOD != "delete") {
+                        $("#tbSMCAUTH_G").find("tbody").append("<tr><td>" + sampleList[i].DEPT_NO + "</td><td>" + sampleList[i].DEPT_NAME + "</td><td><button type='button' class='btn btn-danger' onclick=\"removeSMCAUTH('" + sampleList[i].SYS_ID + "','" + sampleList[i].DEPT_NO + "', 'G')\" >刪除</button></td></tr>");
+                    }
+                }
+            }
+        }
+
+        showSMCAUTHDataToList();
+    </script>
+
+}

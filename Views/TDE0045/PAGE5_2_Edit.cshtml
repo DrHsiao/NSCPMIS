@@ -1,0 +1,277 @@
+﻿@functions {
+    // 3.1.4rev3：取欄位值的小工具。
+    // 注意：不要在 Razor 的 @@{ } 區塊裡宣告 Func<string,string>，
+    // 泛型的角括號會被當成 HTML 標籤，整個檔案的區塊會解析錯亂
+    // （症狀是「The using block is missing a closing "}" character」）。
+    string V(System.Data.DataRow d, string c) {
+        return (d != null && d.Table.Columns.Contains(c) && d[c] != DBNull.Value) ? d[c].ToString() : "";
+    }
+}
+@{
+    Layout = null;
+    var data = ViewBag.Data as System.Data.DataRow;
+}
+
+@* 3.1.4rev3：業主指示
+     ‧「Grid 開放寫入的資料欄位是呼叫 stored procedure CMETMS.dbo.SP_TDE0051_TDUMSD」
+       → 本表單的欄位即為該 SP 的參數，多餘欄位（原本 22 欄有一半不在 SP 內）已移除。
+     ‧「修改裡面還有三個欄位要提供修改」→ 下方三個頁籤，欄位對應查自舊系統
+       App_Data\CMETMS\TDE0020B042.Xml 的 SMCMAINTREEBODY：
+         落後原因或辦理情形說明 = EXECT_DESC
+         落後解決對策           = DELAY_RESN
+         備註                   = CTDELAY_RESN
+     ‧ RESLV_MTHD / CTRESLV_MTHD 畫面上沒有開放，但 SP 會一併覆寫，
+       所以用 hidden 帶原值回去，避免存檔時被清空。
+   注意：TDDMSCD.PRE_SCHD / REL_SCHD 實際存的是「總累計」進度（SP 是以
+   PRE_SCHD = @SUM_PRE_SCHD 寫入），所以這裡的欄位名稱用 SUM_ 開頭對應 SP 參數。 *@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>編輯分月進度</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body { padding: 15px; font-size: 13px; }
+        .form-group { margin-bottom: 10px; }
+        .form-control { font-size: 13px; }
+        label { font-weight: bold; margin-bottom: 3px; }
+        .section-title {
+            background-color: #337ab7;
+            color: white;
+            padding: 8px 12px;
+            margin: 15px 0 10px 0;
+            border-radius: 4px;
+        }
+        .readonly-field { background-color: #eee; }
+        /* 3.1.4rev：日曆需疊在 jQuery UI Dialog 之上 */
+        .ui-datepicker { z-index: 2200 !important; background: #ffffff; border: 1px solid #cccccc; border-radius: 4px; }
+        .btn-toolbar { margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; }
+        .nav-tabs .nav-link { padding: 6px 14px; }
+    </style>
+</head>
+<body>
+    @if (TempData["Success"] != null) {
+        <div class="alert alert-success alert-dismissible">
+            @TempData["Success"]
+            <button type="button" class="close" onclick="$(this).parent().hide();">&times;</button>
+        </div>
+    }
+    @if (TempData["Error"] != null) {
+        @* 錯誤訊息不自動消失，讓使用者看得到 SP 的檢核結果 *@
+        <div class="alert alert-danger alert-dismissible">
+            @TempData["Error"]
+            <button type="button" class="close" onclick="$(this).parent().hide();">&times;</button>
+        </div>
+    }
+
+    @using(Html.BeginForm("PAGE5_2_Edit_Save", "TDE0045", FormMethod.Post, new { id = "editForm" })) {
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="ID" value="@ViewBag.ID" />
+        <input type="hidden" name="TD_CODE" value="@ViewBag.TD_CODE" />
+        <input type="hidden" name="SYR" value="@(V(data, "SYR"))" />
+        <input type="hidden" name="SMN" value="@(V(data, "SMN"))" />
+        @* 畫面未開放但 SP 會覆寫的欄位，帶原值回去以免被清空 *@
+        <input type="hidden" name="RESLV_MTHD" value="@(V(data, "RESLV_MTHD"))" />
+        <input type="hidden" name="CTRESLV_MTHD" value="@(V(data, "CTRESLV_MTHD"))" />
+
+        <!-- 基本資訊 -->
+        <div class="section-title">基本資訊</div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>年度</label>
+                    <input type="text" class="form-control readonly-field" readonly value="@(V(data, "SYR"))" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>月份</label>
+                    <input type="text" class="form-control readonly-field" readonly value="@(V(data, "SMN"))" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 支用數 -->
+        <div class="section-title">支用數（單位：元）</div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>估驗未撥金額</label>
+                    <input type="number" step="1" class="form-control" name="ECC_UPAY_FEE" value="@(V(data, "ECC_UPAY_FEE"))" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>當月預定支用數</label>
+                    <input type="number" step="1" class="form-control" name="PRE_COST" value="@(V(data, "PRE_COST"))" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>中央款累計分配數</label>
+                    <input type="number" step="1" class="form-control" name="L_PLN_COST" value="@(V(data, "L_PLN_COST"))" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>中央款累計實際支用數</label>
+                    <input type="number" step="1" class="form-control" name="L_REL_COST" value="@(V(data, "L_REL_COST"))" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>中央款累計應付未付數</label>
+                    <input type="number" step="1" class="form-control" name="L_UNPAY_COST" value="@(V(data, "L_UNPAY_COST"))" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>節餘數</label>
+                    <input type="number" step="1" class="form-control" name="SAVE_FEE" value="@(V(data, "SAVE_FEE"))" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 進度 -->
+        <div class="section-title">進度（%）</div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>原始預定進度</label>
+                    <input type="number" step="0.01" class="form-control" name="ORG_SUM_PRE_SCHD" value="@(V(data, "ORG_SUM_PRE_SCHD"))" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>總累計預定進度</label>
+                    <input type="number" step="0.01" class="form-control" name="SUM_PRE_SCHD" value="@(V(data, "PRE_SCHD"))" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>總累計實際進度</label>
+                    <input type="number" step="0.01" class="form-control" name="SUM_REL_SCHD" value="@(V(data, "REL_SCHD"))" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-light border py-1 my-1" style="font-size:12px;">
+                    <i class="fa-solid fa-circle-info me-1"></i>
+                    總累計進度不可以小於上一個月，否則儲存時系統會擋下來並提示。
+                </div>
+            </div>
+        </div>
+
+        <!-- 工程數量 -->
+        <div class="section-title">工程數量</div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>箱涵設計長(m)</label>
+                    <input type="number" step="0.01" class="form-control" name="PRE_CON_LEN" value="@(V(data, "PRE_CON_LEN"))" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>累積箱涵施作長度(m)</label>
+                    <input type="number" step="0.01" class="form-control" name="REL_CON_LEN" value="@(V(data, "REL_CON_LEN"))" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>設計滯洪量(m³)</label>
+                    <input type="number" step="0.01" class="form-control" name="PRE_CON_FLOOD" value="@(V(data, "PRE_CON_FLOOD"))" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>累積設計施作滯洪量(m³)</label>
+                    <input type="number" step="0.01" class="form-control" name="REL_CON_FLOOD" value="@(V(data, "REL_CON_FLOOD"))" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 說明欄位（比照舊系統的三個頁籤） -->
+        <div class="section-title">說明</div>
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" type="button" data-bs-toggle="tab" data-bs-target="#tabExect">落後原因或辦理情形說明</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" type="button" data-bs-toggle="tab" data-bs-target="#tabDelay">落後解決對策</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" type="button" data-bs-toggle="tab" data-bs-target="#tabMemo">備註</button>
+            </li>
+        </ul>
+        <div class="tab-content border border-top-0 p-2 mb-2">
+            <div class="tab-pane fade show active" id="tabExect">
+                <textarea class="form-control" name="EXECT_DESC" rows="4">@(V(data, "EXECT_DESC"))</textarea>
+            </div>
+            <div class="tab-pane fade" id="tabDelay">
+                <textarea class="form-control" name="DELAY_RESN" rows="4">@(V(data, "DELAY_RESN"))</textarea>
+            </div>
+            <div class="tab-pane fade" id="tabMemo">
+                <textarea class="form-control" name="CTDELAY_RESN" rows="4">@(V(data, "CTDELAY_RESN"))</textarea>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>預計解決期限</label>
+                    @* 3.1.4rev：TDDMSCD.RESLV_LMT_DT 為 varchar(10) 存民國7碼(如 0970930)，
+                       沿用全站慣用的 datepickerTW + dateFormat:'yymmdd' *@
+                    <input type="text" class="form-control dt" name="RESLV_LMT_DT" maxlength="7"
+                           placeholder="民國7碼，例 0970930" value="@(V(data, "RESLV_LMT_DT"))" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 按鈕 -->
+        <div class="btn-toolbar">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-floppy-disk me-1"></i> 儲存
+            </button>
+            <button type="button" class="btn btn-secondary ms-2" onclick="closeDialog();">
+                <i class="fa-solid fa-xmark me-1"></i> 取消
+            </button>
+        </div>
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @* 3.1.4rev：補上日曆所需的 jQuery UI / datepick（本頁原本只載了 jquery-ui 的 CSS，沒有 JS） *@
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+    <script>
+        $(".dt").datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: '68:168',
+            dateFormat: 'yymmdd'
+        });
+
+        function closeDialog() {
+            if (parent && typeof parent.closeEditDialog === 'function') {
+                parent.closeEditDialog();
+            } else {
+                window.close();
+            }
+        }
+
+        // 儲存成功後自動關閉（失敗時留在畫面上，讓使用者看得到錯誤訊息）
+        @if (TempData["SaveSuccess"] != null) {
+            @:setTimeout(function () { closeDialog(); }, 600);
+        }
+    </script>
+</body>
+</html>

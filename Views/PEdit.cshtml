@@ -1,0 +1,860 @@
+﻿@model WCals.ViewModels.ProjectFundViewModel
+@{
+    ViewBag.Title = "計畫經費維護";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            計畫經費維護
+            <small> 提供計畫經費維護管理</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa-solid fa-dashboard"></i><a href="/Home"> 首頁</a>
+            </li>
+            <li>
+                <i class="fa-solid fa-file"></i> <a href="/WPJM0103"> 計畫經費管理 [0103]</a>
+            </li>
+            <li class="active">
+                <i class="fa-solid fa-file"></i>
+                @Model.PJV_PJDYPSC.PJ_NAME @Model.PJV_PJDYPSC.E_CODE
+            </li>
+        </ol>
+    </div>
+</div>
+@using (Html.BeginForm("PEdit", "WPJM0103", FormMethod.Post))
+{
+    @Html.HiddenFor(f => f.PJV_PJDYPSC.PJ_CODE)
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label>計畫來源名稱</label>
+                @Html.TextBoxFor(f => f.PJV_PJDYPSC.PJ_NAME, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+            <div class="form-group">
+                <label>工程編號字碼</label>
+                @Html.TextBoxFor(f => f.PJV_PJDYPSC.E_CODE, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+            <div class="form-group">
+                <table id="tbquery" class="table table-hover">
+                    <tr>
+                        <th>
+                            <label>修正次數</label>
+                            @Html.DropDownListFor(f => f.SearchParameteVersion, (List<SelectListItem>)ViewBag.FIX_CNT, new { @class = "form-control", @onchange = "this.form.submit();" })
+                        </th>
+                        <th>
+                            <label>年度</label>
+                            @Html.DropDownListFor(f => f.SearchParameterYear, (SelectList)ViewBag.SYR_LIST, "請選擇", new { @class = "form-control", @onchange = "this.form.submit();" })
+                        </th>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-group">
+                <label>分年經費</label>
+                @if (Convert.ToInt16(Model.SearchParameteVersion) == Model.PJV_PJDYPSC.FIX_CNT) //最新一期才允許新增
+                {
+                    <p><button type="button" class="btn btn-warning" onclick="javascript: newPJDFDND()">新增</button></p>
+                }
+                <div class="card shadow-sm border-0 mb-4 h-100">
+                    <div class="card-body table-responsive">
+                        <table id="tbPJDFDND" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>年度</th>
+                                    <th>增加資本</th>
+                                    <th>營運資金</th>
+                                    <th>國內借款</th>
+                                    <th>合計</th>
+                                    <th>成立預算比(%)</th>
+                                    <th>總累計分配</th>
+                                    <th>累計支用比(%)</th>
+                                    <th>#</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            @Html.HiddenFor(f => f.jsonPJDFDND, new { @id = "txtPJDFDND" })
+            @Html.HiddenFor(f => f.jsonPJDDSEX, new { @id = "txtPJDDSEX" })
+            @Html.HiddenFor(f => f.jsonPJDACEX, new { @id = "txtPJDACEX" })
+
+            @{ Html.RenderPartial("PJDYPACList");}
+
+            @{ Html.RenderPartial("PJDREVFList");}
+
+            @if (Convert.ToInt16(Model.SearchParameteVersion) == Model.PJV_PJDYPSC.FIX_CNT) //最新一期才允許儲存
+            {
+                <button class="btn btn-primary" type="submit">儲存</button>
+            }
+            else
+            {
+                <label class="alert-info">本期資料僅供唯讀!!  </label>
+            }
+            <a class="btn btn-secondary" href="/WPJM0103">取消</a>
+        </div>
+    </div>
+}
+
+<div id="modalPJDFDND" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h4 class="modal-title">分年進度</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>年度</label>
+                    <input class="form-control" id="txtPJDFDND_SYR" type="text" placeholder="年度" />
+                </div>
+                <div class="form-group">
+                    <label>增加資本(元)</label>
+                    <input class="form-control" id="txtPJDFDND_AST_FUND" type="text" placeholder="增加資本(元)" />
+                </div>
+                <div class="form-group">
+                    <label>營運資金(元)</label>
+                    <input class="form-control" id="txtPJDFDND_OWN_FUND" type="text" placeholder="營運資金(元)" />
+                </div>
+                <div class="form-group">
+                    <label>國內借款(元)</label>
+                    <input class="form-control" id="txtPJDFDND_LON_FUND" type="text" placeholder="國內借款(元)" />
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnNewPJDFDND" class="btn btn-primary" data-bs-dismiss="modal" onclick="javascript: savePJDFDND('new')">確定</button>
+                <button type="button" id="btnEditPJDFDND" class="btn btn-primary" data-bs-dismiss="modal" onclick="javascript: savePJDFDND('edit')">確定</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">離開</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div id="modalPJDFDNDMNDS" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h4 class="modal-title">各月資料</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <table id="tbPJDFUNDDIST" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>月份</th>
+                            <th>累計分配(元)</th>
+                            <th>累計支用比(%)</th>
+                            <th>保留累計分配(元)</th>
+                            <th>保留累計支用比(%)</th>
+                        </tr>
+                        <tr>
+                            <td>01月</td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_M_01" type="text" placeholder="01月分配" /></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_MR_01" type="text" placeholder="01月累計支用比(%)" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_R_01" type="text" placeholder="01月保留分配" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_RR_01" type="text" placeholder="01月保留累計支用比(%)" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>02月</td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_M_02" type="text" placeholder="02月分配" /></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_MR_02" type="text" placeholder="02月累計支用比(%)" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_R_02" type="text" placeholder="02月保留分配" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_RR_02" type="text" placeholder="02月保留累計支用比(%)" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>03月</td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_M_03" type="text" placeholder="03月分配" /></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_MR_03" type="text" placeholder="03月累計支用比(%)" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_R_03" type="text" placeholder="03月保留分配" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_RR_03" type="text" placeholder="03月保留累計支用比(%)" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>04月</td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_M_04" type="text" placeholder="04月分配" /></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_MR_04" type="text" placeholder="04月累計支用比(%)" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_R_04" type="text" placeholder="04月保留分配" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_RR_04" type="text" placeholder="04月保留累計支用比(%)" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>05月</td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_M_05" type="text" placeholder="05月分配" /></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_MR_05" type="text" placeholder="05月累計支用比(%)" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_R_05" type="text" placeholder="05月保留分配" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_RR_05" type="text" placeholder="05月保留累計支用比(%)" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>06月</td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_M_06" type="text" placeholder="06月分配" /></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_MR_06" type="text" placeholder="06月累計支用比(%)" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_R_06" type="text" placeholder="06月保留分配" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_RR_06" type="text" placeholder="06月保留累計支用比(%)" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>07月</td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_M_07" type="text" placeholder="07月分配" />
+                                </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_MR_07" type="text" placeholder="07月累計支用比(%)" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_R_07" type="text" placeholder="07月保留分配" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_RR_07" type="text" placeholder="07月保留累計支用比(%)" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>08月</td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_M_08" type="text" placeholder="08月分配" />
+                                </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_MR_08" type="text" placeholder="08月累計支用比(%)" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_R_08" type="text" placeholder="08月保留分配" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_RR_08" type="text" placeholder="08月保留累計支用比(%)" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>09月</td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_M_09" type="text" placeholder="09月分配" />
+                                </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_MR_09" type="text" placeholder="09月累計支用比(%)" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_R_09" type="text" placeholder="09月保留分配" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_RR_09" type="text" placeholder="09月保留累計支用比(%)" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>10月</td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_M_10" type="text" placeholder="10月分配" />
+                                </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_MR_10" type="text" placeholder="10月累計支用比(%)" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_R_10" type="text" placeholder="10月保留分配" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_RR_10" type="text" placeholder="10月保留累計支用比(%)" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>11月</td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_M_11" type="text" placeholder="11月分配" />
+                                </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_MR_11" type="text" placeholder="11月累計支用比(%)" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_R_11" type="text" placeholder="11月保留分配" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_RR_11" type="text" placeholder="11月保留累計支用比(%)" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>12月</td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_M_12" type="text" placeholder="12月分配" />
+                                </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_MR_12" type="text" placeholder="12月累計支用比(%)" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_R_12" type="text" placeholder="12月保留分配" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="txtPJDFDND_RR_12" type="text" placeholder="12月保留累計支用比(%)" />
+                                </div>
+                            </td>
+                        </tr>
+                    </thead>
+                </table>    
+
+
+
+
+
+
+
+
+                @*<div class="form-group">
+            <label>年度</label>
+            <input class="form-control" id="txtPJDFDND_SYR" type="text" placeholder="年度" />
+        </div>
+        <div class="form-group">
+            <label>增加資本</label>
+            <input class="form-control" id="txtPJDFDND_AST_FUND" type="text" placeholder="增加資本" />
+        </div>
+        <div class="form-group">
+            <label>營運資金</label>
+            <input class="form-control" id="txtPJDFDND_OWN_FUND" type="text" placeholder="營運資金" />
+        </div>
+        <div class="form-group">
+            <label>國內借款</label>
+            <input class="form-control" id="txtPJDFDND_LON_FUND" type="text" placeholder="國內借款" />
+
+        </div>*@
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnEditPJDFDNDMNDS" class="btn btn-primary" data-bs-dismiss="modal" onclick="javascript: savePJDFDNDMNDS()">確定</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">離開</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div id="modalPJDDSEX" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+
+        <div class="card shadow-sm border-0 mb-4 h-100">
+            <div class="card-body table-responsive">
+                <label>年度各區執行金額</label>
+                <table id="tbPJDDSEX" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>年度</th>
+                            <th>區處別</th>
+                            <th>執行金額</th>
+                            @*<th>#</th>*@
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div><hr />
+            <div class="card-body table-responsive">
+                <label>年度各區科目成立金額</label>
+                <table id="tbPJDACEX" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>年度</th>
+                            <th>區處別</th>
+                            <th>科目</th>
+                            <th>成立金額</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">離開</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script type="text/javascript">
+        function newPJDFDND() {
+            $("#btnNewPJDFDND").show();
+            $("#btnEditPJDFDND").hide();
+
+            $("#txtPJDFDND_SYR").val();
+            $("#txtPJDFDND_AST_FUND").val();
+            $("#txtPJDFDND_OWN_FUND").val();
+            $("#txtPJDFDND_LON_FUND").val();
+            $("#txtPJDFDND_SYR").attr('disabled', false);
+
+            $("#modalPJDFDND").modal("show");
+        }
+
+        function savePJDFDND(method) {
+
+            var SYR = $("#txtPJDFDND_SYR").val();
+            var AST_FUND = $("#txtPJDFDND_AST_FUND").val();
+            var OWN_FUND = $("#txtPJDFDND_OWN_FUND").val();
+            var LON_FUND = $("#txtPJDFDND_LON_FUND").val();
+            var jsonStr = $("#txtPJDFDND").val();
+
+            var sample = null;
+            if (jsonStr == "") {
+                sample = [];
+            }
+            else {
+                sample = JSON.parse(jsonStr);
+            }
+
+            if (method == "new") {
+                sample.push({
+                    "SYR": SYR,
+                    "AST_FUND": AST_FUND,
+                    "OWN_FUND": OWN_FUND,
+                    "LON_FUND": LON_FUND,
+                    "METHOD": "new"
+                });
+
+            }
+            else if (method == "edit") {
+                var currObj = null;
+                for (var i = 0; i < sample.length; i++) {
+                    if (sample[i].SYR == SYR) {
+                        currObj = sample[i];
+                    }
+                }
+                if (currObj != null) {
+                    currObj.SYR = $("#txtPJDFDND_SYR").val();
+                    currObj.AST_FUND = $("#txtPJDFDND_AST_FUND").val();
+                    currObj.OWN_FUND = $("#txtPJDFDND_OWN_FUND").val();
+                    currObj.LON_FUND = $("#txtPJDFDND_LON_FUND").val();
+                    currObj.METHOD = "edit";
+                }
+            }
+            $("#txtPJDFDND").val(JSON.stringify(sample));
+
+            showPJDFDNDDataToList();
+        }
+
+
+
+        function savePJDFDNDMNDS() {
+            var SYR = $("#txtPJDFDND_SYR").val();
+            var jsonStr = $("#txtPJDFDND").val();
+
+            var sample = null;
+            if (jsonStr == "") {
+                sample = [];
+            }
+            else {
+                sample = JSON.parse(jsonStr);
+            }
+
+             var currObj = null;
+             for (var i = 0; i < sample.length; i++) {
+                 if (sample[i].SYR == SYR) {
+                       currObj = sample[i];
+                  }
+                if (currObj != null) {
+                    currObj.SYR = $("#txtPJDFDND_SYR").val();
+                    currObj.M_01=$("#txtPJDFDND_M_01").val();
+                    currObj.M_02=$("#txtPJDFDND_M_02").val();
+                    currObj.M_03=$("#txtPJDFDND_M_03").val();
+                    currObj.M_04=$("#txtPJDFDND_M_04").val();
+                    currObj.M_05=$("#txtPJDFDND_M_05").val();
+                    currObj.M_06=$("#txtPJDFDND_M_06").val();
+                    currObj.M_07=$("#txtPJDFDND_M_07").val();
+                    currObj.M_08=$("#txtPJDFDND_M_08").val();
+                    currObj.M_09=$("#txtPJDFDND_M_09").val();
+                    currObj.M_10=$("#txtPJDFDND_M_10").val();
+                    currObj.M_11=$("#txtPJDFDND_M_11").val();
+                    currObj.M_12=$("#txtPJDFDND_M_12").val();
+                    currObj.R_01=$("#txtPJDFDND_R_01").val();
+                    currObj.R_02=$("#txtPJDFDND_R_02").val();
+                    currObj.R_03=$("#txtPJDFDND_R_03").val();
+                    currObj.R_04=$("#txtPJDFDND_R_04").val();
+                    currObj.R_05=$("#txtPJDFDND_R_05").val();
+                    currObj.R_06=$("#txtPJDFDND_R_06").val();
+                    currObj.R_07=$("#txtPJDFDND_R_07").val();
+                    currObj.R_08=$("#txtPJDFDND_R_08").val();
+                    currObj.R_09=$("#txtPJDFDND_R_09").val();
+                    currObj.R_10=$("#txtPJDFDND_R_10").val();
+                    currObj.R_11=$("#txtPJDFDND_R_11").val();
+                    currObj.R_12=$("#txtPJDFDND_R_12").val();
+                    currObj.MR_01=$("#txtPJDFDND_MR_01").val();
+                    currObj.MR_02=$("#txtPJDFDND_MR_02").val();
+                    currObj.MR_03=$("#txtPJDFDND_MR_03").val();
+                    currObj.MR_04=$("#txtPJDFDND_MR_04").val();
+                    currObj.MR_05=$("#txtPJDFDND_MR_05").val();
+                    currObj.MR_06=$("#txtPJDFDND_MR_06").val();
+                    currObj.MR_07=$("#txtPJDFDND_MR_07").val();
+                    currObj.MR_08=$("#txtPJDFDND_MR_08").val();
+                    currObj.MR_09=$("#txtPJDFDND_MR_09").val();
+                    currObj.MR_10=$("#txtPJDFDND_MR_10").val();
+                    currObj.MR_11=$("#txtPJDFDND_MR_11").val();
+                    currObj.MR_12=$("#txtPJDFDND_MR_12").val();
+                    currObj.RR_01=$("#txtPJDFDND_RR_01").val();
+                    currObj.RR_02=$("#txtPJDFDND_RR_02").val();
+                    currObj.RR_03=$("#txtPJDFDND_RR_03").val();
+                    currObj.RR_04=$("#txtPJDFDND_RR_04").val();
+                    currObj.RR_05=$("#txtPJDFDND_RR_05").val();
+                    currObj.RR_06=$("#txtPJDFDND_RR_06").val();
+                    currObj.RR_07=$("#txtPJDFDND_RR_07").val();
+                    currObj.RR_08=$("#txtPJDFDND_RR_08").val();
+                    currObj.RR_09=$("#txtPJDFDND_RR_09").val();
+                    currObj.RR_10=$("#txtPJDFDND_RR_10").val();
+                    currObj.RR_11=$("#txtPJDFDND_RR_11").val();
+                    currObj.RR_12=$("#txtPJDFDND_RR_12").val();
+                    currObj.METHOD = "edit";
+                }
+            }
+            var jsonStr = JSON.stringify(sample);
+            $("#txtPJDFDND").val(jsonStr);
+
+            var postData = { 'PJ_CODE': '@Model.PJV_PJDYPSC.PJ_CODE', 'SYR': SYR, 'Datas': jsonStr };
+            $.ajax({
+                type: "POST",
+                url: "/WPJM0103/savePJDFDNDMNDS",
+                data: postData,
+                dataType: "json",
+                success: function (data) {
+                    if (data.rtncode == 0) {
+                        alert(data.rtndesc);
+                    }
+                    else {
+                        alert(data.rtndesc);
+                    }
+                }
+            }
+            );
+
+        }
+
+
+
+        function editPJDFDND(SYR) {
+            $("#btnNewPJDFDND").hide();
+            $("#btnEditPJDFDND").show();
+
+            var jsonStr = $("#txtPJDFDND").val();
+            if (jsonStr != "") {
+                var sampleList = JSON.parse(jsonStr);
+                var currObj = null;
+                for (var i = 0; i < sampleList.length; i++) {
+                    if (sampleList[i].SYR == SYR) {
+                        currObj = sampleList[i];
+                    }
+                }
+                if (currObj != null) {
+                    $("#txtPJDFDND_SYR").val(currObj.SYR);
+                    $("#txtPJDFDND_AST_FUND").val(currObj.AST_FUND);
+                    $("#txtPJDFDND_OWN_FUND").val(currObj.OWN_FUND);
+                    $("#txtPJDFDND_LON_FUND").val(currObj.LON_FUND);
+                    $("#txtPJDFDND_SYR").attr('disabled', true);
+                }
+            }
+            $("#modalPJDFDND").modal("show");
+        }
+
+        function editPJDFDNDMNDS(SYR) {
+            var jsonStr = $("#txtPJDFDND").val();
+            if (jsonStr != "") {
+                var sampleList = JSON.parse(jsonStr);
+                var currObj = null;
+                for (var i = 0; i < sampleList.length; i++) {
+                    if (sampleList[i].SYR == SYR) {
+                        currObj = sampleList[i];
+                    }
+                }
+                if (currObj != null) {
+                    $("#txtPJDFDND_M_01").val(currObj.M_01);
+                    $("#txtPJDFDND_M_02").val(currObj.M_02);
+                    $("#txtPJDFDND_M_03").val(currObj.M_03);
+                    $("#txtPJDFDND_M_04").val(currObj.M_04);
+                    $("#txtPJDFDND_M_05").val(currObj.M_05);
+                    $("#txtPJDFDND_M_06").val(currObj.M_06);
+                    $("#txtPJDFDND_M_07").val(currObj.M_07);
+                    $("#txtPJDFDND_M_08").val(currObj.M_08);
+                    $("#txtPJDFDND_M_09").val(currObj.M_09);
+                    $("#txtPJDFDND_M_10").val(currObj.M_10);
+                    $("#txtPJDFDND_M_11").val(currObj.M_11);
+                    $("#txtPJDFDND_M_12").val(currObj.M_12);
+
+                    $("#txtPJDFDND_R_01").val(currObj.R_01);
+                    $("#txtPJDFDND_R_02").val(currObj.R_02);
+                    $("#txtPJDFDND_R_03").val(currObj.R_03);
+                    $("#txtPJDFDND_R_04").val(currObj.R_04);
+                    $("#txtPJDFDND_R_05").val(currObj.R_05);
+                    $("#txtPJDFDND_R_06").val(currObj.R_06);
+                    $("#txtPJDFDND_R_07").val(currObj.R_07);
+                    $("#txtPJDFDND_R_08").val(currObj.R_08);
+                    $("#txtPJDFDND_R_09").val(currObj.R_09);
+                    $("#txtPJDFDND_R_10").val(currObj.R_10);
+                    $("#txtPJDFDND_R_11").val(currObj.R_11);
+                    $("#txtPJDFDND_R_12").val(currObj.R_12);
+
+                    $("#txtPJDFDND_MR_01").val(currObj.MR_01);
+                    $("#txtPJDFDND_MR_02").val(currObj.MR_02);
+                    $("#txtPJDFDND_MR_03").val(currObj.MR_03);
+                    $("#txtPJDFDND_MR_04").val(currObj.MR_04);
+                    $("#txtPJDFDND_MR_05").val(currObj.MR_05);
+                    $("#txtPJDFDND_MR_06").val(currObj.MR_06);
+                    $("#txtPJDFDND_MR_07").val(currObj.MR_07);
+                    $("#txtPJDFDND_MR_08").val(currObj.MR_08);
+                    $("#txtPJDFDND_MR_09").val(currObj.MR_09);
+                    $("#txtPJDFDND_MR_10").val(currObj.MR_10);
+                    $("#txtPJDFDND_MR_11").val(currObj.MR_11);
+                    $("#txtPJDFDND_MR_12").val(currObj.MR_12);
+
+                    $("#txtPJDFDND_RR_01").val(currObj.RR_01);
+                    $("#txtPJDFDND_RR_02").val(currObj.RR_02);
+                    $("#txtPJDFDND_RR_03").val(currObj.RR_03);
+                    $("#txtPJDFDND_RR_04").val(currObj.RR_04);
+                    $("#txtPJDFDND_RR_05").val(currObj.RR_05);
+                    $("#txtPJDFDND_RR_06").val(currObj.RR_06);
+                    $("#txtPJDFDND_RR_07").val(currObj.RR_07);
+                    $("#txtPJDFDND_RR_08").val(currObj.RR_08);
+                    $("#txtPJDFDND_RR_09").val(currObj.RR_09);
+                    $("#txtPJDFDND_RR_10").val(currObj.RR_10);
+                    $("#txtPJDFDND_RR_11").val(currObj.RR_11);
+                    $("#txtPJDFDND_RR_12").val(currObj.RR_12);
+
+                    $("#txtPJDFDND_AST_FUND").val(currObj.AST_FUND);
+                    $("#txtPJDFDND_OWN_FUND").val(currObj.OWN_FUND);
+                    $("#txtPJDFDND_LON_FUND").val(currObj.LON_FUND);
+                    $("#txtPJDFDND_SYR").val(SYR);
+                }
+            }
+            $("#modalPJDFDNDMNDS").modal("show");
+        }
+
+        function deletePJDFDND(SYR) {
+            if (confirm("確定要刪除嗎?") == true) {
+                var sample;
+                var sampleJsonStr = $("#txtPJDFDND").val();
+                if (sampleJsonStr != "") {
+                    sample = jQuery.parseJSON(sampleJsonStr);
+                    for (var i = 0; i < sample.length; i++) {
+                        if (sample[i].DID == null) {
+                            if (sample[i].SYR == SYR) {
+                                sample.splice(i, 1);
+                                //sample[i].METHOD = "delete";
+                            }
+                        }
+                        else {
+                            if (sample[i].SYR == SYR) {
+                                //sample.splice(i, 1);
+                                sample[i].METHOD = "delete";
+                            }
+                        }
+                    }
+                    var jsonstr = JSON.stringify(sample);
+                    $("#txtPJDFDND").val(jsonstr);
+                    showPJDFDNDDataToList();
+                }
+            }
+        }
+
+        function showPJDFDNDDataToList() {
+            $("#tbPJDFDND tbody tr").remove();
+
+            var jsonStr = $("#txtPJDFDND").val();
+            if (jsonStr != "") {
+                var sampleList = JSON.parse(jsonStr);
+                var selseq = @Convert.ToInt16(@Model.SearchParameteVersion);
+                var maxseq = @Model.PJV_PJDYPSC.FIX_CNT;
+                for (var i = 0; i < sampleList.length; i++) {
+                    if (sampleList[i].METHOD != "delete") {
+                        var sum = parseInt(sampleList[i].AST_FUND) + parseInt(sampleList[i].OWN_FUND) + parseInt(sampleList[i].LON_FUND);
+                        if (selseq == maxseq) {
+                            //$("#tbPJDFDND").find("tbody").append("<tr><td>" + sampleList[i].SYR + "</td><td>" + numeral(sampleList[i].AST_FUND).format('0,0') + "</td><td>" + numeral(sampleList[i].OWN_FUND).format('0,0') + "</td><td>" + numeral(sampleList[i].LON_FUND).format('0,0') + "</td><td>" + numeral(sum).format('0,0') + "</td><td>" + numeral(sampleList[i].SYRBG_RATIO).format('0,0') + "</td><td>" + numeral(sampleList[i].YRDIST_FUND).format('0,0') + "</td><td>" + numeral(sampleList[i].COST_RATIO).format('0,0') + "</td><td><button type='button' class='btn btn-secondary' onclick=\"editPJDFDND('" + sampleList[i].SYR + "')\" > 編輯</button> <button class='btn btn-danger' type='button' onclick=\"javascript:deletePJDFDND('" + sampleList[i].SYR + "');\"> 刪除</button> <button type='button' class='btn btn-secondary' onclick=\WPJM0103\PJFundDISTEdit\ > 月分配</button> <button type='button' class='btn btn-secondary' onclick=\WPJM0103\> 執行檢討</button></td></tr>");
+                            $("#tbPJDFDND").find("tbody").append("<tr><td>" + sampleList[i].SYR + "</td><td>" + numeral(sampleList[i].AST_FUND).format('0,0') + "</td><td>" + numeral(sampleList[i].OWN_FUND).format('0,0') + "</td><td>" + numeral(sampleList[i].LON_FUND).format('0,0') + "</td><td>" +  numeral(sampleList[i].SYR_FUND).format('0,0') + "</td><td>" + numeral(sampleList[i].SYRBG_RATIO).format('0,0.00') + "</td><td>" + numeral(sampleList[i].YRDIST_FUND).format('0,0') + "</td><td>" + numeral(sampleList[i].COST_RATIO).format('0,0.00') + "</td><td><button type='button' class='btn btn-secondary' onclick=\"editPJDFDND('" + sampleList[i].SYR + "')\" > 編輯</button> <button class='btn btn-danger' type='button' onclick=\"javascript:deletePJDFDND('" + sampleList[i].SYR + "');\"> 刪除</button> <button type='button' class='btn btn-secondary' onclick=editPJDFDNDMNDS('" + sampleList[i].SYR + "')> 月分配</button> <button type='button' class='btn btn-secondary' onclick=showPJDEXDataToList('" + sampleList[i].SYR + "')> 執行檢討</button></td></tr>");
+                        } else {
+                            $("#tbPJDFDND").find("tbody").append("<tr><td>" + sampleList[i].SYR + "</td><td>" + numeral(sampleList[i].AST_FUND).format('0,0') + "</td><td>" + numeral(sampleList[i].OWN_FUND).format('0,0') + "</td><td>" + numeral(sampleList[i].LON_FUND).format('0,0') + "</td><td>" + numeral(sum).format('0,0') + "</td></tr>");
+                        }
+                    }
+                }
+            }
+        }
+
+        function showPJDEXDataToList(SYR) {
+            $("#tbPJDDSEX tbody tr").remove();
+
+            var jsonDSEX = $("#txtPJDDSEX").val();
+            if (jsonDSEX != "") {
+                var sampleList = JSON.parse(jsonDSEX);
+                for (var i = 0; i < sampleList.length; i++) {
+                    if (sampleList[i].SYR == SYR) {
+                        $("#tbPJDDSEX").find("tbody").append("<tr><td>" + sampleList[i].SYR + "</td><td>" + sampleList[i].SC_NAME + "</td><td>" + numeral(sampleList[i].DSYREX_COST).format('0,0') + "</td></tr>"); //<td><button type='button' class='btn btn-secondary' onclick=\"editPJDFDND('" + sampleList[i].SYR + "')\" > 檢討表</button></td>
+                    }
+                }
+            }
+
+            $("#tbPJDACEX tbody tr").remove();
+
+            var jsonACEX = $("#txtPJDACEX").val();
+            if (jsonACEX != "") {
+                var sampleList1 = JSON.parse(jsonACEX);
+                for (var i = 0; i < sampleList1.length; i++) {
+                    if (sampleList1[i].SYR == SYR) {
+                        $("#tbPJDACEX").find("tbody").append("<tr><td>" + sampleList1[i].SYR + "</td><td>" + sampleList1[i].SC_NAME + "</td><td>" + sampleList1[i].ACC_NAME + "</td><td>" + numeral(sampleList1[i].EXACC_FUND).format('0,0') + "</td></tr>");
+                    }
+                }
+            }
+
+
+
+            $("#modalPJDDSEX").modal("show");
+
+        }
+
+        function prnEXReport(SYR, ) {
+        }
+        showPJDFDNDDataToList();
+    </script>
+}
+

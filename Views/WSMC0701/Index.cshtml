@@ -1,0 +1,127 @@
+﻿@model IEnumerable<WCals.Models.CMBASEModels.SMCMENU3>
+@{ ViewBag.Title = "功能授權管理 [0701]";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+<!-- jQuery library -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<!-- DataTables JS -->
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            功能授權管理 [0701]
+            <small>提供功能授權管理內容</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa-solid fa-dashboard"></i><a href="\Home"> 首頁</a>
+            </li>
+            <li class="active">
+                <i class="fa-solid fa-file"></i>
+                功能授權管理 [0701]
+            </li>
+        </ol>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-12 table-responsive">
+        <div class="card shadow-sm border-0 mb-4 h-100">
+            <table class="table table-bordered table-striped table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>功能編號</th>
+                        <th>功能名稱</th>
+                        <th>#</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.SYS_ID</td>
+                                <td>@item.SYS_NAME</td>
+                                <td><a class="btn btn-secondary" href="/WSMC0701/SubMenu/@item.SYS_ID" title="下層功能項目">下層功能項目</a></td>
+                            </tr>
+                        } }
+
+
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <table id="myTable" class="table">
+                <thead>
+                    <tr>
+                        <th>功能編號1</th>
+                        <th>功能名稱2</th>
+                        <th>功能編號3</th>
+                        <th>功能名稱4</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.SYS_ID</td>
+                            <td>@item.SYS_NAME</td>
+                            <td>@item.SYS_ORD</td>
+                            <td>@item.DATA_TP</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $('#myTable').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            columnDefs: [
+                {
+                    targets: [1, 2, 3],
+                    className: 'editable'
+                }
+            ],
+            editable: true,
+            columnDefs: [
+                {
+                    targets: [0], // 第一個欄位啟用編輯功能
+                    className: 'editable', // 設置可編輯欄位的 CSS class
+                    data: null, // 不使用資料源中的資料填充該欄位
+                    defaultContent: '<input type="text" value="">', // 欄位值的預設值
+                    title: 'Name', // 設置欄位標題
+                    type: 'string', // 設置欄位的資料型別
+                    // 編輯完成後的處理函式
+                    createdCell: function (td, cellData, rowData, row, col) {
+                        $(td).on('blur', 'input', function () {
+                            rowData[col] = $(this).val(); // 更新資料源中的資料
+                        });
+                    }
+                }
+            ]
+
+
+        });
+
+        $('#myTable tbody').on('click', 'td.editable', function () {
+            var cell = $(this).node();
+            var column = $('#myTable').DataTable().column(cell.index());
+            column.makeEditable({
+                onEdit: function (cell) {
+                    console.log('Editing completed');
+                }
+            });
+        });
+    });
+</script>

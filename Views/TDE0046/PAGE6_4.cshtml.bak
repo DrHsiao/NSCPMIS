@@ -1,0 +1,295 @@
+﻿@model WCals.ViewModels.NewModels.TDE0040Model
+@{
+    ViewBag.Title = "技師證照";
+    Layout = null;
+
+    System.Data.DataTable dtList = ViewBag.List1 as System.Data.DataTable;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="~/Scripts/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title</title>
+    <link href="~/Content/themes/base/jquery-ui.theme.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <style>
+        body {
+            padding: 10px;
+        }
+        .section-header {
+            background-color: #f5f5f5;
+            border-left: 4px solid #0275d8;
+            padding: 10px 15px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .table th {
+            background-color: #558DCC;
+            color: white;
+            text-align: center;
+            font-size: 12px;
+        }
+        .table td {
+            font-size: 12px;
+            vertical-align: middle;
+        }
+        .form-control-sm {
+            font-size: 12px;
+            padding: 2px 5px;
+            height: 28px;
+        }
+        textarea.form-control-sm {
+            height: auto;
+        }
+        .btn-sm {
+            font-size: 11px;
+            padding: 3px 8px;
+        }
+        .add-row {
+            background-color: #f9f9f9;
+        }
+        .add-row td {
+            padding: 8px 4px;
+        }
+        .required-field {
+            color: red;
+        }
+        .dt {
+            width: 85px !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="messageDiv"></div>
+
+    <button type="button" onclick="top.closePage6_4();" class="btn btn-default">關閉</button>
+
+    <h4 class="page-header">技師證照</h4>
+    <p>工程編號：@ViewBag.TD_CODE</p>
+
+    <div class="section-header">技師證照列表</div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-condensed" id="dataTable">
+            <thead>
+                <tr>
+                    <th style="width: 100px;">證照號碼</th>
+                    <th style="width: 100px;"><span class="required-field">*</span>身分證字號</th>
+                    <th style="width: 80px;">姓名</th>
+                    <th style="width: 100px;">受聘公司統編</th>
+                    <th style="width: 120px;">受聘公司名稱</th>
+                    <th style="width: 90px;">雇用起日</th>
+                    <th style="width: 90px;">雇用迄日</th>
+                    <th style="width: 150px;"><span class="required-field">*</span>合格證照</th>
+                    <th style="width: 100px;">操作</th>
+                </tr>
+            </thead>
+            <tbody id="dataBody">
+                <tr class="add-row">
+                    <td><input type="text" id="new_LICENSE" class="form-control form-control-sm" /></td>
+                    <td><input type="text" id="new_CARDID" class="form-control form-control-sm" /></td>
+                    <td><input type="text" id="new_NAME" class="form-control form-control-sm" /></td>
+                    <td><input type="text" id="new_COMPANY_NO" class="form-control form-control-sm" /></td>
+                    <td><input type="text" id="new_COMPANY_NAME" class="form-control form-control-sm" /></td>
+                    <td><input type="text" id="new_EMP_SDT" class="form-control form-control-sm dt" /></td>
+                    <td><input type="text" id="new_EMP_EDT" class="form-control form-control-sm dt" /></td>
+                    <td><textarea id="new_LICENSE_PAPER" class="form-control form-control-sm" rows="2"></textarea></td>
+                    <td style="text-align: center;">
+                        <button type="button" class="btn btn-success btn-sm" onclick="addRow();">新增</button>
+                    </td>
+                </tr>
+                @if(dtList != null && dtList.Rows.Count > 0) {
+                    foreach(System.Data.DataRow row in dtList.Rows) {
+                        string id = row["ID"] != DBNull.Value ? row["ID"].ToString() : "";
+                        string license = row["LICENSE"] != DBNull.Value ? row["LICENSE"].ToString() : "";
+                        string cardid = row["CARDID"] != DBNull.Value ? row["CARDID"].ToString() : "";
+                        string name = row["NAME"] != DBNull.Value ? row["NAME"].ToString() : "";
+                        string companyNo = row["COMPANY_NO"] != DBNull.Value ? row["COMPANY_NO"].ToString() : "";
+                        string companyName = row["COMPANY_NAME"] != DBNull.Value ? row["COMPANY_NAME"].ToString() : "";
+                        string empSdt = row["EMP_SDT"] != DBNull.Value ? row["EMP_SDT"].ToString() : "";
+                        string empEdt = row["EMP_EDT"] != DBNull.Value ? row["EMP_EDT"].ToString() : "";
+                        string licensePaper = row["LICENSE_PAPER"] != DBNull.Value ? row["LICENSE_PAPER"].ToString() : "";
+
+                        <tr data-id="@id">
+                            <td><input type="text" value="@license" class="form-control form-control-sm edit-field" data-field="LICENSE" /></td>
+                            <td><input type="text" value="@cardid" class="form-control form-control-sm edit-field" data-field="CARDID" /></td>
+                            <td><input type="text" value="@name" class="form-control form-control-sm edit-field" data-field="NAME" /></td>
+                            <td><input type="text" value="@companyNo" class="form-control form-control-sm edit-field" data-field="COMPANY_NO" /></td>
+                            <td><input type="text" value="@companyName" class="form-control form-control-sm edit-field" data-field="COMPANY_NAME" /></td>
+                            <td><input type="text" value="@empSdt" class="form-control form-control-sm dt edit-field" data-field="EMP_SDT" /></td>
+                            <td><input type="text" value="@empEdt" class="form-control form-control-sm dt edit-field" data-field="EMP_EDT" /></td>
+                            <td><textarea class="form-control form-control-sm edit-field" data-field="LICENSE_PAPER" rows="2">@licensePaper</textarea></td>
+                            <td style="text-align: center;">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="updateRow(this);">儲存</button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(this);">刪除</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <table class="table">
+        <tr>
+            <td>
+                <button type="button" onclick="top.closePage6_4();" class="btn btn-default">關閉</button>
+            </td>
+        </tr>
+    </table>
+
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+    <script>
+        var TD_CODE = '@Model.TD_CODE';
+
+        // 日期選擇器初始化
+        $(".dt").datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: '68:168',
+            dateFormat: 'yymmdd'
+        });
+
+        $('.dt').click(function () {
+            $(this).delay(600).val("");
+        });
+
+        function showMessage(type, message) {
+            var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            var html = '<div class="alert ' + alertClass + ' alert-dismissible" role="alert">' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                message + '</div>';
+            $('#messageDiv').html(html);
+            setTimeout(function () {
+                $('#messageDiv').html('');
+            }, 3000);
+        }
+
+        // 新增資料
+        function addRow() {
+            var cardid = $('#new_CARDID').val();
+            var licensePaper = $('#new_LICENSE_PAPER').val();
+
+            // 驗證必填欄位
+            if (!cardid) {
+                showMessage('error', '請填寫身分證字號');
+                return;
+            }
+            if (!licensePaper) {
+                showMessage('error', '請填寫合格證照');
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("PAGE6_4_Add", "TDE0046")',
+                type: 'POST',
+                data: {
+                    TD_CODE: TD_CODE,
+                    LICENSE: $('#new_LICENSE').val(),
+                    CARDID: cardid,
+                    NAME: $('#new_NAME').val(),
+                    COMPANY_NO: $('#new_COMPANY_NO').val(),
+                    COMPANY_NAME: $('#new_COMPANY_NAME').val(),
+                    EMP_SDT: $('#new_EMP_SDT').val(),
+                    EMP_EDT: $('#new_EMP_EDT').val(),
+                    LICENSE_PAPER: licensePaper
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                        location.reload();
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function (e) {
+                    showMessage('error', '新增失敗：' + e.statusText);
+                }
+            });
+        }
+
+        // 更新資料
+        function updateRow(btn) {
+            var row = $(btn).closest('tr');
+            var id = row.data('id');
+            var cardid = row.find('[data-field="CARDID"]').val();
+            var licensePaper = row.find('[data-field="LICENSE_PAPER"]').val();
+
+            // 驗證必填欄位
+            if (!cardid) {
+                showMessage('error', '請填寫身分證字號');
+                return;
+            }
+            if (!licensePaper) {
+                showMessage('error', '請填寫合格證照');
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("PAGE6_4_Update", "TDE0046")',
+                type: 'POST',
+                data: {
+                    ID: id,
+                    LICENSE: row.find('[data-field="LICENSE"]').val(),
+                    CARDID: cardid,
+                    NAME: row.find('[data-field="NAME"]').val(),
+                    COMPANY_NO: row.find('[data-field="COMPANY_NO"]').val(),
+                    COMPANY_NAME: row.find('[data-field="COMPANY_NAME"]').val(),
+                    EMP_SDT: row.find('[data-field="EMP_SDT"]').val(),
+                    EMP_EDT: row.find('[data-field="EMP_EDT"]').val(),
+                    LICENSE_PAPER: licensePaper
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function () {
+                    showMessage('error', '更新失敗');
+                }
+            });
+        }
+
+        // 刪除資料
+        function deleteRow(btn) {
+            if (!confirm('確定要刪除此筆技師證照紀錄嗎？')) {
+                return;
+            }
+
+            var row = $(btn).closest('tr');
+            var id = row.data('id');
+
+            $.ajax({
+                url: '@Url.Action("PAGE6_4_Delete", "TDE0046")',
+                type: 'POST',
+                data: {
+                    ID: id
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                        row.remove();
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function () {
+                    showMessage('error', '刪除失敗');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

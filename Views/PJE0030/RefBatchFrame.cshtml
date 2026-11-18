@@ -1,0 +1,1053 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@using System.Linq
+@using System.Data
+@model WCals.ViewModels.NewModels.PJE0030Model
+@{ ViewBag.Title = "計畫經費管制[1.1.3] ";
+    //Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <link href="~/Content/PagedList.css" rel="stylesheet" />
+    <style>
+        .ui-dialog {
+            z-index: 4000;
+        }
+
+
+        .block {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: none
+        }
+    </style>
+    <style>
+        /* === BS3 相容層（配色）v2：nav-tabs／分頁／藍色 header 頁籤，接軌系統主色 #337ab7 === */
+        .pagination { --bs-pagination-color: #337ab7; --bs-pagination-hover-color: #286090; --bs-pagination-focus-color: #286090; --bs-pagination-active-bg: #337ab7; --bs-pagination-active-border-color: #337ab7; margin: 10px 0; flex-wrap: wrap; }
+        .nav-tabs:not(.card-header-tabs) .nav-link { color: #337ab7; }
+        .nav-tabs:not(.card-header-tabs) .nav-link:hover, .nav-tabs:not(.card-header-tabs) .nav-link:focus { color: #286090; }
+        .nav-tabs:not(.card-header-tabs) .nav-link.active { color: #495057; font-weight: 600; }
+        .card-header.bg-primary { background-color: #337ab7 !important; color: #fff !important; border-bottom: 1px solid #ddd; padding: 10px 15px; font-weight: bold; }
+        .card-header .card-title { margin: 0; font-size: 1.1rem; }
+        .card-header-tabs { margin-bottom: -11px; border-bottom: none; }
+        .card-header-tabs .nav-item { margin-bottom: 0; }
+        .card-header-tabs .nav-link { border: 1px solid transparent; color: rgba(255,255,255,0.9) !important; margin-right: 2px; padding: 8px 15px; border-radius: 4px 4px 0 0; }
+        .card-header-tabs .nav-link:hover { background-color: rgba(255,255,255,0.15); border-color: transparent; }
+        .card-header-tabs .nav-link.active { background-color: #ffffff !important; color: #337ab7 !important; border-color: #dddddd #dddddd #ffffff !important; font-weight: bold; }
+    </style>
+    <script>
+        /* === BS3 相容層（裝飾器）v2：BS3 標記自動補 BS5 class，舊 view 免改標記 === */
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('ul.nav-tabs > li').forEach(function (li) {
+                li.classList.add('nav-item');
+                var a = li.querySelector(':scope > a');
+                if (!a) return;
+                a.classList.add('nav-link');
+                if (li.classList.contains('active')) { li.classList.remove('active'); a.classList.add('active'); }
+                if (a.getAttribute('data-toggle') === 'tab') { a.setAttribute('data-bs-toggle', 'tab'); a.removeAttribute('data-toggle'); }
+            });
+            document.querySelectorAll('ul.nav-tabs').forEach(function (ul) {
+                if (ul.closest('.card-header')) { ul.classList.add('card-header-tabs'); }
+            });
+            document.querySelectorAll('.tab-pane.in').forEach(function (p) { p.classList.remove('in'); p.classList.add('show'); });
+            document.querySelectorAll('ul.pagination > li').forEach(function (li) {
+                li.classList.add('page-item');
+                var el = li.querySelector(':scope > a, :scope > span');
+                if (el) el.classList.add('page-link');
+            });
+        });
+    </script>
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+<body style="padding:10px;">
+    <div id="block" class="block"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:20px;border-radius:5px">處理中...</div></div>
+    @using (Html.BeginForm("", "PJE0030", FormMethod.Post, new { @class = "form form-inline", id = "mainForm", onsubmit = "document.getElementById('block').style.display='block'" }))
+    {
+        @Html.HiddenFor(x => x.SYR)
+        @Html.HiddenFor(x => x.NO1)
+        @Html.HiddenFor(x => x.NO2)
+        @Html.HiddenFor(x => x.NO3)
+
+        <table class="table" width="100%">
+            <tr>
+                <td>@Html.DropDownListFor(x => x.PPID, (SelectList)ViewBag.PPIDS, "請選擇", new { onChange = "GetPJDSYRC(this.value)", @class = "form-control", form = "mainForm", @required = "required" })</td>
+                <td width="400">
+                    @Html.DropDownListFor(x => x.PJDSYRC, (SelectList)ViewBag.PJDSYRC, "請選擇", new { style = "width:250px;", @class = "form-control", form = "mainForm" })
+                </td>
+                <td>
+
+                    @Html.DropDownListFor(x => x.CITY, (SelectList)ViewBag.cities, "縣市", new { @class = "form-control", form = "mainForm", Onchange = "GetTowns(this.value, 'town');" })
+                </td>
+                <td>
+                    @Html.DropDownListFor(x => x.TOWN, (SelectList)ViewBag.towns, "鄉鎮", new { id = "town", @class = "form-control", form = "mainForm" })
+                </td>
+
+                <td width="100%">
+                    <input type="hidden" name="PID" id="PID" value="@Model.PID" />
+                    <button name="action" type="submit" value="RefBatchSearch" id="RefBatchSearch" class="btn btn-secondary">查詢</button>
+                    <button name="action" type="button" class="btn btn-secondary" onclick="parent.closeEdit();">返回列表</button>
+                </td>
+            </tr>
+        </table>
+
+        <div style="color: red; font-weight: bold; margin: 5px 0 15px 5px; font-size: 15px;">
+            ⚠️ 轉入核定提案建議請先辦理延續案案件
+        </div>
+
+        if (ViewBag.apmforms != null)
+        {
+
+            <script>
+
+
+    function genCode(aid, ext_fg, e) {
+
+        code(aid, ext_fg, e);
+
+     }
+
+    function keyCode(aid, ext_fg, e) {
+
+        code(aid, ext_fg, e);
+    }
+
+
+
+    function code(aid, ext_fg, e){
+
+
+
+        var no1 ='@Model.NO1';
+        var no2 ='@Model.NO2';
+        var no3 = '@Model.NO3';
+
+        var no4 = $("#PJ_CATY_CODE_P_" + aid).val();//分項計畫
+        var no5 = $("#CITY_" + aid).val();
+        var no5_1 = $("#TOWN_" + aid).val();
+
+        if (no5 == null) {
+            no5 = "";
+        }
+        if (no5_1 == null) {
+            no5_1 = "";
+        }
+
+
+
+        var no6 = $("#F_TYPE_" + aid).val();//費用別
+        var no7 = $("#S1_" + aid).val();//序碼1
+        var no8 = $("#S2_" + aid).val();//序碼1
+
+        //var tcode = no1 + no2 + no3 + no4 + (no5 + no5_1) + no6 + (no7 + no8);
+        var fcode = no1 + no2 + no3 + no4 + (no5 + no5_1) + no6 + (no7 + no8);
+
+        $("#FD_CODE_" + aid).val(fcode);
+
+        var isNewProject = (ext_fg === false || String(ext_fg).toLowerCase() === 'false' || String(ext_fg) === '0');
+
+        if (isNewProject && !$("#TD_CODE_" + aid).data("refSet")) {
+            $("#TD_CODE_" + aid).val(fcode);
+        }
+
+        //if (String(ext_fg).toLowerCase() === '0') {
+        //    $("#TD_CODE_" + aid).val(fcode);
+        //}
+
+
+        //let last5 = fcode.slice(-5);
+
+
+        //$("#F_TYPE_" + aid).val(last5.charAt(0));
+
+
+
+
+        // 延遲回焦
+        setTimeout(function () {
+            $(e).focus();  // e 本身就是 DOM 元素，不用加 #
+        }, 100);
+
+    }
+
+
+
+
+
+
+
+
+
+            </script>
+
+
+
+
+            <div style="overflow: auto;">
+                <table class="table table-striped table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th><input type="checkbox" id="checkAll" onclick="toggleAll(this);" /></th>
+                            <th nowrap><button type="button" onclick="batchSave();" class="btn btn-primary btn-sm">批次匯入</button></th>
+                            <th nowrap>縣市*</th>
+                            <th nowrap>鄉鎮別*</th>
+                            <th width="100%" nowrap>提案工程名稱</th>
+                            <th nowrap>工程編號</th>
+                            <th nowrap>經費編號</th>
+                            <th nowrap>分項計畫</th>
+                            <th nowrap>費用別</th>
+                            <th nowrap>序碼</th>
+                            <th nowrap>案件類型</th>
+                            <th nowrap>辦理層級</th>
+                            <th nowrap>工程類別</th>
+                            <th nowrap>工作類別</th>
+
+                            <th nowrap>中央款(元)</th>
+                            <th nowrap>地方款(元)</th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @{
+                            IPagedList<System.Data.DataRow> apmforms = ViewBag.apmforms;
+                            System.Data.DataTable cities = ViewBag.citiesTable;
+                            System.Data.DataTable towns = ViewBag.townsTable;
+                            //System.Data.DataTable towns2 = ViewBag.townsTable;
+                            System.Data.DataTable pjcatycode = ViewBag.pjcatycode;
+                            System.Data.DataTable catycod = ViewBag.catycod;
+                            System.Data.DataTable ipjcode = ViewBag.ipjcode;
+
+                            System.Data.DataTable tdcaty = ViewBag.tdcaty;
+                            System.Data.DataTable yrworks = ViewBag.yrworks;
+
+                        }
+                        @if (apmforms != null && apmforms.Count > 0)
+                        {
+                            foreach (System.Data.DataRow r in apmforms)
+                            {
+
+                                <tr id="tr_@r["AID"]">
+                                    @{
+                                        //string fType = Convert.ToString(r["F_TYPE"]), s1 = Convert.ToString(r["S1"]), s2 = Convert.ToString(r["S2"]);
+                                        var tdCode = Convert.ToString(r["TD_CODE"]);
+                                        string fType = "", s1 = "", s2 = "";
+                                        if (!string.IsNullOrEmpty(tdCode))
+                                        {
+                                            string lastPart = "";
+                                            int len = tdCode.Length;
+                                            if (len == 19 || len == 20)
+                                            {
+                                                lastPart = tdCode.Substring(15);
+                                            }
+                                            else if (len == 11 || len == 14)
+                                            {
+                                                lastPart = tdCode.Substring(9);
+                                            }
+                                            int lastLen = lastPart.Length;
+                                            if (lastLen == 5)
+                                            {
+                                                fType = lastPart.Substring(0, 1);
+                                                s1 = lastPart.Substring(1, 2);
+                                                s2 = lastPart.Substring(3, 2);
+                                            }
+                                            else if (lastLen == 4)
+                                            {
+                                                fType = lastPart.Substring(0, 1);
+                                                s1 = lastPart.Substring(1, 2);
+                                                s2 = lastPart.Substring(3, 1);
+                                            }
+                                            else if (lastLen == 2)
+                                            {
+                                                fType = lastPart.Substring(0, 1);
+                                                s1 = lastPart.Substring(1, 1);
+                                            }
+                                        }
+                                    }
+                                    <td>
+                                        <input type="checkbox" class="row-checkbox" value="@r["AID"]" data-extfg="@r["EXT_FG"].ToString().ToLower()" />
+                                    </td>
+                                    <td>
+                                        <button type="button" onclick="save('@r["AID"]','@r["EXT_FG"].ToString().ToLower()');" class="btn btn-secondary">匯入</button>
+                                    </td>
+                                    <td nowrap>
+                                        <select name="CITY_P" class="form-select" id="CITY_@r["AID"]" style="pointer-events:none; background:#eee;">
+                                            @if (cities != null)
+                                            {
+                                                foreach (System.Data.DataRow c in cities.Rows)
+                                                {
+                                                    if (Convert.ToString(@c["CITY"]).Equals(Convert.ToString(r["CITY"])))
+                                                    {
+                                                        <option selected value="@c["CITY_ID"]">@c["CITY"]</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@c["CITY_ID"]">@c["CITY"]</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+
+                                    </td>
+
+                                    <td nowrap>
+                                        <select name="TOWN_P" class="form-select" id="TOWN_@r["AID"]" onchange="genCode('@r["AID"]', '@r["EXT_FG"].ToString().ToLower()',this);">
+                                            @if (towns != null)
+                                            {
+                                                foreach (System.Data.DataRow c in towns.Rows)
+                                                {
+
+                                                    if (Convert.ToString(r["CITY"]).Equals(Convert.ToString(c["CITY"])))
+                                                    {
+
+                                                        if (Convert.ToString(@c["TOWN"]).Equals(Convert.ToString(r["TOWN"])))
+                                                        {
+                                                            <option selected value="@c["CPA_TOWN_ID"]">@c["TOWN"]</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@c["CPA_TOWN_ID"]">@c["TOWN"]</option>
+                                                        }
+
+
+                                                    }
+
+
+
+                                                }
+                                            }
+                                        </select>
+                                    </td>
+                                    <td width="100%">
+
+                                        <textarea rows="1" id="TD_NAME_@r["AID"]" class="form-control" style="width:250px;">@r["AP_NAME"]</textarea>
+                                    </td>
+                                    <td nowrap>
+                                        <input readonly type="text" name="TD_CODE_P" value="@r["TD_CODE"]" id="TD_CODE_@r["AID"]" class="form-control" style="width:200px;" />
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick='openRefDialog("@r["AID"]","@r["EXT_FG"].ToString().ToLower()")' title="引用延續性工程"><b>引用</b></button>
+                                    </td>
+                                    <td nowrap>
+                                        <input readonly type="text" name="FD_CODE_P" id="FD_CODE_@r["AID"]" value="@Model.NO1@Model.NO2@Model.NO3" class="form-control" style="width:200px;" />
+                                    </td>
+                                    <td nowrap>
+
+                                        <select class="form-select" id="PJ_CATY_CODE_P_@r["AID"]" onchange="genCode('@r["AID"]', '@r["EXT_FG"].ToString().ToLower()',this);">
+                                            <option></option>
+                                            @if (pjcatycode != null)
+                                            {
+                                                foreach (System.Data.DataRow c in pjcatycode.Rows)
+                                                {
+                                                    if (Convert.ToString(@c["id"]).Equals(Convert.ToString(r["CATY_CODE_P"])))
+                                                    {
+                                                        <option selected value="@c["id"]">@c["id"] @c["name"]</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@c["id"]">【@c["id"]】 @c["name"]</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+
+                                    </td>
+
+                                    <!--費用別-->
+                                    <td>
+                                        <!--select class="form-control" id="F_TYPE_@r["AID"]" onchange="genCode('@r["AID"]', '@r["EXT_FG"].ToString().ToLower()');">
+            <option value="0">業務</option>
+            <option value="1">工程</option>
+            <option value="2">用地</option>
+        </select-->
+                                        <input maxlength="1" type="text" class="form-control" id="F_TYPE_@r["AID"]" value="@fType" maxlength="1" style="width:40px;" onkeyup="genCode('@r["AID"]', '@r["EXT_FG"].ToString().ToLower()',this);" />
+                                    </td>
+
+
+                                    <td nowrap>
+                                        <input maxlength="2" type="text" id="S1_@r["AID"]" value="@s1" class="form-control" style="width:40px;" onkeyup="genCode('@r["AID"]', '@r["EXT_FG"].ToString().ToLower()',this);" />
+                                        <input maxlength="1" type="text" id="S2_@r["AID"]" value="@s2" class="form-control" style="width:40px;" onkeyup="genCode('@r["AID"]', '@r["EXT_FG"].ToString().ToLower()',this);" />
+                                    </td>
+                                    <td nowrap>
+
+                                        <select name="CATY_COD_P" class="form-select" id="CATY_CODE_P_@r["AID"]">
+                                            @if (catycod != null)
+                                            {
+                                                foreach (System.Data.DataRow c in catycod.Rows)
+                                                {
+                                                    if (Convert.ToString(@c["id"]).Equals(Convert.ToString(r["CATY_CODE_P"])))
+                                                    {
+                                                        <option selected value="@c["id"]">@c["name"]</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@c["id"]">@c["name"]</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                    </td>
+                                    <td nowrap>
+                                        <select name="IPJ_CODE_P" class="form-select" id="IPJ_CODE_@r["AID"]">
+                                            @if (ipjcode != null)
+                                            {
+                                                foreach (System.Data.DataRow c in ipjcode.Rows)
+                                                {
+                                                    if (Convert.ToString(@c["id"]).Equals(Convert.ToString(r["IPJ_CODE_P"])))
+                                                    {
+                                                        <option selected value="@c["id"]">@c["name"]</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@c["id"]">@c["name"]</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+
+
+                                    </td>
+                                    <td nowrap>
+                                        <select name="TD_CATY_P" class="form-select" id="TD_CATY_@r["AID"]">
+                                            <option value=""></option>
+                                            @*@foreach(System.Data.DataRow c in tdcaty.Rows) {
+                    <option value="@c["id"]">@c["name"]</option>
+                }*@
+
+
+                                            @if (tdcaty != null)
+                                            {
+                                                foreach (System.Data.DataRow c in tdcaty.Rows)
+                                                {
+                                                    if (Convert.ToString(@c["id"]).Equals(Convert.ToString(r["TD_CATY_P"])))
+                                                    {
+                                                        <option selected value="@c["id"]">@c["name"]</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@c["id"]">@c["name"]</option>
+                                                    }
+                                                }
+                                            }
+
+                                        </select>
+
+                                    </td>
+                                    <td nowrap>
+                                        <select name="YR_WORK_P" class="form-select" id="YR_WORK_@r["AID"]">
+                                            <option value=""></option>
+                                            @*@foreach(System.Data.DataRow c in yrworks.Rows) {
+                    <option value="@c["id"]">@c["name"]</option>
+                }*@
+
+
+                                            @if (yrworks != null)
+                                            {
+                                                foreach (System.Data.DataRow c in yrworks.Rows)
+                                                {
+                                                    if (Convert.ToString(@c["id"]).Equals(Convert.ToString(r["YR_WORK_P"])))
+                                                    {
+                                                        <option selected value="@c["id"]">@c["name"]</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@c["id"]">@c["name"]</option>
+                                                    }
+                                                }
+                                            }
+
+                                        </select>
+
+                                    </td>
+                                    @*<td>
+            @{
+                var aid = r["AID"];
+                var elementId = "CATY_CODE_P_" + aid;
+            }
+
+            @Html.DropDownList("CATY_CODE_P", (SelectList)ViewBag.CATY_COD, "請選擇", new { id =  elementId, @class = "form-control" })
+
+        </td>*@
+                                <td>
+                                    @{
+                                        var f00 = r["F00"] == DBNull.Value ? 0m : Convert.ToDecimal(r["F00"]);
+                                        var f11 = r["F11"] == DBNull.Value ? 0m : Convert.ToDecimal(r["F11"]);
+                                    }
+                                    <input type="text" name="" id="F00_@r["AID"]" class="form-control fund-input" style="width:100px;" value="@f00.ToString("#,##0")" />
+                                </td>
+                                    <td>
+                                        <input type="text" id="F11_@r["AID"]" class="form-control fund-input" style="width: 100px;" value="@f11.ToString("#,##0")" />
+                                        <input type="hidden" id="ADV_DP_@r["AID"]" value="@r["ADV_DP"]" />
+                                        <input type="hidden" id="ADV_UID_@r["AID"]" value="@r["ADV_UID"]" />
+                                    </td>
+
+                                </tr>
+
+
+                            }
+                        }
+
+
+
+                    </tbody>
+
+
+
+                </table>
+
+                @* 分頁控件 *@
+                @if (apmforms != null && apmforms.PageCount > 1)
+                {
+                    <div style="text-align: center; margin-top: 20px;">
+                        @Html.PagedListPager(apmforms, prePage => Url.Action("RefBatchSearchPage", new
+                        {
+                            prePage = prePage,
+                            PPID = Model.PPID,
+                            PJDSYRC = Model.PJDSYRC,
+                            CITY = Model.CITY,
+                            TOWN = Model.TOWN,
+                            Limit = Model.Limit,
+                            PID = Model.PID,
+                            SYR = Model.SYR,
+                            NO1 = Model.NO1,
+                            NO2 = Model.NO2,
+                            NO3 = Model.NO3
+                        }))
+                        <div style="margin-top: 10px;">
+                            顯示第 @apmforms.FirstItemOnPage - @apmforms.LastItemOnPage 筆，共 @apmforms.TotalItemCount 筆（第 @apmforms.PageNumber 頁，共 @apmforms.PageCount 頁）
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <script src="~/Scripts/utils/number-utils.js"></script>
+
+            <script>
+                // 4. 全選/取消全選邏輯
+                function toggleAll(source) {
+                    checkboxes = document.getElementsByClassName('row-checkbox');
+                    for (var i = 0, n = checkboxes.length; i < n; i++) {
+                        checkboxes[i].checked = source.checked;
+                    }
+                }
+
+                // 5. 批次匯入邏輯 (使用 async/await)
+                async function batchSave() {
+                    var checkboxes = document.querySelectorAll('.row-checkbox:checked');
+                    if (checkboxes.length === 0) {
+                        alert("請先勾選要匯入的資料！");
+                        return;
+                    }
+
+                    if (!confirm("確定要匯入這 " + checkboxes.length + " 筆資料嗎？")) {
+                        return;
+                    }
+
+                    document.getElementById('block').style.display = 'block';
+
+                    let successCount = 0;
+                    let failCount = 0;
+
+                    for (let i = 0; i < checkboxes.length; i++) {
+                        var aid = checkboxes[i].value;
+                        var extfg = checkboxes[i].getAttribute('data-extfg');
+
+                        try {
+                            // 呼叫改造為 Promise 的 save 函式
+                            let result = await saveAsync(aid, extfg, true);
+                            if (result) successCount++;
+                            else failCount++;
+                        } catch (e) {
+                            console.error("處理 AID: " + aid + " 時發生錯誤", e);
+                            failCount++;
+                        }
+                    }
+
+                    document.getElementById('block').style.display = 'none';
+                    alert("批次匯入完成！\n成功: " + successCount + " 筆\n失敗: " + failCount + " 筆");
+                }
+
+                function save(aid, extfg) {
+                    saveAsync(aid, extfg, false);
+                }
+
+                @*function save(aid, extfg) {
+
+                    if ($("#TD_CODE_" + aid).val() == "") {
+                        alert("工程編號不可空白");
+                        return;
+                    }
+
+                    if ($("#TD_CATY_" + aid).val() == "") {
+                        alert("工程類別不可空白");
+                        return;
+                    }
+
+                    if ($("#YR_WORK_" + aid).val() == "") {
+                        alert("工作類別不可空白");
+                        return;
+                    }
+
+
+                    if ($("#PJ_CATY_CODE_P_" + aid).val() == "") {
+                        alert("分項計畫不可空白");
+                        return;
+                    }
+
+
+
+
+                    if ($("#CATY_CODE_P_" + aid).val() == "") {
+                        alert("案件類型不可空白，新增失敗");
+                        return;
+                    }
+                    var selectedText = $("#CITY_" + aid + " option:selected").text();
+                    var selectedTown = $("#TOWN_" + aid + " option:selected").text();
+
+                    var req = {
+                        "EXT_FG": extfg,
+                    "TD_CODE": $("#TD_CODE_" + aid).val(),
+                    "FD_CODE": $("#FD_CODE_" + aid).val(),
+                    "CATY_CODE": $("#CATY_CODE_P_" + aid).val(),
+                    "AID":aid,
+                    "PID": '@Model.PID',
+                    "TID": '@Model.TID',
+                    "TD_NAME": $("#TD_NAME_" + aid).val(),
+                    "PJ_CATY_CODE": $("#PJ_CATY_CODE_P_" + aid).val(),
+                    "TD_CATY": $("#TD_CATY_" + aid).val(),
+                    "IPJ_CODE": $("#IPJ_CODE_" + aid).val(),
+                    "CITY": selectedText,
+                    "TOWN": selectedTown,
+                    "YR_WORK": $("#YR_WORK_" + aid).val(),
+
+                    "F00": $("#F00_" + aid).val(),
+                    "F11": $("#F11_" + aid).val(),
+                    "SYR":"@Model.SYR",
+                    "YEAR": "@Model.SYR",
+                    "ADV_DP": $("#ADV_DP_" + aid).val(),
+                    "ADV_UID": $("#ADV_UID_" + aid).val()
+                    }
+
+    $.ajax({
+        url: '@Url.Content("~/")PJE0030/RefBatchAddOne',
+        method: 'post',
+        data: { "data": JSON.stringify(req) },
+
+        success: function (d) {
+
+            //alert(d.msg);
+            if (d.id == undefined) {
+                alert(d.msg);
+            } else {
+                alert("已新增(" + d.id + "):" + $("#TD_CODE_" + aid).val());
+                $('#tr_' + aid).hide('slow');
+            }
+
+
+
+        }
+    });
+
+
+
+
+
+
+                }*@
+
+                // 將原本的 save 邏輯封裝成回傳 Promise 的版本
+                // isBatch 參數用來判斷是否為批次執行，如果是批次，遇到錯誤時用 console.log 記錄，避免彈出過多 alert
+                function saveAsync(aid, extfg, isBatch) {
+                    return new Promise((resolve, reject) => {
+                        // 驗證邏輯
+                        if ($("#TD_CODE_" + aid).val() == "") {
+                            if(!isBatch) alert("工程編號不可空白"); else console.log("AID:" + aid + " 工程編號不可空白");
+                            resolve(false); return;
+                        }
+                        if ($("#TD_CATY_" + aid).val() == "") {
+                            if(!isBatch) alert("工程類別不可空白"); else console.log("AID:" + aid + " 工程類別不可空白");
+                            resolve(false); return;
+                        }
+                        if ($("#YR_WORK_" + aid).val() == "") {
+                            if(!isBatch) alert("工作類別不可空白"); else console.log("AID:" + aid + " 工作類別不可空白");
+                            resolve(false); return;
+                        }
+                        if ($("#PJ_CATY_CODE_P_" + aid).val() == "") {
+                            if(!isBatch) alert("分項計畫不可空白"); else console.log("AID:" + aid + " 分項計畫不可空白");
+                            resolve(false); return;
+                        }
+                        if ($("#CATY_CODE_P_" + aid).val() == "") {
+                            if(!isBatch) alert("案件類型不可空白，新增失敗"); else console.log("AID:" + aid + " 案件類型不可空白");
+                            resolve(false); return;
+                        }
+
+                        var selectedText = $("#CITY_" + aid + " option:selected").text();
+                        var selectedTown = $("#TOWN_" + aid + " option:selected").text();
+
+                        var req = {
+                            "EXT_FG": extfg,
+                            "TD_CODE": $("#TD_CODE_" + aid).val(),
+                            "FD_CODE": $("#FD_CODE_" + aid).val(),
+                            "CATY_CODE": $("#CATY_CODE_P_" + aid).val(),
+                            "AID": aid,
+                            "PID": '@Model.PID',
+                            "TID": '@Model.TID',
+                            "TD_NAME": $("#TD_NAME_" + aid).val(),
+                            "PJ_CATY_CODE": $("#PJ_CATY_CODE_P_" + aid).val(),
+                            "TD_CATY": $("#TD_CATY_" + aid).val(),
+                            "IPJ_CODE": $("#IPJ_CODE_" + aid).val(),
+                            "CITY": selectedText,
+                            "TOWN": selectedTown,
+                            "YR_WORK": $("#YR_WORK_" + aid).val(),
+                            "F00": $("#F00_" + aid).val().replace(/,/g, ''),
+                            "F11": $("#F11_" + aid).val().replace(/,/g, ''),
+                            "SYR": "@Model.SYR",
+                            "YEAR": "@Model.SYR",
+                            "ADV_DP": $("#ADV_DP_" + aid).val(),
+                            "ADV_UID": $("#ADV_UID_" + aid).val()
+                        }
+
+                        $.ajax({
+                            url: '@Url.Content("~/")PJE0030/RefBatchAddOne',
+                            method: 'post',
+                            data: { "data": JSON.stringify(req) },
+                            success: function (d) {
+                                if (d.id == undefined) {
+                                    if(!isBatch) alert(d.msg);
+                                    else console.log("AID:" + aid + " 失敗:" + d.msg);
+                                    resolve(false);
+                                } else {
+                                    if(!isBatch) alert("已新增(" + d.id + "):" + $("#TD_CODE_" + aid).val());
+                                    $('#tr_' + aid).hide('slow');
+                                    resolve(true);
+                                }
+                            },
+                            error: function(err) {
+                                if(!isBatch) alert("發生錯誤");
+                                console.error(err);
+                                reject(err);
+                            }
+                        });
+                    });
+                }
+            </script>
+
+
+
+
+
+        }
+
+
+
+
+        <script>
+    function GetPJDSYRC(ppid) {
+
+
+        $("#PJDSYRC").html("");
+         $.ajax({
+             url: '@Url.Content("~/")ASYNC/GetPJDSYRC',
+           method: 'post',
+           data: { "PPID": ppid },
+           success: function (d) {
+               var p = jQuery.parseJSON(d);
+               $("#PJDSYRC").prepend("<option value=''>請選擇</option>");
+               for (i = 0; i < p.length; i++) {
+                   $("#PJDSYRC").append("<option value='" + p[i].YRC_ID + "'>" + p[i].PSG_NAME + "</option>");
+               }
+           }
+       });
+   }
+
+
+
+function GetTowns(city, id) {
+
+    $("#"+id).html("");
+    $.ajax({
+        url: '@Url.Content("~/")ASYNC/GetTownsOldandNew',
+        method: 'post',
+        data: { "city": city },
+        success: function (d) {
+            var p = jQuery.parseJSON(d);
+            $("#"+id).prepend("<option value=''>鄉鎮</option>");
+            for (i = 0; i < p.length; i++) {
+                $("#"+id).append("<option value='" + p[i].TOWN + "'>" + p[i].TOWN + "</option>");
+            }
+        }
+    });
+    }
+
+    function GetTowns4List(city, id) {
+
+    $("#"+id).html("");
+    $.ajax({
+        url: '@Url.Content("~/")ASYNC/GetTowns',
+        method: 'post',
+        data: { "city": city },
+        success: function (d) {
+            var p = jQuery.parseJSON(d);
+            $("#"+id).prepend("<option value=''>鄉鎮</option>");
+            for (i = 0; i < p.length; i++) {
+                $("#"+id).append("<option value='" + p[i].TOWN_ID + "'>" + p[i].TOWN + "</option>");
+            }
+        }
+    });
+}
+        </script>
+
+
+
+
+
+
+
+
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+        <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+        <script src="~/Scripts/validator.min.js"></script>
+        if (ViewBag.msg != null)
+        {
+            <script>
+                alert("@ViewBag.msg");
+            </script>
+        }
+
+
+    }
+
+    <!-- 引用延續性工程 Dialog -->
+    <div id="refDialog" title="選擇延續性工程" style="display:none;">
+        <div style="margin-bottom:8px;">
+            <input type="text" id="refSearchInput" class="form-control" placeholder="輸入關鍵字過濾..." onkeyup="filterRefList()" />
+        </div>
+        <select id="refProjectSelect" class="form-select" size="12" style="width:100%;" ondblclick="confirmRefSelection()">
+        </select>
+    </div>
+
+    <script>
+        var currentRefAid = null;
+        var currentRefExtfg = null;
+
+        function openRefDialog(aid, extfg) {
+            currentRefAid = aid;
+            currentRefExtfg = extfg;
+            var city = $("#CITY_" + aid + " option:selected").text();
+
+            if (!city || city === "縣市") {
+                alert("請先選擇縣市");
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Content("~/")PJE0030/GetContinuingProjects',
+                method: 'post',
+                data: { city: city },
+                success: function (d) {
+                    var data = jQuery.parseJSON(d);
+                    var select = $("#refProjectSelect");
+                    select.empty();
+                    $("#refSearchInput").val("");
+
+                    if (data.length === 0) {
+                        select.append("<option value=''>無符合資料</option>");
+                    } else {
+                        for (var i = 0; i < data.length; i++) {
+                            select.append("<option value='" + data[i].TD_CODE + "' title='" + data[i].TD_CODE + " " + data[i].AP_NAME + "'>" + data[i].TD_CODE + " " + data[i].AP_NAME /*+ "[" + data[i].CITY + data[i].TOWN + "]"*/ + "</option>");
+                        }
+                    }
+
+                    $("#refDialog").dialog({
+                        modal: true,
+                        width: 650,
+                        title: "選擇延續性工程 - " + city,
+                        buttons: {
+                            "確認": function () { confirmRefSelection(); },
+                            "取消": function () { $(this).dialog("close"); }
+                        },
+                        close: function () {
+                            currentRefAid = null;
+                            currentRefExtfg = null;
+                        }
+                    });
+                }
+            });
+        }
+
+        function confirmRefSelection() {
+            var aid = currentRefAid;
+            var extfg = currentRefExtfg;
+            if (!aid) return;
+
+            var selected = $("#refProjectSelect").val();
+            if (!selected || selected === "" || selected === "無符合資料") {
+                alert("請選擇一筆工程");
+                return;
+            }
+
+            loadRefProject(aid, extfg, selected);
+        }
+
+        function loadRefProject(aid, extfg, tdcode) {
+            $.ajax({
+                url: '@Url.Content("~/")PJE0030/RefSelectOne',
+                method: 'post',
+                data: {
+                    "tdcode": tdcode
+                },
+                success: function (d) {
+                    var p = jQuery.parseJSON(d);
+                    if (!p || p.length === 0) {
+                        alert("查無此工程資料");
+                        return;
+                    }
+
+                    // 判斷工程名稱是否不同
+                    var oldName = $("#TD_NAME_" + aid).val();
+                    var newName = p[0].TD_NAME;
+                    var overwriteName = true;
+                    if (oldName && oldName.trim() !== "" && oldName.trim() !== newName.trim()) {
+                        overwriteName = confirm("原有的工程名稱\n" + oldName + "\n\n引用的工程名稱\n" + newName + "\n\n不同，是否覆蓋名稱？");
+                    }
+
+                    // 填入工程名稱
+                    if (overwriteName) {
+                        $("#TD_NAME_" + aid).val(newName);
+                    }
+
+                    // 工程編號 (去除 -)
+                    var code = p[0].TD_CODE ? p[0].TD_CODE.replace("-", "") : tdcode;
+                    $("#TD_CODE_" + aid).val(code);
+                    $("#TD_CODE_" + aid).data("refSet", true); // 標記為引用設定
+
+                    // 案件類型
+                    if (p[0].CATY_CODE) {
+                        $("#CATY_CODE_P_" + aid).val(p[0].CATY_CODE);
+                    }
+
+                    // 辦理層級
+                    if (p[0].IPJ_CODE) {
+                        $("#IPJ_CODE_" + aid).val(p[0].IPJ_CODE);
+                    }
+
+                    // 工程類別
+                    if (p[0].TD_CATY) {
+                        $("#TD_CATY_" + aid).val(p[0].TD_CATY);
+                    }
+
+                    // 工作類別
+                    if (p[0].YR_WORK) {
+                        $("#YR_WORK_" + aid).val(p[0].YR_WORK);
+                    }
+
+                    // 費用別、序碼
+                    SetNo(code, aid);
+
+                    // 縣市鄉鎮
+                    selectCityTown(p, aid);
+
+                    $("#refDialog").dialog("close");
+                },
+                error: function () {
+                    alert("查詢工程資料失敗");
+                }
+            });
+        }
+
+        function filterRefList() {
+            var keyword = $("#refSearchInput").val().toLowerCase();
+            $("#refProjectSelect option").each(function () {
+                var text = $(this).text().toLowerCase();
+                $(this).toggle(text.indexOf(keyword) > -1);
+            });
+        }
+
+        function SetNo(code, aid) {
+            let lastPart = "";
+
+            if (code.length === 19 || code.length === 20) {
+                lastPart = code.substring(15);
+            } else if (code.length === 11 || code.length === 14) {
+                lastPart = code.substring(9);
+            }
+
+            let part1 = "";
+            let part2 = "";
+            let part3 = "";
+
+            if (lastPart.length === 5) {
+                part1 = lastPart.substring(0, 1);
+                part2 = lastPart.substring(1, 3);
+                part3 = lastPart.substring(3, 5);
+            } else if (lastPart.length === 4) {
+                part1 = lastPart.substring(0, 1);
+                part2 = lastPart.substring(1, 3);
+                part3 = lastPart.substring(3, 4);
+            } else if (lastPart.length === 2) {
+                part1 = lastPart.substring(0, 1);
+                part2 = lastPart.substring(1, 2);
+            }
+            $("#F_TYPE_" + aid).val(part1);
+            $("#S1_" + aid).val(part2);
+            $("#S2_" + aid).val(part3);
+        }
+
+        function selectCityTown(p, aid) {
+            var target_city = $('#CITY_' + aid);
+            var target_town = $('#TOWN_' + aid);
+
+            // 先清空
+            target_city.val('');
+            target_town.val('');
+
+            if (!p[0].TD_CITY || !p[0].TD_CITY.trim()) return;
+
+            // 選 CITY
+            var city_option = target_city.find('option').filter(function () {
+                return $(this).text().trim() === p[0].TD_CITY.trim();
+            });
+
+            if (city_option.length === 0) return;
+
+            city_option.prop('selected', true);
+            target_city.change();
+
+            // 選 TOWN
+            if (p[0].TD_TOWN && p[0].TD_TOWN.trim()) {
+                setTimeout(function () {
+                    var town_option = target_town.find('option').filter(function () {
+                        return $(this).text().trim() === p[0].TD_TOWN.trim();
+                    });
+                    if (town_option.length > 0) {
+                        town_option.prop('selected', true);
+                        target_town.change();
+                    } else {
+                        target_town.val('');
+                    }
+                }, 200);
+            }
+        }
+
+    </script>
+
+</body>
+</html>

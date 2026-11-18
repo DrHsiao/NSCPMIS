@@ -1,0 +1,286 @@
+@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0040Model
+@{ ViewBag.Title = "工程登記冊編輯";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+ 
+ <script type="text/javascript" src="~/Scripts/jquery-3.7.1.min.js"></script>
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+ <link href="~/Content/bootstrap-select.css" rel="stylesheet" />
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/themes/base/jquery-ui.theme.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Scripts/plugins/bootstrap-fileinput/icon.mini.css" crossorigin="anonymous">
+    <link href="~/Scripts/plugins/bootstrap-fileinput/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+</head>
+<body style="padding:5px;">
+    @using(Html.BeginForm("PAGE1", "TDE0040", FormMethod.Post, new { data_toggle = "validator", role = "form", id = "mainForm", enctype = "multipart/form-data" })) {
+
+      <table>
+            <tr>
+  <td valign="top">
+  <table>
+ <tr>
+  <td colspan="4">
+ <table width="100%">
+     <tr>
+         <td align="left">
+      <div>修改狀態</div>
+    </td>
+      <td align="right">
+ <input type="button" name="BtnModify" value="修改" />
+   <input type="button" name="BtnDelete" value="刪除" />
+<input type="button" name="BtnSave" value="存檔" />
+    <input name="CBtnSave" type="submit" value="存檔" />
+  <input name="BtnCancel" type="reset" value="取消" />
+      <input type="button" name="BtnQuery" value="查詢" />
+  <input type="button" name="BtnPrint" value="列印" />
+      </td>
+     </tr>
+       </table>
+     </td>
+   </tr>
+     <tr>
+ <td colspan="4">
+      @Html.HiddenFor(m => m.TDMFORM.TD_CODE)
+    </td>
+          </tr>
+        <tr>
+        <td><label>工程編號</label></td>
+      <td>@Html.TextBoxFor(m => m.TDMFORM.TD_CODE, new { @readonly = true })</td>
+       <td><label>預算成立年度</label></td>
+           <td>@Html.TextBoxFor(m => m.TDMFORM.CRT_YR)</td>
+    </tr>
+         <tr>
+     <td><label>工程名稱</label></td>
+          <td colspan="3">@Html.TextBoxFor(m => m.TDMFORM.TD_NAME)</td>
+  </tr>
+      <tr>
+ <td><label>縣市別</label></td>
+        <td>@Html.TextBoxFor(m => m.TDMFORM.TD_CITY, new { @readonly = true })</td>
+     <td><label>鄉鎮別</label></td>
+   <td>@Html.TextBoxFor(m => m.TDMFORM.TD_TOWN, new { @readonly = true })</td>
+       </tr>
+ <tr>
+  <td><label>工程地點</label></td>
+   <td colspan="3">@Html.TextBoxFor(m => m.TDMFORM.TD_LINE)</td>
+   </tr>
+ <tr>
+        <td><label>工程地點Ｘ座標(TWD97格式)</label></td>
+   <td>@Html.TextBoxFor(m => m.TDMFORM.GIS_X)</td>
+   <td><label>工程地點Ｙ座標(TWD97格式)</label></td>
+ <td>@Html.TextBoxFor(m => m.TDMFORM.GIS_Y)</td>
+        </tr>
+   <tr>
+       <td><label>工程類型</label></td>
+<td>@Html.DropDownListFor(m => m.TDMFORM.TD_CATY, ViewBag.TD_CATY as SelectList)</td>
+       <td><label></label></td>
+     <td></td>
+     </tr>
+<tr>
+  <td><label>核定經費</label></td>
+  <td>@Html.TextBoxFor(m => m.TDMFORM.TD_FUND)</td>
+ <td><label>預估工期</label></td>
+<td>
+      @Html.TextBoxFor(m => m.TDMFORM.PRE_PRD)
+@Html.DropDownListFor(m => m.TDMFORM.PRD_TP, new SelectList(new[] { 
+            new { value = "01", text = "日曆天" },
+          new { value = "02", text = "工作天" },
+     new { value = "03", text = "限期完工" }
+     }, "value", "text"))
+     </td>
+       </tr>
+         <tr>
+        <td><label>預算核準日期</label></td>
+     <td>
+    @Html.TextBoxFor(m => m.TDMFORM.VRF_DT)
+ <input type="button" value="選擇日期" />
+    </td>
+   <td><label>預算核準文號</label></td>
+<td>@Html.TextBoxFor(m => m.TDMFORM.VRF_FN)</td>
+       </tr>
+    <tr>
+      <td><label>執行機關代碼</label></td>
+       <td>
+      @Html.TextBoxFor(m => m.TDMFORM.EXE_MCH)
+  <input type="button" value="查詢" />
+    </td>
+ <td><label></label></td>
+<td></td>
+  </tr>
+ <tr>
+   <td><label>執行單位承辦姓名</label></td>
+   <td>@Html.TextBoxFor(m => m.TDMFORM.ADM_CONT)</td>
+      <td><label>執行單位承辦電話</label></td>
+<td>@Html.TextBoxFor(m => m.TDMFORM.ADM_TEL)</td>
+    </tr>
+  <tr>
+   <td><label>執行單位承辦EMail</label></td>
+        <td colspan="3">@Html.TextBoxFor(m => m.TDMFORM.ADM_EMAIL)</td>
+     </tr>
+    <tr>
+     <td colspan="4"></td>
+     </tr>
+  <tr>
+      <td><label>設計案編號</label></td>
+     <td>
+     @Html.TextBoxFor(m => m.TDMFORM.DSGTD_CODE, new { @readonly = true })
+   <input type="button" value="選取" />
+      </td>
+    <td><label>工程會標案編碼</label></td>
+      <td>@Html.TextBoxFor(m => m.TDMFORM.PCCTD_CODE)</td>
+     </tr>
+ <tr>
+     <td><label>設計單位</label></td>
+        <td colspan="3">@Html.TextBoxFor(m => m.TDMFORM.DSG_BUSS_NAME)</td>
+     </tr>
+    <tr>
+    <td><label>設計單位承辦姓名</label></td>
+  <td>@Html.TextBoxFor(m => m.TDMFORM.DSG_CONT)</td>
+<td><label>設計單位承辦電話</label></td>
+        <td>@Html.TextBoxFor(m => m.TDMFORM.DSG_CONTEL)</td>
+        </tr>
+     <tr>
+     <td><label>監造單位</label></td>
+  <td colspan="3">@Html.TextBoxFor(m => m.TDMFORM.SVY_BUSS_NAME)</td>
+       </tr>
+   <tr>
+   <td><label>監造單位承辦姓名</label></td>
+        <td>@Html.TextBoxFor(m => m.TDMFORM.SVY_CONT)</td>
+        <td><label>監造單位承辦電話</label></td>
+  <td>@Html.TextBoxFor(m => m.TDMFORM.SVY_CONTEL)</td>
+  </tr>
+       <tr>
+  <td><label>本署監造督導管理人員</label></td>
+      <td colspan="3">@Html.TextBoxFor(m => m.TDMFORM.ADV_CHIEF)</td>
+       </tr>
+   <tr>
+              <td><label>工程內容</label></td>
+ <td colspan="3">@Html.TextAreaFor(m => m.TDMFORM.TD_NOTE)</td>
+    </tr>
+       <tr>
+      <td><label>工務組系統代碼</label></td>
+      <td>
+   @Html.TextBoxFor(m => m.TDMFORM.TDM_TD_CODE)
+      <input type="button" value="取號" />
+  </td>
+   <td><label></label></td>
+      <td></td>
+      </tr>
+       <tr>
+ <td><label>廠商名稱</label></td>
+        <td>@Html.TextBoxFor(m => m.TDMFORM.BUSS_NAME, new { @readonly = true })</td>
+       <td><label>廠商聯絡人</label></td>
+   <td>@Html.TextBoxFor(m => m.TDMFORM.BUSS_CT_CONT, new { @readonly = true })</td>
+      </tr>
+           <tr>
+       <td><label>廠商地址</label></td>
+ <td>@Html.TextBoxFor(m => m.TDMFORM.BUSS_ADDR, new { @readonly = true })</td>
+<td><label>廠商聯絡人電話</label></td>
+       <td>@Html.TextBoxFor(m => m.TDMFORM.BUSS_CT_CONTEL, new { @readonly = true })</td>
+   </tr>
+  <tr>
+     <td><label>節餘款</label></td>
+       <td colspan="3">@Html.TextBoxFor(m => m.TDMFORM.SAVE_FEE)</td>
+      </tr>
+    <tr>
+        <td><label>污水系統</label></td>
+      <td colspan="3">
+@if (ViewBag.SYS_ID != null)
+{
+    @Html.DropDownListFor(m => m.TDMFORM.SYS_ID, ViewBag.SYS_ID as SelectList, "請選擇", new { @class = "form-control" })
+}
+else
+{
+ <select name="TDMFORM.SYS_ID" class="form-control">
+    <option value="">請選擇污水系統</option>
+    </select>
+}
+  </td>
+        </tr>
+  <tr>
+ <td><label>實施計畫</label></td>
+    <td colspan="3">
+@if (ViewBag.PJ_ID != null)
+{
+    @Html.DropDownListFor(m => m.TDMFORM.PJ_ID, ViewBag.PJ_ID as SelectList, "請選擇", new { @class = "form-control" })
+}
+else
+{
+  <select name="TDMFORM.PJ_ID" class="form-control">
+        <option value="">請選擇實施計畫</option>
+    </select>
+}
+  </td>
+   </tr>
+        <tr>
+     <td><label>已結案</label></td>
+    <td>
+     @Html.HiddenFor(m => m.TDMFORM.TD_FINISH)
+     <input type="checkbox" name="TDMFORM.TD_FINISH" value="true" @(Model.TDMFORM.TD_FINISH == true ? "checked" : "") />
+        </td>
+   <td><label>基設核定經費(千元)</label></td>
+    <td>@Html.TextBoxFor(m => m.TDMFORM.START_FUND)</td>
+ </tr>
+         <tr>
+     <td><label>計畫接管戶數</label></td>
+   <td>@Html.TextBoxFor(m => m.TDMFORM.HOUSEHOLD)</td>
+   <td><label>實際累計接管戶數</label></td>
+    <td>@Html.TextBoxFor(m => m.TDMFORM.TOTAL_HOUSEHOLD)</td>
+        </tr>
+     <tr>
+ <td><label>雨水管線新(改)建長度(m)</label></td>
+         <td>@Html.TextBoxFor(m => m.TDMFORM.WTR_PL_NEW_LEN)</td>
+    <td><label>雨水管線修繕長度(m)</label></td>
+    <td>@Html.TextBoxFor(m => m.TDMFORM.WTR_PL_REP_LEN)</td>
+  </tr>
+  <tr>
+   <td><label>滯洪量(m?)</label></td>
+  <td>@Html.TextBoxFor(m => m.TDMFORM.WTR_FLOOD)</td>
+      <td><label>總抽水量(CMS)</label></td>
+   <td>@Html.TextBoxFor(m => m.TDMFORM.WTR_TOTAL_PUMP)</td>
+ </tr>
+ <tr>
+  <td><label>水位計站數</label></td>
+  <td>@Html.TextBoxFor(m => m.TDMFORM.WTR_GU_STA)</td>
+ </tr>
+     <tr>
+      <td colspan="4">
+ <table width="100%">
+   <tr>
+  <td align="left">
+     <div>修改狀態</div>
+  </td>
+ <td align="right">
+     <input name="CBtnSaveB" type="submit" value="存檔" />
+<input name="BtnCancelB" type="reset" value="取消" />
+</td>
+ </tr>
+  </table>
+     </td>
+            </tr>
+    </table>
+    </td>
+            </tr>
+        </table>
+  }
+
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/fileinput.js"></script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/zh-TW.js"></script>
+    <script src="~/Scripts/bootstrap-select.js"></script>
+  <script src="~/Scripts/validator.min.js"></script>
+</body>
+</html>

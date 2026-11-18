@@ -1,0 +1,329 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0030Model
+@{ ViewBag.Title = "計畫經費管制[1.1.3] ";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+
+@section head{
+
+
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            計畫經費管制[1.1.3]
+            <small>維護</small>
+            <br /><small>@Model.CurrentProjectName</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")PJE0030">計畫經費管制[1.1.3]</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                維護
+            </li>
+        </ol>
+    </div>
+</div>
+@using(Html.BeginForm("", "PJE0030", FormMethod.Post, new { id = "mainForm" })) {
+
+
+    <div id="dialog" title="編輯">
+        <fieldset>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>陳報文號</label>
+                        @Html.TextBoxFor(x => x.PJDFDCR.AP_FN, new { @class = "form-control pjdfdcr", id = "PJDFDCR_AP_FN", placeholder = "陳報文號", AutoComplete = "Off", tabindex = "9", form = "mainForm" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+
+                    <div class="form-group">
+                        <label>陳報日期</label>
+                        @Html.TextBoxFor(x => x.PJDFDCR.AP_DT, new { @class = "form-control pjdfdcr", id = "PJDFDCR_AP_DT", placeholder = "陳報日期", AutoComplete = "Off", form = "mainForm" })
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>核定文號</label>
+                        @Html.TextBoxFor(x => x.PJDFDCR.APROV_FN, new { @class = "form-control pjdfdcr", id = "PJDFDCR_APROV_FN", placeholder = "核定文號", AutoComplete = "Off", tabindex = "11", form = "mainForm" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+
+                    <div class="form-group">
+                        <label>核定日期</label>
+                        @Html.TextBoxFor(x => x.PJDFDCR.APROV_DT, new { @class = "form-control pjdfdcr", id = "PJDFDCR_APROV_DT", placeholder = "核定日期", AutoComplete = "Off", form = "mainForm" })
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-6">
+
+                    <div class="form-group">
+                        <label>經費流出數(元)</label>
+                        @Html.TextBoxFor(x => x.PJDFDCR.AP_OUT_FUND, new { @class = "form-control pjdfdcr", id = "PJDFDCR_AP_OUT_FUND", placeholder = "經費流出數", AutoComplete = "Off", tabindex = "12", form = "mainForm" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>經費鎖定*</label>
+
+                        @{
+                            Model.FCAL_FG = "Y";
+                            if(Model.PJMFORM.FLOCK_FG == false) {
+                                Model.FCAL_FG = "N";
+                            }
+                            SelectListItem item;
+                            List<SelectListItem> options = new List<SelectListItem>();
+                            item = new SelectListItem { Text = "是", Value = "Y" };
+                            options.Add(item);
+                            item = new SelectListItem { Text = "否", Value = "N" };
+                            options.Add(item);
+                        }
+                        @Html.DropDownListFor(x => x.FCAL_FG, options, new { @class = "form-control", form = "mainForm" })
+
+
+
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>經費緣由</label>
+                        @Html.TextAreaFor(x => x.PJDFDCR.FDCR_RESN, new { @class = "form-control pjdfdcr", id = "PJDFDCR_FDCR_RESN", placeholder = "經費緣由", AutoComplete = "Off", tabindex = "13", form = "mainForm" })
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="$('#dialog').dialog('close');">取消</button>
+            <button class="btn btn-primary" name="action" type="submit" value="SavePJDFDCR" id="SavePJDFDCR" form="mainForm">儲存</button>
+        </fieldset>
+    </div>
+
+    <div style="float:right;">
+        @Html.PagedListPager(Model.List1, page => Url.Action("",
+             new {
+                 page = page
+             }),
+             new PagedListRenderOptions {
+                 DisplayItemSliceAndTotal = true,
+                 DisplayPageCountAndCurrentLocation = true,
+                 DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                 DisplayLinkToIndividualPages = false,
+
+                 ItemSliceAndTotalFormat = "顯示第 {0} - {1}筆, 共{2}筆",
+                 PageCountAndCurrentLocationFormat = "第 {0}頁 / 共 {1}頁",
+             }
+         )
+    </div>
+    <button class="btn btn-success" id="AddPJDFDCR" name="action" type="submit" value="AddPJDFDCR" onclick="return confirm('是否新增期別，新增後無法刪除');">新增修正</button>
+    <!-- Button trigger modal -->    
+    <a class="btn btn-secondary" href="@Url.Content("~/")PJE0030?prePage=@Model.prePage">返回</a>
+    @Html.HiddenFor(x => x.prePage)
+    @Html.HiddenFor(x => x.PJDFDCR.SEQ_NO)
+    @Html.HiddenFor(x => x.PID)
+    @Html.HiddenFor(x => x.addkey)
+    <br />
+    <br />
+
+    <div class="card border-primary mb-3">
+        <div class="card-header bg-primary text-white">修正期別列表</div>
+        <table width="100%" class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>期別 </th>
+                    <th>核定日期</th>
+                    <th>核定文號</th>
+                    <th>經費鎖定*</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ Boolean b = true;}
+
+                @if(Model.List1 != null) {
+
+                    foreach(System.Data.DataRow c in Model.List1) {
+                        <tr>
+
+                            @if(Convert.ToString(@c["SEQ_NO"]).Equals("0")) {
+                                <td>原預算</td>
+                                <td>@c["APROV_DT"]</td>
+                                <td>@c["APROV_FN"]</td>
+                                <td>
+                                    @if(Model.PJMFORM.FLOCK_FG == true) {
+                                        <span>是</span>
+                                    }
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-secondary" onclick="EditPJDFDCR('@c["PID"]', '@c["SEQ_NO"]')">檢視</button>
+                                </td>
+                            } else {
+                                <td>@c["SEQ_NO"]</td>
+                                <td>@c["APROV_DT"]</td>
+                                <td>@c["APROV_FN"]</td>
+                                <td>
+                                    @if(Model.PJMFORM.FLOCK_FG == true) {
+                                        <span>是</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if(b) {
+                                        <button type="button" class="btn btn-primary" onclick="EditPJDFDCR('@c["PID"]', '@c["SEQ_NO"]', 'Y')">修改</button>
+                                        <!--<button class="btn btn-danger" name="action" onClick="$('#PJDFDCR_SEQ_NO').val(@c["SEQ_NO"], 'N'); if(!confirm('確定刪除？')) { return false; }" type="submit" value="DelPJDFDCR">刪除</button>-->
+                                    } else {
+                                        <button type="button" class="btn btn-secondary" onclick="EditPJDFDCR('@c["PID"]', '@c["SEQ_NO"]')">檢視</button>
+
+                                    }
+                                </td>
+                            }
+
+                        </tr>
+                        b = false;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.PagedListPager(Model.List1, page => Url.Action("",
+    new { page = page }))
+}
+<script>
+
+
+
+    $(function () {
+        $("#dialog").dialog({
+            autoOpen: false,
+            show: {
+                //effect: "blind",
+                //effect: "drop",
+                duration: 1000
+            },
+            hide: {
+                //effect: "explode",
+                //effect: "drop",
+                duration: 1000
+            },
+            autoOpen: false,
+            maxWidth: 800,
+            maxHeight: 500,
+            width: 800,
+            height: 500,
+            modal: true
+        });
+
+
+    });
+
+
+
+    function AddPJDFDCR() {
+        $(".pjdfdcr").val("");
+        $("#addkey").val("*");
+        $("#PJDFDCR_AP_DT").val("");
+        $("#PJDFDCR_AP_FN").val("");
+        $("#PJDFDCR_APROV_DT").val("");
+        $("#PJDFDCR_APROV_FN").val("");
+        $("#PJDFDCR_AP_OUT_FUND").val("");
+        $("#PJDFDCR_FDCR_RESN").val("");
+        //$("#PJDFDCR_PID").val(pid);
+        $("#PJDFDCR_SEQ_NO").val(0);
+        $("#dialog").dialog("open");
+    }
+
+    function EditPJDFDCR(pid, seqno, edit) {
+
+        $('.pjdfdcr').val('');
+        $("#addkey").val("");
+        $.ajax({
+            url: '@Url.Content("~/")/PJE0030/GetPJDFDCR',
+            method: 'post',
+            data: {
+                "PID": pid,
+                "SEQ_NO": seqno,
+                "edit":edit
+            },
+            success: function (d) {
+                var p = jQuery.parseJSON(d);
+
+                $("#PJDFDCR_AP_DT").val(p[0].AP_DT);
+                $("#PJDFDCR_AP_FN").val(p[0].AP_FN);
+                $("#PJDFDCR_APROV_DT").val(p[0].APROV_DT);
+                $("#PJDFDCR_APROV_FN").val(p[0].APROV_FN);
+                $("#PJDFDCR_AP_OUT_FUND").val(p[0].AP_OUT_FUND);
+                $("#PJDFDCR_FDCR_RESN").val(p[0].FDCR_RESN);
+                $("#PJDFDCR_PID").val(p[0].PID);
+                $("#PJDFDCR_SEQ_NO").val(p[0].SEQ_NO);
+
+                if (p[0].FLOCK_FG) {
+                    //alert(p[0].FLOCK_FG);
+                    $('#FLOCK_FG').prop('checked', p[0].SEQ_NO);
+                }
+            }
+            ,
+            error: function (xhr, status, error) {
+                alert(xhr.responseText);
+            }
+        });
+
+        $("#dialog").dialog("open");
+        if (edit == 'Y') {
+            $("#SavePJDFDCR").prop('disabled', false);
+        } else {
+            $("#SavePJDFDCR").prop('disabled', true);
+        }
+    }
+</script>
+
+
+
+
+@section scripts{
+
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+    <script>
+
+
+        $("#PJDFDCR_AP_DT").datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: '68:168',
+            dateFormat: 'yymmdd',
+            //defaultDate: '990101'
+        });
+        $('#PJDFDCR_APROV_DT').datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            dateFormat: 'yymmdd',
+            yearRange: '88:168',
+
+        });
+
+
+    </script>
+
+}

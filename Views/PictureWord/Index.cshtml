@@ -1,0 +1,109 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model  IPagedList<WCals.Models.CMEDOCModels.TDV_TDDDCOB>
+
+@{
+    ViewBag.Title = "圖文管理系統";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@{
+    string TD_CODE_search = ViewBag.TD_CODE_search;
+    var type = ViewBag.type1;
+    string TD_NAME_search = ViewBag.TD_NAME_search;
+    string KEYWORD_search = ViewBag.KEYWORD_search;
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            圖文管理系統[0.1.4]
+
+            <small> </small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/Home")"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                例行性管考報表
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                圖文管理系統
+            </li>
+        </ol>
+    </div>
+</div>
+@*<h2>圖文管理系統</h2>*@
+
+@using (Html.BeginForm("Index", "PictureWord", FormMethod.Get))
+{
+    <p>
+        工程編號: @Html.TextBox("TD_CODE_search", TD_CODE_search)
+        文件類型: <select id="type" name="type">
+            @{
+                if (type != null)
+                {
+                    <option value="" disabled selected>@type</option>
+                }
+                else
+                {
+                    <option value="" disabled selected>請選擇</option>
+                }
+            }
+            @foreach (var item in ViewBag.Type)
+            {
+                <option>@item.CODE_DESC</option>
+            }
+        </select>
+        工程名稱: @Html.TextBox("TD_NAME_search", TD_NAME_search)
+        文字關鍵字: @Html.TextBox("KEYWORD_search", KEYWORD_search)
+        <input type="submit" value="查詢" />
+    </p>
+}
+<br />
+<div class="table-responsive" style="max-width:1500px;">
+    <table class="table table-bordered" style="background-color:white">
+        <tr style="background-color:lightskyblue;">
+            <td>工程編號</td>
+            <td>工程名稱</td>
+            <td>文件類型</td>
+            <td>文件說明</td>
+            <td>文字關鍵字</td>
+            <td>文件建置時間</td>
+            <td>文字作者</td>
+            <td>詳</td>
+        </tr>
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                string id = item.OBJ_NAME;
+                string fileName = Path.GetFileNameWithoutExtension(item.OBJ_NAME); // 取得檔名
+                string fileExtension = Path.GetExtension(item.OBJ_NAME); // 取得副檔名
+
+                <tr>
+                    <td>@item.TD_CODE</td>
+                    <td>@item.TD_NAME</td>
+                    <td>@item.IT_CODE_DESC</td>
+                    <td>@item.OBJ_TITLE</td>
+                    <td>@item.OBJ_DESC</td>
+                    <td>@item.OBJ_CRT_DM</td>
+                    <td>@item.AUTHOR</td>
+                    <td>
+                        @*<img src="@Url.Action("GetImage","PictureWord", new { name = fileName, name_type = fileExtension })" />*@
+                        <a href="@Url.Action("GetImage","PictureWord", new { name = fileName, name_type = fileExtension })">詳</a>
+                    </td>
+                </tr>
+            }
+        }
+
+    </table>
+
+    @if (Model != null)
+    {
+        <table>@Html.PagedListPager(Model, page => Url.Action("Index", new { page, type = type, TD_CODE_search = TD_CODE_search, TD_NAME_search = TD_NAME_search, KEYWORD_search = KEYWORD_search }))</table>
+    }
+</div>

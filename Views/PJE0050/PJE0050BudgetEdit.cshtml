@@ -1,0 +1,375 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0030Model
+@{ ViewBag.Title = "計畫經費管制查詢 [1.1.5]";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+@section head{
+    <link href="http://www.jeasyui.com/easyui/themes/material-teal/easyui.css" />
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <link href="~/Content/themes/jstree-default/style.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/Scripts/jstree.js"></script>
+    <script type="text/javascript" src="~/Scripts/jstreetable.js"></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            white-space: nowrap;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            background: #f2f2f2;
+            z-index: 2;
+        }
+
+        /* 固定第一欄 */
+        th:first-child,
+        td:first-child {
+            position: sticky;
+            left: 0;
+            background: #fff;
+            z-index: 1;
+        }
+
+        /* 確保標題列比內容高層 */
+        thead th:first-child {
+            z-index: 3;
+        }
+
+        .table-container {
+            overflow: auto;
+            max-width: 600px;
+            
+        }
+
+        .jstree-table-header-regular {
+            background-color: #ffffff !important;
+            padding: 5px !important;
+            font-size: 16px !important;
+            border: 0px !important;
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            計畫經費管制查詢 [1.1.5]
+
+            <br /><small>@Model.CurrentProjectName</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page"> <i class="fa-solid fa-file"></i><a href="@Url.Content("~/")PJE0050">計畫經費管制查詢 [1.1.5]</a></li>
+
+            <li class="breadcrumb-item active" aria-current="page"><i class="fa-solid fa-file"></i>預算調整</li>
+        </ol>
+    </div>
+</div>
+@using(Html.BeginForm("", "PJE0050", FormMethod.Post, new { id = "mainForm" })) {
+
+
+    <input type="hidden" name="PID" id="PID" value="@Model.PID" />
+    <input type="hidden" name="TID" id="TID" value="@Model.TID" />
+    <input type="hidden" name="SEQ_NO" id="SEQ_NO" value="@Model.SEQ_NO" />
+
+
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="card border-primary mb-3">
+                <div class="card-header bg-primary text-white">內容</div>
+                <div id="jstree"></div>
+            </div>
+        </div>
+        <div class="col-lg-7" id="d">
+            <div id="box" style="display:none;">
+
+                <div class="card border-primary mb-3">
+                    <div class="card-header bg-primary text-white">內容</div>
+                    <table width="100%" height="500" class="table table-hover table-striped" style="display:block; overflow-x:auto; white-space:nowrap;">
+                        <tr>
+                            <td nowrap>工程名稱</td>
+                            <td nowrap>執行單位</td>
+                            <td nowrap>建議中央款比例(%)</td>
+                            <td nowrap>中央款比例(%)</td>
+                            <td nowrap>中央款需求數(元)(1)</td>
+                            <td nowrap>累計實支至</td>
+                            <td nowrap>中央款累計實支(元)(2)</td>
+                            <td nowrap>中央款未支用分配(元)(3)</td>
+                            <td nowrap>分配差異數(元)(1)-(2)-(3)</td>
+                            <td nowrap>辦理層級</td>
+                            <td nowrap>1月分配數(元)</td>
+                            <td nowrap>2月分配數(元)</td>
+                            <td nowrap>3月分配數(元)</td>
+                            <td nowrap>4月分配數(元)</td>
+                            <td nowrap>5月分配數(元)</td>
+                            <td nowrap>6月分配數(元)</td>
+                            <td nowrap>7月分配數(元)</td>
+                            <td nowrap>8月分配數(元)</td>
+                            <td nowrap>9月分配數(元)</td>
+                            <td nowrap>10月分配數(元)</td>
+                            <td nowrap>11月分配數(元)</td>
+                            <td nowrap>12月分配數(元)</td>
+                            <td nowrap>地方款金額(元)</td>
+                            <td nowrap>最後修改日期</td>
+                            <td nowrap>最後修改</td>
+                        </tr>
+                        <tbody id="info">
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+
+
+}
+
+@{ System.Data.DataTable core = ViewBag.core;
+    System.Data.DataTable citi;
+    System.Data.DataTable prj;
+    string sql;
+}
+<script>
+
+
+
+
+    $(document).ready(function () {
+
+        var data;
+        data = [
+            @foreach(System.Data.DataRow c in core.Rows) {
+            <text>
+            {
+              text: '@c["D_NAME"]',
+                data: {
+
+                    D_FUND: '@c["D_FUND"]',
+                    D_CNT: @c["D_CNT"],
+                    N_FUND: '@c["N_FUND"]',
+                    COST_FEE: '@c["COST_FEE"]',
+
+                },
+
+
+
+                children: [
+                    @{prj = (System.Data.DataTable)c["prj"];}
+                    @foreach(System.Data.DataRow p in prj.Rows) {
+                    <text>
+                    {
+                    text: '<b onclick=getInfo("@p["KEYCODE"]")>@p["D_NAME"]</b>',
+                        data: {
+                            D_FUND: '@p["D_FUND"]',
+                            D_CNT: @p["D_CNT"],
+                            N_FUND: '@p["N_FUND"]',
+                            COST_FEE: '@p["COST_FEE"]'
+                        },
+                        children: [
+                        @if(p["citi"] != null) {
+
+                                citi = (System.Data.DataTable)p["citi"];
+                                foreach(System.Data.DataRow t in citi.Rows) {
+                                <text>
+                                    {
+                                        @{sql = p["WHERE_COND"].ToString().Replace(" ", "");}
+                                        text: '<b onclick=getInfo("@t["KEYCODE"]")>@t["CATY_CODE"]</b>',
+                                        data: {
+                                            //YR_FUND: '@t["N_FUND"]', cnt: '@t["D_CNT"]'
+
+
+                                            D_FUND: '@t["D_FUND"]',
+                                            D_CNT: @t["D_CNT"],
+                                            N_FUND: '@t["N_FUND"]',
+                                            COST_FEE: '@t["COST_FEE"]',
+
+
+
+                                        }
+                                    },
+                                </text>
+                            }
+                         }
+                    ],
+                    'state': {'opened': true}
+                        },
+                    </text>
+                    }
+
+
+
+                ],
+              'state': {'opened': true}
+                    },
+            </text>
+            }
+        ];
+
+    // load jstree
+    $("div#jstree").jstree({
+        plugins: ["table", "dnd", "contextmenu", "sort"],
+        core: {
+        data: data
+        },
+        // configure tree table
+        table: {
+        columns: [
+                { width: 200, header: "名稱" },
+                { width: 300, value: "D_FUND", header: "核定總經費" },
+                { width: 150, value: "N_FUND", header: "需求總經費"},
+                { width: 150, value: "D_CNT", header: "件數" },
+                { width: 150, value: "COST_FEE", header: "累計支用數" }
+            ],
+            resizable: true,
+            draggable: true,
+            contextmenu: true,
+            //width: 800,
+            height: 500
+        }
+                });
+            });
+
+    function getInfo(KEYCODE) {
+        //$("#overlay").show(); // 顯示遮罩
+        $("#box").fadeOut("slow");
+        var html;
+        $.ajax({
+            url: '@Url.Content("~/")PJE0030/GetTDDCFTS',
+            method: 'post',
+            data: {
+                "KEYCODE": KEYCODE,
+                "PID": '@Model.PID'
+
+            },
+            success: function (d) {
+                var p = jQuery.parseJSON(d);
+                html = "";
+                for (i = 0; i < p.length; i++) {
+
+                    if (p[i].USR_NAME == null) p[i].USR_NAME = "";
+                    if (p[i].CEN_SP_RATIO_S == null) p[i].CEN_SP_RATIO_S = "";
+                    if (p[i].CEN_SP_RATIO == null) p[i].CEN_SP_RATIO = "";
+
+                    if (p[i].MAX_SYRMN == null) p[i].MAX_SYRMN = "";
+                    if (p[i].COST_FEE == null) p[i].COST_FEE = "";
+                    if (p[i].DIST_FEE == null) p[i].DIST_FEE = "";
+                    if (p[i].DIFF_FUND == null) p[i].DIFF_FUND = "";
+                    if (p[i].IPJ_DESC == null) p[i].IPJ_DESC = "";
+
+                    if (p[i].UPD_DT == null) p[i].UPD_DT = "";
+                    if (p[i].UPD_NAME == null) p[i].UPD_NAME = "";
+
+
+                    html += "<tr>"+
+                            "<td> "+p[i].TD_NAME+"</td >           "+
+                            "<td>" + p[i].USR_NAME + "</td>               " +//執行單位
+                            "<td>" + p[i].CEN_SP_RATIO_S+"</td>          " +//建議中央款比例
+                            "<td>" + p[i].CEN_SP_RATIO +"</td>             " +//中央款比例
+                        "<td><input title='' onKeyup='saveOne(" + p[i].TID + ", this.id, this.name, this.value)' class='form-control' type='text' name='M_00" + p[i].TID + "' id='M_00' value='" + p[i].CEN_FUND +"' /></td>         "+
+                        "<td>" + p[i].MAX_SYRMN +"</td>             "+
+                        "<td>" + p[i].COST_FEE +"</td>       "+
+                        "<td>" + p[i].DIST_FEE +"</td>     "+
+                        "<td>" + p[i].DIFF_FUND +"</td>     "+
+                        "<td>" + p[i].IPJ_DESC + "</td>               "+
+                        "<td><input title='' onKeyup='saveOne("+p[i].TID+", this.id, this.name, this.value)' class='form-control' type='text' name='M_01" + p[i].TID + "' id='M_01' value='" + p[i].M_01 +"' /></td>              "+
+                        "<td><input title='' onKeyup='saveOne("+p[i].TID+", this.id, this.name, this.value)' class='form-control' type='text' name='M_02" + p[i].TID + "' id='M_02' value='" + p[i].M_02 +"' /></td>              "+
+                        "<td><input title='' onKeyup='saveOne("+p[i].TID+", this.id, this.name, this.value)' class='form-control' type='text' name='M_03" + p[i].TID + "' id='M_03' value='" + p[i].M_03 +"' /></td>              "+
+                        "<td><input title='' onKeyup='saveOne("+p[i].TID+", this.id, this.name, this.value)' class='form-control' type='text' name='M_04" + p[i].TID + "' id='M_04' value='" + p[i].M_04 +"' /></td>              "+
+                        "<td><input title='' onKeyup='saveOne("+p[i].TID+", this.id, this.name, this.value)' class='form-control' type='text' name='M_05" + p[i].TID + "' id='M_05' value='" + p[i].M_05 +"' /></td>              "+
+                        "<td><input title='' onKeyup='saveOne("+p[i].TID+", this.id, this.name, this.value)' class='form-control' type='text' name='M_06" + p[i].TID + "' id='M_06' value='" + p[i].M_06 +"' /></td>              "+
+                        "<td><input title='' onKeyup='saveOne("+p[i].TID+", this.id, this.name, this.value)' class='form-control' type='text' name='M_07" + p[i].TID + "' id='M_07' value='" + p[i].M_07 +"' /></td>              "+
+                        "<td><input title='' onKeyup='saveOne("+p[i].TID+", this.id, this.name, this.value)' class='form-control' type='text' name='M_08" + p[i].TID + "' id='M_08' value='" + p[i].M_08 +"' /></td>              "+
+                        "<td><input title='' onKeyup='saveOne("+p[i].TID+", this.id, this.name, this.value)' class='form-control' type='text' name='M_09" + p[i].TID + "' id='M_09' value='" + p[i].M_09 +"' /></td>              "+
+                        "<td><input title='' onKeyup='saveOne("+p[i].TID+", this.id, this.name, this.value)' class='form-control' type='text' name='M_10" + p[i].TID + "' id='M_10' value='" + p[i].M_10 +"' /></td>             "+
+                        "<td><input title='' onKeyup='saveOne("+p[i].TID+", this.id, this.name, this.value)' class='form-control' type='text' name='M_11" + p[i].TID + "' id='M_11' value='" + p[i].M_11 +"' /></td>             "+
+                        "<td><input title='' onKeyup='saveOne("+p[i].TID+", this.id, this.name, this.value)' class='form-control' type='text' name='M_12" + p[i].TID + "' id='M_12' value='" + p[i].M_12 +"' /></td>             "+
+                        "<td><input title='' onKeyup='saveOne(" + p[i].TID + ", this.id, this.name, this.value)' class='form-control' type='text' name='M_" + p[i].TID + "' id='M_' value='" + p[i].LOC_FUND +"' /></td>             "+
+                        "<td>" + p[i].UPD_DT +"</td>            "+
+                        "<td>" + p[i].UPD_NAME +"</td>               "+
+                        "</tr > ";
+                }
+
+                $("#box").fadeIn("slow");
+                //$('#overlay').hide(); // 移除遮罩
+                $("#info").html(html);
+                const myForm = document.getElementById('mainForm');//清除
+                cleanFormNulls(myForm);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error('AJAX 發生錯誤');
+                console.error('狀態:', textStatus);
+                console.error('HTTP 狀態碼:', jqXHR.status);
+                console.error('錯誤訊息:', errorThrown);
+                console.error('伺服器回傳:', jqXHR.responseText);
+                //$('#overlay').hide(); // 移除遮罩
+            }
+        });
+
+    }
+
+    function cleanFormNulls(formElement) {
+        const inputs = formElement.querySelectorAll('input, textarea, select');
+
+        inputs.forEach(input => {
+            if (input.value === 'null' || input.value === null) {
+                input.value = '';
+            }
+        });
+    }
+
+    function saveOne(tid, id, name, val) {
+        if (!/^\d+$/.test(val)) {
+            $("[name='" + name + "']").val("");
+            $("[name='" + name + "']").attr("title", "未儲存").tooltip("fixTitle").tooltip("show");
+            return false; // 中斷事件處理
+        }
+
+        val = Number(val);
+
+        $.ajax({
+            url: '@Url.Content("~/")PJE0030/EzSv',
+            method: 'post',
+            data: {
+                "pid": '@Model.PID',
+                "tid": tid,
+                "id": id,
+                "val": val
+            },
+            success: function (d) {
+
+                $("[name='" + name + "']").val(val);
+                $("[name='" + name + "']").attr("title", d + val).tooltip("fixTitle").tooltip("show");
+
+                setTimeout(function () {
+                    //$("#" + id).attr("title", d + val).tooltip("fixTitle").tooltip("hide");
+                    $("[name='"+name+"']").attr("title", d + val).tooltip("fixTitle").tooltip("hide");
+                }, 1000);
+            }, error: function (xhr, status, error) {
+                $("#" + id).attr("title", error + val).tooltip("fixTitle").tooltip("show");
+                setTimeout(function (e) {
+                   //$("#" + id).attr("title", "儲存失敗" + e + val).tooltip("fixTitle").tooltip("hide");
+                    $("[name='" + name + "']").attr("title", "儲存失敗" + e + val).tooltip("fixTitle").tooltip("hide");
+                }, 1000);
+            },
+
+
+
+        });
+
+
+
+
+
+    }
+</script>

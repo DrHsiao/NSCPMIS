@@ -1,0 +1,29 @@
+﻿@model WCals.Models.CMBASEModels.OGCDEPT
+
+@{
+    ViewBag.Title = "群組管理";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<form method="post" action="@Url.Action("Create")">
+    <h2 style="color:cornflowerblue">新增群組</h2>
+
+    <table style="text-align:left;" class="model-form">
+        <tr>
+            <th>
+                群組編號:
+                <input type="text" id="DEPT_NO" name="DEPT_NO" class="form-contol" required />
+            </th>
+            <th>
+                群組姓名:
+                <input type="text" id="DEPT_NAME" name="DEPT_NAME" class="form-contol" required />
+            </th>
+        </tr>
+        <tr><th><br /></th></tr>
+        <tr>
+            <th><input type="submit" value="新增" class="btn btn-secondary" style="border:1px gray solid" />&nbsp;<a href="@Url.Action("Index", "Group")" class="btn btn-secondary" style="border:1px gray solid">取消</a></th>
+        </tr>
+    </table>
+</form>
+
+<div style="color:red; text-align: left; margin: 0px 0px 30px 290px;">@ViewBag.NameERRORR</div>

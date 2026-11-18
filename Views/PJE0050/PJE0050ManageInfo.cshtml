@@ -1,0 +1,507 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0030Model
+@{ ViewBag.Title = "";
+    //Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+
+
+    <style>
+        /* === BS3 相容層（配色）v2：nav-tabs／分頁／藍色 header 頁籤，接軌系統主色 #337ab7 === */
+        .pagination { --bs-pagination-color: #337ab7; --bs-pagination-hover-color: #286090; --bs-pagination-focus-color: #286090; --bs-pagination-active-bg: #337ab7; --bs-pagination-active-border-color: #337ab7; margin: 10px 0; flex-wrap: wrap; }
+        .nav-tabs:not(.card-header-tabs) .nav-link { color: #337ab7; }
+        .nav-tabs:not(.card-header-tabs) .nav-link:hover, .nav-tabs:not(.card-header-tabs) .nav-link:focus { color: #286090; }
+        .nav-tabs:not(.card-header-tabs) .nav-link.active { color: #495057; font-weight: 600; }
+        .card-header.bg-primary { background-color: #337ab7 !important; color: #fff !important; border-bottom: 1px solid #ddd; padding: 10px 15px; font-weight: bold; }
+        .card-header .card-title { margin: 0; font-size: 1.1rem; }
+        .card-header-tabs { margin-bottom: -11px; border-bottom: none; }
+        .card-header-tabs .nav-item { margin-bottom: 0; }
+        .card-header-tabs .nav-link { border: 1px solid transparent; color: rgba(255,255,255,0.9) !important; margin-right: 2px; padding: 8px 15px; border-radius: 4px 4px 0 0; }
+        .card-header-tabs .nav-link:hover { background-color: rgba(255,255,255,0.15); border-color: transparent; }
+        .card-header-tabs .nav-link.active { background-color: #ffffff !important; color: #337ab7 !important; border-color: #dddddd #dddddd #ffffff !important; font-weight: bold; }
+    </style>
+    <script>
+        /* === BS3 相容層（裝飾器）v2：BS3 標記自動補 BS5 class，舊 view 免改標記 === */
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('ul.nav-tabs > li').forEach(function (li) {
+                li.classList.add('nav-item');
+                var a = li.querySelector(':scope > a');
+                if (!a) return;
+                a.classList.add('nav-link');
+                if (li.classList.contains('active')) { li.classList.remove('active'); a.classList.add('active'); }
+                if (a.getAttribute('data-toggle') === 'tab') { a.setAttribute('data-bs-toggle', 'tab'); a.removeAttribute('data-toggle'); }
+            });
+            document.querySelectorAll('ul.nav-tabs').forEach(function (ul) {
+                if (ul.closest('.card-header')) { ul.classList.add('card-header-tabs'); }
+            });
+            document.querySelectorAll('.tab-pane.in').forEach(function (p) { p.classList.remove('in'); p.classList.add('show'); });
+            document.querySelectorAll('ul.pagination > li').forEach(function (li) {
+                li.classList.add('page-item');
+                var el = li.querySelector(':scope > a, :scope > span');
+                if (el) el.classList.add('page-link');
+            });
+        });
+    </script>
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+<body style="padding:5px;">
+    @using(Html.BeginForm("", "PJE0050", FormMethod.Post, new { id = "mainForm", data_toggle = "validator", role = "form" })) {
+        <input type="hidden" name="TID" id="TID" value="@Model.TID" />
+        <div>
+            <div class="card border-primary mb-3">
+                <div class="card-header bg-primary text-white">
+                    <ul class="nav nav-tabs">
+
+                        @if(Model.List1 != null) {
+                            <li class="nav-item" role="presentation"><a class="nav-link active" href="@Url.Content("~/PJE0050/")ManageList1?PJ_CATY_CODE=@Model.PJ_CATY_CODE&TD_NAME=@Model.TD_NAME&CITY=@Model.CITY&TOWN=@Model.TOWN&TD_CATY=@Model.TD_CATY&EXE_TYPE=@Model.EXE_TYPE&IPJ_CODE=@Model.IPJ_CODE&N_IPJ_CODE=@Model.N_IPJ_CODE&EMG_CATY=@Model.EMG_CATY&ACC_ID=@Model.ACC_ID&PID=@Model.PID&page=1&SEQ_NO=@Model.SEQ_NO&PJ_CATY_CODE=@Model.PJ_CATY_CODE&TD_NAME=@Model.TD_NAME&CITY=@Model.CITY&Model.TOWN=@Model.TOWN&TD_CATY=@Model.TD_CATY&EXE_TYPE=@Model.EXE_TYPE&IPJ_CODE=@Model.IPJ_CODE&N_IPJ_CODE=@Model.N_IPJ_CODE&EMG_CATY=@Model.EMG_CATY&ACC_ID=@Model.ACC_ID" aria-controls="tab1" role="tab">執行中</a></li>
+                        } else {
+                            <li class="nav-item" role="presentation"><a class="nav-link" href="@Url.Content("~/PJE0050/")ManageList1?PJ_CATY_CODE=@Model.PJ_CATY_CODE&TD_NAME=@Model.TD_NAME&CITY=@Model.CITY&TOWN=@Model.TOWN&TD_CATY=@Model.TD_CATY&EXE_TYPE=@Model.EXE_TYPE&IPJ_CODE=@Model.IPJ_CODE&N_IPJ_CODE=@Model.N_IPJ_CODE&EMG_CATY=@Model.EMG_CATY&ACC_ID=@Model.ACC_ID&PID=@Model.PID&page=1&SEQ_NO=@Model.SEQ_NO&SEQ_NO=@Model.SEQ_NO&PJ_CATY_CODE=@Model.PJ_CATY_CODE&TD_NAME=@Model.TD_NAME&CITY=@Model.CITY&Model.TOWN=@Model.TOWN&TD_CATY=@Model.TD_CATY&EXE_TYPE=@Model.EXE_TYPE&IPJ_CODE=@Model.IPJ_CODE&N_IPJ_CODE=@Model.N_IPJ_CODE&EMG_CATY=@Model.EMG_CATY&ACC_ID=@Model.ACC_ID" aria-controls="tab1" role="tab">執行中</a></li>
+                        }
+                        @if(Model.List2 != null) {
+                            <li class="nav-item" role="presentation"><a class="nav-link active" href="@Url.Content("~/PJE0050/")ManageList2?PJ_CATY_CODE=@Model.PJ_CATY_CODE&TD_NAME=@Model.TD_NAME&CITY=@Model.CITY&TOWN=@Model.TOWN&TD_CATY=@Model.TD_CATY&EXE_TYPE=@Model.EXE_TYPE&IPJ_CODE=@Model.IPJ_CODE&N_IPJ_CODE=@Model.N_IPJ_CODE&EMG_CATY=@Model.EMG_CATY&ACC_ID=@Model.ACC_ID&PID=@Model.PID&page=1&SEQ_NO=@Model.SEQ_NO&PJ_CATY_CODE=@Model.PJ_CATY_CODE&TD_NAME=@Model.TD_NAME&CITY=@Model.CITY&Model.TOWN=@Model.TOWN&TD_CATY=@Model.TD_CATY&EXE_TYPE=@Model.EXE_TYPE&IPJ_CODE=@Model.IPJ_CODE&N_IPJ_CODE=@Model.N_IPJ_CODE&EMG_CATY=@Model.EMG_CATY&ACC_ID=@Model.ACC_ID" aria-controls="tab1" role="tab">經費歸零</a></li>
+                        } else {
+                            <li class="nav-item" role="presentation"><a class="nav-link" href="@Url.Content("~/PJE0050/")ManageList2?PJ_CATY_CODE=@Model.PJ_CATY_CODE&TD_NAME=@Model.TD_NAME&CITY=@Model.CITY&TOWN=@Model.TOWN&TD_CATY=@Model.TD_CATY&EXE_TYPE=@Model.EXE_TYPE&IPJ_CODE=@Model.IPJ_CODE&N_IPJ_CODE=@Model.N_IPJ_CODE&EMG_CATY=@Model.EMG_CATY&ACC_ID=@Model.ACC_ID&PID=@Model.PID&page=1&SEQ_NO=@Model.SEQ_NO&PJ_CATY_CODE=@Model.PJ_CATY_CODE&TD_NAME=@Model.TD_NAME&CITY=@Model.CITY&Model.TOWN=@Model.TOWN&TD_CATY=@Model.TD_CATY&EXE_TYPE=@Model.EXE_TYPE&IPJ_CODE=@Model.IPJ_CODE&N_IPJ_CODE=@Model.N_IPJ_CODE&EMG_CATY=@Model.EMG_CATY&ACC_ID=@Model.ACC_ID" aria-controls="tab1" role="tab">經費歸零</a></li>
+                        }
+                        @if(Model.List3 != null) {
+                            <li class="nav-item" role="presentation"><a class="nav-link active" href="@Url.Content("~/PJE0050/")ManageList3?PJ_CATY_CODE=@Model.PJ_CATY_CODE&TD_NAME=@Model.TD_NAME&CITY=@Model.CITY&TOWN=@Model.TOWN&TD_CATY=@Model.TD_CATY&EXE_TYPE=@Model.EXE_TYPE&IPJ_CODE=@Model.IPJ_CODE&N_IPJ_CODE=@Model.N_IPJ_CODE&EMG_CATY=@Model.EMG_CATY&ACC_ID=@Model.ACC_ID&PID=@Model.PID&page=1&SEQ_NO=@Model.SEQ_NO&PJ_CATY_CODE=@Model.PJ_CATY_CODE&TD_NAME=@Model.TD_NAME&CITY=@Model.CITY&Model.TOWN=@Model.TOWN&TD_CATY=@Model.TD_CATY&EXE_TYPE=@Model.EXE_TYPE&IPJ_CODE=@Model.IPJ_CODE&N_IPJ_CODE=@Model.N_IPJ_CODE&EMG_CATY=@Model.EMG_CATY&ACC_ID=@Model.ACC_ID" aria-controls="tab1" role="tab">保留款</a></li>
+                        } else {
+                            <li class="nav-item" role="presentation"><a class="nav-link" href="@Url.Content("~/PJE0050/")ManageList3?PJ_CATY_CODE=@Model.PJ_CATY_CODE&TD_NAME=@Model.TD_NAME&CITY=@Model.CITY&TOWN=@Model.TOWN&TD_CATY=@Model.TD_CATY&EXE_TYPE=@Model.EXE_TYPE&IPJ_CODE=@Model.IPJ_CODE&N_IPJ_CODE=@Model.N_IPJ_CODE&EMG_CATY=@Model.EMG_CATY&ACC_ID=@Model.ACC_ID&PID=@Model.PID&page=1&SEQ_NO=@Model.SEQ_NO&PJ_CATY_CODE=@Model.PJ_CATY_CODE&TD_NAME=@Model.TD_NAME&CITY=@Model.CITY&Model.TOWN=@Model.TOWN&TD_CATY=@Model.TD_CATY&EXE_TYPE=@Model.EXE_TYPE&IPJ_CODE=@Model.IPJ_CODE&N_IPJ_CODE=@Model.N_IPJ_CODE&EMG_CATY=@Model.EMG_CATY&ACC_ID=@Model.ACC_ID" aria-controls="tab1" role="tab">保留款</a></li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="card-body">
+                    <div class="tab-content">
+                        @if(Model.List1 != null) {
+                            <div class="tab-pane fade show active" id="tab1">
+
+                                @if(ViewBag.fund1 != null) {
+
+                                    <table>
+                                        <tr>
+                                            <td style="padding:1px;">
+                                                @{System.Data.DataTable fs = (System.Data.DataTable)ViewBag.fund1;}
+                                                
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">總經費(元)</span>
+                                                    <input class="form-control" type="text" readonly value="@((Convert.ToDecimal(@fs.Rows[0]["YR_FUND"])).ToString("N2"))" />
+                                                </div>
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">中央款(元)</span>
+                                                    <input class="form-control" type="text" readonly value="@((Convert.ToDecimal(@fs.Rows[0]["CEN_FUND"])).ToString("N2"))" />
+                                                </div>
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">地方款(元)</span>
+                                                    <input class="form-control" type="text" readonly value="@((Convert.ToDecimal(@fs.Rows[0]["LOC_FUND"])).ToString("N2"))" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                } else {
+
+                                    <table>
+                                        <tr>
+
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">總經費(元)</span>
+                                                    <input class="form-control" type="text" readonly value="0" />
+                                                </div>
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">中央款(元)</span>
+                                                    <input class="form-control" type="text" readonly value="0" />
+                                                </div>
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">地方款(元)</span>
+                                                    <input class="form-control" type="text" readonly value="0" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                }
+
+
+                                <!--執行中-->
+                                <div style="overflow: auto;">
+                                    <table width="100%" class="table table-hover" style="overflow-x: auto; white-space: nowrap;">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>工程編號</th>
+                                                <th>工程名稱</th>
+                                                <th>經費編號</th>
+                                                <th>年度預算(元)</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            @foreach(System.Data.DataRow c in Model.List1) {
+                                                <tr>
+                                                    <td>@c["TD_CODE"]</td>
+                                                    <td>@c["TD_NAME"]</td>
+                                                    <td>@c["FD_CODE"]</td>
+                                                    <td align="right">@((Convert.ToDecimal(c["YR_FUND"])).ToString("N2"))</td>
+                                                    <td>
+
+                                                        @try {
+                                                            <button class="btn btn-primary bl" type="button" onclick="window.parent.editPrj('@c["PID"]', '@c["TID"]', '@c["SEQ_NO"]')">檢視</button>
+                                                        } catch {
+                                                            <button class="btn btn-primary bl" type="button" onclick="window.parent.editPrj('@c["PID"]', '@c["TID"]', '')">檢視</button>
+                                                            
+                                                        }
+                                                    </td>
+
+
+
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                @Html.PagedListPager(Model.List1, page => Url.Action("ManageList1",
+                                                              new {
+                                                                  PJ_CATY_CODE = Model.PJ_CATY_CODE,
+                                                                  TD_NAME = Model.TD_NAME,
+                                                                  CITY = Model.CITY,
+                                                                  TOWN = Model.TOWN,
+                                                                  TD_CATY = Model.TD_CATY,
+                                                                  EXE_TYPE = Model.EXE_TYPE,
+                                                                  IPJ_CODE = Model.IPJ_CODE,
+                                                                  N_IPJ_CODE = Model.N_IPJ_CODE,
+                                                                  EMG_CATY = Model.EMG_CATY,
+                                                                  ACC_ID = Model.ACC_ID,
+                                                                  PID = Model.PID,
+                                                                  SEQ_NO = Model.SEQ_NO,
+                                                                  page = page,
+
+                                                              }))
+                            </div>
+                        } else {
+                            <div class="tab-pane fade" id="tab1"></div>
+                        }
+                        @if(Model.List2 != null) {
+                            <div class="tab-pane fade show active" id="tab2">
+                                @if(ViewBag.fund2 != null) {
+
+                                    <table>
+                                        <tr>
+                                            <td style="padding:1px;">
+                                                @{System.Data.DataTable fs = (System.Data.DataTable)ViewBag.fund2;}
+                                                <button class="btn btn-success bl" type="button" onclick="window.parent.addPrj('@Model.PID', 0, '@Model.SEQ_NO')">新增</button>
+                                                <button class="btn btn-warning bl" type="button" onclick="window.parent.reBatch('@Model.PID', '@Model.SYR');">轉入核定提案</button>
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">總經費(元)</span>
+                                                    <input class="form-control" type="text" readonly value="@((Convert.ToDecimal(@fs.Rows[0]["YR_FUND"])).ToString("N2"))" />
+                                                </div>
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">中央款(元)</span>
+                                                    <input class="form-control" type="text" readonly value="@((Convert.ToDecimal(@fs.Rows[0]["CEN_FUND"])).ToString("N2"))" />
+                                                </div>
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">地方款(元)</span>
+                                                    <input class="form-control" type="text" readonly value="@((Convert.ToDecimal(@fs.Rows[0]["LOC_FUND"])).ToString("N2"))" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                } else {
+
+                                    <table>
+                                        <tr>
+
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">總經費(元)</span>
+                                                    <input class="form-control" type="text" readonly value="0" />
+                                                </div>
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">中央款(元)</span>
+                                                    <input class="form-control" type="text" readonly value="0" />
+                                                </div>
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">地方款(元)</span>
+                                                    <input class="form-control" type="text" readonly value="0" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                }
+
+                                <div style="width: 50%; ">
+                                    @Html.PagedListPager(Model.List2, page => Url.Action("ManageList2",
+                                                                      new {
+                                                                          PJ_CATY_CODE = Model.PJ_CATY_CODE,
+                                                                          TD_NAME = Model.TD_NAME,
+                                                                          CITY = Model.CITY,
+                                                                          TOWN = Model.TOWN,
+                                                                          TD_CATY = Model.TD_CATY,
+                                                                          EXE_TYPE = Model.EXE_TYPE,
+                                                                          IPJ_CODE = Model.IPJ_CODE,
+                                                                          N_IPJ_CODE = Model.N_IPJ_CODE,
+                                                                          EMG_CATY = Model.EMG_CATY,
+                                                                          ACC_ID = Model.ACC_ID,
+                                                                          PID = Model.PID,
+                                                                          SEQ_NO = Model.SEQ_NO,
+                                                                          page = page,
+                                                                      }),
+                                                                      new PagedListRenderOptions {
+                                                                          DisplayItemSliceAndTotal = true,
+                                                                          DisplayPageCountAndCurrentLocation = true,
+                                                                          DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                                                                          DisplayLinkToIndividualPages = false,
+                                                                          ItemSliceAndTotalFormat = "顯示第 {0} - {1}筆, 共{2}筆",
+                                                                          PageCountAndCurrentLocationFormat = "第 {0}頁 / 共 {1}頁",
+                                                                      }
+                                                                  )
+                                </div>
+                                <table width="100%" class="table table-hover" style="overflow-x: auto; white-space: nowrap;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>工程編號</th>
+                                            <th>工程名稱</th>
+                                            <th>經費編號</th>
+                                            <th>年度預算(元)</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach(System.Data.DataRow c in Model.List2) {
+                                            <tr>
+
+                                                <td>@c["TD_CODE"]</td>
+
+                                                <td>@c["TD_NAME"]</td>
+                                                <td>@c["FD_CODE"]</td>
+                                                <td>@c["YR_FUND"]</td>
+                                                <td>
+                                                    @try {
+                                                        <button class="btn btn-primary bl" type="button" onclick="window.parent.editPrj('@c["PID"]', '@c["TID"]', '@c["SEQ_NO"]')">檢視</button>
+                                                    } catch {
+                                                <button class="btn btn-primary bl" type="button" onclick="window.parent.editPrj('@c["PID"]', '@c["TID"]', '')">檢視</button>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                @Html.PagedListPager(Model.List2, page => Url.Action("ManageList2",
+                                                              new {
+                                                                  PJ_CATY_CODE = Model.PJ_CATY_CODE,
+                                                                  TD_NAME = Model.TD_NAME,
+                                                                  CITY = Model.CITY,
+                                                                  TOWN = Model.TOWN,
+                                                                  TD_CATY = Model.TD_CATY,
+                                                                  EXE_TYPE = Model.EXE_TYPE,
+                                                                  IPJ_CODE = Model.IPJ_CODE,
+                                                                  N_IPJ_CODE = Model.N_IPJ_CODE,
+                                                                  EMG_CATY = Model.EMG_CATY,
+                                                                  ACC_ID = Model.ACC_ID,
+                                                                  PID = Model.PID,
+                                                                  SEQ_NO = Model.SEQ_NO,
+                                                                  page = page,
+                                                              }))
+                            </div>
+                        } else {
+                            <div class="tab-pane fade" id="tab2"></div>
+                        }
+                        @if(Model.List3 != null) {
+                            <div class="tab-pane fade show active" id="tab3">
+                                @if(ViewBag.fund3 != null) {
+                                    System.Data.DataTable fs = (System.Data.DataTable)ViewBag.fund3;
+                                    <table>
+                                        <tr>
+                                            <td style="padding:1px;">
+
+                                                <button class="btn btn-success bl" type="button" onclick="window.parent.addPrj('@Model.PID', 0, '@Model.SEQ_NO')">新增</button>
+                                                <button class="btn btn-warning bl" type="button" onclick="window.parent.reBatch('@Model.PID', '@Model.SYR');">轉入核定提案</button>
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">總經費</span>
+                                                    <input class="form-control" type="text" readonly value="@((Convert.ToDecimal(@fs.Rows[0]["YR_FUND"])).ToString("N2"))" />
+                                                </div>
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">中央款(元)</span>
+                                                    <input class="form-control" type="text" readonly value="@((Convert.ToDecimal(@fs.Rows[0]["CEN_FUND"])).ToString("N2"))" />
+                                                </div>
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">地方款(元)</span>
+                                                    <input class="form-control" type="text" readonly value="@((Convert.ToDecimal(@fs.Rows[0]["LOC_FUND"])).ToString("N2"))" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                } else {
+
+                                    <table>
+                                        <tr>
+
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">總經費(元)</span>
+                                                    <input class="form-control" type="text" readonly value="0" />
+                                                </div>
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">中央款(元)</span>
+                                                    <input class="form-control" type="text" readonly value="0" />
+                                                </div>
+                                            </td>
+                                            <td style="padding:1px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="sizing-addon2">地方款(元)</span>
+                                                    <input class="form-control" type="text" readonly value="0" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                }
+                                <div style="width: 50%; ">
+                                    @Html.PagedListPager(Model.List3, page => Url.Action("ManageList3",
+                                                                      new {
+                                                                          PJ_CATY_CODE = Model.PJ_CATY_CODE,
+                                                                          TD_NAME = Model.TD_NAME,
+                                                                          CITY = Model.CITY,
+                                                                          TOWN = Model.TOWN,
+                                                                          TD_CATY = Model.TD_CATY,
+                                                                          EXE_TYPE = Model.EXE_TYPE,
+                                                                          IPJ_CODE = Model.IPJ_CODE,
+                                                                          N_IPJ_CODE = Model.N_IPJ_CODE,
+                                                                          EMG_CATY = Model.EMG_CATY,
+                                                                          ACC_ID = Model.ACC_ID,
+                                                                          PID = Model.PID,
+                                                                          SEQ_NO = Model.SEQ_NO,
+                                                                          page = page,
+                                                                      }),
+                                                                      new PagedListRenderOptions {
+                                                                          DisplayItemSliceAndTotal = true,
+                                                                          DisplayPageCountAndCurrentLocation = true,
+                                                                          DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                                                                          DisplayLinkToIndividualPages = false,
+                                                                          ItemSliceAndTotalFormat = "顯示第 {0} - {1}筆, 共{2}筆",
+                                                                          PageCountAndCurrentLocationFormat = "第 {0}頁 / 共 {1}頁",
+                                                                      }
+                                                                  )
+                                </div>
+
+                                保留至: (@Model.PJMFORM.SYR 年) @Model.PJMFORM.PJ_NAME
+                                <table width="100%" class="table table-hover" style="overflow-x: auto; white-space: nowrap;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>經費編號</th>
+                                            <th>工程編號</th>
+                                            <th>工程名稱</th>
+                                            <th>縣市別</th>
+                                            <th>保留金額(元)</th>
+                                            <th>保留原因</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach(System.Data.DataRow c in Model.List3) {
+                                            <tr>
+                                                <td>@c["FD_CODE"]</td>
+                                                <td>@c["TD_CODE"]</td>
+
+                                                <td>@c["TD_NAME"]</td>
+                                                <td>@c["TD_CITY"]</td>
+                                                <td>@c["REV_FUND"]</td>
+                                                <td>@c["REV_RESN"]</td>
+                                                <td>
+                                                    @try {
+                                                        <button class="btn btn-primary bl" type="button" onclick="window.parent.editRetainage('@c["PID"]', '@c["TID"]', '@c["SEQ_NO"]')">檢視</button>
+                                                    } catch {
+                                                        
+                                                <button class="btn btn-primary bl" type="button" onclick="window.parent.editRetainage('@c["PID"]', '@c["TID"]', '')">檢視</button>
+                                                    }
+                                                </td>
+                                            </tr>
+
+                                        }
+                                    </tbody>
+                                </table>
+                                @Html.PagedListPager(Model.List3, page => Url.Action("ManageList3",
+                                                              new {
+                                                                  PJ_CATY_CODE = Model.PJ_CATY_CODE,
+                                                                  TD_NAME = Model.TD_NAME,
+                                                                  CITY = Model.CITY,
+                                                                  TOWN = Model.TOWN,
+                                                                  TD_CATY = Model.TD_CATY,
+                                                                  EXE_TYPE = Model.EXE_TYPE,
+                                                                  IPJ_CODE = Model.IPJ_CODE,
+                                                                  N_IPJ_CODE = Model.N_IPJ_CODE,
+                                                                  EMG_CATY = Model.EMG_CATY,
+                                                                  ACC_ID = Model.ACC_ID,
+                                                                  PID = Model.PID,
+                                                                  SEQ_NO = Model.SEQ_NO,
+                                                                  page = page,
+                                                              }))
+
+
+                            </div>
+                        } else {
+                            <div class="tab-pane fade" id="tab3"></div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function del(pid, tid, seq_no) {
+                if (confirm('確定刪除?')) {
+                    $('#PID').val(pid);
+                    $('#TID').val(tid);
+                    $('#SEQ_NO').val(seq_no);
+                } else {
+                    void ('')
+                }
+            }
+        </script>
+                                                }
+</body>
+</html>

@@ -1,0 +1,346 @@
+﻿@model WCals.ViewModels.NewModels.TDE0040Model
+@{
+    ViewBag.Title = "專業人員";
+    Layout = null;
+
+    System.Data.DataTable dtList = ViewBag.List1 as System.Data.DataTable;
+    System.Data.DataTable dtProCaty = ViewBag.ProCatyList as System.Data.DataTable;
+    System.Data.DataTable dtRemTp = ViewBag.RemTpList as System.Data.DataTable;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <style>
+        body {
+            padding: 10px;
+        }
+        .section-header {
+            background-color: #f5f5f5;
+            border-left: 4px solid #0275d8;
+            padding: 10px 15px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .table th {
+            background-color: #558DCC;
+            color: white;
+            text-align: center;
+            font-size: 12px;
+        }
+        .table td {
+            font-size: 12px;
+            vertical-align: middle;
+        }
+        .form-control-sm {
+            font-size: 12px;
+            padding: 2px 5px;
+            height: 28px;
+        }
+        textarea.form-control-sm {
+            height: auto;
+        }
+        .btn-sm {
+            font-size: 11px;
+            padding: 3px 8px;
+        }
+        .add-row {
+            background-color: #f9f9f9;
+        }
+        .add-row td {
+            padding: 8px 4px;
+        }
+        .required-field {
+            color: red;
+        }
+        .dt {
+            width: 85px !important;
+        }
+        .ui-datepicker { z-index: 2200 !important; background: #ffffff; border: 1px solid #cccccc; border-radius: 4px; }
+    
+        /* 表格框線與排版美化 */
+        .table-bordered { border: 0 !important; }
+        .table-bordered th, .table-bordered td { border: 0 !important; border-bottom: 1px solid #e2e8f0 !important; }
+        .table > thead > tr > th { 
+            border-bottom: 2px solid #337ab7 !important; 
+            background-color: #f8fafc; 
+            color: #334155; 
+        }
+        .table > tbody > tr:last-child > td { border-bottom: 0 !important; }
+</style>
+</head>
+<body>
+    <div id="messageDiv"></div>
+
+    <button type="button" onclick="top.closePage6_5();" class="btn btn-outline-secondary shadow-sm"><i class="fa-solid fa-xmark me-1"></i> 關閉</button>
+
+    <h4 class="page-header">專業人員</h4>
+    <p>工程編號：@ViewBag.TD_CODE</p>
+
+    <div class="section-header">專業人員列表</div>
+
+    <div class="table-responsive">
+        <table class="table table-sm" id="dataTable">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">專業類別</th>
+                    <th style="width: 100px;">身分證字號</th>
+                    <th style="width: 100px;">證照號碼</th>
+                    <th style="width: 100px;">證照期限</th>
+                    <th style="width: 80px;">姓名</th>
+                    <th style="width: 100px;">電話</th>
+                    <th style="width: 120px;">Email</th>
+                    <th style="width: 80px;">解除原因</th>
+                    <th style="width: 90px;">解除日期</th>
+                    <th style="width: 100px;">解除文號</th>
+                    <th style="width: 100px;">操作</th>
+                </tr>
+            </thead>
+            <tbody id="dataBody">
+                <tr class="add-row">
+                    <td>
+                        <select id="new_PRO_CATY" class="form-control form-control-sm">
+                            <option value="">請選擇</option>
+                            @if(dtProCaty != null) {
+                                foreach(System.Data.DataRow row in dtProCaty.Rows) {
+                                    string code = row["id"].ToString();
+                                    string desc = row["name"].ToString();
+                                    <option value="@code">@desc</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td><input type="text" id="new_USR_ID" class="form-control form-control-sm" /></td>
+                    <td><input type="text" id="new_LISN_ID" class="form-control form-control-sm" /></td>
+                    <td><input type="text" id="new_LISN_DEADLINE" class="form-control form-control-sm dt" /></td>
+                    <td><input type="text" id="new_USR_NAME" class="form-control form-control-sm" /></td>
+                    <td><input type="text" id="new_USR_TEL" class="form-control form-control-sm" /></td>
+                    <td><input type="text" id="new_USR_EMAIL" class="form-control form-control-sm" /></td>
+                    <td>
+                        <select id="new_REM_TP" class="form-control form-control-sm">
+                            <option value="">請選擇</option>
+                            @if(dtRemTp != null) {
+                                foreach(System.Data.DataRow r in dtRemTp.Rows) {
+                                    string code = r["id"].ToString();
+                                    string desc = r["name"].ToString();
+                                    <option value="@code">@desc</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td><input type="text" id="new_REM_DT" class="form-control form-control-sm dt" /></td>
+                    <td><input type="text" id="new_REM_FN" class="form-control form-control-sm" /></td>
+                    <td style="text-align: center;">
+                        <button type="button" class="btn btn-success btn-sm" onclick="addRow();">新增</button>
+                    </td>
+                </tr>
+                @if(dtList != null && dtList.Rows.Count > 0) {
+                    foreach(System.Data.DataRow row in dtList.Rows) {
+                        decimal uid = row["UID"] != DBNull.Value ? Convert.ToDecimal(row["UID"]) : 0;
+                        string proCaty = row["PRO_CATY"] != DBNull.Value ? row["PRO_CATY"].ToString() : "";
+                        string usrId = row["USR_ID"] != DBNull.Value ? row["USR_ID"].ToString() : "";
+                        string lisnId = row["LISN_ID"] != DBNull.Value ? row["LISN_ID"].ToString() : "";
+                        string lisnDeadline = row["LISN_DEADLINE"] != DBNull.Value ? row["LISN_DEADLINE"].ToString() : "";
+                        string usrName = row["USR_NAME"] != DBNull.Value ? row["USR_NAME"].ToString() : "";
+                        string usrTel = row["USR_TEL"] != DBNull.Value ? row["USR_TEL"].ToString() : "";
+                        string usrEmail = row["USR_EMAIL"] != DBNull.Value ? row["USR_EMAIL"].ToString() : "";
+                        string remTp = row["REM_TP"] != DBNull.Value ? row["REM_TP"].ToString() : "";
+                        string remDt = row["REM_DT"] != DBNull.Value ? row["REM_DT"].ToString() : "";
+                        string remFn = row["REM_FN"] != DBNull.Value ? row["REM_FN"].ToString() : "";
+
+                        <tr data-uid="@uid">
+                            <td>
+                                <select class="form-control form-control-sm edit-field" data-field="PRO_CATY">
+                                    <option value="">請選擇</option>
+                                    @if(dtProCaty != null) {
+                                        foreach(System.Data.DataRow r in dtProCaty.Rows) {
+                                            string code = r["id"].ToString();
+                                            string desc = r["name"].ToString();
+                                            if(code == proCaty) {
+                                                <option value="@code" selected>@desc</option>
+                                            } else {
+                                                <option value="@code">@desc</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td><input type="text" value="@usrId" class="form-control form-control-sm edit-field" data-field="USR_ID" /></td>
+                            <td><input type="text" value="@lisnId" class="form-control form-control-sm edit-field" data-field="LISN_ID" /></td>
+                            <td><input type="text" value="@lisnDeadline" class="form-control form-control-sm dt edit-field" data-field="LISN_DEADLINE" /></td>
+                            <td><input type="text" value="@usrName" class="form-control form-control-sm edit-field" data-field="USR_NAME" /></td>
+                            <td><input type="text" value="@usrTel" class="form-control form-control-sm edit-field" data-field="USR_TEL" /></td>
+                            <td><input type="text" value="@usrEmail" class="form-control form-control-sm edit-field" data-field="USR_EMAIL" /></td>
+                            <td>
+                                <select class="form-control form-control-sm edit-field" data-field="REM_TP">
+                                    <option value="">請選擇</option>
+                                    @if(dtRemTp != null) {
+                                        foreach(System.Data.DataRow r in dtRemTp.Rows) {
+                                            string code = r["id"].ToString();
+                                            string desc = r["name"].ToString();
+                                            if(code == remTp) {
+                                                <option value="@code" selected>@desc</option>
+                                            } else {
+                                                <option value="@code">@desc</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td><input type="text" value="@remDt" class="form-control form-control-sm dt edit-field" data-field="REM_DT" /></td>
+                            <td><input type="text" value="@remFn" class="form-control form-control-sm edit-field" data-field="REM_FN" /></td>
+                            <td style="text-align: center;">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="updateRow(this);"><i class="fa-solid fa-floppy-disk me-1"></i> 儲存</button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(this);">刪除</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <table class="table">
+        <tr>
+            <td>
+                <button type="button" onclick="top.closePage6_5();" class="btn btn-outline-secondary shadow-sm"><i class="fa-solid fa-xmark me-1"></i> 關閉</button>
+            </td>
+        </tr>
+    </table>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+    <script>
+        var TD_CODE = '@Model.TD_CODE';
+
+        // 日期選擇器初始化
+        $(".dt").datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: '68:168',
+            dateFormat: 'yymmdd'
+        });
+
+        $('.dt').click(function () {
+            $(this).delay(600).val("");
+        });
+
+        function showMessage(type, message) {
+            var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            var html = '<div class="alert ' + alertClass + ' alert-dismissible" role="alert">' +
+                '<button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                message + '</div>';
+            $('#messageDiv').html(html);
+            setTimeout(function () {
+                $('#messageDiv').html('');
+            }, 3000);
+        }
+
+        // 新增資料
+        function addRow() {
+            $.ajax({
+                url: '@Url.Action("PAGE6_5_Add", "TDE0046")',
+                type: 'POST',
+                data: {
+                    TD_CODE: TD_CODE,
+                    PRO_CATY: $('#new_PRO_CATY').val(),
+                    USR_ID: $('#new_USR_ID').val(),
+                    LISN_ID: $('#new_LISN_ID').val(),
+                    LISN_DEADLINE: $('#new_LISN_DEADLINE').val(),
+                    USR_NAME: $('#new_USR_NAME').val(),
+                    USR_TEL: $('#new_USR_TEL').val(),
+                    USR_EMAIL: $('#new_USR_EMAIL').val(),
+                    REM_TP: $('#new_REM_TP').val(),
+                    REM_DT: $('#new_REM_DT').val(),
+                    REM_FN: $('#new_REM_FN').val()
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                        location.reload();
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function (e) {
+                    showMessage('error', '新增失敗：' + e.statusText);
+                }
+            });
+        }
+
+        // 更新資料
+        function updateRow(btn) {
+            var row = $(btn).closest('tr');
+            var uid = row.data('uid');
+
+            $.ajax({
+                url: '@Url.Action("PAGE6_5_Update", "TDE0046")',
+                type: 'POST',
+                data: {
+                    UID: uid,
+                    PRO_CATY: row.find('[data-field="PRO_CATY"]').val(),
+                    USR_ID: row.find('[data-field="USR_ID"]').val(),
+                    LISN_ID: row.find('[data-field="LISN_ID"]').val(),
+                    LISN_DEADLINE: row.find('[data-field="LISN_DEADLINE"]').val(),
+                    USR_NAME: row.find('[data-field="USR_NAME"]').val(),
+                    USR_TEL: row.find('[data-field="USR_TEL"]').val(),
+                    USR_EMAIL: row.find('[data-field="USR_EMAIL"]').val(),
+                    REM_TP: row.find('[data-field="REM_TP"]').val(),
+                    REM_DT: row.find('[data-field="REM_DT"]').val(),
+                    REM_FN: row.find('[data-field="REM_FN"]').val()
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function () {
+                    showMessage('error', '更新失敗');
+                }
+            });
+        }
+
+        // 刪除資料
+        function deleteRow(btn) {
+            if (!confirm('確定要刪除此筆專業人員紀錄嗎？')) {
+                return;
+            }
+
+            var row = $(btn).closest('tr');
+            var uid = row.data('uid');
+
+            $.ajax({
+                url: '@Url.Action("PAGE6_5_Delete", "TDE0046")',
+                type: 'POST',
+                data: {
+                    UID: uid
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                        row.remove();
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function () {
+                    showMessage('error', '刪除失敗');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

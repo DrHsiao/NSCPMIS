@@ -1,0 +1,16 @@
+﻿/* 欄位必填時顯示 */
+.is-required::after {
+    content: " *";
+    color: red;
+}
+
+/* textarea只允許上下拉 */
+.resize-vertical {
+    resize: vertical; /* 只允許上下拉 */
+    overflow: auto;
+}
+
+/* 文字顯示時保留換行符號 */
+.text-pre-line {
+    white-space: pre-line; /* 保留換行符號 */
+}

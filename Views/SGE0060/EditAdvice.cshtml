@@ -1,0 +1,912 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.SGE0010Model
+@{ ViewBag.Title = "0060";
+    Layout = null;
+
+    List<SelectListItem> boolOptions = new List<SelectListItem>
+{
+        new SelectListItem { Text = "是", Value = "true" },
+        new SelectListItem { Text = "否", Value = "false" }
+    };
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+    <link rel="stylesheet" href="~/Scripts/plugins/bootstrap-fileinput/icon.mini.css" crossorigin="anonymous">
+    <link href="~/Scripts/plugins/bootstrap-fileinput/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/moment-taiwan.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/locale/zh-tw.js"></script>
+    <script type="text/javascript" src="~/Scripts/JavaScript.js?s=20240402"></script>
+
+    <style type="text/css">
+        .table-text-view {
+            white-space: pre-wrap; /* 保留換行 */
+            word-break: break-word; /* 防止長字串撐爆 table */
+            min-height: 100px;
+            max-height: 300px;
+            overflow-y: auto;
+            resize: vertical; /* vertical / both */
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+
+        .table-textarea {
+            resize: vertical; /* 只允許上下拉 */
+            max-width: 100%; /* 不可超出 td */
+            width: 100%; /* 固定寬度 */
+            overflow: auto;
+        }
+
+        .sticky-project-name {
+            position: sticky;
+            top: 0;
+            z-index: 1050;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            word-break: break-word;
+            font-size: 30px;
+            font-weight: 600;
+            color: black;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+</head>
+<body style="padding:5px;">
+    @using (Html.BeginForm("", "SGE0060", FormMethod.Post, new { id = "mainForm" }))
+    {
+
+        <div class="alert alert-info sticky-project-name">
+            <strong>提案工程名稱：</strong>
+            @(Model.apmform.AP_NAME ?? "")
+        </div>
+        <div>
+            <button class="btn btn-warning btn-lg" name="action" type="submit" value="SaveAdvice">儲存</button>
+
+            @*<a class="btn btn-secondary btn-lg" href="PJE0011?page=@Model.page">返回</a>*@
+            <button type="button" class="btn btn-secondary btn-lg back" onclick="window.parent.CloseEditAdvice();">返回</button>
+            @Html.HiddenFor(x => x.AID)
+
+            @{System.Data.DataRow aa = ViewBag.APV_APMFORM;}
+
+
+        </div>
+        <br />
+        <table class="table">
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">申請總經費(元)</span>
+                                <input type="text" disabled class="form-control fund-input" value="@String.Format("{0:#,##0}", @aa["FUND"])" />
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">中央款比例(%)</span>
+                                <input type="text" disabled class="form-control fund-input" value="@String.Format("{0:#,##0.00}", @aa["PERCENT_CEN_FUND"])" />
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">初審總經費(元)</span>
+                                <input type="text" disabled class="form-control fund-input" value="@String.Format("{0:#,##0}", @aa["JUD_FUND"])" />
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">初審中央款比例(%)</span>
+                                <input type="text" disabled class="form-control fund-input" value="@String.Format("{0:#,##0.00}", @aa["PERCENT_CEN_JUD_FUND"])" />
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="input-group">
+                                <span class="input-group-text">初審意見</span>
+                                <div class="form-control table-text-view">
+                                    @aa["S1_COMT"]
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">複審來文號</span>
+                                @Html.TextBoxFor(x => x.apmform.S2_FN_NO, new { @class = "form-control", placeholder = "複審來文號", AutoComplete = "Off" })
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">複審來文日</span>
+                                <input type="text" name="FN_DT" value="@ViewBag.S2_FN_DT" class="form-control dt" placeholder="複審來文日" AutoComplete="Off" />
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">複審回文號</span>
+                                @Html.TextBoxFor(x => x.apmform.S2_OF_NO, new { @class = "form-control", placeholder = "複審回文號", AutoComplete = "Off" })
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">複審回文日</span>
+                                <input type="text" name="OF_DT" value="@ViewBag.S2_OF_DT" class="form-control dt" placeholder="複審回文日" AutoComplete="Off" />
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="input-group">
+                                <span class="input-group-text">複審意見</span>
+                                @Html.TextAreaFor(x => x.apmform.S2_COMT, new { @class = "form-control table-textarea", placeholder = "複審意見", AutoComplete = "Off", maxlength = "1000" })
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <table class="table">
+            <tr>
+                <td>年度</td>
+                <td>經費層級</td>
+                <td>經費描述</td>
+                <td>提案金額(元)</td>
+                <td>初審金額(元)</td>
+                <td>複審金額(元)</td>
+                <td></td>
+            </tr>
+            @{System.Data.DataTable apdfund = ViewBag.apdfund;}
+            @foreach (System.Data.DataRow a in apdfund.Rows)
+            {
+                <tr>
+                    <td>@a["SYR"] <input type="hidden" name="FID" value="@a["FID"]" /></td>
+                    <td>@WCals.classes.john.util.GetIPJCODE(a["FIT_CODE"].ToString())</td>
+                    <td><input type="text" name="FUND_DESC" class="form-control" value="@a["FUND_DESC"]" /></td>
+                    <td><input readonly type="text" class="form-control fund-input" value="@String.Format("{0:#,##0}", @a["FUND"])" /></td>
+                    <td><input type="text" id="JUD_FUND_@a["FID"]" disabled class="form-control fund-input" value="@String.Format("{0:#,##0}", @a["JUD_FUND"])" /></td>
+                    <td>
+                        <input type="text" id="DCS_FUND_@a["FID"]" name="DCS_FUND" class="form-control fund-input" value="@String.Format("{0:#,##0}", @a["DCS_FUND"])" />
+
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-secondary" onclick="$('#DCS_FUND_@a["FID"]').val('@a["JUD_FUND"]');">引用</button>
+                    </td>
+                </tr>
+            }
+
+        </table>
+
+        <table class="table">
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">縣市自評優先順序</span>
+                                @Html.TextBoxFor(x => x.apmform.S1_ORDER, new { @class = "form-control", AutoComplete = "Off" })
+                            </div>
+                        </div>
+                        @if (!Model.PJMFORM.STAT_NO.Equals("R"))
+                        {
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text">當年度可提供用戶接管數 @Model.PJMFORM.STAT_NO</span>
+                                    @Html.TextBoxFor(x => x.apmform.PRV_CON_SEWERS, new { @class = "form-control", AutoComplete = "Off" })
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text">本年度是否補助</span>
+                                @Html.DropDownListFor(x => x.apmform.CHK_STAT,
+                                new List<SelectListItem>
+                                {
+                                    new SelectListItem { Text = "", Value = "" },
+                                    new SelectListItem { Text = "是", Value = "Y" },
+                                    new SelectListItem { Text = "否", Value = "N" }
+                                },
+                                new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text">辦理層級</span>
+                                @Html.DropDownListFor(x => x.apmform.IPJ_CODE, (SelectList)ViewBag.IPJ_CODES, "", new { @class = "form-select" })
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text">預算分類</span>
+                                @Html.DropDownListFor(x => x.apmform.BUDGET_TP, (SelectList)ViewBag.BUDGET_TP, "", new { @class = "form-select" })
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+
+
+        if (!Model.PJMFORM.STAT_NO.Equals("R"))
+        {
+            if (Model.apmform.PJ_CATY_CODE.Equals("EA") ||
+        Model.apmform.PJ_CATY_CODE.Equals("EB") ||
+        Model.apmform.PJ_CATY_CODE.Equals("EC"))
+            {
+                // 計算初審的自評總分 (排除無須自評的第1項)
+                decimal totalEA_Init = 0;
+                var scoresEA_Init = new decimal?[] {
+        Model.apmform.SC2_SCORE1, Model.apmform.SC3_SCORE1,
+        Model.apmform.SC4_SCORE1, Model.apmform.SC5_SCORE1, Model.apmform.SC6_SCORE1,
+        Model.apmform.SC7_SCORE1, Model.apmform.SC8_SCORE1
+    };
+                totalEA_Init = scoresEA_Init.Sum(x => x ?? 0);
+                decimal s9_init = 0;
+                if (ViewData.Eval("apmform.SC9_SCORE1") != null && decimal.TryParse(ViewData.Eval("apmform.SC9_SCORE1").ToString(), out s9_init))
+                {
+                    totalEA_Init += s9_init;
+                }
+
+                <table class="table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>評比項目(E)</th>
+                            <th nowrap width="20%">審查分數</th>
+                            <th width="80%">審查意見</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td width="1" nowrap>
+                                (一)地方政府內部競爭序位分數(22分)<br />
+                                <small class="text-muted fs-6">是否完成規劃設計：</small>
+                                @Html.DropDownListFor(x => x.apmform.SC1_FG, boolOptions, "請選擇", new { @class = "form-select", style = "display: inline-block; width: auto;" })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC1_SCORE, new { oninput = "this.value = (+this.value > 22 || isNaN(this.value)) ? 22 : this.value", id = "SC1_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數:(無須自評)</small>
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC1_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明:(無須自評)</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>
+                                (二)計畫總體規劃完善性(10分)<br />
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC2_SCORE, new { oninput = "this.value = (+this.value > 10 || isNaN(this.value)) ? 10 : this.value", id = "SC2_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC2_SCORE1</small>
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC2_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC2_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>
+                                (三)地方政府發展重點區域(6分)<br />
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC3_SCORE, new { oninput = "this.value = (+this.value > 6 || isNaN(this.value)) ? 6 : this.value", id = "SC3_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC3_SCORE1</small>
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC3_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC3_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>
+                                (四)與污水下水道建設計畫配合情形(12分)<br />
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC4_SCORE, new { oninput = "this.value = (+this.value > 12 || isNaN(this.value)) ? 12 : this.value", id = "SC4_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC4_SCORE1</small>
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC4_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC4_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>
+                                (五)水域生態及水質改善效益(20分)<br />
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC5_SCORE, new { oninput = "this.value = (+this.value > 20 || isNaN(this.value)) ? 20 : this.value", id = "SC5_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC5_SCORE1</small>
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC5_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC5_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>
+                                (六)水環境改善效益(12分)<br />
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC6_SCORE, new { oninput = "this.value = (+this.value > 12 || isNaN(this.value)) ? 12 : this.value", id = "SC6_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC6_SCORE1</small>
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC6_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC6_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>
+                                (七)民眾認同度(6分)<br />
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC7_SCORE, new { oninput = "this.value = (+this.value > 6 || isNaN(this.value)) ? 6 : this.value", id = "SC7_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC7_SCORE1</small>
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC7_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC7_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>
+                                (八)營運管理計畫完整性(6分)<br />
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC8_SCORE, new { oninput = "this.value = (+this.value > 6 || isNaN(this.value)) ? 6 : this.value", id = "SC8_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC8_SCORE1</small>
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC8_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC8_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>
+                                (九)地方配合款編列情況及過去3年相關計畫執行績效(6分)<br />
+                            </td>
+                            <td>
+                                <input type="text" name="apmform.SC9_SCORE" id="SC9_SCORE" value="@(ViewData.Eval("apmform.SC9_SCORE"))" class="form-control" form="mainForm" oninput="this.value = (+this.value > 6 || isNaN(this.value)) ? 6 : this.value" />
+                                <small class="text-muted fs-6">自評分數: @(ViewData.Eval("apmform.SC9_SCORE1"))</small>
+                            </td>
+                            <td>
+                                <input type="text" name="apmform.SC9_CMT" id="SC9_CMT" value="@(ViewData.Eval("apmform.SC9_CMT"))" class="form-control" form="mainForm" />
+                                <small class="text-muted fs-6">自評說明: @(ViewData.Eval("apmform.SC9_CMT1"))</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>總評</td>
+                            <td>
+                                <input type="text" id="SCS_SCORE" class="form-control" />
+                                <small class="text-muted fs-6">自評分數:@totalEA_Init</small>
+                            </td>
+                            <td>
+                                @*@Html.TextBoxFor(x => x.apmform.SCS_CMT, new { @class = "form-control", form = "mainForm" })*@
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SCS_CMT1</small>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <script>
+                    $(document).ready(function () {
+                        cntSCS();
+                        $('.form-control').on('keyup', function () {
+                            cntSCS();
+                        });
+                    });
+                </script>
+            }
+            else
+            {
+                <table class="table">
+
+                    <tr>
+                        <td align="right">1.應行配合事項之辦理情形(15分)</td>
+
+                        <td width="10%" nowrap>@Html.TextBoxFor(x => x.apmform.SC1_SCORE, new { oninput = "this.value = (+this.value > 15 || isNaN(this.value)) ? 15 : this.value", @class = "form-control", AutoComplete = "Off" })</td>
+                        <td align="right">2.基本設計完成進度(15分)</td>
+
+                        <td width="10%">@Html.TextBoxFor(x => x.apmform.SC2_SCORE, new { oninput = "this.value = (+this.value > 15 || isNaN(this.value)) ? 15 : this.value", @class = "form-control", AutoComplete = "Off" })</td>
+                    </tr>
+                    <tr>
+                        <td align="right">3.以前年度計畫及預算執行情形(15分)</td>
+
+                        <td width="10%">@Html.TextBoxFor(x => x.apmform.SC3_SCORE, new { oninput = "this.value = (+this.value > 15 || isNaN(this.value)) ? 15 : this.value", @class = "form-control", AutoComplete = "Off" })</td>
+                        <td align="right">4.可行性及預期效益(15分)</td>
+
+                        <td width="10%">@Html.TextBoxFor(x => x.apmform.SC4_SCORE, new { oninput = "this.value = (+this.value > 15 || isNaN(this.value)) ? 15 : this.value", @class = "form-control", AutoComplete = "Off" })</td>
+                    </tr>
+                    <tr>
+                        <td align="right">5.與中央政策配合程度(15分)</td>
+
+                        <td width="10%">@Html.TextBoxFor(x => x.apmform.SC5_SCORE, new { oninput = "this.value = (+this.value > 15 || isNaN(this.value)) ? 15 : this.value", @class = "form-control", AutoComplete = "Off" })</td>
+
+                        <td align="right">6.負擔經費之財源籌措及相關財務計畫規劃情形(15分)</td>
+
+                        <td width="10%">@Html.TextBoxFor(x => x.apmform.SC6_SCORE, new { oninput = "this.value = (+this.value > 15 || isNaN(this.value)) ? 15 : this.value", @class = "form-control", AutoComplete = "Off" })</td>
+
+                    </tr>
+                    <tr>
+                        <td align="right">7.其他審查及評比之項目(10分)</td>
+
+                        <td>@Html.TextBoxFor(x => x.apmform.SC7_SCORE, new { oninput = "this.value = (+this.value > 10 || isNaN(this.value)) ? 10 : this.value", @class = "form-control", AutoComplete = "Off" })</td>
+
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+
+                </table>
+            }
+
+        }
+        else
+        {
+            var scores = new decimal?[] {
+                            Model.apmform.SC1_SCORE1,
+                            Model.apmform.SC2_SCORE1,
+                            Model.apmform.SC3_SCORE1,
+                            Model.apmform.SC4_SCORE1,
+                            Model.apmform.SC5_SCORE1,
+                            Model.apmform.SC6_SCORE1,
+                            Model.apmform.SC7_SCORE1,
+                            Model.apmform.SC8_SCORE1
+                        };
+            var totalA = scores.Sum(x => x ?? 0);
+            var totalB = scores.Take(4).Sum(x => x ?? 0);
+            var totalC = scores.Take(6).Sum(x => x ?? 0);
+
+            if (
+        Model.apmform.PJ_CATY_CODE.Equals("CA") ||
+        Model.apmform.PJ_CATY_CODE.Equals("CB") ||
+        Model.apmform.PJ_CATY_CODE.Equals("CC") ||
+        Model.apmform.PJ_CATY_CODE.Equals("CD") ||
+        Model.apmform.PJ_CATY_CODE.Equals("CE"))
+            {
+                <table class="table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>評比項目(C)</th>
+
+                            <th nowrap width="15%">審查分數</th>
+                            <th width="70%">審查意見</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td width="1" nowrap>1.辦理原因(20分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC1_SCORE, new { oninput = "this.value = (+this.value > 20 || isNaN(this.value)) ? 20 : this.value", id = "SC1_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC1_SCORE1</small>
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC1_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC1_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>2.與整體治理計畫之相容性(20分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC2_SCORE, new { oninput = "this.value = (+this.value > 20 || isNaN(this.value)) ? 20 : this.value", id = "SC2_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC2_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC2_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC2_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>3.災害改善情形(15分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC3_SCORE, new { oninput = "this.value = (+this.value > 15 || isNaN(this.value)) ? 15 : this.value", id = "SC3_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC3_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC3_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC3_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>4.保護對象(15分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC4_SCORE, new { oninput = "this.value = (+this.value > 15 || isNaN(this.value)) ? 15 : this.value", id = "SC4_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC4_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC4_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC4_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>5.地方支持度(10分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC5_SCORE, new { oninput = "this.value = (+this.value > 10 || isNaN(this.value)) ?10 : this.value", id = "SC5_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC5_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC5_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC5_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>6.管線遷移(5分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC6_SCORE, new { oninput = "this.value = (+this.value > 5 || isNaN(this.value)) ? 5 : this.value", id = "SC6_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC6_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC6_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC6_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>7.是否具其他間接效益(10分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC7_SCORE, new { oninput = "this.value = (+this.value > 10 || isNaN(this.value)) ? 10 : this.value", id = "SC7_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC7_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC7_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC7_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>8.都市防洪設施維護管理(5分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC8_SCORE, new { oninput = "this.value = (+this.value > 5 || isNaN(this.value)) ? 5 : this.value", id = "SC8_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC8_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC8_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC8_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>總評</td>
+                            <td>
+                                <input type="text" id="SCS_SCORE" class="form-control" />
+                                <small class="text-muted fs-6">自評分數:@totalA</small>
+                            </td>
+
+                            <td>
+                                @*@Html.TextBoxFor(x => x.apmform.SCS_CMT, new { @class = "form-control", form = "mainForm" })*@
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SCS_CMT1</small>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <script>
+
+                    $(document).ready(function () {
+                        cntSCS(8);
+                        $('.form-control').on('keyup', function () {
+                            cntSCS(8);
+                        });
+
+                    });
+                </script>
+
+            }
+
+            if (Model.apmform.PJ_CATY_CODE.Equals("OA") ||
+            Model.apmform.PJ_CATY_CODE.Equals("OB") ||
+            Model.apmform.PJ_CATY_CODE.Equals("OC"))
+            {
+                <table class="table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>評比項目(O)</th>
+                            <th nowrap width="15%">審查分數</th>
+                            <th width="70%">審查意見</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td width="1" nowrap>1.辦理原因(20分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC1_SCORE, new { oninput = "this.value = (+this.value > 20 || isNaN(this.value)) ? 20 : this.value", id = "SC1_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC1_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC1_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC1_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>2.經費合理性(30分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC2_SCORE, new { oninput = "this.value = (+this.value > 30 || isNaN(this.value)) ? 30 : this.value", id = "SC2_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC2_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC2_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC2_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>3.功能效益(40分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC3_SCORE, new { oninput = "this.value = (+this.value > 40 || isNaN(this.value)) ? 40 : this.value", id = "SC3_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC3_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC3_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC3_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>4.其他(10分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC4_SCORE, new { oninput = "this.value = (+this.value > 10 || isNaN(this.value)) ? 10 : this.value", id = "SC4_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC4_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC4_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC4_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>總評</td>
+                            <td>
+                                <input type="text" id="SCS_SCORE" class="form-control" />
+                                <small class="text-muted fs-6">自評分數:@totalB</small>
+                            </td>
+                            <td>
+                                @*@Html.TextBoxFor(x => x.apmform.SCS_CMT, new { @class = "form-control", form = "mainForm" })*@
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SCS_CMT1</small>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <script>
+
+                    $(document).ready(function () {
+                        cntSCS(4)
+                        $('.form-control').on('keyup', function () {
+                            cntSCS(4)
+                        });
+
+                    });
+                </script>
+            }
+
+            if (Model.apmform.PJ_CATY_CODE.Equals("PA") ||
+            Model.apmform.PJ_CATY_CODE.Equals("PB"))
+            {
+                <table class="table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>評比項目(P)</th>
+                            <th nowrap width="15%">審查分數</th>
+                            <th width="70%">審查意見</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td width="1" nowrap>1.辦理原因(20分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC1_SCORE, new { oninput = "this.value = (+this.value > 20 || isNaN(this.value)) ? 20 : this.value", id = "SC1_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC1_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC1_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC1_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>2.規劃範圍內淹水情形(20分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC2_SCORE, new { oninput = "this.value = (+this.value > 20 || isNaN(this.value)) ? 20 : this.value", id = "SC2_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC2_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC2_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC2_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>3.規劃範圍內人口(人)(15分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC3_SCORE, new { oninput = "this.value = (+this.value > 15 || isNaN(this.value)) ? 15 : this.value", id = "SC3_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC3_SCORE1</small>
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC3_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC3_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>4.保護對象(15分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC4_SCORE, new { oninput = "this.value = (+this.value > 15 || isNaN(this.value)) ? 15 : this.value", id = "SC4_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC4_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC4_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC4_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>5.地方支持度(15分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC5_SCORE, new { oninput = "this.value = (+this.value > 15 || isNaN(this.value)) ? 15 : this.value", id = "SC5_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC5_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC5_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC5_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>6.雨水下水道實施率(15分)</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC6_SCORE, new { oninput = "this.value = (+this.value > 15 || isNaN(this.value)) ? 15 : this.value", id = "SC6_SCORE", @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評分數: @Model.apmform.SC6_SCORE1</small>
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(x => x.apmform.SC6_CMT, new { @class = "form-control", form = "mainForm" })
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SC6_CMT1</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap>總評</td>
+                            <td>
+                                <input type="text" id="SCS_SCORE" class="form-control" />
+                                <small class="text-muted fs-6">自評分數:@totalC</small>
+                            </td>
+
+                            <td>
+                                @*@Html.TextBoxFor(x => x.apmform.SCS_CMT, new { @class = "form-control", form = "mainForm" })*@
+                                <small class="text-muted fs-6">自評說明: @Model.apmform.SCS_CMT1</small>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <script>
+
+                    $(document).ready(function () {
+                        cntSCS(6)
+                        $('.form-control').on('keyup', function () {
+                            cntSCS(6)
+                        });
+
+                    });
+                </script>
+            }
+
+        }
+
+
+    }
+
+    <script src="~/Scripts/utils/number-utils.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+    <script type="text/javascript" src="~/Scripts/bootstrap-multiselect.min.js"></script>
+    <script>
+        function cntSCS() {
+            let total = 0;
+            // 系統最多有 9 個審查項目，自動巡覽 1~9
+            for (let i = 1; i <= 9; i++) {
+                let $input = $('#SC' + i + '_SCORE');
+                // 確認畫面上真的有這個輸入框才進行加總
+                if ($input.length > 0) {
+                    total += parseFloat($input.val()) || 0;
+                }
+            }
+            // 將計算結果放入總評
+            $('#SCS_SCORE').val(total);
+        }
+
+        $(".dt").datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: '68:168',
+            dateFormat: 'yymmdd',
+            //defaultDate: new Date()
+        });
+        $('#PJDFDCR_APROV_DT').datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            dateFormat: 'yymmdd',
+            yearRange: '88:168',
+
+        });
+    </script>
+    @if (ViewBag.msg != null)
+    {
+        <script>
+            alert('@ViewBag.msg');
+        </script>
+    }
+
+    @if (ViewBag.locked != null)
+    {
+        <script>
+            $(":input").not(".back").prop("disabled", true);
+        </script>
+    }
+
+</body>
+</html>
+
+

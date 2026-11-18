@@ -1,0 +1,229 @@
+﻿@model WCals.ViewModels.FeedbackDetailsViewModel
+
+@{
+    ViewBag.Title = "使用者意見內容";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    ViewBag.CONTROLLER_NAME = this.ViewContext.RouteData.Values["controller"].ToString();
+}
+
+@section head{
+    <link rel="stylesheet" href="~/Content/views/common.css">
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            @ViewBag.Title
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa fa-dashboard"></i>
+                <a href="@Url.Content("~")"> 首頁</a>
+            </li>
+            <li class="active">
+                <i class="fa fa-file"></i>
+                <a href="@Url.Action("FeedbackList", new { page = @TempData[WCals.Controllers.Constants.MQA_PAGE_NUMBER_KEY], edit = 1 })">使用者意見留言和查詢</a>
+            </li>
+            <li class="active">
+                <i class="fa fa-file"></i>
+                @ViewBag.Title
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title mb-0">@ViewBag.Title</h3>
+    </div>
+
+    <div class="card-body">
+        <div class="form-horizontal">
+
+            <div class="row mb-3">
+                <label class="col-md-2 col-form-label">內容分類</label>
+                <div class="col-md-8">
+                    <p class="form-control-plaintext">@Model.FeedbackDetails.APL_TYPE_NAME</p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-md-2 col-form-label">問題主旨</label>
+                <div class="col-md-8">
+                    <p class="form-control-plaintext">@Model.FeedbackDetails.QUE_HEAD</p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-md-2 col-form-label">問題內容</label>
+                <div class="col-md-8">
+                    <p class="form-control-plaintext text-pre-line">@Model.FeedbackDetails.QUE_DATA</p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-md-2 col-form-label">發問者</label>
+                <div class="col-md-8">
+                    <p class="form-control-plaintext">@Model.FeedbackDetails.QUE_USER</p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-md-2 col-form-label">發問時間</label>
+                <div class="col-md-8">
+                    <p class="form-control-plaintext">@Model.FeedbackDetails.ADD_DT</p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-md-2 col-form-label">文章人氣</label>
+                <div class="col-md-8">
+                    <p class="form-control-plaintext">@Model.FeedbackDetails.OPEN_PEP</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title mb-0">相關檔案</h3>
+    </div>
+
+    <div class="card-body">
+        <div class="form-horizontal">
+
+            @if (Model.FeedbackFileList != null && Model.FeedbackFileList.Any())
+            {
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>檔案說明</th>
+                            <th>檔案名稱</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var file in Model.FeedbackFileList)
+                        {
+                            <tr>
+                                <td>@file.FILE_DESC</td>
+                                <td>@file.FILE_NAME</td>
+                                <td>
+                                    <a href="@Url.Action("ViewFile", (string)ViewBag.CONTROLLER_NAME, new { id = file.FID })" target="_blank">
+                                        檢視
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>無</p>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title mb-0">回覆內容</h3>
+    </div>
+
+    <div class="card-body">
+        <div class="form-horizontal">
+
+            @if (Model.FeedbackReplyList != null && Model.FeedbackReplyList.Any())
+            {
+                foreach (var reply in Model.FeedbackReplyList)
+                {
+                    <div class="reply-box" data-id="@reply.FRM_ID">
+                        <hr />
+                        <p />
+                        <!-- 修改、刪除、確認、取消 -->
+                        @if (reply.ADV_UID == WCals.Helpers.WebSiteHelper.getUserId())
+                        {
+                            <button class="btn-edit btn btn-primary" data-id="@reply.FRM_ID">修改</button>
+                            <button class="btn-delete btn btn-danger" data-id="@reply.FRM_ID"><i class="bi bi-trash"></i>刪除</button>
+                            <button class="btn-confirm btn btn-primary" data-id="@reply.FRM_ID" style="display:none;">確認</button>
+                            <button class="btn-cancel btn btn-secondary" data-id="@reply.FRM_ID" style="display:none;">取消</button>
+                        }
+                        <p />
+                        <strong>
+                            回答者：@reply.FRM_USER
+                        </strong>
+                        <p />
+                        <strong>
+                            回答日期：@reply.ADD_DT
+                        </strong>
+                        <p />
+                        <!-- 顯示內容 -->
+                        <div class="reply-content text-pre-line" id="content-@reply.FRM_ID">@reply.FRM_DATA</div>
+                        <!-- 編輯用 textarea -->
+                        <textarea rows="10" class="edit-textarea form-control w-100 mw-100 resize-vertical" id="textarea-@reply.FRM_ID" placeholder="輸入回覆內容..." style="display:none;">@reply.FRM_DATA</textarea>
+                        <p />
+                    </div>
+                }
+            }
+            else
+            {
+                <p>無</p>
+            }
+
+        </div>
+    </div>
+</div>
+
+@if (Model.UserCanReply)
+{
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title h5 mb-0">回覆內容</h3>
+        </div>
+
+        <div class="card-body">
+            <div>
+
+                @using (Html.BeginForm("CreateReply", (string)ViewBag.CONTROLLER_NAME, FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.FeedbackDetails.MAIN_ID" />
+
+                    <div class="mb-3" style="margin: 5px 0px;">
+                        <textarea name="content" class="form-control w-100 mw-100 resize-vertical" rows="10" maxlength="500" placeholder="輸入回覆內容..." required></textarea>
+                    </div>
+                    <small>(最多500個字)</small>
+
+                    <p class="text-center">
+                        <button type="submit" class="btn btn-warning btn-lg" style="margin-right: 15px;">回答問題</button>
+                        <a href="@Url.Action("FeedbackList", (string)ViewBag.CONTROLLER_NAME, new { page = @TempData[WCals.Controllers.Constants.MQA_PAGE_NUMBER_KEY], edit = 1 })" class="btn btn-secondary btn-lg">返回</a>
+                    </p>
+                }
+
+                @if (TempData["msg"] != null)
+                {
+                    <script>
+                        alert('@TempData["msg"]');
+                    </script>
+                }
+
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p class="text-center">
+        <a href="@Url.Action("FeedbackList", (string)ViewBag.CONTROLLER_NAME, new { page = @TempData[WCals.Controllers.Constants.MQA_PAGE_NUMBER_KEY], edit = 1 })" class="btn btn-secondary btn-lg">返回</a>
+    </p>
+}
+
+@section scripts {
+    <script>
+        const canEdit = @Model.UserCanReply.ToString().ToLower();
+        const editUrl = '@Url.Action("EditReply")';
+        const delUrl = '@Url.Action("DeleteReply")';
+    </script>
+
+    <script src="~/Scripts/Feedback/details.js?v=@DateTime.Now.Ticks"></script>
+}

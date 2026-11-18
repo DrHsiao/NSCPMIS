@@ -1,0 +1,187 @@
+﻿@model WCals.ViewModels.NewModels.TDE0051Model
+@{
+    ViewBag.Title = "連續落後進度編輯";
+    Layout = null;
+
+    string tdName = Model.TD_NAME ?? "";
+    System.Data.DataTable dtList = ViewBag.List1 as System.Data.DataTable;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .section-header {
+            background-color: #f5f5f5;
+            border-left: 4px solid #d9534f;
+            padding: 10px 15px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .diff-warning {
+            color: #d9534f;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body style="padding:5px;">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible" role="alert" id="successAlert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible" role="alert" id="errorAlert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            @TempData["Error"]
+        </div>
+    }
+
+    <div id="messageDiv"></div>
+
+    <button type="button" onclick="top.closeEditDialog5();" class="btn btn-secondary btn-lg">關閉</button>
+
+    <h1 class="page-header">連續落後進度填報 - @tdName</h1>
+
+    <div class="section-header">連續落後月進度資料 (TDDMSCD)</div>
+
+    <div class="table-responsive">
+        <table class="table table-sm" id="dataTable">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">年度</th>
+                    <th style="width: 60px;">月份</th>
+                    <th style="width: 100px;">預定進度(%)</th>
+                    <th style="width: 100px;">實際進度(%)</th>
+                    <th style="width: 80px;">進度差異</th>
+                    <th style="width: 200px;">落後原因</th>
+                    <th style="width: 200px;">解決方式</th>
+                    <th style="width: 80px;">操作</th>
+                </tr>
+            </thead>
+            <tbody id="dataBody">
+                @if (dtList != null && dtList.Rows.Count > 0)
+                {
+                    foreach (System.Data.DataRow row in dtList.Rows)
+                    {
+                        string syr = row["SYR"] != DBNull.Value ? row["SYR"].ToString() : "";
+                        string smn = row["SMN"] != DBNull.Value ? row["SMN"].ToString() : "";
+                        string preSchd = row["PRE_SCHD"] != DBNull.Value ? Convert.ToDecimal(row["PRE_SCHD"]).ToString("0.##") : "";
+                        string relSchd = row["REL_SCHD"] != DBNull.Value ? Convert.ToDecimal(row["REL_SCHD"]).ToString("0.##") : "";
+                        string diffSchd = "";
+                        if (row["PRE_SCHD"] != DBNull.Value && row["REL_SCHD"] != DBNull.Value)
+                        {
+                            decimal pre = Convert.ToDecimal(row["PRE_SCHD"]);
+                            decimal rel = Convert.ToDecimal(row["REL_SCHD"]);
+                            diffSchd = Math.Abs(pre - rel).ToString("0.##");
+                        }
+                        string delayResn = row["DELAY_RESN"] != DBNull.Value ? row["DELAY_RESN"].ToString() : "";
+                        string reslvMthd = row["RESLV_MTHD"] != DBNull.Value ? row["RESLV_MTHD"].ToString() : "";
+
+                        <tr data-syr="@syr" data-smn="@smn">
+                            <td style="text-align: center;">@syr</td>
+                            <td style="text-align: center;">@smn</td>
+                            <td>
+                                <input type="number" name="PRE_SCHD" value="@preSchd" class="form-control form-control-sm edit-field" data-field="PRE_SCHD" step="0.01" style="text-align: right;" />
+                            </td>
+                            <td>
+                                <input type="number" name="REL_SCHD" value="@relSchd" class="form-control form-control-sm edit-field" data-field="REL_SCHD" step="0.01" style="text-align: right;" />
+                            </td>
+                            <td style="text-align: right;" class="diff-warning">@diffSchd</td>
+                            <td>
+                                <input type="text" name="DELAY_RESN" value="@delayResn" class="form-control form-control-sm edit-field" data-field="DELAY_RESN" />
+                            </td>
+                            <td>
+                                <input type="text" name="RESLV_MTHD" value="@reslvMthd" class="form-control form-control-sm edit-field" data-field="RESLV_MTHD" />
+                            </td>
+                            <td style="text-align: center;">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="updateRow(this);">儲存</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr id="noDataRow">
+                        <td colspan="8" style="text-align:center;">無資料</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <table class="table">
+        <tr>
+            <td>
+                <button type="button" onclick="top.closeEditDialog5();" class="btn btn-secondary btn-lg">關閉</button>
+            </td>
+        </tr>
+    </table>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var TD_CODE = '@Model.TD_CODE';
+
+        function showMessage(type, message) {
+            var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            var html = '<div class="alert ' + alertClass + ' alert-dismissible" role="alert">' +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                message + '</div>';
+            $('#messageDiv').html(html);
+            setTimeout(function () {
+                $('#messageDiv').html('');
+            }, 3000);
+        }
+
+        // 更新資料
+        function updateRow(btn) {
+            var row = $(btn).closest('tr');
+            var syr = row.data('syr');
+            var smn = row.data('smn');
+            var preSchd = row.find('[data-field="PRE_SCHD"]').val();
+            var relSchd = row.find('[data-field="REL_SCHD"]').val();
+            var delayResn = row.find('[data-field="DELAY_RESN"]').val();
+            var reslvMthd = row.find('[data-field="RESLV_MTHD"]').val();
+
+            $.ajax({
+                url: '@Url.Action("Edit5Update", "TDE0051")',
+                type: 'POST',
+                data: {
+                    TD_CODE: TD_CODE,
+                    SYR: syr,
+                    SMN: smn,
+                    PRE_SCHD: preSchd || null,
+                    REL_SCHD: relSchd || null,
+                    DELAY_RESN: delayResn || null,
+                    RESLV_MTHD: reslvMthd || null
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                        // 更新差異欄位
+                        var pre = parseFloat(preSchd) || 0;
+                        var rel = parseFloat(relSchd) || 0;
+                        var diff = Math.abs(pre - rel).toFixed(2);
+                        row.find('.diff-warning').text(diff);
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function () {
+                    showMessage('error', '更新失敗');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

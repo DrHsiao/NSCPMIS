@@ -1,0 +1,354 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0070Model
+@{
+    ViewBag.Title = "污水下水道普及率統計";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head{
+        <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+        <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <style>
+        .ui-dialog { z-index: 4000; }
+        .card.with-nav-tabs {
+            display: flex;
+            flex-direction: column;
+            min-height: 600px;
+        }
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+        .tab-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .tab-pane {
+            flex: 1;
+            display: none;
+        }
+        .tab-pane.active {
+            display: flex;
+            flex-direction: column;
+        }
+        .tab-pane iframe {
+            flex: 1;
+            width: 100%;
+            min-height: 500px;
+            border: 0;
+        }
+    
+        /* 頁籤顏色修正 */
+        .card-header-tabs .nav-link:not(.active) {
+            color: #ffffff !important;
+            opacity: 0.85;
+        }
+        .card-header-tabs .nav-link:not(.active):hover {
+            opacity: 1;
+            color: #ffffff !important;
+        }
+        .card-header-tabs .nav-link.active {
+            color: #337ab7 !important;
+            font-weight: bold;
+        }
+</style>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            污水下水道普及率統計
+            <small></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="active">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")TDE0070">污水下水道普及率統計</a>
+            </li>
+        </ol>
+    </div>
+</div>
+
+@using (Html.BeginForm("Index", "TDE0070", FormMethod.Post, new { id = "mainForm" }))
+{
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white fw-bold">查詢條件</div>
+        <table class="table table-striped table-hover align-middle mb-0">
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text">年度</span>
+                                @Html.DropDownListFor(x => x.SYR, (List<SelectListItem>)ViewBag.Years, new { @class = "form-control", id = "SYR", onchange = "loadMonths(this.value)" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text">月份</span>
+                                @Html.DropDownListFor(x => x.SMN, (List<SelectListItem>)ViewBag.Months, new { @class = "form-control", id = "SMN" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-primary" type="button" onclick="searchData()">查詢</button>
+                            <button class="btn btn-success" type="button" onclick="lockAll()">批次鎖定</button>
+                            <button class="btn btn-warning" type="button" onclick="unlockAll()">批次解鎖</button>
+                            @* 3.3.4：Excel 報表輸出（格式沿用舊系統範本 Template\TDE0070*.xlsx） *@
+                            <button class="btn btn-info" type="button" onclick="exportExcel()">
+                                <i class="fa-solid fa-file-excel me-1"></i>匯出 Excel
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 頁籤區域 -->
+    <div class="card shadow-sm border-0 mb-4 with-nav-tabs">
+        <div class="card-header bg-primary text-white fw-bold">
+            <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                <li id="li1" role="presentation"  class="nav-item"><button type="button" class="nav-link active" data-bs-target="#tab1"    aria-controls="tab1" role="tab"  data-bs-toggle="tab">統計表</button></li>
+                <li id="li2" role="presentation" class="nav-item"><button type="button" class="nav-link" data-bs-target="#tab2"    aria-controls="tab2" role="tab"  data-bs-toggle="tab">資料設定</button></li>
+            </ul>
+        </div>
+
+        <div class="card-body">
+            <div class="tab-content">
+                <div class="tab-pane fade in active" id="tab1">
+                    <iframe id="iframe1" src="@Url.Content("~/TDE0070/Tab")?tab=1&SYR=@Model.SYR&SMN=@Model.SMN"></iframe>
+                </div>
+                <div class="tab-pane fade" id="tab2">
+                    <iframe id="iframe2" src=""></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 編輯 Dialog (CCDMCNT) -->
+    <div id="editDialog" title="統計資料編輯" style="padding:5px;">
+        <iframe id="editFrame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+    <!-- 編輯 Dialog2 (CCEMCNT) -->
+    <div id="editDialog2" title="基礎資料編輯" style="padding:5px;">
+        <iframe id="editFrame2" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+}
+
+@section scripts{
+    <script>
+        var h = $(window).height();
+        var w = $(window).width();
+
+        // 初始化編輯 Dialog (CCDMCNT)
+        $("#editDialog").dialog({
+            autoOpen: false,
+            show: { duration: 500 },
+            hide: { duration: 500 },
+            width: w * 0.7,
+            height: h * 0.7,
+            modal: true
+        });
+
+        // 初始化編輯 Dialog2 (CCEMCNT)
+        $("#editDialog2").dialog({
+            autoOpen: false,
+            show: { duration: 500 },
+            hide: { duration: 500 },
+            width: w * 0.5,
+            height: h * 0.5,
+            modal: true
+        });
+
+        // 年度變更時載入對應月份
+        function loadMonths(syr) {
+            $("#SMN").html("");
+            $.ajax({
+                url: '@Url.Action("GetMonths", "TDE0070")',
+                type: 'POST',
+                data: { SYR: syr },
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        $("#SMN").append("<option value='" + data[i].Value + "'>" + data[i].Text + "</option>");
+                    }
+                },
+                error: function () {
+                    // 若失敗則載入預設月份
+                    for (var i = 12; i >= 1; i--) {
+                        var m = i < 10 ? '0' + i : '' + i;
+                        $("#SMN").append("<option value='" + m + "'>" + m + "</option>");
+                    }
+                }
+            });
+        }
+
+        // 開啟編輯 Dialog (CCDMCNT)
+        function openEditDialog(syr, smn, city) {
+            $("#editFrame").attr("src", "@Url.Content("~/TDE0070/Edit")?SYR=" + syr + "&SMN=" + smn + "&CITY=" + encodeURIComponent(city));
+            $("#editDialog").dialog("open");
+        }
+
+        // 關閉編輯 Dialog
+        function closeEditDialog() {
+            $("#editDialog").dialog("close");
+            refreshCurrentTab();
+        }
+
+        // 開啟編輯 Dialog2 (CCEMCNT)
+        function openEditDialog2(syr, smn, city) {
+            $("#editFrame2").attr("src", "@Url.Content("~/TDE0070/Edit2")?SYR=" + syr + "&SMN=" + smn + "&CITY=" + encodeURIComponent(city));
+            $("#editDialog2").dialog("open");
+        }
+
+        // 關閉編輯 Dialog2
+        function closeEditDialog2() {
+            $("#editDialog2").dialog("close");
+            refreshCurrentTab();
+        }
+
+        // 重新整理當前頁籤
+        function refreshCurrentTab() {
+            var activeTab = $('.nav-tabs button.active').attr('data-bs-target').replace('#tab', '');
+            loadIframe(activeTab);
+        }
+
+        // 頁籤切換時載入對應 iframe
+        $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+        // 樣式切換 logic
+        
+        
+
+            var target = $(e.target).attr("data-bs-target");
+            var tabNo = target.replace('#tab', '');
+            var iframe = $('#iframe' + tabNo);
+
+            // 如果 iframe 尚未載入，則載入
+            if (!iframe.attr('src') || iframe.attr('src') === '') {
+                loadIframe(tabNo);
+            }
+        });
+
+        function loadIframe(tabNo) {
+            var url = '@Url.Content("~/TDE0070/Tab")';
+            url += '?tab=' + tabNo;
+            url += '&SYR=' + encodeURIComponent($('#SYR').val());
+            url += '&SMN=' + encodeURIComponent($('#SMN').val());
+            url += '&_t=' + new Date().getTime();
+
+            $('#iframe' + tabNo).attr('src', url);
+        }
+
+        function searchData() {
+            // 取得當前頁籤
+            var activeTab = $('.nav-tabs button.active').attr('data-bs-target').replace('#tab', '');
+            loadIframe(activeTab);
+        }
+
+        // 3.3.4：匯出 Excel（直接導向下載，不需另開視窗）
+        function exportExcel() {
+            var syr = $('#SYR').val();
+            var smn = $('#SMN').val();
+            if (!syr || !smn) {
+                alert('請先輸入年度與月份，再按「匯出 Excel」。');
+                return;
+            }
+            location.href = '@Url.Action("ExportExcel", "TDE0070")'
+                + '?SYR=' + encodeURIComponent(syr) + '&SMN=' + encodeURIComponent(smn);
+        }
+
+        // 批次鎖定
+        function lockAll() {
+            var syr = $('#SYR').val();
+            var smn = $('#SMN').val();
+            if (!confirm('確定要鎖定 ' + syr + '年' + smn + '月 所有縣市的資料?')) {
+                return;
+            }
+            $.ajax({
+                url: '@Url.Action("LockAll", "TDE0070")',
+                type: 'POST',
+                data: { SYR: syr, SMN: smn },
+                success: function (result) {
+                    alert(result.message);
+                    if (result.success) {
+                        refreshCurrentTab();
+                    }
+                },
+                error: function () {
+                    alert('批次鎖定失敗');
+                }
+            });
+        }
+
+        // 批次解除鎖定
+        function unlockAll() {
+            var syr = $('#SYR').val();
+            var smn = $('#SMN').val();
+            if (!confirm('確定要解除鎖定 ' + syr + '年' + smn + '月 所有縣市的資料?')) {
+                return;
+            }
+            $.ajax({
+                url: '@Url.Action("UnlockAll", "TDE0070")',
+                type: 'POST',
+                data: { SYR: syr, SMN: smn },
+                success: function (result) {
+                    alert(result.message);
+                    if (result.success) {
+                        refreshCurrentTab();
+                    }
+                },
+                error: function () {
+                    alert('批次解除鎖定失敗');
+                }
+            });
+        }
+
+        // 單筆鎖定
+        function lockRow(syr, smn, city) {
+            if (!confirm('確定要鎖定此筆資料?')) {
+                return;
+            }
+            $.ajax({
+                url: '@Url.Action("Lock", "TDE0070")',
+                type: 'POST',
+                data: { SYR: syr, SMN: smn, CITY: city },
+                success: function (result) {
+                    alert(result.message);
+                    if (result.success) {
+                        refreshCurrentTab();
+                    }
+                },
+                error: function () {
+                    alert('鎖定失敗');
+                }
+            });
+        }
+
+        // 單筆解除鎖定
+        function unlockRow(syr, smn, city) {
+            if (!confirm('確定要解除鎖定此筆資料?')) {
+                return;
+            }
+            $.ajax({
+                url: '@Url.Action("Unlock", "TDE0070")',
+                type: 'POST',
+                data: { SYR: syr, SMN: smn, CITY: city },
+                success: function (result) {
+                    alert(result.message);
+                    if (result.success) {
+                        refreshCurrentTab();
+                    }
+                },
+                error: function () {
+                    alert('解除鎖定失敗');
+                }
+            });
+        }
+    </script>
+}

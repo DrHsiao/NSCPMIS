@@ -1,0 +1,216 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJEModel
+@{ ViewBag.Title = "工作計劃維護 [1.1.1]";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            工作計劃維護 [1.1.1]
+            <small>@Model.PJMFORM.PJ_NAME</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i>
+                <a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")PJE0010">工作計劃維護</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                編輯 [1.1.1]@Model.PID
+            </li>
+        </ol>
+    </div>
+</div>
+@using(Html.BeginForm("", "PJE0010", FormMethod.Post, new { id = "mainForm", data_toggle = "validator", role = "form" })) {
+
+
+    <button name="action" type="submit" value="Save" class="btn btn-warning btn-lg">儲存</button>
+    if(Model.PID != 0) {
+        <button formnovalidate class="btn btn-danger btn-lg" onclick="return confirmDel()" name="action" type="submit" value="Del" id="delbtn">
+            刪除
+        </button>
+        <script>
+            
+                function confirmDel() {
+                    if (confirm("確定要刪除這筆資料嗎？")) {
+                        return true; // 繼續提交
+                    } else {
+                        return false; // 中止提交
+                    }
+                }
+            
+            $('form').on('submit', function (e) {
+
+                if ($(e.originalEvent.submitter).is('[formnovalidate]')) {
+                    e.preventDefault(); // 停止預設的驗證行為
+                    //this.submit(); // 強制提交表單
+                    // 移除可能已經存在的相同 name 的 input
+                    $('input[id="delbtn"]').remove();
+
+                    // 新增一個隱藏 input，帶上想要的 name 和 value
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'action',
+                        value: 'Del'
+                    }).appendTo('#mainForm');
+
+                    // 手動提交表單
+                    this.submit();
+                }
+            });
+        </script>
+    }
+    <a href="@Url.Content("~/")PJE0010?page=@Model.page" class="btn btn-secondary btn-lg">返回列表</a>
+
+
+
+    <input type="hidden" name="page" id="page" value="@Model.page" />
+    <input type="hidden" name="PID" id="PID" value="@Model.PID" />
+    <input type="hidden" name="ANPID" id="ANPID" value="@Model.ANPID" />
+
+    <br />
+    <br />
+
+
+    <div class="card border-primary mb-3">
+        <div class="card-header bg-primary text-white">內容</div>
+        <table class="table">
+            <tr>
+                <td>
+                    <div class="form-group has-feedback">
+
+                        <div class="input-group">
+                            <span class="input-group-text">起始年度</span>
+                            <select class="form-select" id="SYR" name="SYR" placeholder="年度" value="@Model.PJMFORM.SYR" required>
+                                @{int syear;
+                                    if(string.IsNullOrEmpty(Model.PJMFORM.SYR)) {
+
+                                        syear = DateTime.Now.Year - 1911;
+                                    } else {
+                                        syear = Convert.ToInt16(Model.PJMFORM.SYR);
+                                    }
+                                }
+                                @for(int i = (syear - 10); i <= (syear + 10); i++) {
+                                    if(Model.PJMFORM.SYR == Convert.ToString(i)) {
+                                        <option selected value="@i">@i</option>
+                                    } else {
+                                        <option value="@i">@i</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group has-feedback">
+                        <div class="input-group">
+                            <span class="input-group-text">終止年度</span>
+                            <select class="form-select" id="END_SYR" name="END_SYR" required>
+                                @{
+                                    if(string.IsNullOrEmpty(Model.PJMFORM.END_SYR)) {
+
+                                        syear = DateTime.Now.Year - 1911;
+                                    } else {
+                                        syear = Convert.ToInt16(Model.PJMFORM.END_SYR);
+                                    }
+                                }
+                                @for(int i = (syear - 10); i <= (syear + 10); i++) {
+                                    if(Model.PJMFORM.END_SYR == Convert.ToString(i)) {
+                                        <option selected value="@i">@i</option>
+                                    } else {
+                                        <option value="@i">@i</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group has-feedback">
+                        <div class="input-group">
+                            <span class="input-group-text">計畫名稱</span>
+                            <input type="text" class="form-control" id="PJ_NAME" name="PJ_NAME" placeholder="名稱" value="@Model.PJMFORM.PJ_NAME" required />
+
+                        </div>
+                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group has-feedback">
+
+                        <div class="input-group">
+                            <span class="input-group-text">工作計畫編號</span>
+                            <input type="text" class="form-control" id="WK_CODE" name="WK_CODE" placeholder="編號" value="@Model.PJMFORM.WK_CODE" required>
+                        </div>
+                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group has-feedback">
+
+                        <div class="input-group">
+                            <span class="input-group-text">年度預算(元)</span>
+                            <input type="text" class="form-control" id="PJ_FUND" name="PJ_FUND" placeholder="預算(元)" value="@Model.PJMFORM.PJ_FUND" required>
+                        </div>
+                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group has-feedback">
+
+                        <div class="input-group">
+                            <span class="input-group-text">經管單位</span>
+                            <input type="text" class="form-control" id="password" name="dept" disabled placeholder="單位" value="@WCals.Helpers.WebSiteHelper.getDeptName(WCals.Helpers.WebSiteHelper.getUserDept())" required>
+                        </div>
+                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group has-feedback">
+
+                        <div class="input-group">
+                            <span class="input-group-text">經管人員</span>
+                            <input type="text" class="form-control" id="user" disabled placeholder="人員" value="@WCals.Helpers.WebSiteHelper.getUserName()" required>
+                        </div>
+                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+
+
+
+    </div>
+
+
+
+
+
+}

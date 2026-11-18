@@ -1,0 +1,298 @@
+﻿@model WCals.ViewModels.NewModels.TDE0040Model
+@{
+    Layout = null;
+    var listData = ViewBag.ListData as System.Data.DataTable;
+    var syrList = ViewBag.SyrList as System.Data.DataTable;
+    var mscdData = ViewBag.MscdData as System.Data.DataTable;
+    var selectedSyr = ViewBag.SelectedSyr as string;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>辦理情形及施工進度</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <style>
+        html, body { height: 100%; margin: 0; padding: 0; }
+        body { padding: 10px; box-sizing: border-box; font-size: 14px; }
+        .form-group { margin-bottom: 10px; }
+        .input { width: 100%; }
+        .alert { margin-top: 10px; }
+        .table th { text-align: center; background-color: #f5f5f5; white-space: nowrap; }
+        .table td { vertical-align: middle !important; white-space: nowrap; }
+        .text-right { text-align: right; }
+   .text-center { text-align: center; }
+     .table-scroll-wrapper {
+       overflow-x: auto;
+overflow-y: auto;
+     max-height: 400px;
+          border: 1px solid #ddd;
+        }
+        .table-scroll-wrapper table {
+            min-width: 2000px;
+        }
+        .table-scroll-wrapper2 table {
+   min-width: 2500px;
+        }
+        .syr-select {
+      display: inline-block;
+   margin-left: 10px;
+     }
+  
+        /* 表格框線與排版美化 */
+        .table-bordered { border: 0 !important; }
+        .table-bordered th, .table-bordered td { border: 0 !important; border-bottom: 1px solid #e2e8f0 !important; }
+        .table > thead > tr > th { 
+            border-bottom: 2px solid #337ab7 !important; 
+            background-color: #f8fafc; 
+            color: #334155; 
+        }
+        .table > tbody > tr:last-child > td { border-bottom: 0 !important; }
+</style>
+</head>
+<body>
+    <input type="hidden" id="hidTD_CODE" value="@Model.TD_CODE" />
+    
+    <!-- 訊息顯示區 -->
+    <div id="messageArea"></div>
+
+    @* 3.1.4rev：業主指示此框內容多餘，整區移除（原「計畫經費需求」表，含 TID/PID/DA_CODE/O_TID 等內部欄位）。
+       ViewBag.ListData 仍由 controller 提供，未來若要復原可回溯 git 此檔。 *@
+
+    <!-- 分月進度列表 -->
+<div class="card shadow-sm border-0 mb-4">
+   <div class="card-header bg-primary text-white fw-bold">
+     <strong>分月進度</strong>
+   <span class="syr-select">
+        <select id="syrSelect" class="form-control" style="display:inline-block; width:auto;">
+       @if (syrList != null && syrList.Rows.Count > 0)
+    {
+          foreach (System.Data.DataRow row in syrList.Rows)
+           {
+          var syr = row["SYR"].ToString();
+      <option value="@syr" @(syr == selectedSyr ? "selected" : "")>@syr 年度</option>
+ }
+              }
+   </select>
+            </span>
+        </div>
+        <div class="card-body">
+        <div class="table-scroll-wrapper table-scroll-wrapper2">
+    <table class="table table-striped table-hover" id="mscdTable">
+     <thead>
+        <tr>
+       <th>功能</th>
+     <th>年度</th>
+        <th>月份</th>
+             <th>估驗未撥金額</th>
+     <th>原始預定支用數</th>
+     <th>總累計預定進度</th>
+       <th>總累計實際進度</th>
+        <th>年度累計預定進度</th>
+     <th>年度累計實際進度</th>
+     <th>當月預定進度</th>
+    <th>當月累計進度</th>
+    <th>中央款累計分配數</th>
+            <th>中央款累計實際支用數</th>
+           <th>中央款累計應付未付數</th>
+     <th>節餘數</th>
+       <th>作業計畫分配數</th>
+         <th>當月實際支用數</th>
+              <th>年度累計預定支用</th>
+ <th>年度累計實際支用</th>
+               <th>總累計預定支用</th>
+           <th>總累計實際支用</th>
+          <th>箱涵設計長(m)</th>
+         <th>累積箱涵施作長度(m)</th>
+      <th>執行情形說明</th>
+     <th>落後原因</th>
+   <th>解決方法</th>
+             <th>預計解決期限</th>
+             </tr>
+      </thead>
+               <tbody id="mscdTableBody">
+    @if (mscdData != null && mscdData.Rows.Count > 0)
+{
+            foreach (System.Data.DataRow row in mscdData.Rows)
+      {
+    var id = row["ID"] != DBNull.Value ? row["ID"].ToString() : "";
+    var syr = row["SYR"] != DBNull.Value ? row["SYR"].ToString() : "";
+        var smn = row["SMN"] != DBNull.Value ? row["SMN"].ToString() : "";
+    var eccUpayFee = row["ECC_UPAY_FEE"] != DBNull.Value ? Convert.ToDecimal(row["ECC_UPAY_FEE"]).ToString("N0") : "0";
+             var orgSumPreSchd = row["ORG_SUM_PRE_SCHD"] != DBNull.Value ? Convert.ToDecimal(row["ORG_SUM_PRE_SCHD"]).ToString("N2") : "0";
+         var preSchd = row["PRE_SCHD"] != DBNull.Value ? Convert.ToDecimal(row["PRE_SCHD"]).ToString("N2") : "0";
+             var relSchd = row["REL_SCHD"] != DBNull.Value ? Convert.ToDecimal(row["REL_SCHD"]).ToString("N2") : "0";
+      var preCost = row["PRE_COST"] != DBNull.Value ? Convert.ToDecimal(row["PRE_COST"]).ToString("N0") : "0";
+    var relCost = row["REL_COST"] != DBNull.Value ? Convert.ToDecimal(row["REL_COST"]).ToString("N0") : "0";
+         var ctPreCost = row["CT_PRE_COST"] != DBNull.Value ? Convert.ToDecimal(row["CT_PRE_COST"]).ToString("N0") : "0";
+      var rvPreCost = row["RV_PRE_COST"] != DBNull.Value ? Convert.ToDecimal(row["RV_PRE_COST"]).ToString("N0") : "0";
+   var exectDesc = row["EXECT_DESC"] != DBNull.Value ? row["EXECT_DESC"].ToString() : "";
+           var delayResn = row["DELAY_RESN"] != DBNull.Value ? row["DELAY_RESN"].ToString() : "";
+            var reslvMthd = row["RESLV_MTHD"] != DBNull.Value ? row["RESLV_MTHD"].ToString() : "";
+       var reslvLmtDt = row["RESLV_LMT_DT"] != DBNull.Value ? row["RESLV_LMT_DT"].ToString() : "";
+        var lPlnCost = row["L_PLN_COST"] != DBNull.Value ? Convert.ToDecimal(row["L_PLN_COST"]).ToString("N0") : "0";
+      var lRelCost = row["L_REL_COST"] != DBNull.Value ? Convert.ToDecimal(row["L_REL_COST"]).ToString("N0") : "0";
+         var lUnpayCost = row["L_UNPAY_COST"] != DBNull.Value ? Convert.ToDecimal(row["L_UNPAY_COST"]).ToString("N0") : "0";
+      var saveFee = row["SAVE_FEE"] != DBNull.Value ? Convert.ToDecimal(row["SAVE_FEE"]).ToString("N0") : "0";
+  var preConLen = row["PRE_CON_LEN"] != DBNull.Value ? Convert.ToDecimal(row["PRE_CON_LEN"]).ToString("N2") : "";
+          var relConLen = row["REL_CON_LEN"] != DBNull.Value ? Convert.ToDecimal(row["REL_CON_LEN"]).ToString("N2") : "";
+              var preConFlood = row["PRE_CON_FLOOD"] != DBNull.Value ? Convert.ToDecimal(row["PRE_CON_FLOOD"]).ToString("N2") : "";
+var relConFlood = row["REL_CON_FLOOD"] != DBNull.Value ? Convert.ToDecimal(row["REL_CON_FLOOD"]).ToString("N2") : "";
+
+          <tr>
+    <td class="text-center">
+    <button type="button" class="btn btn-warning btn-sm" onclick="top.editMscd('@id');">修改</button>
+            </td>
+         <td class="text-center">@syr</td>
+      <td class="text-center">@smn</td>
+       <td class="text-right">@eccUpayFee</td>
+        <td class="text-right">@orgSumPreSchd</td>
+          <td class="text-right">@preSchd</td>
+   <td class="text-right">@relSchd</td>
+            <td class="text-right">@preCost</td>
+            <td class="text-right">@relCost</td>
+        <td class="text-right">@ctPreCost</td>
+          <td class="text-right">@rvPreCost</td>
+         <td class="text-right">@lPlnCost</td>
+             <td class="text-right">@lRelCost</td>
+ <td class="text-right">@lUnpayCost</td>
+           <td class="text-right">@saveFee</td>
+  <td class="text-right">@preCost</td>
+         <td class="text-right">@relCost</td>
+         <td class="text-right">@ctPreCost</td>
+           <td class="text-right">@rvPreCost</td>
+       <td class="text-right">@preSchd</td>
+        <td class="text-right">@relSchd</td>
+          <td class="text-right">@preConLen</td>
+      <td class="text-right">@relConLen</td>
+    <td>@exectDesc</td>
+               <td>@delayResn</td>
+                  <td>@reslvMthd</td>
+  <td class="text-center">@reslvLmtDt</td>
+    </tr>
+          }
+      }
+            else
+    {
+        <tr>
+      <td colspan="27" class="text-center">無資料</td>
+        </tr>
+    }
+    </tbody>
+     </table>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script>
+        var TD_CODE = '@Model.TD_CODE';
+
+     // 顯示訊息
+        function showMessage(msg, isSuccess) {
+            var cls = isSuccess ? 'alert-success' : 'alert-danger';
+       $('#messageArea').html('<div class="alert ' + cls + ' alert-dismissible">' + msg +
+            '<button type="button" class="close" onclick="$(this).parent().hide();">&times;</button></div>');
+            if (isSuccess) {
+       setTimeout(function () { $('#messageArea .alert').fadeOut(); }, 3000);
+         }
+        }
+
+        // 切換年度查詢
+        function loadMscdBySyr(syr) {
+       $.ajax({
+    url: '@Url.Action("PAGE5_2_GetMscdBySyr", "TDE0045")',
+        type: 'POST',
+           data: { TD_CODE: TD_CODE, SYR: syr },
+    success: function (result) {
+ if (result.success) {
+   renderMscdTable(result.data);
+           } else {
+        showMessage('查詢失敗：' + result.message, false);
+}
+      },
+     error: function () {
+          showMessage('查詢失敗：網路錯誤', false);
+              }
+  });
+        }
+
+        // 渲染分月進度表格
+function renderMscdTable(data) {
+var tbody = $('#mscdTableBody');
+       tbody.empty();
+
+            if (data && data.length > 0) {
+      for (var i = 0; i < data.length; i++) {
+       var row = data[i];
+      var tr = '<tr>' +
+               '<td class="text-center"><button type="button" class="btn btn-warning btn-sm" onclick="editMscd(\'' + row.ID + '\');">修改</button></td>' +
+            '<td class="text-center">' + (row.SYR || '') + '</td>' +
+            '<td class="text-center">' + (row.SMN || '') + '</td>' +
+             '<td class="text-right">' + formatNumber(row.ECC_UPAY_FEE) + '</td>' +
+   '<td class="text-right">' + formatDecimal(row.ORG_SUM_PRE_SCHD) + '</td>' +
+    '<td class="text-right">' + formatDecimal(row.PRE_SCHD) + '</td>' +
+             '<td class="text-right">' + formatDecimal(row.REL_SCHD) + '</td>' +
+'<td class="text-right">' + formatNumber(row.PRE_COST) + '</td>' +
+  '<td class="text-right">' + formatNumber(row.REL_COST) + '</td>' +
+            '<td class="text-right">' + formatNumber(row.CT_PRE_COST) + '</td>' +
+         '<td class="text-right">' + formatNumber(row.RV_PRE_COST) + '</td>' +
+       '<td class="text-right">' + formatNumber(row.L_PLN_COST) + '</td>' +
+       '<td class="text-right">' + formatNumber(row.L_REL_COST) + '</td>' +
+             '<td class="text-right">' + formatNumber(row.L_UNPAY_COST) + '</td>' +
+      '<td class="text-right">' + formatNumber(row.SAVE_FEE) + '</td>' +
+  '<td class="text-right">' + formatNumber(row.PRE_COST) + '</td>' +
+ '<td class="text-right">' + formatNumber(row.REL_COST) + '</td>' +
+     '<td class="text-right">' + formatNumber(row.CT_PRE_COST) + '</td>' +
+     '<td class="text-right">' + formatNumber(row.RV_PRE_COST) + '</td>' +
+         '<td class="text-right">' + formatDecimal(row.PRE_SCHD) + '</td>' +
+  '<td class="text-right">' + formatDecimal(row.REL_SCHD) + '</td>' +
+              '<td class="text-right">' + formatDecimal(row.PRE_CON_LEN) + '</td>' +
+    '<td class="text-right">' + formatDecimal(row.REL_CON_LEN) + '</td>' +
+        '<td>' + (row.EXECT_DESC || '') + '</td>' +
+       '<td>' + (row.DELAY_RESN || '') + '</td>' +
+        '<td>' + (row.RESLV_MTHD || '') + '</td>' +
+     '<td class="text-center">' + (row.RESLV_LMT_DT || '') + '</td>' +
+         '</tr>';
+      tbody.append(tr);
+    }
+            } else {
+     tbody.append('<tr><td colspan="27" class="text-center">無資料</td></tr>');
+            }
+        }
+
+        // 數字格式化（整數）
+        function formatNumber(val) {
+     if (val === null || val === undefined || val === '') return '0';
+       return parseFloat(val).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+    // 數字格式化（小數）
+     function formatDecimal(val) {
+          if (val === null || val === undefined || val === '') return '';
+     return parseFloat(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        
+
+        $(document).ready(function () {
+            
+
+            // 年度切換事件
+            $('#syrSelect').change(function () {
+                var syr = $(this).val();
+                loadMscdBySyr(syr);
+            });
+        });
+</script>
+</body>
+</html>
+

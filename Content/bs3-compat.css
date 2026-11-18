@@ -1,0 +1,287 @@
+/*!
+ * BS3 相容層 —— 供 Layout=null 的獨立頁（iframe / popup）使用
+ *
+ * 這些頁面不會載入 _Layout2_v2，因此拿不到 layout 內的相容層 CSS 與裝飾器 JS。
+ * 注意：獨立頁沒有裝飾器 JS，ul.nav-tabs 不會被補上 .card-header-tabs，
+ *       所以選擇器一律以 .card-header .nav-tabs 為準（同時相容有 card-header-tabs 的情況）。
+ *
+ * 內容對應 _Layout2_v2 的 BS3 相容層，寫法參考 CPC 版已驗收的做法。
+ */
+
+/* validator 會動態塞 glyphicon-ok / glyphicon-remove，需要 BS3 圖示字型（同目錄的 glyphicons.css 提供 @font-face） */
+@import url("glyphicons.css");
+
+:root {
+    --bs3-primary: #337ab7;
+    --bs3-success: #5cb85c;
+    --bs3-info: #5bc0de;
+    --bs3-warning: #f0ad4e;
+    --bs3-danger: #d9534f;
+}
+
+/* === 按鈕：BS3 的 .btn 有 nowrap，BS5 移除了 → 文字會被折行 === */
+.btn {
+    white-space: nowrap;
+}
+
+/* === 系統主色（BS3 主題藍 #337ab7）===
+   獨立頁(Layout=null，如 SGE0000/STEP01~08)不載入 _Layout2_v2，
+   會落回 BS5 原生的亮藍 #0d6efd，與系統其他頁不一致(card-header 藍色「怪怪的」)。
+   此處補齊與 _Layout2_v2 相同的主色覆蓋，讓獨立頁配色一致。 */
+.card-header.bg-primary {
+    background-color: var(--bs3-primary) !important;
+    color: #fff !important;
+    border-bottom: 1px solid #ddd;
+}
+
+.bg-primary {
+    background-color: var(--bs3-primary) !important;
+}
+
+.btn-primary {
+    background-color: var(--bs3-primary);
+    border-color: #2e6da4;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #286090;
+    border-color: #204d74;
+}
+
+.btn-success {
+    background-color: var(--bs3-success);
+    border-color: #4cae4c;
+}
+
+.btn-warning {
+    background-color: var(--bs3-warning);
+    border-color: #eea236;
+    color: #fff;
+}
+
+.btn-warning:hover,
+.btn-warning:focus {
+    background-color: #ed9c28;
+    border-color: #d58512;
+    color: #fff;
+}
+
+.btn-danger {
+    background-color: var(--bs3-danger);
+    border-color: #d43f3a;
+}
+
+.btn-info {
+    background-color: var(--bs3-info);
+    border-color: #46b8da;
+}
+
+.text-primary {
+    color: var(--bs3-primary) !important;
+}
+
+/* === form-inline：BS3/BS4 的 class，BS5 已完全移除 ===
+       沒有這段的話，原本水平排列的查詢列會變成 display:block，
+       select/input 寬度被壓成 20~30px 甚至 0（例：PJE0030「轉入核定提案」的篩選條件） */
+/* === bootstrap-select v1.13.14（BS3/BS4 版）在 BS5 下的外觀補償 ===
+   ⚠️ 此外掛「不可」升級到 v1.14.0-beta3：實測 beta 版在 SGE0000/STEP01 只會產出空的
+      <ul class="dropdown-menu inner">（li = 0），下拉點開後沒有任何選項可選。
+      1.13.14 於同一頁可正確渲染 16 筆選項，故維持 1.13.14，僅用 CSS 補足 BS5 沒有的 class。 */
+.bootstrap-select > .btn-default {
+    color: #212529;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+}
+
+.bootstrap-select > .btn-default:hover,
+.bootstrap-select > .btn-default:focus {
+    background-color: #f8f9fa;
+    border-color: #86b7fe;
+}
+
+/* BS4 起已移除 .input-group-btn，1.13.14 仍會加在包裝層 */
+.bootstrap-select.input-group-btn {
+    display: inline-block;
+    float: none;
+}
+
+/* 讓觸發鈕高度與 BS5 表單控制項一致 */
+.bootstrap-select > .dropdown-toggle {
+    padding: .375rem .75rem;
+    line-height: 1.5;
+    border-radius: .375rem;
+}
+
+/* 註：BS3 的 .form-inline 本身並非 flex 容器（那是 BS4 的做法），
+   它只把內部控制項設成 inline-block + width:auto。
+   這裡若寫 display:flex，會破壞仍用 <table> 排版的舊表單（例：PJE0030 RefBatchFrame）。 */
+.form-inline .form-control,
+.form-inline .form-select {
+    display: inline-block;
+    width: auto;
+    max-width: 360px; /* width:auto 會讓 select 依最長選項撐開（曾達 682px），把同列的查詢/返回鈕擠出畫面 */
+    vertical-align: middle;
+}
+
+.form-inline label,
+.form-inline .form-check {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+/* === panel with-nav-tabs 外觀：header 不留 padding，由 ul 自行控制間距，
+       頁籤才能貼齊底緣並與 card-body 連成一體（CPC 版做法） === */
+.card > .card-header:has(.nav-tabs) {
+    padding: 0;
+    border-bottom: 0;
+}
+
+.card-header .nav-tabs,
+.card-header .nav-tabs.card-header-tabs {
+    margin: 0;
+    padding: .5rem 1rem 0;
+    border-bottom: 0;
+}
+
+/* 深色 header 上的頁籤配色 */
+.card-header .nav-tabs .nav-link:not(.active) {
+    color: #fff !important;
+    opacity: .85;
+    border-color: transparent;
+}
+
+.card-header .nav-tabs .nav-link:not(.active):hover,
+.card-header .nav-tabs .nav-link:not(.active):focus {
+    opacity: 1;
+    color: #fff !important;
+    background-color: rgba(255,255,255,.15);
+    border-color: transparent;
+}
+
+.card-header .nav-tabs .nav-link.active {
+    color: #337ab7 !important;
+    font-weight: bold;
+    background-color: #fff;
+    border-color: #ddd #ddd #fff;
+}
+
+/* 非 card-header 內的一般頁籤：接軌系統主色 */
+.nav-tabs:not(.card-header-tabs) .nav-link {
+    color: #337ab7;
+}
+
+.nav-tabs:not(.card-header-tabs) .nav-link:hover,
+.nav-tabs:not(.card-header-tabs) .nav-link:focus {
+    color: #286090;
+}
+
+.nav-tabs:not(.card-header-tabs) .nav-link.active {
+    color: #495057;
+    font-weight: 600;
+}
+
+/* === 分頁：PagedList.Mvc 產 BS3 標記，配色接軌主色 === */
+.pagination {
+    --bs-pagination-color: #337ab7;
+    --bs-pagination-hover-color: #286090;
+    --bs-pagination-focus-color: #286090;
+    --bs-pagination-active-bg: #337ab7;
+    --bs-pagination-active-border-color: #337ab7;
+    margin: 10px 0;
+    flex-wrap: wrap;
+}
+
+/* === 表單驗證：Scripts/validator.min.js 是 Validator v0.11.9 for Bootstrap 3，
+       只會加 has-error / has-success / help-block，BS5 無對應樣式 === */
+.has-error .form-control,
+.has-error .form-select {
+    border-color: #a94442;
+}
+
+.has-error .form-control:focus,
+.has-error .form-select:focus {
+    border-color: #843534;
+    box-shadow: 0 0 0 .2rem rgba(169,68,66,.25);
+}
+
+.has-error label,
+.has-error .col-form-label,
+.has-error .control-label,
+.has-error .help-block {
+    color: #a94442;
+}
+
+.has-success .form-control,
+.has-success .form-select {
+    border-color: #3c763d;
+}
+
+.has-success .form-control:focus,
+.has-success .form-select:focus {
+    border-color: #2b542c;
+    box-shadow: 0 0 0 .2rem rgba(60,118,61,.25);
+}
+
+.has-success label,
+.has-success .col-form-label,
+.has-success .control-label,
+.has-success .help-block {
+    color: #3c763d;
+}
+
+/* BS3 validator 的圖示回饋：view 內是空的 <span class="glyphicon form-control-feedback">，
+   由 validator 動態加 glyphicon-ok / glyphicon-remove。BS5 已移除 .has-feedback /
+   .form-control-feedback 的定位樣式，不補的話圖示會跑版或不顯示。 */
+.has-feedback {
+    position: relative;
+}
+
+.has-feedback .form-control,
+.has-feedback .form-select {
+    padding-right: 42.5px;
+}
+
+.form-control-feedback {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    display: block;
+    width: 38px;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    pointer-events: none;
+}
+
+.has-feedback label ~ .form-control-feedback {
+    top: 25px;
+}
+
+.has-error .form-control-feedback {
+    color: #a94442;
+}
+
+.has-success .form-control-feedback {
+    color: #3c763d;
+}
+
+/* BS3 的 .help-block 相當於 BS5 的 .form-text；BS5 也移除了 .form-group 的間距 */
+.help-block {
+    display: block;
+    margin-top: .25rem;
+    margin-bottom: .5rem;
+    font-size: .875em;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+/* === badge：BS3 的 .badge 自帶灰底，BS5 需搭配 bg-* === */
+.btn > .badge:not([class*="bg-"]):not([class*="text-bg-"]) {
+    background-color: #f8f9fa;
+    color: #212529;
+}

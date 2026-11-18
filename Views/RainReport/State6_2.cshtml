@@ -1,0 +1,107 @@
+﻿@model IEnumerable<WCals.Models.CMBASEModels.SiteCityViewModel>
+
+@{
+    ViewBag.Title = "(雨水)例行性管考報表：B-1.修正預算作業表";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head{
+    <link rel="stylesheet" href="~/Content/views/report.css">
+
+    <style>
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            (雨水)例行性管考報表[0.1.2]
+
+            <small> </small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/Home")"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                (雨水)例行性管考報表
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                B-1.修正預算作業表
+            </li>
+        </ol>
+    </div>
+</div>
+
+<form method="post" action="@Url.Action("ReportPrint6_NEW")" class="my-text" id="dynamicForm">
+    
+    報表類型:
+    <select id="choose">
+        <option value="Index" @{if (ViewBag.State == "Index") { <text> selected</text> }}>I-1.雨水例行性管考報表</option>
+        <option value="2_2" @{if (ViewBag.State == "2_2") { <text> selected</text> }}>A-2.細項執行情形表</option>
+        <option value="4_2" @{if (ViewBag.State == "4_2") { <text> selected</text> }}>A-4.跨年度細項執行情形表</option>
+        <option value="6_2" @{if (ViewBag.State == "6_2") { <text> selected</text> }}>B-1.修正預算作業表</option>
+        <option value="9_2" @{if (ViewBag.State == "9_2") { <text> selected</text> }}>E-1.功能細項執行表(自訂欄位)</option>
+        <option value="10_2" @{if (ViewBag.State == "10_2") { <text> selected</text> }}>F-1.相關計畫年度補助經費表</option>
+        <option value="12_2" @{if (ViewBag.State == "12_2") { <text> selected</text> }}>H-1.在建工程抽查/查核/督導統計表</option>
+    </select>
+    <br />
+
+    選擇年度:
+    <select id="Year" name="SYR" required>
+        <option value="" disabled selected>請選擇</option>
+
+        @foreach (var item in ViewBag.year)
+        {
+            <option>@item.SYR</option>
+        }
+    </select>
+    <br />
+
+    選擇計畫:
+    <select id="Value" name="PID" required>
+        <option>------</option>
+    </select>
+    <br />
+
+    期數:
+    <select id="Period" name="period">
+        <option>------</option>
+    </select>
+    <br />
+
+    <div id="Subject"></div>
+
+    組別:
+    <input type="radio" name="Choose" value="B" />署內
+    <input type="radio" name="Choose" value="G" />下水道永續營運組
+    <input type="radio" name="Choose" value="F" />分署
+    <input type="radio" name="Choose" value="ALL" checked />所有組別設定(含1.1.3未勾選組別之工程)
+    <br />
+    <br />
+
+    <button type="submit"> Excel匯出</button>
+    <button type="submit" name="ods" value="1">ODS匯出</button>
+    @Html.Partial("_ReportMessage")
+</form>
+
+@section scripts {
+    <script type="text/javascript">
+        var periodUrl = '@Url.Action("ChoosePeriod", "Report")';
+        var subjectUrl = '@Url.Action("ChooseSubject", "Report")';
+        var stateUrl = '@Url.Action("ChooseState", "Report")';
+        var orderUrl = '@Url.Action("Orders", "Report")';
+        var currentUser = '@Html.Raw(User.Identity.Name)';
+    </script>
+
+    <script src="~/Scripts/RainReport/State6_2.js" type="text/javascript"></script>
+}

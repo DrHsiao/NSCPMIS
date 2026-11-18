@@ -1,0 +1,754 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0030Model
+@{ ViewBag.Title = "計畫經費管制[1.1.3] ";
+    //Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <style>
+        .select-readonly {
+            pointer-events: none;
+            background-color: #e9ecef; /* 灰掉 */
+        }
+
+        .ui-dialog {
+            z-index: 4000;
+        }
+    </style>
+    <style>
+        /* === BS3 相容層（配色）v2：nav-tabs／分頁／藍色 header 頁籤，接軌系統主色 #337ab7 === */
+        .pagination { --bs-pagination-color: #337ab7; --bs-pagination-hover-color: #286090; --bs-pagination-focus-color: #286090; --bs-pagination-active-bg: #337ab7; --bs-pagination-active-border-color: #337ab7; margin: 10px 0; flex-wrap: wrap; }
+        .nav-tabs:not(.card-header-tabs) .nav-link { color: #337ab7; }
+        .nav-tabs:not(.card-header-tabs) .nav-link:hover, .nav-tabs:not(.card-header-tabs) .nav-link:focus { color: #286090; }
+        .nav-tabs:not(.card-header-tabs) .nav-link.active { color: #495057; font-weight: 600; }
+        .card-header.bg-primary { background-color: #337ab7 !important; color: #fff !important; border-bottom: 1px solid #ddd; padding: 10px 15px; font-weight: bold; }
+        .card-header .card-title { margin: 0; font-size: 1.1rem; }
+        .card-header-tabs { margin-bottom: -11px; border-bottom: none; }
+        .card-header-tabs .nav-item { margin-bottom: 0; }
+        .card-header-tabs .nav-link { border: 1px solid transparent; color: rgba(255,255,255,0.9) !important; margin-right: 2px; padding: 8px 15px; border-radius: 4px 4px 0 0; }
+        .card-header-tabs .nav-link:hover { background-color: rgba(255,255,255,0.15); border-color: transparent; }
+        .card-header-tabs .nav-link.active { background-color: #ffffff !important; color: #337ab7 !important; border-color: #dddddd #dddddd #ffffff !important; font-weight: bold; }
+    </style>
+    <script>
+        /* === BS3 相容層（裝飾器）v2：BS3 標記自動補 BS5 class，舊 view 免改標記 === */
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('ul.nav-tabs > li').forEach(function (li) {
+                li.classList.add('nav-item');
+                var a = li.querySelector(':scope > a');
+                if (!a) return;
+                a.classList.add('nav-link');
+                if (li.classList.contains('active')) { li.classList.remove('active'); a.classList.add('active'); }
+                if (a.getAttribute('data-toggle') === 'tab') { a.setAttribute('data-bs-toggle', 'tab'); a.removeAttribute('data-toggle'); }
+            });
+            document.querySelectorAll('ul.nav-tabs').forEach(function (ul) {
+                if (ul.closest('.card-header')) { ul.classList.add('card-header-tabs'); }
+            });
+            document.querySelectorAll('.tab-pane.in').forEach(function (p) { p.classList.remove('in'); p.classList.add('show'); });
+            document.querySelectorAll('ul.pagination > li').forEach(function (li) {
+                li.classList.add('page-item');
+                var el = li.querySelector(':scope > a, :scope > span');
+                if (el) el.classList.add('page-link');
+            });
+        });
+    </script>
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+<body style="padding:5px;">
+
+    @*@using(Html.BeginForm("", "PJE0030", FormMethod.Post, new { id = "mainForm", data_toggle = "validator", role = "form" })) {*@
+    @using (Html.BeginForm("", "PJE0030", FormMethod.Post, new { id = "mainForm" }))
+    {
+        <button name="action" type="submit" value="CTDMNDS_ADD" id="BranchSave" class="btn btn-warning btn-lg">儲存</button>
+        <button name="action" type="button" class="btn btn-secondary btn-lg" onclick="parent.closeEdit();">返回列表</button>
+        <input type="hidden" name="REF_STAT" id="REF_STAT" value="" />
+        <input type="hidden" name="PID" id="PID" value="@Model.PID" />
+        <input type="hidden" name="TID" value="@Model.TID" />
+        <input type="hidden" name="SEQ_NO" id="SEQ_NO" value="@Model.SEQ_NO" />
+        <div style="height:5px;"></div>
+        <div>
+            <div class="card border-primary mb-3">
+                <div class="card-header bg-primary text-white">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" href="#tab1" aria-controls="tab1" role="tab" data-bs-toggle="tab">新增案件</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" href="#tab2" aria-controls="tab2" role="tab" data-bs-toggle="tab">經費(元)</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="tab1">
+
+
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group has-feedback">
+
+                                        <div class="input-group">
+                                            <span class="input-group-text">工程名稱</span>
+                                            @Html.TextBoxFor(x => x.TDV_TDHCFTS.TD_NAME, new { id = "TD_NAME", @class = "form-control", placeholder = "工程名稱", AutoComplete = "Off", @required = "required" })
+
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-secondary" onclick='refsel()'>引用</button>
+                                            </span>
+
+                                        </div>
+                                        <!-- 修改這裡：加入 style 將圖示往外推 -->
+                                        <span class="glyphicon form-control-feedback" aria-hidden="true" style="right: -25px; z-index: 10;"></span>
+                                        <!-- 避免錯誤訊息被擠到按鈕下面，可以加點上距 -->
+                                        <div class="help-block with-errors" style="margin-top: 5px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group has-feedback">
+
+                                        <div class="input-group">
+                                            <span class="input-group-text">計畫分項內容</span>
+                                            @Html.DropDownListFor(x => x.TDV_TDHCFTS.PJ_CATY_CODE, (SelectList)ViewBag.PJ_CATY_CODE, "請選擇", new { id = "PJ_CATY_CODE", @class = "form-control map", form = "mainForm", @required = "required" })
+
+                                        </div>
+                                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" id="codgen">
+                                <div class="col-md-12">
+                                    <table>
+                                        <tr>
+                                            <td style="padding:5px;">@ViewBag.NO1 - @ViewBag.NO2 - @ViewBag.NO3</td>
+                                            <td style="padding:5px;">
+                                                <input readonly style="width:42px;" class="map form-control" type="text" name="TD_NO" id="NO4" />
+                                            </td>
+                                            <td style="padding:5px;">@Html.DropDownListFor(x => x.CITY, (SelectList)ViewBag.cities, "縣市", new { @class = "form-control map", form = "mainForm", Onchange = "GetTowns(this.value)" })</td>
+                                            <td style="padding:5px;">@Html.DropDownListFor(x => x.TOWN, (SelectList)ViewBag.towns, "鄉鎮", new { @class = "form-control map", form = "mainForm" })</td>
+                                            <td style="padding:5px;">
+                                                @*<input style="width:42px;" class="map form-control" type="text" name="TD_NO" id="NO7" value="1" />*@
+                                                <!--select class="form-control map" id="NO7">
+                                                    <option value="0">業務</option>
+                                                    <option value="1">工程</option>
+                                                    <option value="2">用地</option>
+                                                </select-->
+                                                <input maxlength="1" style="width:42px;" class="map form-control" type="text" name="TD_NO" id="NO7" value="" />
+                                            </td>
+                                            <td style="padding:5px;">
+                                                <input maxlength="2" style="width:42px;" class="map form-control" type="text" name="TD_NO" id="NO8" />
+                                            </td>
+                                            <td style="padding:5px;">
+                                                <input maxlength="2" style="width:42px;" class="map form-control" type="text" name="TD_NO" id="NO9" />
+
+                                            </td>
+                                            <td>
+
+                                                <button type="button" class="btn btn-secondary" data-container="body" data-bs-toggle="popover"
+                                                        id="fk" data-placement="top">
+                                                    編號說明
+                                                </button>
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group has-feedback">
+                                        <div class="input-group">
+                                            <span class="input-group-text">工程編號</span>
+                                            @Html.TextBoxFor(x => x.TDV_TDHCFTS.TD_CODE, new { id = "TD_CODE", @class = "form-control", form = "mainForm", placeholder = "工程編號", @required = "required", @readonly = "readonly" })
+                                        </div>
+                                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <input class="map" type="hidden" name="TD_NO" id="NO1" value="@ViewBag.NO1" />
+                                <input class="map" type="hidden" name="TD_NO" id="NO2" value="@ViewBag.NO2" />
+                                <input class="map" type="hidden" name="TD_NO" id="NO3" value="@ViewBag.NO3" />
+                                <input class="map" type="hidden" name="TD_NO" id="NO5" />
+                                <input class="map" type="hidden" name="TD_NO" id="NO6" />
+
+                                <div class="col-md-6">
+                                    <div class="form-group has-feedback">
+
+                                        <div class="input-group">
+                                            <span class="input-group-text">經費編號</span>
+                                            @Html.TextBoxFor(x => x.TDV_TDHCFTS.FD_CODE, new { id = "FD_CODE", @class = "form-control", form = "mainForm", placeholder = "經費編號", @required = "required", @readonly = "readonly" })
+                                        </div>
+                                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group has-feedback">
+
+                                        <div class="input-group">
+                                            <span class="input-group-text">案件類型</span>
+                                            @Html.DropDownListFor(x => x.TDV_TDHCFTS.CATY_CODE, (SelectList)ViewBag.CATY_COD, "請選擇", new { id = "CATY_CODE", @class = "form-control", form = "mainForm", @required = "required" })
+                                        </div>
+                                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group has-feedback">
+
+                                        <div class="input-group">
+                                            <span class="input-group-text">辦理層級</span>
+                                            @Html.DropDownListFor(x => x.TDV_TDHCFTS.IPJ_CODE, (SelectList)ViewBag.N_IPJ_CODE, "請選擇", new { id = "IPJ_CODE", @class = "form-control", form = "mainForm", @required = "required" })
+                                        </div>
+                                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group has-feedback">
+
+                                        <div class="input-group">
+                                            <span class="input-group-text">工程類別</span>
+                                            @Html.DropDownListFor(x => x.TDV_TDHCFTS.TD_CATY, (SelectList)ViewBag.TD_CATY, "請選擇", new { id = "TD_CATY", @class = "form-control", form = "mainForm", @required = "required" })
+                                        </div>
+                                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group has-feedback">
+
+                                        <div class="input-group">
+                                            <span class="input-group-text">工作類別</span>
+                                            @Html.DropDownListFor(x => x.TDV_TDHCFTS.YR_WORK, (SelectList)ViewBag.YR_WORK, "請選擇", new { id = "YR_WORK", @class = "form-control", form = "mainForm", @required = "required" })
+                                        </div>
+                                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group has-feedback">
+
+                                        <div class="input-group">
+                                            <span class="input-group-text">工程型態(雨水用)</span>
+                                            @Html.DropDownListFor(x => x.TDV_TDHCFTS.EMG_CATY, (SelectList)ViewBag.EMG_CATY, "請選擇", new { id = "EMG_CATY", @class = "form-control", form = "mainForm" })
+                                        </div>
+                                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group has-feedback">
+
+                                        <div class="input-group">
+                                            <span class="input-group-text">執行單位</span>
+                                            @Html.DropDownListFor(x => x.TDV_TDHCFTS.ADV_DP, (SelectList)ViewBag.depts, new { id = "ADV_DP", @class = "form-control", form = "mainForm", Onchange = "GetUsers(this.value)", @required = "required" })
+                                        </div>
+                                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group has-feedback">
+
+                                        <div class="input-group">
+                                            <span class="input-group-text">執行人員</span>
+
+                                            <select name="TDV_TDHCFTS.ADV_UID" id="ADV_UID" class="form-select" required>
+                                                <option value="@Model.TDV_TDHCFTS.ADV_UID">@WCals.Helpers.WebSiteHelper.getUserName(Model.TDV_TDHCFTS.ADV_UID)</option>
+                                            </select>
+                                        </div>
+                                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <table class="table table-condensed">
+                                <tr>
+                                    <td width="1" nowrap align="right">經費納入計算</td>
+                                    <td>
+                                        @if (Convert.ToString(Model.TDV_TDHCFTS.FCAL_FG).ToUpper().Equals("TRUE"))
+                                        {
+                                            <input type="checkbox" name="FCAL_FG" checked />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="FCAL_FG" />
+                                        }
+                                    </td>
+
+                                    <td width="1" nowrap align="right">不納執行件數</td>
+                                    <td>
+                                        @if (Convert.ToString(Model.TDV_TDHCFTS.UCNT_FG).ToUpper().Equals("TRUE"))
+                                        {
+                                            <input type="checkbox" name="UCNT_FG" checked />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="UCNT_FG" />
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="1" nowrap align="right">B署內</td>
+                                    <td>
+                                        @if (Convert.ToString(Model.TDV_TDHCFTS.B_GROUP).ToUpper().Equals("TRUE"))
+                                        {
+                                            <input type="checkbox" name="B_GROUP" id="B_GROUP" checked />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="B_GROUP" id="B_GROUP" />
+                                        }
+
+                                    </td>
+                                    <td width="1" nowrap align="right">F分署</td>
+                                    <td>
+                                        @if (Convert.ToString(Model.TDV_TDHCFTS.F_GROUP).ToUpper().Equals("TRUE"))
+                                        {
+                                            <input type="checkbox" name="F_GROUP" id="F_GROUP" checked />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="F_GROUP" id="F_GROUP" />
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="1" nowrap align="right">下水道永續營運組</td>
+                                    <td>
+                                        @if (Convert.ToString(Model.TDV_TDHCFTS.TD_GROUP).ToUpper().Equals("TRUE"))
+                                        {
+                                            <input type="checkbox" name="TD_GROUP" id="TD_GROUP" checked />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="TD_GROUP" id="TD_GROUP" />
+                                        }
+                                    </td>
+                                    <td width="1" nowrap align="right">BOT案</td>
+                                    <td>
+                                        @if (Model.TDV_TDHCFTS.EXE_TYPE != null)
+                                        {
+                                            if (Model.TDV_TDHCFTS.EXE_TYPE.Equals("02"))
+                                            {
+                                                <input type="checkbox" name="EXE_TYPE" id="EXE_TYPE" checked />
+                                            }
+                                            else
+                                            {
+                                                <input type="checkbox" name="EXE_TYPE" id="EXE_TYPE" />
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="EXE_TYPE" id="EXE_TYPE" />
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+
+                        <script>
+    function refs(id) {
+        $('#REF_STAT').val('1');
+        $.ajax({
+            url: '@Url.Content("~/")PJE0030/RefSelectOne',
+            method: 'post',
+            data: { "tdcode": id },
+            success: function (d) {
+                var p = jQuery.parseJSON(d);
+                $("#UCNT_FG").attr("checked", false);
+                $("#B_GROUP").attr("checked", false);
+                $("#F_GROUP").attr("checked", false);
+                $("#TD_GROUP").attr("checked", false);
+                $("#EXE_TYPE").attr("checked", false);
+
+                if (p[0].UCNT_FG == true) {
+                    $("#UCNT_FG").attr("checked", true);
+                }
+                if (p[0].B_GROUP == true) {
+                    $("#B_GROUP").attr("checked", true);
+                }
+                if (p[0].F_GROUP == true) {
+                    $("#F_GROUP").attr("checked", true);
+                }
+                if (p[0].TD_GROUP == true) {
+                    $("#TD_GROUP").attr("checked", true);
+                }
+                if (p[0].EXE_TYPE == true) {
+                    $("#EXE_TYPE").attr("checked", true);
+                }
+                //alert(p[0].TD_NAME);
+                $("#TD_NAME").val(p[0].TD_NAME);
+                $("#FD_CODE").val(p[0].SIP_TD_CODE);
+                $("#TD_CODE").val(p[0].TD_CODE.replace("-", ""));
+
+                $("#TD_CATY").val(p[0].TD_CATY);
+
+
+                $("#CATY_CODE").val(p[0].CATY_CODE);
+                $("#IPJ_CODE").val(p[0].IPJ_CODE);
+
+
+                $("#YR_WORK").val(p[0].CATY_CODE);
+                $("#EMG_CATY").val(p[0].EMG_CATY);
+                $("#ADV_DP").val(p[0].ADV_DP).change();
+
+
+                setTimeout(function () {
+                    $("#ADV_UID").val(p[0].ADV_UID).change();
+                    //$("#codgen").hide("slow");
+                    $("#mainForm").validator("validate");
+                }, 1000);
+
+                selectCityTown(p);
+                SetNo(p);
+                SetCode(p);
+            }
+        });
+
+    }
+    function refsel() {
+        window.parent.refsel();
+    }
+
+
+                            function selectCityTown(p) {
+                                // 先清空
+                                $('#CITY, #TOWN').val('').removeClass('select-readonly');
+
+                                if (!p[0].TD_CITY || !p[0].TD_CITY.trim()) return; // CITY 沒值就直接返回
+
+                                // 選 CITY
+                                var city_option = $('#CITY option').filter(function () {
+                                    return $(this).text().trim() === p[0].TD_CITY.trim();
+                                });
+
+                                if (city_option.length === 0) return; // 找不到對應 CITY 就返回
+
+                                city_option.prop('selected', true);
+                                $('#CITY').addClass('select-readonly').change();
+
+                                // 選 TOWN（延遲等待選項生成）
+                                if (p[0].TD_TOWN && p[0].TD_TOWN.trim()) {
+                                    setTimeout(function () {
+                                        var town_option = $('#TOWN option').filter(function () {
+                                            return $(this).text().trim() === p[0].TD_TOWN.trim();
+                                        });
+                                        if (town_option.length > 0) {
+                                            town_option.prop('selected', true);
+                                            $('#TOWN').addClass('select-readonly').change();
+                                        } else {
+                                            $('#TOWN').val('').removeClass('select-readonly');
+                                        }
+                                    }, 200);
+                                }
+                            }
+
+                            function SetNo(p) {
+                                let code = p[0].TD_CODE;
+
+                                let lastPart = "";
+
+                                if (code.length === 19 || code.length === 20) {
+                                    lastPart = code.substring(15);
+                                } else if (code.length === 11 || code.length === 14) {
+                                    lastPart = code.substring(9);
+                                }
+
+                                let part1 = "";
+                                let part2 = "";
+                                let part3 = "";
+
+                                if (lastPart.length === 5) {
+                                    part1 = lastPart.substring(0, 1);
+                                    part2 = lastPart.substring(1, 3);
+                                    part3 = lastPart.substring(3, 5);
+                                } else if (lastPart.length === 4) {
+                                    part1 = lastPart.substring(0, 1);
+                                    part2 = lastPart.substring(1, 3);
+                                    part3 = lastPart.substring(3, 4);
+                                } else if (lastPart.length === 2) {
+                                    part1 = lastPart.substring(0, 1);
+                                    part2 = lastPart.substring(1, 2);
+                                }
+                                $("#NO7").val(part1);
+                                $("#NO8").val(part2);
+                                $("#NO9").val(part3);
+                            }
+
+                            function SetCode(p) {
+                                if (p[0].TD_CODE.replace("-", "") === '') {
+                                    $('#TD_CODE').prop('readonly', false);
+                                } else {
+                                    $('#TD_CODE').prop('readonly', true);
+                                }
+                            }
+                        </script>
+
+
+                        <div role="tabpanel" class="tab-pane" id="tab2">
+                            <br />
+                            <button type="button" class="btn btn-secondary" onclick="cpFund()"><span class="fa-solid fa-plus" aria-hidden="true"></span> 新增</button>
+                            <br />
+                            <table class="table">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>年度</th>
+                                        <th>經費來源</th>
+                                        <th>經費金額(元)</th>
+                                        <th>經費說明</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="flist">
+                                    <tr>
+                                        <td>
+                                            <input type="text" name="CTDITFD_SYR" class="form-control" value="@ViewBag.ProjYear" />
+                                        </td>
+                                        <td>
+                                            @{System.Data.DataTable FIT_CODES = (System.Data.DataTable)ViewBag.FIT_CODES;}
+                                            <select name="CTDITFD_FD_CODE" class="form-select">
+                                                @foreach (System.Data.DataRow f in FIT_CODES.Rows)
+                                                {
+                                                    <option value="@f["id"]">@f["name"]</option>
+                                                }
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="CTDITFD_FUND" class="form-control" />
+                                        </td>
+                                        <td>
+                                            <input type="text" name="CTDITFD_FUND_DESC" class="form-control" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+        <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+        if (ViewBag.msg != null)
+        {
+            <script>
+                alert("@ViewBag.msg");
+            </script>
+        }
+    }
+    <script>
+        //
+        $("#PJ_CATY_CODE").on("change", function () {
+            $("#NO4").val($(this).val());
+        });
+
+
+        //
+        $("#TOWN").on("change", function () {
+
+            $("#NO6").val($(this).val());
+        });
+
+
+    function change() {
+        var no1 = $("#NO1").val() + $("#NO2").val() + $("#NO3").val() + $("#NO4").val() + $("#NO5").val() +
+            $("#NO6").val() + $("#NO7").val() + $("#NO8").val() + $("#NO9").val();
+
+        //var no2 = $("#NO1").val() + "-" + $("#NO2").val() + "-" + $("#NO3").val() + $("#NO4").val() + "-" + $("#NO5").val() +
+            //$("#NO6").val() + "-" + $("#NO7").val() + $("#NO8").val() + $("#NO9").val();
+
+        var no2 = $("#NO1").val() +  $("#NO2").val() + $("#NO3").val() + $("#NO4").val() + $("#NO5").val() +
+            $("#NO6").val() + $("#NO7").val() + $("#NO8").val() + $("#NO9").val();
+
+        if ($('#REF_STAT').val() === '') $("#TD_CODE").val(no2);
+        $("#FD_CODE").val(no1);
+    }
+
+    /*
+    $(".map").on("change", function () {
+        change();
+        $("#mainForm").validator("validate");
+    });
+
+    $(".map").on("keyup", function () {
+        change();
+        $("#mainForm").validator("validate");
+    });
+    */
+
+   $(".map").on("change", function (event) {
+    // 呼叫你原本的 change 函數
+    change();
+
+    // 驗證表單
+    $("#mainForm").validator("validate");
+
+    // 將焦點回到觸發 change 的元素
+    $(event.target).focus();
+   });
+
+        $(".map").on("keyup", function (event) {
+            change();
+            $("#mainForm").validator("validate");
+
+            // 延遲回焦
+            var self = event.target;
+            setTimeout(function () {
+                $(self).focus();
+            }, 100);
+        });
+
+
+
+    $(document).ready(function () {
+        $("#mainForm").validator("validate");
+        //$('#fk').popover('show');
+        //$('#fk').popover('hide');
+
+        $('#fk').popover({
+            html: true,
+            trigger: 'hover',
+            content: function () {
+                return '<img src="../Content/img/serialrules.png" />';
+            }
+        });
+    });
+
+
+     function GetTowns(city) {
+         $("#NO5").val(city);
+         //alert(city);
+        $("#TOWN").html("");
+            $.ajax({
+                url: '@Url.Content("~/")ASYNC/GetTownsById',
+                method: 'post',
+                data: { "city": city },
+                success: function (d) {
+                    var p = jQuery.parseJSON(d);
+                    $("#TOWN").prepend("<option value=''>鄉鎮</option>");
+                    for (i = 0; i < p.length; i++) {
+                        $("#TOWN").append("<option value='" + p[i].TOWN_ID + "'>" + p[i].TOWN + "</option>");
+                    }
+                }
+            });
+
+        }
+
+    function GetTown4Add(city) {
+        $("#town1").html("");
+        $.ajax({
+            url: '@Url.Content("~/")ASYNC/GetTownsById',
+            method: 'post',
+            data: { "city": city },
+            success: function (d) {
+
+                var p = jQuery.parseJSON(d);
+                $("#town1").prepend("<option value=''>鄉鎮</option>");
+                for (i = 0; i < p.length; i++) {
+                    $("#town1").append("<option value='" + p[i].TOWN_ID + "'>" + p[i].TOWN + "</option>");
+                }
+            }
+        });
+    }
+
+    function GetUsers(DEPT_NO){
+    var EXE_UID = "@Model.EXE_UID";
+        $("#ADV_UID").html("");
+    $.ajax({
+        url: '@Url.Content("~/")ASYNC/GetUsers',
+        method: 'post',
+        data: { "DEPT_NO": DEPT_NO },
+        success: function (d) {
+            var p = jQuery.parseJSON(d);
+            $("#ADV_UID").prepend("<option value=''>請選擇</option>");
+            for (i = 0; i < p.length; i++) {
+                $("#ADV_UID").append("<option value='" + p[i].USR_ID + "'>" + p[i].USR_NAME + "</option>");
+            }
+        }
+    });
+    }
+
+    function cpFund() {
+        //alert();
+        $("#flist").append($("#cpFund").html());
+    }
+    </script>
+    <script src="~/Scripts/validator.min.js"></script>
+    @{System.Data.DataTable FIT_CODES2 = (System.Data.DataTable)ViewBag.FIT_CODES;}
+    <table style="display:none;">
+        <tbody id="cpFund">
+            <tr>
+                <td>
+                    <input type="text" name="CTDITFD_SYR" class="form-control" value="@ViewBag.ProjYear" />
+                </td>
+                <td>
+
+                    <select name="CTDITFD_FD_CODE" class="form-select">
+                        @foreach (System.Data.DataRow f in FIT_CODES2.Rows)
+                        {
+                            <option value="@f["id"]">@f["name"]</option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="CTDITFD_FUND" class="form-control" />
+                </td>
+                <td>
+                    <input type="text" name="CTDITFD_FUND_DESC" class="form-control" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

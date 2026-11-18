@@ -1,0 +1,11 @@
+下水道
+SEPMIS2
+帳:OUTSEPMIS2
+密:8-z]jJ0Y
+
+從vs
+上方git 選項 
+建立儲存庫
+遠端儲存庫
+輸入:ssh://OUTSEPMIS2@100.89.124.37:29/volume1/Git/SEPMIS2 
+建立後輸入一次帳號，之後都是密碼

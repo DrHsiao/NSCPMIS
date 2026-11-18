@@ -1,0 +1,153 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJEModel
+@{ ViewBag.Title = "資料授權";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+
+}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            資料授權
+            <small></small>
+            <br /><small>@Model.CurrentProjectName</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")PJE0010">工作計劃維護</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")PJE0010/Branch?pid=@Model.PID&page=@Model.page&ANPID=@Model.ANPID&branchPage=@Model.branchPage">分支工作計劃維護</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                資料授權
+            </li>
+        </ol>
+    </div>
+</div>
+
+@using(Html.BeginForm("", "PJE0010", FormMethod.Post, new { id = "mainForm" })) {
+    @Html.HiddenFor(f => f.PID)
+    @Html.HiddenFor(f => f.ANPID)
+    @Html.HiddenFor(f => f.EditPID)
+    @Html.HiddenFor(f => f.DID)
+    <input type="hidden" name="page" id="page" value="@Model.page" />
+    <input type="hidden" name="branchPage" id="branchPage" value="@Model.branchPage" />
+    <button class="btn btn-secondary btn-lg" name="action" type="submit" value="Branch">返回列表</button>
+    
+    <br /><br />
+    <div class="card border-primary mb-3">
+        <div class="card-header bg-primary text-white">資料授權</div>
+        <table width="100%" class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>部門</th>
+                    <th>人員</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text">承辦單位</span>
+                            @Html.DropDownListFor(x => x.EXE_DP, (SelectList)ViewBag.depts, new { @class = "form-control", form = "mainForm", Onchange = "GetUsers(this.value)" })
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text">承辦人員</span>
+                            <select name="EXE_UID" id="EXE_UID" class="form-select"></select>
+                        </div>
+                    </td>
+                    <td width="50%"><button class="btn btn-success" name="action" type="submit" value="AssignAddUser">新增人員</button></td>
+
+                </tr>
+                @{
+                    System.Data.DataTable list = ViewBag.list;
+
+                }
+                @foreach(System.Data.DataRow c in list.Rows) {
+                    <tr>
+                        <td nowrap>@c["DEPT_NAME"]</td>
+                        <td nowrap>@c["USR_NAME"]</td>
+                        <td><button onclick="$('#DID').val('@c["DID"]'); if(!confirm('確定刪除？')) { return false; }" class="btn btn-danger" name="action" type="submit" value="AssignDelUser">刪除</button></td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+    </div>
+    
+    
+
+
+}
+
+
+
+<script>
+$(document).ready(function () {
+
+    if ($("#EXE_DP").val() != "") {
+
+        GetUsers($("#EXE_DP").val());
+
+    }
+
+
+});
+function GetUsers(DEPT_NO){
+    var EXE_UID = "@Model.EXE_UID";
+    @*$.ajax({
+        url: '@Url.Content("~/")PJE0010/GetUsers',
+    method: 'post',
+    data: { "DEPT_NO": DEPT_NO },
+    success: function (d) {
+    var p = jQuery.parseJSON(d);
+        $("#EXE_UID").html("");
+        $("#EXE_UID").prepend("<option value=''>請選擇</option>");
+            for (i = 0; i < p.length; i++) {
+                if (p[i].USR_ID == EXE_UID) {
+                    $("#EXE_UID").append("<option selected value='" + p[i].USR_ID + "'>" + p[i].USR_NAME + "</option>");
+                } else {
+                    $("#EXE_UID").append("<option value='" + p[i].USR_ID + "'>" + p[i].USR_NAME + "</option>");
+                }
+
+
+            }
+
+        }
+    });*@
+    //alert(DEPT_NO)
+    $("#EXE_UID").html("");
+    $.ajax({
+        url: '@Url.Content("~/")ASYNC/GetUsers',
+        method: 'post',
+        data: { "DEPT_NO": DEPT_NO },
+        success: function (d) {
+            var p = jQuery.parseJSON(d);
+            $("#EXE_UID").prepend("<option value=''>請選擇</option>");
+            for (i = 0; i < p.length; i++) {
+                $("#EXE_UID").append("<option value='" + p[i].USR_ID + "'>" + p[i].USR_NAME + "</option>");
+            }
+        }
+    });
+}
+
+
+
+</script>
+
+
+
+
+
+
+
+

@@ -1,0 +1,833 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0030Model
+@{ ViewBag.Title = "計畫經費管制[1.1.3] ";
+    //Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <style>
+        /* === BS3 相容層（配色）v2：nav-tabs／分頁／藍色 header 頁籤，接軌系統主色 #337ab7 === */
+        .pagination { --bs-pagination-color: #337ab7; --bs-pagination-hover-color: #286090; --bs-pagination-focus-color: #286090; --bs-pagination-active-bg: #337ab7; --bs-pagination-active-border-color: #337ab7; margin: 10px 0; flex-wrap: wrap; }
+        .nav-tabs:not(.card-header-tabs) .nav-link { color: #337ab7; }
+        .nav-tabs:not(.card-header-tabs) .nav-link:hover, .nav-tabs:not(.card-header-tabs) .nav-link:focus { color: #286090; }
+        .nav-tabs:not(.card-header-tabs) .nav-link.active { color: #495057; font-weight: 600; }
+        .card-header.bg-primary { background-color: #337ab7 !important; color: #fff !important; border-bottom: 1px solid #ddd; padding: 10px 15px; font-weight: bold; }
+        .card-header .card-title { margin: 0; font-size: 1.1rem; }
+        .card-header-tabs { margin-bottom: -11px; border-bottom: none; }
+        .card-header-tabs .nav-item { margin-bottom: 0; }
+        .card-header-tabs .nav-link { border: 1px solid transparent; color: rgba(255,255,255,0.9) !important; margin-right: 2px; padding: 8px 15px; border-radius: 4px 4px 0 0; }
+        .card-header-tabs .nav-link:hover { background-color: rgba(255,255,255,0.15); border-color: transparent; }
+        .card-header-tabs .nav-link.active { background-color: #ffffff !important; color: #337ab7 !important; border-color: #dddddd #dddddd #ffffff !important; font-weight: bold; }
+    </style>
+    <script>
+        /* === BS3 相容層（裝飾器）v2：BS3 標記自動補 BS5 class，舊 view 免改標記 === */
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('ul.nav-tabs > li').forEach(function (li) {
+                li.classList.add('nav-item');
+                var a = li.querySelector(':scope > a');
+                if (!a) return;
+                a.classList.add('nav-link');
+                if (li.classList.contains('active')) { li.classList.remove('active'); a.classList.add('active'); }
+                if (a.getAttribute('data-toggle') === 'tab') { a.setAttribute('data-bs-toggle', 'tab'); a.removeAttribute('data-toggle'); }
+            });
+            document.querySelectorAll('ul.nav-tabs').forEach(function (ul) {
+                if (ul.closest('.card-header')) { ul.classList.add('card-header-tabs'); }
+            });
+            document.querySelectorAll('.tab-pane.in').forEach(function (p) { p.classList.remove('in'); p.classList.add('show'); });
+            document.querySelectorAll('ul.pagination > li').forEach(function (li) {
+                li.classList.add('page-item');
+                var el = li.querySelector(':scope > a, :scope > span');
+                if (el) el.classList.add('page-link');
+            });
+        });
+    </script>
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+<body style="padding:10px;">
+
+    @using (Html.BeginForm("", "PJE0030", FormMethod.Post, new { id = "mainForm", data_toggle = "validator", role = "form" }))
+    {
+
+
+
+
+
+        <input type="hidden" name="PID" id="PID" value="@Model.PID" />
+        <input type="hidden" name="TID" value="@Model.TID" />
+        <input type="hidden" name="SEQ_NO" id="SEQ_NO" value="@Model.SEQ_NO" /><div style="height:5px;"></div><!-- Nav tabs --><div class="card border-primary mb-3">
+            <div class="card-header bg-primary text-white">
+                <ul class="nav nav-tabs">
+                    @if (ViewBag.save2 == null)
+                    {
+                        <li class="nav-item" role="presentation"><a class="nav-link active" href="#tab1" aria-controls="tab1" role="tab" data-bs-toggle="tab">修改案件</a></li>
+                        <li class="nav-item" role="presentation"><a class="nav-link" href="#tab2" aria-controls="tab2" role="tab" data-bs-toggle="tab">經費(元)</a></li>
+                    }
+                    else
+                    {
+                        <li class="nav-item" role="presentation"><a class="nav-link" href="#tab1" aria-controls="tab1" role="tab" data-bs-toggle="tab">修改案件</a></li>
+                        <li class="nav-item" role="presentation"><a class="nav-link active" href="#tab2" aria-controls="tab2" role="tab" data-bs-toggle="tab">經費(元)</a></li>
+                    }
+                </ul>
+            </div>
+
+            <div class="card-body">
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane @(ViewBag.save2 == null ? "fade show active" : "") " id="tab1">
+
+                        @if (ViewBag.Lock == null)
+                        {
+                            <button name="action" type="submit" value="CTDMNDS_SAVE" class="btn btn-warning btn-lg">儲存案件資料</button>
+                            <button name="action" type="button" class="btn btn-secondary btn-lg" onclick="parent.closeEdit();">返回列表</button>
+                            <br /><br />
+                        }
+                        else
+                        {
+                            <script>
+                                $(document).ready(function () {
+                                    $(":input").not("[name=tloEnable], [name=filename], [name=notifyUsers]")
+                                        .prop("disabled", true);
+                                });
+                            </script>
+                        }
+                        @{System.Data.DataRow mnds = ViewBag.mnds;}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">工程編號</span>
+                                        @Html.TextBoxFor(x => x.TDV_TDHCFTS.TD_CODE, new { @class = "form-control", form = "mainForm", placeholder = "工程編號", @required = "required" })
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">經費編號</span>
+                                        @Html.TextBoxFor(x => x.TDV_TDHCFTS.FD_CODE, new { @class = "form-control", form = "mainForm", placeholder = "經費編號", @required = "required" })
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">工程名稱</span>
+                                        @Html.TextBoxFor(x => x.TDV_TDHCFTS.TD_NAME, new { @class = "form-control", placeholder = "工程名稱", AutoComplete = "Off", @required = "required" })
+
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">案件類型 </span>
+                                        @Html.DropDownListFor(x => x.TDV_TDHCFTS.CATY_CODE, (SelectList)ViewBag.CATY_COD, "請選擇", new { id = "CATY_CODE", @class = "form-control", form = "mainForm", @required = "required" })
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">計畫分項內容</span>
+                                        @Html.DropDownListFor(x => x.TDV_TDHCFTS.PJ_CATY_CODE, (SelectList)ViewBag.PJ_CATY_CODE, "請選擇", new { @readonly = "readonly", @class = "form-control", form = "mainForm", disabled = "disabled" })
+
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">中央款比例(運算)(%)</span>
+                                        @Html.TextBoxFor(x => x.TDV_TDHCFTS.CEN_SP_RATIO, new { @class = "form-control", form = "mainForm", disabled = "disabled" })
+
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">中央款比例(參考)(%)</span>
+                                        @Html.TextBoxFor(x => x.TDV_TDHCFTS.CEN_SP_RATIO_S, new { @class = "form-control", form = "mainForm", disabled = "disabled" })
+
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">中央款比例(核定)(%)</span>
+                                        @Html.TextBoxFor(x => x.TDV_TDHCFTS.CEN_SP_RATIO, new { @class = "form-control", form = "mainForm", disabled = "disabled" })
+
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">經費層級</span>
+                                        <input type="text" disabled value="@Model.TDV_TDHCFTS.IPJ_CODE_DESC" class="form-control" required />
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">費用金額(元)</span>
+                                        <input type="text" disabled value="@String.Format("{0:#,##0.00}", Model.TDV_TDHCFTS.YR_FUND)" class="form-control fund-input" required />
+
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">工程類別</span>
+                                        @Html.DropDownListFor(x => x.TDV_TDHCFTS.TD_CATY, (SelectList)ViewBag.TD_CATY, "請選擇", new { @class = "form-control", form = "mainForm", @required = "required" })
+
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">工作類別</span>
+                                        @Html.DropDownListFor(x => x.TDV_TDHCFTS.YR_WORK, (SelectList)ViewBag.YR_WORK, "未選擇", new { @class = "form-control", form = "mainForm" })
+
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">辦理層級</span>
+                                        @Html.DropDownListFor(x => x.TDV_TDHCFTS.IPJ_CODE, (SelectList)ViewBag.N_IPJ_CODE, "請選擇", new { @class = "form-control", form = "mainForm", @required = "required" })
+
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">會計科目</span>
+                                        <input class="form-control" type="text" value="@Model.TDV_TDHCFTS.ACC_DESC" disabled />
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-12">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">工程型態(雨水用)</span>
+                                        @Html.DropDownListFor(x => x.TDV_TDHCFTS.EMG_CATY, (SelectList)ViewBag.EMG_CATY, "請選擇", new { @class = "form-control", form = "mainForm" })
+
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">執行單位</span>
+                                        @Html.DropDownListFor(x => x.TDV_TDHCFTS.ADV_DP, (SelectList)ViewBag.depts, new { @class = "form-control", form = "mainForm", Onchange = "GetUsers(this.value)", @required = "required" })
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group has-feedback">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">執行人員</span>
+
+
+                                        @Html.DropDownListFor(x => x.TDV_TDHCFTS.ADV_DP, (SelectList)ViewBag.users, new { id = "ADV_UID", @class = "form-control", form = "mainForm", @required = "required" })
+
+
+
+                                    </div>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <table class="table">
+
+                            <tr>
+                                <td width="1" nowrap align="right">經費納入計算</td>
+                                <td>
+                                    @if (Convert.ToString(Model.TDV_TDHCFTS.FCAL_FG).ToUpper().Equals("TRUE"))
+                                    {
+                                        <input type="checkbox" name="FCAL_FG" checked />
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" name="FCAL_FG" />
+                                    }
+                                </td>
+
+                                <td width="1" nowrap align="right">不納執行件數</td>
+                                <td>
+                                    @if (Convert.ToString(Model.TDV_TDHCFTS.UCNT_FG).ToUpper().Equals("TRUE"))
+                                    {
+                                        <input type="checkbox" name="UCNT_FG" checked />
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" name="UCNT_FG" />
+                                    }
+                                </td>
+                            </tr>
+
+
+
+
+                            <tr>
+                                <td width="1" nowrap align="right">B署內</td>
+                                <td>
+                                    @if (Convert.ToString(Model.TDV_TDHCFTS.B_GROUP).ToUpper().Equals("TRUE"))
+                                    {
+                                        <input type="checkbox" name="B_GROUP" checked />
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" name="B_GROUP" />
+                                    }
+
+                                </td>
+
+                                <td width="1" nowrap align="right">F分署</td>
+                                <td>
+                                    @if (Convert.ToString(Model.TDV_TDHCFTS.F_GROUP).ToUpper().Equals("TRUE"))
+                                    {
+                                        <input type="checkbox" name="F_GROUP" checked />
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" name="F_GROUP" />
+                                    }
+
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td width="1" nowrap align="right">下水道永續營運組</td>
+                                <td>
+                                    @if (Convert.ToString(Model.TDV_TDHCFTS.TD_GROUP).ToUpper().Equals("TRUE"))
+                                    {
+                                        <input type="checkbox" name="TD_GROUP" checked />
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" name="TD_GROUP" />
+                                    }
+
+
+                                </td>
+                                <td width="1" nowrap align="right">BOT案</td>
+                                <td>
+                                    @if (Model.TDV_TDHCFTS.EXE_TYPE != null)
+                                    {
+                                        if (Model.TDV_TDHCFTS.EXE_TYPE.Equals("02"))
+                                        {
+                                            <input type="checkbox" name="EXE_TYPE" checked />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="EXE_TYPE" />
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" name="EXE_TYPE" />
+                                    }
+
+
+                                </td>
+                            </tr>
+
+
+                        </table>
+
+                    </div>
+                    @{System.Data.DataTable CTDITFD = (System.Data.DataTable)ViewBag.CTDITFD;}
+                    <div role="tabpanel" class="tab-pane @(ViewBag.save2 != null ? "fade show active" : "")" id="tab2">
+                        <br />
+                        <button name="action" type="button" class="btn btn-secondary btn-lg" onclick="parent.closeEdit();">返回列表</button>
+
+                        <button type="button" class="btn btn-success btn-lg" onclick="cpFund()"><span class="fa-solid fa-plus" aria-hidden="true"></span> 新增年度</button>
+
+                        <input type="hidden" name="DelTid" id="DelTid" />
+                        <input type="hidden" name="DelFid" id="DelFid" />
+                        <br />
+                        <table class="table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>年度</th>
+                                    <th>經費來源</th>
+                                    <th>經費金額(元)</th>
+                                    <th>經費說明</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+
+                            @{System.Data.DataTable FIT_CODES = (System.Data.DataTable)ViewBag.FIT_CODES;}
+                            <tbody id="flist">
+
+
+
+                                @foreach (System.Data.DataRow c in CTDITFD.Rows)
+                                {
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" id="tid_@c["TID"]@c["FID"]" name="CTDITFD_TID" class="form-control" />
+                                            <input type="hidden" id="fid_@c["TID"]@c["FID"]" name="CTDITFD_FID" class="form-control" />
+                                            <input type="text" name="CTDITFD_SYR" class="form-control" value="@c["SYR"].ToString()" />
+                                        </td>
+                                        <td>
+                                            <select name="CTDITFD_FD_CODE" class="form-select">
+                                                @foreach (System.Data.DataRow f in FIT_CODES.Rows)
+                                                {
+                                                    if (Convert.ToString(f["id"]).Equals(Convert.ToString(c["FIT_CODE"])))
+                                                    {
+                                                        <option value="@f["id"]" selected>@f["name"]</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@f["id"]">@f["name"]</option>
+                                                    }
+
+                                                }
+                                            </select>
+                                        </td>
+                                        <td><input type="text" id="CTDITFD_FUND_@c["TID"]@c["FID"]" name="CTDITFD_FUND" class="form-control fund-input" value="@(Convert.ToDecimal(c["FUND"]).ToString("#,##0"))" /></td>
+                                        <td><input type="text" id="CTDITFD_FUND_DESC_@c["TID"]@c["FID"]" name="CTDITFD_FUND_DESC" class="form-control" value="@c["FUND_DESC"].ToString()" /></td>
+                                        <td>
+                                            <button onclick="setFid('@c["TID"]', '@c["FID"]') " name="action" type="submit" value="CTDITFD_SAVE" class="btn btn-warning btn-sm">儲存</button>
+                                            @*<button onclick="delFid('@c["TID"]', '@c["FID"]') " name="action" type="submit" value="CTDITFD_DEL" class="btn btn-danger btn-sm">刪除</button>*@
+                                            <button onclick="return delFid('@c["TID"]', '@c["FID"]')" name="action" type="submit" value="CTDITFD_DEL" class="btn btn-danger btn-sm">刪除</button>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                        <br />
+                        @if (ViewBag.Lock == null)
+                        {
+                            <button name="action" type="submit" value="CTDMNDS_FUND_SAVE" class="btn btn-warning btn-lg">儲存經費資料</button>
+
+                        }
+                        else
+                        {
+
+                            <script>
+                                $(document).ready(function () {
+                                    $(":input").not("[name=tloEnable], [name=filename], [name=notifyUsers]")
+                                        .prop("disabled", true);
+                                });
+                            </script>
+
+                        }
+                        <table class="table">
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-text">一月</span>
+                                        @Html.TextBox(
+"TDV_TDHCFTS.M_01",
+string.Format("{0:0}", Model.TDV_TDHCFTS.M_01),
+new
+{
+@class = "form-control",
+form = "mainForm"
+})
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-text">二月</span>
+                                        @Html.TextBox(
+"TDV_TDHCFTS.M_02",
+string.Format("{0:0}", Model.TDV_TDHCFTS.M_02),
+new
+{
+@class = "form-control",
+form = "mainForm"
+})
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-text">三月</span>
+                                        @Html.TextBox(
+                                        "TDV_TDHCFTS.M_03",
+                                        string.Format("{0:0}", Model.TDV_TDHCFTS.M_03),
+                                        new
+                                             {
+                                        @class = "form-control",
+                                        form = "mainForm"
+                                        })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-text">四月</span>
+                                        @Html.TextBox(
+                                        "TDV_TDHCFTS.M_04",
+                                        string.Format("{0:0}", Model.TDV_TDHCFTS.M_04),
+                                        new
+                                             {
+                                        @class = "form-control",
+                                        form = "mainForm"
+                                        })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-text">五月</span>
+                                        @Html.TextBox(
+                                        "TDV_TDHCFTS.M_05",
+                                        string.Format("{0:0}", Model.TDV_TDHCFTS.M_05),
+                                        new
+                                             {
+                                        @class = "form-control",
+                                        form = "mainForm"
+                                        })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-text">六月</span>
+                                        @Html.TextBox(
+                                        "TDV_TDHCFTS.M_06",
+                                        string.Format("{0:0}", Model.TDV_TDHCFTS.M_06),
+                                        new
+                                             {
+                                        @class = "form-control",
+                                        form = "mainForm"
+                                        })
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-text">七月</span>
+                                        @Html.TextBox(
+                                        "TDV_TDHCFTS.M_07",
+                                        string.Format("{0:0}", Model.TDV_TDHCFTS.M_07),
+                                        new
+                                             {
+                                        @class = "form-control",
+                                        form = "mainForm"
+                                        })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-text">八月</span>
+                                        @Html.TextBox(
+                                        "TDV_TDHCFTS.M_08",
+                                        string.Format("{0:0}", Model.TDV_TDHCFTS.M_08),
+                                        new
+                                             {
+                                        @class = "form-control",
+                                        form = "mainForm"
+                                        })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-text">九月</span>
+                                        @Html.TextBox(
+"TDV_TDHCFTS.M_09",                        // name
+string.Format("{0:0}", Model.TDV_TDHCFTS.M_09), // value 去除小數點
+new
+{
+@class = "form-control",
+form = "mainForm"
+}
+)
+
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-text">十月</span>
+                                        @Html.TextBox(
+"TDV_TDHCFTS.M_10",                        // name
+string.Format("{0:0}", Model.TDV_TDHCFTS.M_10), // value 去除小數點
+new
+{
+@class = "form-control",
+form = "mainForm"
+}
+)
+
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-text">十一月</span>
+                                        @Html.TextBox(
+    "TDV_TDHCFTS.M_11",                        // name
+    string.Format("{0:0}", Model.TDV_TDHCFTS.M_11), // value 去除小數點
+    new
+{
+        @class = "form-control",
+        form = "mainForm"
+    }
+)
+
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-text">十二月</span>
+                                        @Html.TextBox(
+                                            "TDV_TDHCFTS.M_12",                        // name
+                                            string.Format("{0:0}", Model.TDV_TDHCFTS.M_12), // value 去除小數點
+                                            new
+                                                 {
+                                                @class = "form-control",
+                                                form = "mainForm"
+                                            }
+                                        )
+
+
+
+
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <br />
+                        @{System.Data.DataTable CTDUPRC = (System.Data.DataTable)ViewBag.CTDUPRC;}
+                        <table class="table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>修改日期</th>
+                                    <th>修改人員</th>
+                                    <th>調整內容</th>
+                                    <th>經費說明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (System.Data.DataRow c in CTDUPRC.Rows)
+                                {
+                                    <tr>
+                                        <td>@c["ADD_DT"]</td>
+                                        <td>@c["UPD_USER"]</td>
+                                        <th>@c["UPD_CONT"]</th>
+                                        <th>@c["FUND_DESC"]</th>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+        <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+        <script src="~/Scripts/validator.min.js"></script>
+        if (ViewBag.msg != null)
+        {
+            <script>
+                alert("@ViewBag.msg");
+            </script>
+
+
+
+        }
+
+
+    }
+    <script>
+    function setFid(tid, fid) {
+        $("#tid_" + tid + fid).val(tid);
+        $("#fid_" + tid + fid).val(fid);
+        }
+
+        function delFid(tid, fid) {
+
+            if (!confirm("確定要刪除此筆經費資料嗎？")) {
+                return false;
+            }
+
+            $("#CTDITFD_FUND_" + tid + fid).val(0);
+            $("#DelTid").val(tid);
+            $("#DelFid").val(fid);
+
+            return true;
+        }
+
+    function GetUsers(DEPT_NO){
+    var EXE_UID = "@Model.EXE_UID";
+        $("#ADV_UID").html("");
+    $.ajax({
+        url: '@Url.Content("~/")ASYNC/GetUsers',
+        method: 'post',
+        data: { "DEPT_NO": DEPT_NO },
+        success: function (d) {
+            var p = jQuery.parseJSON(d);
+            $("#ADV_UID").prepend("<option value=''>請選擇</option>");
+            for (i = 0; i < p.length; i++) {
+                $("#ADV_UID").append("<option value='" + p[i].USR_ID + "'>" + p[i].USR_NAME + "</option>");
+            }
+        }
+    });
+}
+function cpFund() {
+    $("#flist").prepend($("#cpFund").html());
+}
+    </script>
+
+    @{System.Data.DataTable FIT_CODES2 = (System.Data.DataTable)ViewBag.FIT_CODES;}
+    <table style="display:none;">
+        <tbody id="cpFund">
+            <tr>
+                <td>
+                    <input type="hidden" name="CTDITFD_TID" class="form-control" />
+                    <input type="hidden" name="CTDITFD_FID" class="form-control" />
+                    <input type="text" name="CTDITFD_SYR" class="form-control" value="@ViewBag.ProjYear" />
+                </td>
+                <td>
+
+                    <select name="CTDITFD_FD_CODE" class="form-select">
+                        @foreach (System.Data.DataRow f in FIT_CODES2.Rows)
+                        {
+                            <option value="@f["id"]">@f["name"]</option>
+                        }
+                    </select>
+                </td>
+                <td><input type="text" name="CTDITFD_FUND" class="form-control" /></td>
+                <td><input type="text" name="CTDITFD_FUND_DESC" class="form-control" /></td>
+                <td>
+                    <button name="action" type="submit" value="CTDITFD_ADD" class="btn btn-success btn-sm">新增</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script src="~/Scripts/utils/number-utils.js"></script>
+
+</body>
+</html>

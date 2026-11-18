@@ -1,0 +1,263 @@
+﻿@model WCals.ViewModels.NewModels.TDE0051Model
+@{
+    ViewBag.Title = "進度填報編輯";
+    Layout = null;
+
+    string tdName = Model.TD_NAME ?? "";
+    System.Data.DataTable dtList = ViewBag.List1 as System.Data.DataTable;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .section-header {
+            background-color: #f5f5f5;
+            border-left: 4px solid #0275d8;
+            padding: 10px 15px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body style="padding:5px;">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible" role="alert" id="successAlert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible" role="alert" id="errorAlert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            @TempData["Error"]
+        </div>
+    }
+
+    <div id="messageDiv"></div>
+
+    <button type="button" onclick="top.closeEditDialog2();" class="btn btn-secondary btn-lg">關閉</button>
+
+    <h1 class="page-header">進度填報 - @tdName</h1>
+
+    <div class="section-header">月進度資料列表 (TDDMSCD)</div>
+
+    <div class="table-responsive">
+        <table class="table table-sm" id="dataTable">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">年度</th>
+                    <th style="width: 60px;">月份</th>
+                    <th style="width: 100px;">預定進度(%)</th>
+                    <th style="width: 100px;">實際進度(%)</th>
+                    <th style="width: 250px;">辦理情形</th>
+                    <th style="width: 100px;">操作</th>
+                </tr>
+            </thead>
+            <tbody id="dataBody">
+                @if (dtList != null && dtList.Rows.Count > 0)
+                {
+                    foreach (System.Data.DataRow row in dtList.Rows)
+                    {
+                        string syr = row["SYR"] != DBNull.Value ? row["SYR"].ToString() : "";
+                        string smn = row["SMN"] != DBNull.Value ? row["SMN"].ToString() : "";
+                        string preSchd = row["PRE_SCHD"] != DBNull.Value ? Convert.ToDecimal(row["PRE_SCHD"]).ToString("0.##") : "";
+                        string relSchd = row["REL_SCHD"] != DBNull.Value ? Convert.ToDecimal(row["REL_SCHD"]).ToString("0.##") : "";
+                        string exectDesc = row["EXECT_DESC"] != DBNull.Value ? row["EXECT_DESC"].ToString() : "";
+
+                        <tr data-syr="@syr" data-smn="@smn">
+                            <td style="text-align: center;">@syr</td>
+                            <td style="text-align: center;">@smn</td>
+                            <td>
+                                <input type="number" name="PRE_SCHD" value="@preSchd" class="form-control form-control-sm edit-field" data-field="PRE_SCHD" step="0.01" style="text-align: right;" />
+                            </td>
+                            <td>
+                                <input type="number" name="REL_SCHD" value="@relSchd" class="form-control form-control-sm edit-field" data-field="REL_SCHD" step="0.01" style="text-align: right;" />
+                            </td>
+                            <td>
+                                <input type="text" name="EXECT_DESC" value="@exectDesc" class="form-control form-control-sm edit-field" data-field="EXECT_DESC" />
+                            </td>
+                            <td style="text-align: center;">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="updateRow(this);">儲存</button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(this);">刪除</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr id="noDataRow">
+                        <td colspan="6" style="text-align:center;">無資料</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr class="add-row">
+                    <td style="text-align: center;">
+                        <input type="text" id="new_SYR" class="form-control form-control-sm" placeholder="YYY" style="width:60px;" maxlength="3" />
+                    </td>
+                    <td style="text-align: center;">
+                        <select id="new_SMN" class="form-control form-control-sm" style="width:60px;">
+                            <option value="">月</option>
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                <option value="@i.ToString("00")">@i.ToString("00")</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" id="new_PRE_SCHD" class="form-control form-control-sm" step="0.01" style="text-align: right;" />
+                    </td>
+                    <td>
+                        <input type="number" id="new_REL_SCHD" class="form-control form-control-sm" step="0.01" style="text-align: right;" />
+                    </td>
+                    <td>
+                        <input type="text" id="new_EXECT_DESC" class="form-control form-control-sm" />
+                    </td>
+                    <td style="text-align: center;">
+                        <button type="button" class="btn btn-success btn-sm" onclick="addRow();">新增</button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <table class="table">
+        <tr>
+            <td>
+                <button type="button" onclick="top.closeEditDialog2();" class="btn btn-secondary btn-lg">關閉</button>
+            </td>
+        </tr>
+    </table>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script>
+        var TD_CODE = '@Model.TD_CODE';
+
+        function showMessage(type, message) {
+            var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            var html = '<div class="alert ' + alertClass + ' alert-dismissible" role="alert">' +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                message + '</div>';
+            $('#messageDiv').html(html);
+            setTimeout(function () {
+                $('#messageDiv').html('');
+            }, 3000);
+        }
+
+        // 新增資料
+        function addRow() {
+            var syr = $('#new_SYR').val();
+            var smn = $('#new_SMN').val();
+            var preSchd = $('#new_PRE_SCHD').val();
+            var relSchd = $('#new_REL_SCHD').val();
+            var exectDesc = $('#new_EXECT_DESC').val();
+
+            if (!syr || !smn) {
+                showMessage('error', '請輸入年度和月份');
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("Edit2Add", "TDE0051")',
+                type: 'POST',
+                data: {
+                    TD_CODE: TD_CODE,
+                    SYR: syr,
+                    SMN: smn,
+                    PRE_SCHD: preSchd || null,
+                    REL_SCHD: relSchd || null,
+                    EXECT_DESC: exectDesc || null
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                        location.reload();
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function (e) {
+                    showMessage('error', '新增失敗：' + e.statusText);
+                }
+            });
+        }
+
+        // 更新資料
+        function updateRow(btn) {
+            var row = $(btn).closest('tr');
+            var syr = row.data('syr');
+            var smn = row.data('smn');
+            var preSchd = row.find('[data-field="PRE_SCHD"]').val();
+            var relSchd = row.find('[data-field="REL_SCHD"]').val();
+            var exectDesc = row.find('[data-field="EXECT_DESC"]').val();
+
+            $.ajax({
+                url: '@Url.Action("Edit2Update", "TDE0051")',
+                type: 'POST',
+                data: {
+                    TD_CODE: TD_CODE,
+                    SYR: syr,
+                    SMN: smn,
+                    PRE_SCHD: preSchd || null,
+                    REL_SCHD: relSchd || null,
+                    EXECT_DESC: exectDesc || null
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function () {
+                    showMessage('error', '更新失敗');
+                }
+            });
+        }
+
+        // 刪除資料
+        function deleteRow(btn) {
+            if (!confirm('確定要刪除此筆資料嗎？')) {
+                return;
+            }
+
+            var row = $(btn).closest('tr');
+            var syr = row.data('syr');
+            var smn = row.data('smn');
+
+            $.ajax({
+                url: '@Url.Action("Edit2Delete", "TDE0051")',
+                type: 'POST',
+                data: {
+                    TD_CODE: TD_CODE,
+                    SYR: syr,
+                    SMN: smn
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                        row.remove();
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function () {
+                    showMessage('error', '刪除失敗');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

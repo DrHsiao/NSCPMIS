@@ -1,0 +1,133 @@
+﻿@model  WCals.Models.CMEPMSModels.PJDFDDS
+@{
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<style>
+    .table th {
+        text-align: center;
+    }
+</style>
+
+<div class="card mb-3"><div class="card-body">
+    <form action="@Url.Action("annual_distribution_Save","BranchPlanMainten")">
+        <h1>分支計畫</h1>
+        <hr />
+        <div class="form-horizontal">
+            <div class="form-group">
+                <span class="col-form-label col-md-2">分支計畫名稱</span>
+                <div class="col-md-3">
+                    <input name="branch_plan" value="@ViewBag.branch_plan" type="text" readonly class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫年分</span>
+                <div class="col-md-3">
+                    <input name="branch_SYR" value="@ViewBag.branch_SYR" type="text" readonly class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <br />
+        <h1 style="display:inline-block; vertical-align:middle">年度分配數</h1>
+        <div id="button" style="display:inline-block; margin-left: 25px">
+            <input type="button" value="修改" onclick="Edit()" class="btn btn-primary" />
+        </div>
+
+        <br />
+
+        <table class="table table-bordered" style="width:70%">
+            <tr>
+                <td colspan="4" align="center">年分</td>
+            </tr>
+            <tr>
+                <th id="Year" colspan="4">@ViewBag.branch_SYR</th>
+            </tr>
+            <tr>
+                <td align="center">一月</td>
+                <td align="center">二月</td>
+                <td align="center">三月</td>
+                <td align="center">四月</td>
+            </tr>
+            <tr>
+                @if (Model != null)
+                {
+                    <th>@Model.M_01</th>
+                    <th>@Model.M_02</th>
+                    <th>@Model.M_03</th>
+                    <th>@Model.M_04</th>
+                }
+                else
+                {
+                    <th>0</th>
+                    <th>0</th>
+                    <th>0</th>
+                    <th>0</th>
+                }
+            </tr>
+            <tr>
+                <td align="center">五月</td>
+                <td align="center">六月</td>
+                <td align="center">七月</td>
+                <td align="center">八月</td>
+            </tr>
+            <tr>
+                @if (Model != null)
+                {
+                    <th>@Model.M_05</th>
+                    <th>@Model.M_06</th>
+                    <th>@Model.M_07</th>
+                    <th>@Model.M_08</th>
+                }
+                else
+                {
+                    <th>0</th>
+                    <th>0</th>
+                    <th>0</th>
+                    <th>0</th>
+                }
+            </tr>
+            <tr>
+                <td align="center">九月</td>
+                <td align="center">十月</td>
+                <td align="center">十一月</td>
+                <td align="center">十二月</td>
+            </tr>
+            <tr>
+                @if (Model != null)
+                {
+                    <th>@Model.M_09</th>
+                    <th>@Model.M_10</th>
+                    <th>@Model.M_11</th>
+                    <th>@Model.M_12</th>
+                }
+                else
+                {
+                    <th>0</th>
+                    <th>0</th>
+                    <th>0</th>
+                    <th>0</th>
+                }
+            </tr>
+        </table>
+    </form>
+</div></div>
+
+<script>
+    function Edit() {
+        var thElement = document.querySelectorAll('th:not(#Year)');
+        thElement.forEach(function (th) {
+            originValue = th.textContent;
+            $(th).empty();
+            $(th).append('<input name="month" value="' + originValue + '" class="form-control" />');
+
+        })
+
+        $('#button').empty();
+        $('#button').append('<input type="submit" value="存檔" onclick="Save()" class="btn btn-primary" />');
+        $('#button').append('<input type="submit" name="button" style="margin-left:5px" value="返回" onclick="Return()" class="btn btn-primary" />');
+    }
+</script>
+
+

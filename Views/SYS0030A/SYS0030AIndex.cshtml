@@ -1,0 +1,299 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.SYS0030Model
+@{ ViewBag.Title = "3.1.A 污水下水道計畫文件 (A)";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+
+@section head{
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+        <style>
+        .pagination {
+            margin: 0;
+        }
+
+        .ui-dialog {
+            z-index: 4000;
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h2 class="border-bottom pb-2 mb-3">
+            3.1.A 雨水下水道計畫文件
+        </h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-light p-2 rounded">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house me-1"></i><a href="@Url.Content("~/")Home" class="text-decoration-none">首頁</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><i class="fa-solid fa-file me-1"></i> 3.1.A 雨水下水道計畫文件</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+@using(Html.BeginForm("", "SYS0030A", FormMethod.Post, new { id = "mainForm" })) {
+
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white fw-bold">查詢</div>
+        <table class="table table-striped table-hover align-middle mb-0">
+            <tr>
+                <td>
+
+                    <button onclick="Open_SYSManager();" class="btn btn-primary" name="action" type="button" value="Save">
+                        雨水下水道系統別管理
+                    </button>
+                    <button class="btn btn-success" onclick="Open_SYSInfo();" name="action" type="button" value="Save">新增文件</button>
+                    @* 經費統計表：git 版有、CPC 重構時遺漏。共用 SYS0030/PrtSysPopup，STAT_NO='R' 表雨水 *@
+                    <button class="btn btn-warning" id="ButPRT_SYS" name="action" type="button" onclick="Open_PRT_SYS('R');"><i class="fa-solid fa-print me-1"></i>經費統計表</button>
+                </td>
+            </tr>
+            <!-- 第一列 -->
+            <tr>
+                <td>
+                    <div class="row">
+
+                        <div class="col-md-2">
+                            <div class="input-group">
+                                <span class="input-group-text">縣市別</span>
+                                @Html.DropDownList("CITY", (SelectList)ViewBag.cities, "縣市", new { @class = "form-control", form = "mainForm", Onchange = "GetTowns(this.value)" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group">
+                                <span class="input-group-text">系統別</span>
+                                
+                                @Html.DropDownListFor(m => m.sys, (SelectList)ViewBag.systems, "請選擇", new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group">
+                                <span class="input-group-text">文件類別</span>
+                                
+                                @Html.DropDownListFor(m => m.doc_type, new SelectList(new[] {
+                                     
+                                      new { Value = "C", Text = "C:實施計畫" }
+                                }, "Value", "Text"), "請選擇", new { @class = "form-control" })
+                            
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group">
+                                <span class="input-group-text">文件名稱</span>
+                                @Html.TextBoxFor(x => x.doc_name, new { @class = "form-control", placeholder = "文件名稱", AutoComplete = "Off" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary" type="submit" formaction="@Url.Action("Search", "SYS0030A")">查詢</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    if(Model.List1 != null) {
+
+        @Html.PagedListPager(Model.List1, page => Url.Action("Search",
+        new {
+             page = page,
+        sys = Model.sys,
+        doc_name = Model.doc_name,
+        doc_type = Model.doc_type,
+        city = Model.CITY
+        }))
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-primary text-white fw-bold">查詢列表</div>
+            <div class="table-responsive" style="overflow-x:auto;">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th nowrap>縣市別</th>
+                            <th nowrap>下水道系統別</th>
+                            <th nowrap>文件類別</th>
+                            <th nowrap>造冊編號</th>
+                            <th nowrap>文件名稱</th>
+                            <th nowrap></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(System.Data.DataRow c in Model.List1) {
+                            <tr>
+
+                                <td>@c["SER_CITY"]</td>
+                                <td>@c["SYS_NAME"]</td>
+                                <td>@c["PJ_ID_TYPE"]</td>
+                                <td>
+                                    <span>@c["SER_FN_1"]</span>
+                                    @if(!Convert.ToString(c["SER_FN_2"]).Equals("")) {
+                                        <span>- @c["SER_FN_2"]</span>
+                                    }
+                                    @if(!Convert.ToString(c["SER_FN_3"]).Equals("")) {
+                                        <span>- @c["SER_FN_3"]</span>
+                                    }
+                                    @if(!Convert.ToString(c["SER_FN_4"]).Equals("")) {
+                                        <span>- @c["SER_FN_4"]</span>
+                                    }
+                                    @if(!Convert.ToString(c["SER_FN_5"]).Equals("")) {
+                                        <span>- @c["SER_FN_5"]</span>
+                                    }
+                                    @if(!Convert.ToString(c["SER_FN_6"]).Equals("")) {
+                                        <span>- @c["SER_FN_6"]</span>
+                                    }
+                                    @if(!Convert.ToString(c["SER_FN_7"]).Equals("")) {
+                                        <span>- @c["SER_FN_7"]</span>
+                                    }
+
+
+                                </td>
+                                <td>@c["PJ_NAME"]</td>
+                                <td>
+                                    <button class="btn btn-primary" name="action" type="button" onclick="Open_SYSInfo('@c["PJ_ID"]');">編輯</button>
+                                    <button class="btn btn-danger" name="action" type="button" onclick="if(!confirm('確定刪除？')) { return false; } " value="Del">刪除</button>
+                                    <button class="btn btn-secondary" name="action" type="button" onclick="Open_SYSInfo('@c["PJ_ID"]', 'copy');">複製</button>
+                                </td>
+                            </tr>
+                        }
+
+                        <!-- 可繼續複製其他列 -->
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    }
+
+
+    @* 經費統計表彈窗容器：git 版有、CPC 遺漏 *@
+    <div id="PRT_SYS_Dialog" title="列印下水道系統經費統計表" style="padding:5px; display:none;">
+        <iframe id="PRT_SYS_Frame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+    <div id="SYSManager" title="系統別管理 (A)" style="padding:5px; color:#ffffff;">
+        <iframe id="editor" src="" style="width:100%; height:100%; border:0px;"></iframe>
+    </div>
+
+    <div id="SYSInfo" title="系統別內容 (A)" style="padding:5px; color:#ffffff;">
+        <iframe id="SYSInfoFrame" src="" style="width:100%; height:100%; border:0px;"></iframe>
+    </div>
+
+    <div id="SYSStat" title="系統別狀態 (A)" style="padding:5px; color:#ffffff;">
+        <iframe id="SYSStatFrame" src="" style="width:100%; height:100%; border:0px;"></iframe>
+    </div>
+    <script>
+
+
+ // 開啟下水道系統經費統計表彈窗（共用 SYS0030/PrtSysPopup，STAT_NO='R' 表雨水）
+ function Open_PRT_SYS(STAT_NO) {
+     var url = '@Url.Action("PrtSysPopup", "SYS0030")';
+     if (STAT_NO) {
+         url += '?STAT_NO=' + encodeURIComponent(STAT_NO);
+     }
+     $("#PRT_SYS_Frame").attr("src", url);
+     $("#PRT_SYS_Dialog").dialog("open");
+ }
+
+ //開啟系統別管理
+ function Open_SYSManager() {
+ $("#editor").attr("src", '@Url.Action("SYSManager", "SYS0030A")');
+ $("#SYSManager").dialog("open");
+ }
+
+
+ //開啟系統別內容
+ function Open_SYSInfo(pjId, mode) {
+   var url = '@Url.Action("SYSInfo", "SYS0030A")';
+   var params = [];
+   if (pjId) { params.push('pjId=' + encodeURIComponent(pjId)); }
+   if (mode) { params.push('mode=' + encodeURIComponent(mode)); }
+   if (params.length > 0) { url = url + '?' + params.join('&'); }
+   $('#SYSInfoFrame').attr('src', url);
+   $('#SYSInfo').dialog('open');
+   }
+
+ //開啟系統別狀態
+ function Open_SYSStat(Pid) {
+ alert(Pid);
+ $("#SYSStatFrame").attr("src", "@Url.Content("~/")SYSStatA");
+ $("#SYSStat").dialog("open");
+ }
+
+
+ $(function () {
+
+
+ var h = $(window).height();
+ var w = $(window).width();
+
+ // 經費統計表彈窗初始化（git 版有、CPC 遺漏）
+ $("#PRT_SYS_Dialog").dialog({
+     autoOpen: false,
+     show: { duration: 500 },
+     hide: { duration: 500 },
+     width: w * 0.75,
+     height: h * 0.85,
+     modal: true
+ });
+
+ //系統別管理
+ $("#SYSManager").dialog({
+ autoOpen: false,
+ show: {duration:1000 },
+ hide: { duration:1000},
+ autoOpen: false,
+ width: w *0.7,
+ height: h *0.9,
+ modal: true,
+ close: function (event, ui) {
+ //alert("Dialog 已關閉並重新整理");
+ location.reload();
+ }
+ });
+
+ //系統別內容管理
+ $("#SYSInfo").dialog({
+ autoOpen: false,
+ show: { duration:1000 },
+ hide: { duration:1000 },
+ autoOpen: false,
+ width: w *0.7,
+ height: h *0.9,
+ modal: true,
+ close: function (event, ui) {
+ //alert("Dialog 已關閉並重新整理");
+ location.reload();
+ }
+ });
+
+ //系統別狀態管理
+ $("#SYSStat").dialog({
+ autoOpen: false,
+ show: { duration:1000 },
+ hide: { duration:1000 },
+ autoOpen: false,
+ width: w *0.4,
+ height: h *0.6,
+ modal: true,
+ close: function (event, ui) {
+ //alert("Dialog 已關閉並重新整理");
+ //location.reload();
+ }
+ });
+
+ });
+
+
+    </script>
+
+
+}
+
+
+@section scripts{
+
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+
+}

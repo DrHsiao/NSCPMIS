@@ -1,0 +1,214 @@
+﻿@model WCals.ViewModels.NewModels.TDE0070Model
+@{
+    ViewBag.Title = "統計資料編輯";
+    Layout = null;
+
+    System.Data.DataTable dtList = ViewBag.List1 as System.Data.DataTable;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .section-header {
+            background-color: #f5f5f5;
+            border-left: 4px solid #0275d8;
+            padding: 10px 15px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+            /* BS3 form-horizontal 相容 shim (BS5 移除 form-group 的 row 行為) */
+        .form-horizontal .form-group{display:flex;flex-wrap:wrap;align-items:center;margin-bottom:1rem;}
+        .form-horizontal .form-group>.col-form-label{text-align:right;}
+</style>
+</head>
+<body style="padding:15px;">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible" role="alert" id="successAlert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible" role="alert" id="errorAlert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            @TempData["Error"]
+        </div>
+    }
+
+    <div id="messageDiv"></div>
+
+    <h4 class="page-header">統計資料編輯 - @Model.CITY (@Model.SYR 年 @Model.SMN 月)</h4>
+
+    <div class="section-header">污水下水道接管統計 (CCDMCNT)</div>
+
+    @{
+        string pcCnt = "";
+        string acCnt = "";
+        string bcCnt = "";
+        string ccCnt = "";
+        string changeNote = "";
+        string unusualNote = "";
+
+        if (dtList != null && dtList.Rows.Count > 0)
+        {
+            System.Data.DataRow row = dtList.Rows[0];
+            pcCnt = row["PC_CNT"] != DBNull.Value ? Convert.ToDecimal(row["PC_CNT"]).ToString("0") : "";
+            acCnt = row["AC_CNT"] != DBNull.Value ? Convert.ToDecimal(row["AC_CNT"]).ToString("0") : "";
+            bcCnt = row["BC_CNT"] != DBNull.Value ? Convert.ToDecimal(row["BC_CNT"]).ToString("0") : "";
+            ccCnt = row["CC_CNT"] != DBNull.Value ? Convert.ToDecimal(row["CC_CNT"]).ToString("0") : "";
+            changeNote = row["CHANGE_NOTE"] != DBNull.Value ? row["CHANGE_NOTE"].ToString() : "";
+            unusualNote = row["UNUSUAL_NOTE"] != DBNull.Value ? row["UNUSUAL_NOTE"].ToString() : "";
+        }
+    }
+
+    <div class="card shadow-sm border-0 mb-4 h-100">
+        <div class="card-body">
+            <form id="editForm" class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">年度</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">@Model.SYR</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">月份</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">@Model.SMN</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">縣市</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">@Model.CITY</p>
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">公共污水接管人口</label>
+                    <div class="col-sm-4">
+                        <input type="number" id="PC_CNT" name="PC_CNT" value="@pcCnt" class="form-control" style="text-align: right;" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">專用污水接管人口</label>
+                    <div class="col-sm-4">
+                        <input type="number" id="AC_CNT" name="AC_CNT" value="@acCnt" class="form-control" style="text-align: right;" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">建築物污水接管人口</label>
+                    <div class="col-sm-4">
+                        <input type="number" id="BC_CNT" name="BC_CNT" value="@bcCnt" class="form-control" style="text-align: right;" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">社區污水接管人口</label>
+                    <div class="col-sm-4">
+                        <input type="number" id="CC_CNT" name="CC_CNT" value="@ccCnt" class="form-control" style="text-align: right;" />
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">異動說明</label>
+                    <div class="col-sm-9">
+                        <textarea id="CHANGE_NOTE" name="CHANGE_NOTE" class="form-control" rows="3">@changeNote</textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">異常說明</label>
+                    <div class="col-sm-9">
+                        <textarea id="UNUSUAL_NOTE" name="UNUSUAL_NOTE" class="form-control" rows="3">@unusualNote</textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <button type="button" class="btn btn-primary btn-lg" onclick="saveData();">儲存</button>
+                        <button type="button" onclick="top.closeEditDialog();" class="btn btn-secondary btn-lg">關閉</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var SYR = '@Model.SYR';
+        var SMN = '@Model.SMN';
+        var CITY = '@Model.CITY';
+
+        // 3.3.4：keepVisible=true 時不自動消失（錯誤訊息必須留著讓使用者看清楚）
+        //        並自動捲到訊息位置，避免訊息出現在畫面外而像是「沒反應」
+        function showMessage(type, message, keepVisible) {
+            var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            var html = '<div class="alert ' + alertClass + ' alert-dismissible" role="alert">' +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                message + '</div>';
+            $('#messageDiv').html(html);
+            try { document.getElementById('messageDiv').scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { }
+            if (!keepVisible) {
+                setTimeout(function () {
+                    $('#messageDiv').html('');
+                }, 3000);
+            }
+        }
+
+        // 儲存資料
+        function saveData() {
+            var pcCnt = $('#PC_CNT').val();
+            var acCnt = $('#AC_CNT').val();
+            var bcCnt = $('#BC_CNT').val();
+            var ccCnt = $('#CC_CNT').val();
+            var changeNote = $('#CHANGE_NOTE').val();
+            var unusualNote = $('#UNUSUAL_NOTE').val();
+
+            $.ajax({
+                url: '@Url.Action("EditUpdate", "TDE0070")',
+                type: 'POST',
+                data: {
+                    SYR: SYR,
+                    SMN: SMN,
+                    CITY: CITY,
+                    PC_CNT: pcCnt || null,
+                    AC_CNT: acCnt || null,
+                    BC_CNT: bcCnt || null,
+                    CC_CNT: ccCnt || null,
+                    CHANGE_NOTE: changeNote,
+                    UNUSUAL_NOTE: unusualNote
+                },
+                success: function (result) {
+                    if (result.success) {
+                        // 3.3.4：業主回報「儲存後無反應」。實測儲存其實成功，
+                        // 但「儲存」鈕在表單最下方、訊息區在最上方(相距約 740px、頁面需捲動)，
+                        // 訊息出現在畫面外又 3 秒自動消失，使用者完全看不到回饋。
+                        // 改為：成功即關閉編輯視窗並重整列表，讓使用者直接在列表看到新數值。
+                        showMessage('success', result.message);
+                        setTimeout(function () {
+                            if (parent && typeof parent.closeEditDialog === 'function') {
+                                parent.closeEditDialog();
+                            }
+                        }, 700);
+                    } else {
+                        showMessage('error', result.message, true);
+                    }
+                },
+                error: function () {
+                    showMessage('error', '更新失敗，請稍後再試或聯絡系統管理員。', true);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

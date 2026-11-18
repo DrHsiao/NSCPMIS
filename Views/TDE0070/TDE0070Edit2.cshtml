@@ -1,0 +1,169 @@
+﻿@model WCals.ViewModels.NewModels.TDE0070Model
+@{
+    ViewBag.Title = "基礎資料編輯";
+    Layout = null;
+
+    System.Data.DataTable dtList = ViewBag.List1 as System.Data.DataTable;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .section-header {
+            background-color: #f5f5f5;
+            border-left: 4px solid #5cb85c;
+            padding: 10px 15px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+            /* BS3 form-horizontal 相容 shim (BS5 移除 form-group 的 row 行為) */
+        .form-horizontal .form-group{display:flex;flex-wrap:wrap;align-items:center;margin-bottom:1rem;}
+        .form-horizontal .form-group>.col-form-label{text-align:right;}
+</style>
+</head>
+<body style="padding:15px;">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible" role="alert" id="successAlert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible" role="alert" id="errorAlert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            @TempData["Error"]
+        </div>
+    }
+
+    <div id="messageDiv"></div>
+
+    <h4 class="page-header">基礎資料編輯 - @Model.CITY (@Model.SYR 年 @Model.SMN 月)</h4>
+
+    <div class="section-header">人口戶數基礎資料 (CCEMCNT)</div>
+
+    @{
+        string popCnt = "";
+        string dorCnt = "";
+        string dorCount = "";
+
+        if (dtList != null && dtList.Rows.Count > 0)
+        {
+            System.Data.DataRow row = dtList.Rows[0];
+            popCnt = row["POP_CNT"] != DBNull.Value ? Convert.ToDecimal(row["POP_CNT"]).ToString("0") : "";
+            dorCnt = row["DOR_CNT"] != DBNull.Value ? Convert.ToDecimal(row["DOR_CNT"]).ToString("0") : "";
+            dorCount = row["DOR_COUNT"] != DBNull.Value ? Convert.ToDecimal(row["DOR_COUNT"]).ToString("0") : "";
+        }
+    }
+
+    <div class="card shadow-sm border-0 mb-4 h-100">
+        <div class="card-body">
+            <form id="editForm" class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">年度</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">@Model.SYR</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">月份</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">@Model.SMN</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">縣市</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">@Model.CITY</p>
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">人口數</label>
+                    <div class="col-sm-4">
+                        <input type="number" id="POP_CNT" name="POP_CNT" value="@popCnt" class="form-control" style="text-align: right;" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">戶數</label>
+                    <div class="col-sm-4">
+                        <input type="number" id="DOR_CNT" name="DOR_CNT" value="@dorCnt" class="form-control" style="text-align: right;" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 col-form-label">戶數(內政部)</label>
+                    <div class="col-sm-4">
+                        <input type="number" id="DOR_COUNT" name="DOR_COUNT" value="@dorCount" class="form-control" style="text-align: right;" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <button type="button" class="btn btn-primary btn-lg" onclick="saveData();">儲存</button>
+                        <button type="button" onclick="top.closeEditDialog2();" class="btn btn-secondary btn-lg">關閉</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var SYR = '@Model.SYR';
+        var SMN = '@Model.SMN';
+        var CITY = '@Model.CITY';
+
+        function showMessage(type, message) {
+            var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            var html = '<div class="alert ' + alertClass + ' alert-dismissible" role="alert">' +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                message + '</div>';
+            $('#messageDiv').html(html);
+            setTimeout(function () {
+                $('#messageDiv').html('');
+            }, 3000);
+        }
+
+        // 儲存資料
+        function saveData() {
+            var popCnt = $('#POP_CNT').val();
+            var dorCnt = $('#DOR_CNT').val();
+            var dorCount = $('#DOR_COUNT').val();
+
+            $.ajax({
+                url: '@Url.Action("Edit2Update", "TDE0070")',
+                type: 'POST',
+                data: {
+                    SYR: SYR,
+                    SMN: SMN,
+                    CITY: CITY,
+                    POP_CNT: popCnt || null,
+                    DOR_CNT: dorCnt || null,
+                    DOR_COUNT: dorCount || null
+                },
+                success: function (result) {
+                    if (result.success) {
+                        showMessage('success', result.message);
+                    } else {
+                        showMessage('error', result.message);
+                    }
+                },
+                error: function () {
+                    showMessage('error', '更新失敗');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

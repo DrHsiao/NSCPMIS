@@ -1,0 +1,71 @@
+﻿@{
+    ViewBag.Title = "人員管理";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head {
+    <link rel="stylesheet" href="~/Content/views/group.css">
+}
+
+<form method="post" action="@Url.Action("Create")">
+    <h2 style="color:cornflowerblue">新增人員</h2>
+
+    <table style="text-align:left; " class="model-form">
+        <tr>
+            <th>
+                員工編號:
+                <input type="text" id="USR_ID" name="USR_ID" class="form-contol" required />
+            </th>
+            <th>
+                員工姓名:
+                <input type="text" id="USR_NAME" name="USR_NAME" class="form-contol" required />
+            </th>
+        </tr>
+        <tr>
+            <th>
+                連絡電話:
+                <input type="text" id="TEL_O" name="TEL_O" class="form-contol" />
+            </th>
+            <th>
+                行動電話:
+                <input type="text" id="TEL_M" name="TEL_M" class="form-contol" />
+            </th>
+        </tr>
+        <tr>
+            <th>
+                電子郵件:
+                <input type="text" id="EMAIL" name="EMAIL" class="form-contol" />
+            </th>
+            <th>
+                在職狀況:
+                <input type="checkbox" id="USR_STAT" name="USR_STAT" value="True">
+            </th>
+        </tr>
+        <tr>
+            <th>
+                備註說明:
+            </th>
+        </tr>
+        <tr>
+            <th>
+                <textarea id="NOTE" name="NOTE" rows="3" cols="50" style="width:300px;height:50px;"></textarea>
+            </th>
+        </tr>
+        <tr>
+            <th>
+                密碼:
+                <input type="text" id="USR_PSW" name="USR_PSW" class="form-contol" required />
+            </th>
+            <th>
+                確認密碼:
+                <input type="text" id="USR_PSW2" name="USR_PSW2" class="form-contol" required />
+            </th>
+        </tr>
+        <tr><th><br /></th></tr>
+        <tr>
+            <th><input type="submit" value="新增" class="btn btn-secondary" style="border:1px gray solid" />&nbsp;<a href="@Url.Action("Cancel", "Employee")" class="btn btn-secondary" style="border:1px gray solid">取消</a></th>
+        </tr>
+    </table>
+
+    <div style="color:red; text-align:left; margin: 20px 30px 30px 290px">@ViewBag.IDERROR</div>
+</form>

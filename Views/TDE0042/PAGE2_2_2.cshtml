@@ -1,0 +1,287 @@
+﻿@model WCals.ViewModels.NewModels.TDE0040Model
+@{
+    Layout = null;
+    bool isNew = ViewBag.IsNew ?? false;
+    var data = ViewBag.Data as System.Data.DataRow;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>保留款月份分配編輯</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+ html, body {
+   height: 100%;
+   margin: 0;
+       padding: 0;
+        }
+
+        body {
+       padding: 10px;
+    box-sizing: border-box;
+  }
+
+    .form-group {
+   margin-bottom: 10px;
+        }
+
+  .month-row {
+   display: flex;
+    flex-wrap: wrap;
+  margin: 0 -5px;
+        }
+
+      .month-col {
+ flex: 0 0 25%;
+  padding: 0 5px;
+      margin-bottom: 10px;
+    }
+
+     .input-group-addon {
+    min-width: 50px;
+   }
+
+        .total-row {
+ background-color: #f5f5f5;
+    padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+   .btn-toolbar {
+     margin-top: 15px;
+  }
+    </style>
+</head>
+<body>
+  @if(TempData["Success"] != null) {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if(TempData["Error"] != null) {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+@using(Html.BeginForm("PAGE2_2_2_Save", "TDE0042", FormMethod.Post, new { id = "mainForm" })) {
+      @Html.AntiForgeryToken()
+
+        <input type="hidden" name="TD_CODE" value="@ViewBag.TD_CODE" />
+        <input type="hidden" name="PID" value="@(data != null && data.Table.Columns.Contains("PID") && data["PID"] != DBNull.Value ? data["PID"] : "")" />
+        <input type="hidden" name="IsNew" value="@isNew.ToString().ToLower()" />
+
+     <div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-primary text-white fw-bold">
+  <strong>保留款月份分配 @(isNew ? "(新增)" : "(編輯)")</strong>
+ </div>
+<div class="card-body">
+       <!-- 保留款基本資料 -->
+       <div class="row">
+     <div class="col-md-4">
+<div class="form-group">
+        <label>保留金額(元)</label>
+        <input type="number" class="form-control" name="REV_FUND" id="REV_FUND"
+         value="@(data != null && data.Table.Columns.Contains("REV_FUND") && data["REV_FUND"] != DBNull.Value ? data["REV_FUND"] : "")" />
+  </div>
+    </div>
+        <div class="col-md-4">
+  <div class="form-group">
+             <label>發生權責數(元)</label>
+     <input type="number" class="form-control" name="OCR_FUND" id="OCR_FUND"
+  value="@(data != null && data.Table.Columns.Contains("OCR_FUND") && data["OCR_FUND"] != DBNull.Value ? data["OCR_FUND"] : "")" />
+    </div>
+      </div>
+          <div class="col-md-4">
+       <div class="form-group">
+      <label>特別分配數(元)</label>
+  <input type="number" class="form-control" name="SPD_FUND" id="SPD_FUND"
+ value="@(data != null && data.Table.Columns.Contains("SPD_FUND") && data["SPD_FUND"] != DBNull.Value ? data["SPD_FUND"] : "")" />
+  </div>
+      </div>
+          </div>
+
+  <div class="row">
+   <div class="col-md-12">
+      <div class="form-group">
+         <label>保留原因</label>
+    <textarea class="form-control" name="REV_RESN" id="REV_RESN" rows="2">@(data != null && data.Table.Columns.Contains("REV_RESN") && data["REV_RESN"] != DBNull.Value ? data["REV_RESN"] : "")</textarea>
+        </div>
+     </div>
+      </div>
+
+  <hr />
+
+     <!-- 月份分配 -->
+      <h5>月份分配 <small class="text-muted">(月份合計需等於特別分配數)</small></h5>
+   <div class="month-row">
+   <div class="month-col">
+       <div class="input-group">
+ <span class="input-group-text">1月</span>
+       <input type="number" class="form-control month-input" name="M_01" id="M_01"
+    value="@(data != null && data.Table.Columns.Contains("M_01") && data["M_01"] != DBNull.Value ? data["M_01"] : "")" />
+      </div>
+       </div>
+  <div class="month-col">
+       <div class="input-group">
+          <span class="input-group-text">2月</span>
+  <input type="number" class="form-control month-input" name="M_02" id="M_02"
+     value="@(data != null && data.Table.Columns.Contains("M_02") && data["M_02"] != DBNull.Value ? data["M_02"] : "")" />
+  </div>
+</div>
+         <div class="month-col">
+       <div class="input-group">
+          <span class="input-group-text">3月</span>
+        <input type="number" class="form-control month-input" name="M_03" id="M_03"
+     value="@(data != null && data.Table.Columns.Contains("M_03") && data["M_03"] != DBNull.Value ? data["M_03"] : "")" />
+        </div>
+         </div>
+          <div class="month-col">
+    <div class="input-group">
+   <span class="input-group-text">4月</span>
+ <input type="number" class="form-control month-input" name="M_04" id="M_04"
+    value="@(data != null && data.Table.Columns.Contains("M_04") && data["M_04"] != DBNull.Value ? data["M_04"] : "")" />
+   </div>
+  </div>
+    </div>
+
+   <div class="month-row">
+    <div class="month-col">
+  <div class="input-group">
+<span class="input-group-text">5月</span>
+ <input type="number" class="form-control month-input" name="M_05" id="M_05"
+   value="@(data != null && data.Table.Columns.Contains("M_05") && data["M_05"] != DBNull.Value ? data["M_05"] : "")" />
+  </div>
+            </div>
+        <div class="month-col">
+      <div class="input-group">
+    <span class="input-group-text">6月</span>
+     <input type="number" class="form-control month-input" name="M_06" id="M_06"
+   value="@(data != null && data.Table.Columns.Contains("M_06") && data["M_06"] != DBNull.Value ? data["M_06"] : "")" />
+</div>
+         </div>
+        <div class="month-col">
+       <div class="input-group">
+         <span class="input-group-text">7月</span>
+  <input type="number" class="form-control month-input" name="M_07" id="M_07"
+          value="@(data != null && data.Table.Columns.Contains("M_07") && data["M_07"] != DBNull.Value ? data["M_07"] : "")" />
+   </div>
+        </div>
+           <div class="month-col">
+     <div class="input-group">
+   <span class="input-group-text">8月</span>
+      <input type="number" class="form-control month-input" name="M_08" id="M_08"
+  value="@(data != null && data.Table.Columns.Contains("M_08") && data["M_08"] != DBNull.Value ? data["M_08"] : "")" />
+        </div>
+     </div>
+         </div>
+
+    <div class="month-row">
+      <div class="month-col">
+         <div class="input-group">
+               <span class="input-group-text">9月</span>
+       <input type="number" class="form-control month-input" name="M_09" id="M_09"
+      value="@(data != null && data.Table.Columns.Contains("M_09") && data["M_09"] != DBNull.Value ? data["M_09"] : "")" />
+   </div>
+     </div>
+         <div class="month-col">
+  <div class="input-group">
+   <span class="input-group-text">10月</span>
+  <input type="number" class="form-control month-input" name="M_10" id="M_10"
+      value="@(data != null && data.Table.Columns.Contains("M_10") && data["M_10"] != DBNull.Value ? data["M_10"] : "")" />
+ </div>
+   </div>
+        <div class="month-col">
+   <div class="input-group">
+       <span class="input-group-text">11月</span>
+     <input type="number" class="form-control month-input" name="M_11" id="M_11"
+     value="@(data != null && data.Table.Columns.Contains("M_11") && data["M_11"] != DBNull.Value ? data["M_11"] : "")" />
+       </div>
+          </div>
+    <div class="month-col">
+       <div class="input-group">
+<span class="input-group-text">12月</span>
+   <input type="number" class="form-control month-input" name="M_12" id="M_12"
+     value="@(data != null && data.Table.Columns.Contains("M_12") && data["M_12"] != DBNull.Value ? data["M_12"] : "")" />
+           </div>
+         </div>
+    </div>
+
+           <!-- 月份合計 -->
+        <div class="total-row">
+       <div class="row">
+          <div class="col-md-6">
+  <strong>月份合計：</strong>
+        <span id="monthTotal">0</span> 元
+          </div>
+          <div class="col-md-6">
+    <strong>與特別分配數差額：</strong>
+      <span id="diffAmount">0</span> 元
+     </div>
+      </div>
+     </div>
+   </div>
+   </div>
+
+        <div class="btn-toolbar">
+            <button type="submit" class="btn btn-primary">
+  <i class="fa-solid fa-floppy-disk me-1"></i> 儲存
+          </button>
+    <button type="button" class="btn btn-outline-secondary shadow-sm" onclick="closeDialog();">
+  <i class="fa-solid fa-xmark me-1"></i> 關閉
+       </button>
+ </div>
+  }
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 關閉對話框並刷新父頁面
+   function closeDialog() {
+ var topWindow = window;
+   while (topWindow.parent && topWindow.parent !== topWindow) {
+         topWindow = topWindow.parent;
+   if (typeof topWindow.close2_2_2 === 'function') {
+     topWindow.close2_2_2();
+       return;
+        }
+ }
+}
+
+   // 計算月份合計
+     function calculateTotal() {
+    var total = 0;
+    $('.month-input').each(function () {
+  var val = parseFloat($(this).val()) || 0;
+  total += val;
+  });
+
+   $('#monthTotal').text(total.toLocaleString());
+
+  // 與特別分配數比較
+   var spdFund = parseFloat($('#SPD_FUND').val()) || 0;
+        var diff = spdFund - total;
+  $('#diffAmount').text(diff.toLocaleString());
+
+         if (diff < 0) {
+       $('#diffAmount').css('color', 'red');
+        } else if (diff > 0) {
+            $('#diffAmount').css('color', 'orange');
+   } else {
+      $('#diffAmount').css('color', 'green');
+     }
+     }
+
+     $(document).ready(function () {
+            // 綁定月份輸入變更事件
+     $('.month-input, #SPD_FUND').on('input', function () {
+           calculateTotal();
+        });
+
+ // 初始計算
+  calculateTotal();
+  });
+ </script>
+</body>
+</html>

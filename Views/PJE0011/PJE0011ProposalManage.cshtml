@@ -1,0 +1,560 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0011Model
+@{ ViewBag.Title = "中長程計畫維護[2.1.1]";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+@section head{
+
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <style>
+        /* 表格的基本樣式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            color: #212529;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .ui-dialog {
+            z-index: 4000;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            中長程計畫維護[2.1.1]
+            <small>@ViewBag.PJ_NAME</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")PJE0011">中長程計畫維護[2.1.1]</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                提案管理
+            </li>
+        </ol>
+    </div>
+</div>
+
+
+@using (Html.BeginForm("", "PJE0011", FormMethod.Post, new { id = "mainForm" }))
+{
+
+
+    @Html.HiddenFor(x => x.keyword)
+    @Html.HiddenFor(x => x.page1)
+    @Html.HiddenFor(x => x.page2)
+    @Html.HiddenFor(x => x.AID)
+    @Html.HiddenFor(x => x.tab)
+    @Html.HiddenFor(x => x.PPID)
+
+    <div style="display:flex;width:100%">
+        <div style="width:50%; text-align:left; ">
+            <table>
+                <tr>
+                    <td style="padding-right: 10px; vertical-align: top;">
+                        <!-- 💡 調整：在 tab=4 加上批次成案與批次重新審核，tab=7 加上批次重新審核 -->
+                        @if (Model.tab == 4)
+                        {
+                            <button type="button" class="btn btn-success" onclick="batchSendDeal()">批次成案</button>
+                            <button type="button" class="btn btn-warning" onclick="batchSendPrevious()">批次重新審核</button>
+                        }
+                        @if (Model.tab == 7)
+                        {
+                            <button type="button" class="btn btn-warning" onclick="batchSendPrevious()">批次重新審核</button>
+                        }
+                    </td>
+
+                    <td class="col-md-3">
+                        @Html.DropDownListFor(x => x.YRC_ID, (SelectList)ViewBag.yrcs, new { @class = "form-control", form = "mainForm" })
+                    </td>
+                    <td class="col-md-2">
+                        @Html.DropDownListFor(x => x.city, (SelectList)ViewBag.cities, "所有縣市", new { @class = "form-control", form = "mainForm" })
+                    </td>
+                    <td class="col-md-3">
+                        @Html.TextBoxFor(x => x.keyword2, new { @class = "form-control", placeholder = "輸入工程名稱...", form = "mainForm" })
+                    </td>
+                    <td class="text-nowrap">
+
+                        <button class="btn btn-secondary" name="action" type="submit" value="ProposalSearch">查詢</button>
+
+                        @if (ViewBag.STAT_NO == "R")
+                        {
+                            <button class="btn btn-secondary" name="action" type="submit" value="ExportScoreToExcel">評分表</button>
+                            <button class="btn btn-secondary" name="action" type="submit" value="ExportDetailsToExcel">明細表</button>
+                        }
+                        else if (ViewBag.STAT_NO == "S" && (Model.tab == 4 || Model.tab == 5))
+                        {
+                            <button class="btn btn-secondary" name="action" type="submit" value="ExportScoreToExcel">評分表</button>
+                            <button class="btn btn-secondary" name="action" type="submit" value="ExportDetailsToExcel">明細表</button>
+                        }
+                        @* 20260424 版本修改 => 環境改善計畫，每個狀態都要顯示 "評分表" | "明細表" *@
+                        else if (ViewBag.STAT_NO == "E" && (Model.tab >= 1 && Model.tab <= 8))
+                        {
+                            <button class="btn btn-secondary" name="action" type="submit" value="ExportEnvironmentScoreToExcel">評分表</button>
+                            <button class="btn btn-secondary" name="action" type="submit" value="ExportEnvironmentDetailsToExcel">明細表</button>
+                        }
+
+                        <a class="btn btn-secondary" href="@Url.Content("~/")PJE0011?page1=@Model.page1">返回</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        @if (Model.List1 != null)
+        {
+            <div style="width: 50%; text-align: right;">
+                @Html.PagedListPager(Model.List1, page2 => Url.Action("ProposalManage",
+                    new
+                         {
+                        page1 = Model.page1,
+                        page2 = page2,
+                        tab = Model.tab,
+                        ppid = Model.PPID,
+                        yrcid = Model.YRC_ID,
+                        city = Model.city,
+                        keyword2 = Model.keyword2
+                    }),
+                    new PagedListRenderOptions
+                         {
+                        DisplayItemSliceAndTotal = true,
+                        DisplayPageCountAndCurrentLocation = true,
+                        DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                        DisplayLinkToIndividualPages = false,
+                        ItemSliceAndTotalFormat = "顯示第 {0} - {1}筆, 共{2}筆",
+                        PageCountAndCurrentLocationFormat = "第 {0}頁 / 共 {1}頁",
+                    }
+                )
+            </div>
+        }
+
+    </div>
+
+
+    <br />
+    <div class="card border-primary mb-3">
+        <div class="card-header bg-primary text-white">
+            <ul class="nav nav-tabs">
+                @if (Model.tab == 1)
+                {
+                    <li class="nav-item"><a class="nav-link active" href="@Url.Content("~/")PJE0011/ProposalManage?tab=1&ppid=@Model.PPID&yrcid=@Model.YRC_ID&page1=@Model.page1&page2=1&city=@Model.city&keyword2=@Model.keyword2">待收件</a></li>
+                }
+                else
+                {
+                    <li class="nav-item"><a class="nav-link" href="@Url.Content("~/")PJE0011/ProposalManage?tab=1&ppid=@Model.PPID&yrcid=@Model.YRC_ID&page1=@Model.page1&page2=1&city=@Model.city&keyword2=@Model.keyword2">待收件</a></li>
+                }
+                @if (Model.tab == 2)
+                {
+                    <li class="nav-item"><a class="nav-link active" href="@Url.Content("~/")PJE0011/ProposalManage?tab=2&ppid=@Model.PPID&yrcid=@Model.YRC_ID&page1=@Model.page1&page2=1&city=@Model.city&keyword2=@Model.keyword2">初審中</a></li>
+                }
+                else
+                {
+                    <li class="nav-item"><a class="nav-link" href="@Url.Content("~/")PJE0011/ProposalManage?tab=2&ppid=@Model.PPID&yrcid=@Model.YRC_ID&page1=@Model.page1&page2=1&city=@Model.city&keyword2=@Model.keyword2">初審中</a></li>
+                }
+                @if (Model.tab == 3)
+                {
+                    <li class="nav-item"><a class="nav-link active" href="@Url.Content("~/")PJE0011/ProposalManage?tab=3&ppid=@Model.PPID&yrcid=@Model.YRC_ID&page1=@Model.page1&page2=1&city=@Model.city&keyword2=@Model.keyword2">複審中</a></li>
+                }
+                else
+                {
+                    <li class="nav-item"><a class="nav-link" href="@Url.Content("~/")PJE0011/ProposalManage?tab=3&ppid=@Model.PPID&yrcid=@Model.YRC_ID&page1=@Model.page1&page2=1&city=@Model.city&keyword2=@Model.keyword2">複審中</a></li>
+                }
+                @if (Model.tab == 4)
+                {
+                    <li class="nav-item"><a class="nav-link active" href="@Url.Content("~/")PJE0011/ProposalManage?tab=4&ppid=@Model.PPID&yrcid=@Model.YRC_ID&page1=@Model.page1&page2=1&city=@Model.city&keyword2=@Model.keyword2">核定中</a></li>
+                }
+                else
+                {
+                    <li class="nav-item"><a class="nav-link" href="@Url.Content("~/")PJE0011/ProposalManage?tab=4&ppid=@Model.PPID&yrcid=@Model.YRC_ID&page1=@Model.page1&page2=1&city=@Model.city&keyword2=@Model.keyword2">核定中</a></li>
+                }
+                @if (Model.tab == 5)
+                {
+                    <li class="nav-item"><a class="nav-link active" href="@Url.Content("~/")PJE0011/ProposalManage?tab=5&ppid=@Model.PPID&yrcid=@Model.YRC_ID&page1=@Model.page1&page2=1&city=@Model.city&keyword2=@Model.keyword2">已成案</a></li>
+                }
+                else
+                {
+                    <li class="nav-item"><a class="nav-link" href="@Url.Content("~/")PJE0011/ProposalManage?tab=5&ppid=@Model.PPID&yrcid=@Model.YRC_ID&page1=@Model.page1&page2=1&city=@Model.city&keyword2=@Model.keyword2">已成案</a></li>
+                }
+                @if (Model.tab == 6)
+                {
+                    <li class="nav-item"><a class="nav-link active" href="@Url.Content("~/")PJE0011/ProposalManage?tab=6&ppid=@Model.PPID&yrcid=@Model.YRC_ID&page1=@Model.page1&page2=1&city=@Model.city&keyword2=@Model.keyword2">未過初審</a></li>
+                }
+                else
+                {
+                    <li class="nav-item"><a class="nav-link" href="@Url.Content("~/")PJE0011/ProposalManage?tab=6&ppid=@Model.PPID&yrcid=@Model.YRC_ID&page1=@Model.page1&page2=1&city=@Model.city&keyword2=@Model.keyword2">未過初審</a></li>
+                }
+                @if (Model.tab == 7)
+                {
+                    <li class="nav-item"><a class="nav-link active" href="@Url.Content("~/")PJE0011/ProposalManage?tab=7&ppid=@Model.PPID&yrcid=@Model.YRC_ID&page1=@Model.page1&page2=1&city=@Model.city&keyword2=@Model.keyword2">未過複審</a></li>
+                }
+                else
+                {
+                    <li class="nav-item"><a class="nav-link" href="@Url.Content("~/")PJE0011/ProposalManage?tab=7&ppid=@Model.PPID&yrcid=@Model.YRC_ID&page1=@Model.page1&page2=1&city=@Model.city&keyword2=@Model.keyword2">未過複審</a></li>
+                }
+            </ul>
+        </div>
+
+        @if (Model.List1.Count == 0)
+        {
+            <table width="100%" class="table table-hover" style="overflow-x: auto; white-space: nowrap;">
+                <thead class="table-light">
+                    <tr>
+                        <th>無資料</th>
+                </thead>
+            </table>
+        }
+        @if (Model.List1.Count > 0)
+        {
+            <div style="overflow: auto;">
+                <table width="100%" class="table table-hover" style="overflow-x: auto; white-space: nowrap;">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 40px; text-align: center;">
+                                <input type="checkbox" id="checkAll" />
+                            </th>
+                            <th></th>
+                            @*<th>提案編號</th>*@
+                            <th>提案計畫名稱</th>
+                            <th>提案工程名稱</th>
+                            <th>年度</th>
+                            <th>縣市別</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (System.Data.DataRow c in Model.List1)
+                        {
+                            <tr>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <!-- 💡 調整：讓 tab=7 (未過複審) 也能夠顯示 Checkbox 供批次重新審核使用 -->
+                                    @if (Request.Params["tab"] == "4" || Request.Params["tab"] == "7")
+                                    {
+                                        <input type="checkbox" class="chkItem" value="@c["AID"]" />
+                                    }
+                                </td>
+                                <td><button type="button" class="btn btn-secondary btn-sm" onclick="getAPDPROC('@c["AID"]')"><span class="fa-solid fa-align-justify" aria-hidden="true"></span></button></td>
+                                @*<td>@c["AP_CODE"]</td>*@
+                                <td>@c["AP_PJ_NAME"]</td>
+                                <td>@c["AP_NAME"]</td>
+                                <td>@c["SYR"]</td>
+                                <td>@c["CITY"], </td>
+                                <td>
+                                    @functions {
+                                        public string FormatNumber(object input)
+                                        {
+                                            try
+                                            {
+                                                if (input == null) return "0";
+
+                                                decimal value = Convert.ToDecimal(input);
+                                                return string.Format("{0:N0}", value); // 千分位，不顯示小數
+                                            }
+                                            catch
+                                            {
+                                                return "0"; // 非數字或錯誤時回傳 0
+                                            }
+                                        }
+                                    }
+
+                                    提案-中央: @(FormatNumber(c["cen1"]))
+                                    , 地方: @(FormatNumber(c["loc1"]))<br />
+                                    初審-中央: @(FormatNumber(c["cen2"]))
+                                    , 地方: @(FormatNumber(c["loc2"]))
+                                </td>
+                                <td>
+
+                                    @if (Request.Params["tab"] == null || Request.Params["tab"] == "1")
+                                    {
+
+                                        <button class="btn btn-primary" type="button" onclick="viewAPMFORM('@c["AID"]')">內容</button>
+
+                                    }
+
+                                    @if (Request.Params["tab"] == "2")
+                                    {
+                                        <button class="btn btn-primary" type="button" onclick="viewAPMFORM('@c["AID"]')">內容</button>
+
+                                    }
+
+                                    @if (Request.Params["tab"] == "3")
+                                    {
+                                        <button class="btn btn-primary" type="button" onclick="viewAPMFORM('@c["AID"]')">內容</button>
+                                    }
+
+                                    @if (Request.Params["tab"] == "4")
+                                    {
+                                        <button class="btn btn-primary" type="button" onclick="viewAPMFORM('@c["AID"]')">內容</button>
+                                        <button class="btn btn-secondary" type="button" onclick="editAdviceReadonly('@c["AID"]')">審查記錄</button>
+                                        <button class="btn btn-primary" name="action" onclick="$('#AID').val('@c["AID"]');return(confirm('確定成案?')); void('')" value="SendDeal">成案</button>
+                                        <button class="btn btn-secondary" name="action" onclick="$('#AID').val('@c["AID"]');return (confirm('確定恢復狀態(重新審核)?')); void ('');" value="SendPrevious">重新審核</button>
+
+
+                                    }
+
+                                    @if (Request.Params["tab"] == "5")
+                                    {
+                                        <button class="btn btn-primary" type="button" onclick="viewAPMFORM('@c["AID"]')">內容</button>
+                                        <button class="btn btn-secondary" type="button" onclick="editAdviceReadonly('@c["AID"]')">審查記錄</button>
+                                        <button class="btn btn-secondary" name="action" onclick="$('#AID').val('@c["AID"]');return (confirm('確定恢復狀態?')); void ('');" value="SendBeforePrevious">取消核定</button>
+
+                                    }
+
+                                    @if (Request.Params["tab"] == "6")
+                                    {
+                                        <button class="btn btn-primary" type="button" onclick="viewAPMFORM('@c["AID"]')">內容</button>
+                                        <button class="btn btn-secondary" type="button" onclick="editAdviceReadonly('@c["AID"]')">審查記錄</button>
+                                    }
+
+                                    @if (Request.Params["tab"] == "7")
+                                    {
+                                        <button class="btn btn-primary" type="button" onclick="viewAPMFORM('@c["AID"]')">內容</button>
+                                        <button class="btn btn-secondary" type="button" onclick="editAdviceReadonly('@c["AID"]')">審查記錄</button>
+                                        <button class="btn btn-secondary" name="action" onclick="$('#AID').val('@c["AID"]');return (confirm('確定恢復狀態(重新審核)?')); void ('');" value="SendPrevious">重新審核</button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+
+
+    if (Model.List1 != null)
+    {
+        @Html.PagedListPager(Model.List1, page2 => Url.Action("ProposalManage",
+                         new
+                              {
+                             page1 = Model.page1,
+                             page2 = page2,
+                             tab = Model.tab,
+                             ppid = Model.PPID,
+                             yrcid = Model.YRC_ID,
+                             city = Model.city,
+                             keyword2 = Model.keyword2
+                         }))
+
+    }
+
+    <div id="viewFrame" title="檢視" style="padding:0px;">
+        <iframe id="viewer" src="" style="width:1024px; height:640px; border:0px;"></iframe>
+    </div>
+
+    <div id="editAdvice" title="審查記錄" style="padding:0px;">
+        <iframe id="advicer" src="" style="width:1024px; height:640px; border:0px;"></iframe>
+    </div>
+
+    <div id="histFrame" title="歷程" style="padding:0px;">
+
+        <div style="overflow: auto;">
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th>動作</th>
+                        <th>新狀態</th>
+                        <th>執行人員</th>
+                        <th>執行時間</th>
+                        <th>備註</th>
+                    </tr>
+                </thead>
+                <tbody id="hister"></tbody>
+            </table>
+            <button type="button" class="btn btn-secondary" onclick='$("#histFrame").dialog("close");'>關閉</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(function () {
+        $("#viewFrame").dialog({
+            autoOpen: false,
+            show: {
+                //effect: "blind",
+                //effect: "drop",
+                duration: 1000
+            },
+            hide: {
+                //effect: "explode",
+                //effect: "drop",
+                duration: 1000
+            },
+            autoOpen: false,
+            maxWidth: 1024,
+            maxHeight: 700,
+            width: 1024,
+            height: 700,
+            modal: true
+        });
+
+        $("#editAdvice").dialog({
+            autoOpen: false,
+            show: {
+                //effect: "blind",
+                //effect: "drop",
+                duration: 1000
+            },
+            hide: {
+                //effect: "explode",
+                //effect: "drop",
+                duration: 1000
+            },
+            autoOpen: false,
+            maxWidth: 1024,
+            maxHeight: 700,
+            width: 1024,
+            height: 700,
+            modal: true
+        });
+        $("#histFrame").dialog({
+            autoOpen: false,
+            show: {
+                //effect: "blind",
+                //effect: "drop",
+                duration: 1000
+            },
+            hide: {
+                //effect: "explode",
+                //effect: "drop",
+                duration: 1000
+            },
+            autoOpen: false,
+            //maxWidth: 800,
+            //maxHeight: 400,
+            width: 800,
+            height: 400,
+            modal: true
+        });
+    });
+    function viewAPMFORM(aid) {
+        //$("#viewer").attr("src","@Url.Content("~/SGE0010/EditAdvice")?aid="+aid+"&locked=y");
+        $("#viewer").attr("src", "/SEPMIS2/SGE0000/STEP01?aid=" + aid + "&dis=true");
+        //$("#viewer").attr("src","@Url.Content("~/SGE0000/ViewAPMFORM")?aid="+aid );
+        $("#viewFrame").dialog("open");
+    }
+
+    function CloseEditAdvice() {
+        $("#editAdvice").dialog("close");
+    }
+
+    function editAdviceReadonly(aid) {
+
+    $("#advicer").attr("src","@Url.Content("~/SGE0060/EditAdvice")?aid="+aid+"&locked=y");
+    $("#editAdvice").dialog("open");
+}
+
+    function getAPDPROC(aid) {
+
+        $("#hister").html("");
+        $("#histFrame").dialog("open");
+
+        $.ajax({
+            url: '@Url.Content("~/")ASYNC/GetAPDPROC',
+            method: 'post',
+            data: { "aid": aid },
+            success: function (d) {
+                var p = jQuery.parseJSON(d);
+
+                for (i = 0; i < p.length; i++) {
+                //alert(p[i].AID)
+                    $("#hister").append("<tr><td>" + p[i].PROC_ACT + "</td><td>" + p[i].NAP_STAT + "</td><td>" + p[i].USR_NAME +
+                        "</td><td>" + p[i].UPD_DT + "</td><td>" + p[i].PRC_NOTE + "</td></tr>");
+                //$('#hister').append('<p>這是一段新內容</p>');
+                }
+
+            }
+        });
+    }
+
+    // 全選 / 全不選 功能
+    $(function () {
+        $("#checkAll").click(function () {
+            var checkedStatus = this.checked;
+            $(".chkItem").each(function () {
+                $(this).prop("checked", checkedStatus);
+            });
+        });
+
+        $(document).on('click', '.chkItem', function () {
+            if (!$(this).prop("checked")) {
+                $("#checkAll").prop("checked", false);
+            } else {
+                if ($(".chkItem:checked").length === $(".chkItem").length) {
+                    $("#checkAll").prop("checked", true);
+                }
+            }
+        });
+    });
+
+    // 批次成案 功能
+    function batchSendDeal() {
+        var selectedAids = [];
+        $('.chkItem:checked').each(function () {
+            selectedAids.push($(this).val());
+        });
+
+        if (selectedAids.length === 0) {
+            alert("請至少勾選一筆要成案的資料！");
+            return;
+        }
+
+        if (confirm("確定要將勾選的 " + selectedAids.length + " 筆資料批次成案嗎？")) {
+            $('#AID').val(selectedAids.join(','));
+
+            // 動態產生 hidden input 指定 action，這會對應到後端的 SendDealBatch
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'action',
+                value: 'SendDealBatch'
+            }).appendTo('#mainForm');
+
+            $('#mainForm').submit();
+        }
+    }
+
+    // 💡 批次重新審核 功能
+    function batchSendPrevious() {
+        var selectedAids = [];
+        $('.chkItem:checked').each(function () {
+            selectedAids.push($(this).val());
+        });
+
+        if (selectedAids.length === 0) {
+            alert("請至少勾選一筆要重新審核的資料！");
+            return;
+        }
+
+        if (confirm("確定要將勾選的 " + selectedAids.length + " 筆資料批次恢復狀態(重新審核)嗎？")) {
+            $('#AID').val(selectedAids.join(','));
+
+            // 動態產生 hidden input 指定 action，這會對應到後端的 SendPreviousBatch
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'action',
+                value: 'SendPreviousBatch'
+            }).appendTo('#mainForm');
+
+            $('#mainForm').submit();
+        }
+    }
+</script>
+@section scripts{
+
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+
+
+}

@@ -1,0 +1,176 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0040Model
+@{ ViewBag.Title = "工程登記冊編輯";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="~/Scripts/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="~/Content/themes/base/jquery-ui.theme.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/Scripts/plugins/bootstrap-fileinput/icon.mini.css" crossorigin="anonymous">
+    <link href="~/Scripts/plugins/bootstrap-fileinput/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            padding: 5px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #mainForm {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        
+    </style>
+</head>
+<body>
+    @using(Html.BeginForm("PAGE3_1", "TDE0043", FormMethod.Post, new { data_toggle = "validator", role = "form", id = "mainForm", enctype = "multipart/form-data" })) {
+
+        @Html.AntiForgeryToken()
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+                @if(@Model.REC_TP.ToString().Equals("B") || @Model.REC_TP.ToString().Equals("C")) {
+                    @Model.TDMFORM.TD_NAME <button class="btn btn-success" name="action" value="PAGE3_1_EDIT_F">新增修正</button>
+                }
+
+
+
+            </div>
+
+            <div class="panel-body">
+                <table width="100%" class="table table-hover" style="overflow-x: auto; white-space: nowrap;">
+                    <thead>
+                        <tr>
+                            <th>期別** @Html.HiddenFor(m => m.TD_CODE)</th>
+                            <th>送核日期 @Html.HiddenFor(m => m.REC_TP)</th>
+                            <th>送核日期文號</th>
+                            <th>核示日期</th>
+                            <th>核示日期文號</th>
+                            <th>[修改] [經費款項]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(ViewBag.List1 != null && ViewBag.List1.Rows.Count > 0) {
+                            foreach(System.Data.DataRow row in ViewBag.List1.Rows) {
+                                <tr>
+                                    <td>@row["BGRC_NAME"]</td>
+                                    <td>@row["SVRF_DT"]</td>
+                                    <td>@row["SVRF_FNO"]</td>
+                                    <td>@row["CVRF_DT"]</td>
+                                    <td>@row["CVRF_FNO"]</td>
+
+
+                                    @if(@Model.REC_TP.ToString().Equals("B")) {
+                                        <td>
+                                            <button type="button" class="btn btn-default" onclick="top.open3_1_Edit('@row["TD_CODE"]', '@row["SEQ_NO"]', '@row["REC_TP"]');">修改</button>
+                                            
+                                            <button type="button" class="btn btn-default" onclick="top.open3_1_Edit_d('@row["TD_CODE"]', '@row["SEQ_NO"]', '@row["REC_TP"]');">經費款項 </button>
+                                            
+                                        </td>
+                                    }
+
+
+                                    @if(@Model.REC_TP.ToString().Equals("C")) {
+                                        <td>
+                                            <button type="button" class="btn btn-default" onclick="top.open3_1_Edit_c('@row["TD_CODE"]', '@row["SEQ_NO"]', '@row["REC_TP"]');">修改</button>
+                                            <button type="button" class="btn btn-default" onclick="top.open3_1_Edit_d('@row["TD_CODE"]', '@row["SEQ_NO"]', '@row["REC_TP"]');">經費款項 </button>
+                                            <button type="button" class="btn btn-default" onclick="top.open3_1_Edit_e('@row["TD_CODE"]', '@row["SEQ_NO"]', '@row["REC_TP"]');">契約明細 </button>
+
+                                        </td>
+                                    }
+
+                                    @if(@Model.REC_TP.ToString().Equals("S")) {
+                                        <td>
+                                            <button type="button" class="btn btn-default" onclick="top.open3_1_Edit('@row["TD_CODE"]', '@row["SEQ_NO"]', '@row["REC_TP"]');">修改</button>
+                                            <button type="button" class="btn btn-default" onclick="top.open3_1_Edit_d('@row["TD_CODE"]', '@row["SEQ_NO"]', '@row["REC_TP"]');">經費款項 </button>
+
+                                        </td>
+                                    }
+
+
+                                    @if(@Model.REC_TP.ToString().Equals("F")) {
+                                        <td>
+                                            <button type="button" class="btn btn-default" onclick="top.open3_1_Edit('@row["TD_CODE"]', '@row["SEQ_NO"]', '@row["REC_TP"]');">修改</button>
+                                            <button type="button" class="btn btn-default" onclick="top.open3_1_Edit_d('@row["TD_CODE"]', '@row["SEQ_NO"]', '@row["REC_TP"]');">經費款項 </button>
+
+                                        </td>
+                                    }
+
+                                </tr>
+                            }
+                        } else {
+                            <tr>
+                                <td colspan="6" style="text-align:center;">無資料</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button type="button" class="btn btn-default" onclick="top.close3();">關閉</button>
+        </div>
+    }
+
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/fileinput.js"></script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/zh-TW.js"></script>
+    <script src="~/Scripts/bootstrap-select.js"></script>
+    <script src="~/Scripts/validator.min.js"></script>
+    <script>
+        // 日期選擇器初始化
+        $(".dt").datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: '68:168',
+            dateFormat: 'yymmdd'
+        });
+
+        $(".dt").datepickerTW({
+            onSelect: function (dateText) {
+                $('#mainForm').validator('validate');
+            }
+        });
+
+        $('.dt').click(function () {
+            $(this).delay(600).val("");
+        });
+
+        // 修改記錄
+        function editRecord(bgfid, tdCode, recTp, seqNo) {
+            // TODO: 實作編輯功能
+            alert('編輯功能：BGFID=' + bgfid + ', TD_CODE=' + tdCode + ', REC_TP=' + recTp + ', SEQ_NO=' + seqNo);
+        }
+
+        // 查看經費款項
+        function viewBudget(bgfid, tdCode, recTp, seqNo) {
+            // TODO: 實作查看經費款項功能
+            alert('經費款項：BGFID=' + bgfid + ', TD_CODE=' + tdCode + ', REC_TP=' + recTp + ', SEQ_NO=' + seqNo);
+        }
+    </script>
+</body>
+</html>

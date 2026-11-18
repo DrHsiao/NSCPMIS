@@ -1,0 +1,5 @@
+﻿@* Anti-spam: Honeypot + Form Load Time *@
+<div style="display:none;">
+    @Html.TextBox("email_confirm", null, new { autocomplete = "off" })
+</div>
+@Html.Hidden("form_loaded", DateTime.UtcNow.Ticks)

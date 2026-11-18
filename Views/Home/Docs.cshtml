@@ -1,0 +1,40 @@
+﻿@model WCals.ViewModels.HomeIndexViewModel
+@{
+    ViewBag.Title = Model.dataSMCDOCS.SUBJECT;
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            下水道工程管理系統
+            <small> 訊息公告及檔案下載</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa-solid fa-dashboard"></i>
+                <a href="Home" title="/home">首頁</a>
+            </li>
+            <li class="active">
+                <i class="fa-solid fa-dashboard"></i> @Model.dataSMCDOCS.SUBJECT
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label>表格名稱</label>
+            @Html.TextBoxFor(f => f.dataSMCDOCS.SUBJECT, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+        <div class="form-group">
+            <label>表格說明</label>
+            @Html.TextAreaFor(f => f.dataSMCDOCS.CONTENT, new { @class = "form-control", rows = "15", @readonly = "readonly" })
+        </div>
+        <div class="form-group">
+            <label>目的檔案名稱</label>
+            @Html.TextBoxFor(f => f.dataSMCDOCS.DESP, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+        <a class="btn btn-secondary" href="/Home"> 返回</a>
+    </div>
+</div>

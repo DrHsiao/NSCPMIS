@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="http://tempuri.org/CpaEnaW/CpaEna_WS1" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://tempuri.org/CpaEnaW/CpaEna_WS1" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/CpaEnaW/CpaEna_WS1">
+      <s:element name="xGet_EybPTyy">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cDbs" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cGbax" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cBugNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cAcyy" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cDoym" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="xGet_EybPTyyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="xGet_EybPTyyResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="xGet_EybPTyyV2">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cDbs" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cAcyy" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cDoym" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="xGet_EybPTyyV2Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="xGet_EybPTyyV2Result">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="xGet_EybPTyx">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cDbs" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cGbax" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cBugNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cAcyy" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cDoym" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="xGet_EybPTyxResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="xGet_EybPTyxResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="xGet_EybPTyxV2">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cDbs" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cAcyy" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cDoym" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="xGet_EybPTyxV2Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="xGet_EybPTyxV2Result">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="xGet_EybPTxx">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cDbs" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cGbax" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cEngNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cAcyy" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cDoym" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="xGet_EybPTxxResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="xGet_EybPTxxResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="xGet_EybKPyx">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cDbs" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cGbax" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cAcyy" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cBugNo" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="xGet_EybKPyxResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="xGet_EybKPyxResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="xGet_EybPTyySoapIn">
+    <wsdl:part name="parameters" element="tns:xGet_EybPTyy" />
+  </wsdl:message>
+  <wsdl:message name="xGet_EybPTyySoapOut">
+    <wsdl:part name="parameters" element="tns:xGet_EybPTyyResponse" />
+  </wsdl:message>
+  <wsdl:message name="xGet_EybPTyyV2SoapIn">
+    <wsdl:part name="parameters" element="tns:xGet_EybPTyyV2" />
+  </wsdl:message>
+  <wsdl:message name="xGet_EybPTyyV2SoapOut">
+    <wsdl:part name="parameters" element="tns:xGet_EybPTyyV2Response" />
+  </wsdl:message>
+  <wsdl:message name="xGet_EybPTyxSoapIn">
+    <wsdl:part name="parameters" element="tns:xGet_EybPTyx" />
+  </wsdl:message>
+  <wsdl:message name="xGet_EybPTyxSoapOut">
+    <wsdl:part name="parameters" element="tns:xGet_EybPTyxResponse" />
+  </wsdl:message>
+  <wsdl:message name="xGet_EybPTyxV2SoapIn">
+    <wsdl:part name="parameters" element="tns:xGet_EybPTyxV2" />
+  </wsdl:message>
+  <wsdl:message name="xGet_EybPTyxV2SoapOut">
+    <wsdl:part name="parameters" element="tns:xGet_EybPTyxV2Response" />
+  </wsdl:message>
+  <wsdl:message name="xGet_EybPTxxSoapIn">
+    <wsdl:part name="parameters" element="tns:xGet_EybPTxx" />
+  </wsdl:message>
+  <wsdl:message name="xGet_EybPTxxSoapOut">
+    <wsdl:part name="parameters" element="tns:xGet_EybPTxxResponse" />
+  </wsdl:message>
+  <wsdl:message name="xGet_EybKPyxSoapIn">
+    <wsdl:part name="parameters" element="tns:xGet_EybKPyx" />
+  </wsdl:message>
+  <wsdl:message name="xGet_EybKPyxSoapOut">
+    <wsdl:part name="parameters" element="tns:xGet_EybKPyxResponse" />
+  </wsdl:message>
+  <wsdl:portType name="CpaEna_WS1Soap">
+    <wsdl:operation name="xGet_EybPTyy">
+      <wsdl:input message="tns:xGet_EybPTyySoapIn" />
+      <wsdl:output message="tns:xGet_EybPTyySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybPTyyV2">
+      <wsdl:input message="tns:xGet_EybPTyyV2SoapIn" />
+      <wsdl:output message="tns:xGet_EybPTyyV2SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybPTyx">
+      <wsdl:input message="tns:xGet_EybPTyxSoapIn" />
+      <wsdl:output message="tns:xGet_EybPTyxSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybPTyxV2">
+      <wsdl:input message="tns:xGet_EybPTyxV2SoapIn" />
+      <wsdl:output message="tns:xGet_EybPTyxV2SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybPTxx">
+      <wsdl:input message="tns:xGet_EybPTxxSoapIn" />
+      <wsdl:output message="tns:xGet_EybPTxxSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybKPyx">
+      <wsdl:input message="tns:xGet_EybKPyxSoapIn" />
+      <wsdl:output message="tns:xGet_EybKPyxSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CpaEna_WS1Soap" type="tns:CpaEna_WS1Soap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="xGet_EybPTyy">
+      <soap:operation soapAction="http://tempuri.org/CpaEnaW/CpaEna_WS1/xGet_EybPTyy" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybPTyyV2">
+      <soap:operation soapAction="http://tempuri.org/CpaEnaW/CpaEna_WS1/xGet_EybPTyyV2" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybPTyx">
+      <soap:operation soapAction="http://tempuri.org/CpaEnaW/CpaEna_WS1/xGet_EybPTyx" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybPTyxV2">
+      <soap:operation soapAction="http://tempuri.org/CpaEnaW/CpaEna_WS1/xGet_EybPTyxV2" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybPTxx">
+      <soap:operation soapAction="http://tempuri.org/CpaEnaW/CpaEna_WS1/xGet_EybPTxx" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybKPyx">
+      <soap:operation soapAction="http://tempuri.org/CpaEnaW/CpaEna_WS1/xGet_EybKPyx" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="CpaEna_WS1Soap12" type="tns:CpaEna_WS1Soap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="xGet_EybPTyy">
+      <soap12:operation soapAction="http://tempuri.org/CpaEnaW/CpaEna_WS1/xGet_EybPTyy" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybPTyyV2">
+      <soap12:operation soapAction="http://tempuri.org/CpaEnaW/CpaEna_WS1/xGet_EybPTyyV2" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybPTyx">
+      <soap12:operation soapAction="http://tempuri.org/CpaEnaW/CpaEna_WS1/xGet_EybPTyx" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybPTyxV2">
+      <soap12:operation soapAction="http://tempuri.org/CpaEnaW/CpaEna_WS1/xGet_EybPTyxV2" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybPTxx">
+      <soap12:operation soapAction="http://tempuri.org/CpaEnaW/CpaEna_WS1/xGet_EybPTxx" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="xGet_EybKPyx">
+      <soap12:operation soapAction="http://tempuri.org/CpaEnaW/CpaEna_WS1/xGet_EybKPyx" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CpaEna_WS1">
+    <wsdl:port name="CpaEna_WS1Soap" binding="tns:CpaEna_WS1Soap">
+      <soap:address location="http://actsrv03.cpami.gov.tw/CpaEnaWeb/CpaEna_WS1.asmx" />
+    </wsdl:port>
+    <wsdl:port name="CpaEna_WS1Soap12" binding="tns:CpaEna_WS1Soap12">
+      <soap12:address location="http://actsrv03.cpami.gov.tw/CpaEnaWeb/CpaEna_WS1.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

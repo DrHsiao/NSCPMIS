@@ -1,0 +1,214 @@
+﻿@model WCals.Models.CMBASEModels.state9ViewModel
+
+@{
+    ViewBag.Title = "例行性管考報表：A-4.跨年度細項執行情形表";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head{
+    <link rel="stylesheet" href="~/Content/views/report.css">
+
+    <link rel="stylesheet" href="~/Content/views/loading-spinner.css">
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            例行性管考報表[0.1.1]
+
+            <small> </small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/Home")"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                例行性管考報表
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                A-4.跨年度細項執行情形表
+            </li>
+        </ol>
+    </div>
+</div>
+
+<form method="post" action="@Url.Action("ReportPrint4_2")" class="my-text" id="myForm">
+    @*<h2>例行性管考報表:</h2>*@
+
+    報表類型:
+    <select id="choose">
+        <option value="Index" @{if (ViewBag.State == "Index") { <text> selected</text> }}>I-1.雨水例行性管考報表</option>
+        <option value="2_2" @{if (ViewBag.State == "2_2") { <text> selected</text> }}>A-2.細項執行情形表</option>
+        <option value="4_2" @{if (ViewBag.State == "4_2") { <text> selected</text> }}>A-4.跨年度細項執行情形表</option>
+        <option value="6_2" @{if (ViewBag.State == "6_2") { <text> selected</text> }}>B-1.修正預算作業表</option>
+        <option value="9_2" @{if (ViewBag.State == "9_2") { <text> selected</text> }}>E-1.功能細項執行表(自訂欄位)</option>
+        <option value="10_2" @{if (ViewBag.State == "10_2") { <text> selected</text> }}>F-1.相關計畫年度補助經費表</option>
+        <option value="12_2" @{if (ViewBag.State == "12_2") { <text> selected</text> }}>H-1.在建工程抽查/查核/督導統計表</option>
+    </select>
+    <br />
+
+    <table class="table table-bordered table-hover" style="text-align: left; width:95%">
+        <tr>
+            <td class="fixed-column">
+                年度區間:
+            </td>
+            <td id="Year" colspan="4">
+                <select name="StartYear" id="yearStart">
+                    <option value="" selected disabled>選擇</option>
+
+                    @foreach (var year in ViewBag.year2)
+                    {
+                        <option value="@year.SYR">@year.SYR</option>
+                    }
+                </select>
+                <label>年度~</label>
+                <select name="EndYear" id="yearEnd">
+                    @foreach (var year in ViewBag.year)
+                    {
+                        <option value="@year.SYR">@year.SYR</option>
+                    }
+                </select>
+                <label>年度</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                計畫名稱:
+            </td>
+            <td id="Plan" colspan="4">
+                @foreach (var item in Model.PJV_PJDPCAT)
+                {
+                    <div class="plan-item" data-id="@item.SYR" hidden>
+
+                        <input type="checkbox" data-id="@item.SYR" name="plan" value="@item.AN_PJ_NAME+@item.PJ_NAME" class="Plan-checkbox" />
+                        <span>@item.AN_PJ_NAME-@item.PJ_NAME</span>
+                        <br />
+                    </div>
+                }
+            </td>
+        </tr>
+        <tr>
+            <td>
+                縣市別:
+            </td>
+            <td colspan="4" id="City">
+                <input type="checkbox" id="selectAll" onclick="toggleCheckboxes()">
+                全選框
+                <br />
+
+                @for (int i = 0; i < 23; i++)
+                {
+                    if (i == 7 || i == 14 || i == 21)
+                    {
+                        <br />
+                    }
+                    <input type="checkbox" name="CITY" value="@Model.SMCPOSTN[i].CITY" class="city-checkbox" />
+                    <span> </span>
+                    @Model.SMCPOSTN[i].CITY
+                    <span> </span>
+                }
+            </td>
+        </tr>
+        <tr>
+            <td rowspan="18">
+                顯示欄位:
+            </td>
+            <td colspan="4">
+                <input type="checkbox" id="selectAll2" onclick="toggleCheckboxes2()">
+                全選框
+                <br />
+            </td>
+        </tr>
+
+        @for (int i = 0; i < 36; i++)
+        {
+            if (i > 1 && i % 4 == 0)
+            {
+                @:<tr>
+                }
+                if (Model.OGCTITLE[i].TITLE == "工程地點(址)" || Model.OGCTITLE[i].TITLE == "當年度核定數")
+                {
+                    <td>
+                        <input type="checkbox" name="COLUMN1" checked="checked" value="@Model.OGCTITLE[i].TITLE" hidden />
+                    </td>
+
+                }
+                else
+                {
+                    <td>
+                        <input type="checkbox" name="COLUMN1" value="@Model.OGCTITLE[i].TITLE" class="column-checkbox" />
+                        <span> </span>
+                        @Model.OGCTITLE[i].TITLE
+                        <span> </span>
+                    </td>
+                }
+                if (i % 4 == 3)
+                {
+                @:</tr>
+            }
+        }
+        <tr>
+            <td colspan="5" align="center">
+                <button type="submit" name="FormatFile" value="excel"> EXCEL匯出</button>
+                <button type="submit" name="FormatFile" value="ods"> ODS匯出 </button>
+            </td>
+
+        </tr>
+    </table>
+    @Html.Partial("_ReportMessage")
+</form>
+
+@section scripts {
+    <script type="text/javascript">
+        var reportUrl = '@Url.Action("ReportPrint4_2", "RainReport")';
+        var stateUrl = '@Url.Action("ChooseState", "Report")';
+    </script>
+
+    <script src="~/Scripts/Report/State4.js" type="text/javascript"></script>
+    <script>
+    $(document).ready(function () {
+        // 1. 當起點年度或終點年度被切換時，觸發篩選
+        $('#yearStart, #yearEnd').on('change', function () {
+            filterPlansByYearRange();
+        });
+
+        function filterPlansByYearRange() {
+            // 2. 取得選取的起點與終點年度（轉成整數以利比較大小）
+            var startYear = parseInt($('#yearStart').val());
+            var endYear = parseInt($('#yearEnd').val());
+
+            // 【防呆】如果任何一個年度還沒選，就維持全部隱藏
+            if (isNaN(startYear) || isNaN(endYear)) {
+                $('.plan-item').attr('hidden', true);
+                return;
+            }
+
+            // 【防呆】如果起點年度大於終點年度，提示使用者並中止
+            if (startYear > endYear) {
+                alert('錯誤：起點年度不能大於終點年度！');
+                return;
+            }
+
+            // 3. 跑迴圈檢查每一個計畫項目
+            $('.plan-item').each(function () {
+                var $item = $(this);
+                var planYear = parseInt($item.data('id')); // 撈出 HTML 中的 data-id="item.SYR"
+
+                // 判斷計畫的年度是否落在選擇的區間之內
+                if (planYear >= startYear && planYear <= endYear) {
+                    $item.removeAttr('hidden'); // 在區間內：顯示
+                } else {
+                    $item.attr('hidden', true);  // 不在區間內：隱藏
+
+                    // 【核心安全機制】被隱藏的項目必須自動取消勾選！
+                    // 避免使用者換了年度後，看不見的舊計畫還悄悄被送出到後端
+                    $item.find('.Plan-checkbox').prop('checked', false);
+                }
+            });
+        }
+    });
+    </script>
+
+}

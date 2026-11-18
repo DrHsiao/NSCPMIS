@@ -1,0 +1,199 @@
+﻿@model WCals.ViewModels.NewModels.SUG0010Model
+@{
+    ViewBag.Title = "結案";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 10px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .btn-toolbar {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .readonly-content {
+            background: #f5f5f5;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 60px;
+            max-height: 150px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .reply-section {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .reply-section h5 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        .reply-item {
+            padding: 8px;
+            margin-bottom: 8px;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .reply-item .dept-name {
+            font-weight: bold;
+            color: #337ab7;
+        }
+        .reply-item .main-badge {
+            color: #d9534f;
+            font-size: 12px;
+        }
+        .reply-item .reply-content {
+            margin-top: 5px;
+            padding-left: 10px;
+            border-left: 3px solid #5cb85c;
+            color: #333;
+        }
+        .reply-item .no-reply {
+            color: #999;
+            font-style: italic;
+        }
+        .agree-group label {
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <form id="closeForm">
+        <input type="hidden" id="SUG_ID" name="SUG_ID" value="@Model.SUG_ID" />
+
+        <div class="form-group">
+            案件編號
+            <input type="text" class="form-control" value="@Model.SUG_ID" readonly />
+        </div>
+
+        <div class="form-group">
+            建議內容
+            <div class="readonly-content">@Model.SUG_CONTENT</div>
+        </div>
+
+        @if (Model.DetailList != null && Model.DetailList.Rows.Count > 0)
+        {
+            <div class="reply-section">
+                <h5>各單位回覆</h5>
+                @foreach (System.Data.DataRow row in Model.DetailList.Rows)
+                {
+                    bool isMain = row["MAIN_DP"] != DBNull.Value && Convert.ToBoolean(row["MAIN_DP"]);
+                    string replyContent = row["REPLY_CONTENT"] != DBNull.Value ? row["REPLY_CONTENT"].ToString() : "";
+                    <div class="reply-item">
+                        <span class="dept-name">@row["DEPT_NAME"]</span>
+                        @if (isMain)
+                        {
+                            <span class="main-badge">(主辦)</span>
+                        }
+                        @if (!string.IsNullOrEmpty(replyContent))
+                        {
+                            <div class="reply-content">@replyContent</div>
+                        }
+                        else
+                        {
+                            <div class="no-reply">尚未回覆</div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="form-group">
+            最終處理內容 <span class="text-danger">*</span>
+            <textarea id="FINAL_CONTENT" name="FINAL_CONTENT" class="form-control" rows="4"
+                      placeholder="請輸入最終處理內容...">@Model.FINAL_CONTENT</textarea>
+        </div>
+
+        <div class="form-group agree-group">
+            滿意度
+            <br />
+            <label class="radio-inline">
+                <input type="radio" name="AGREE" value="true" @(Model.AGREE.HasValue && Model.AGREE.Value ? "checked" : "") /> 滿意
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="AGREE" value="false" @(Model.AGREE.HasValue && !Model.AGREE.Value ? "checked" : "") /> 不滿意
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="AGREE" value="" @(!Model.AGREE.HasValue ? "checked" : "") /> 未填
+            </label>
+        </div>
+
+        <div class="form-group">
+            關鍵字
+            <input type="text" id="KEYWORDS" name="KEYWORDS" class="form-control"
+                   value="@Model.KEYWORDS" placeholder="多個關鍵字請用逗號分隔" />
+        </div>
+
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-warning" onclick="doClose()"><i class="fa-solid fa-check"></i> 確認結案</button>
+            <button type="button" class="btn btn-secondary" onclick="parent.closeDialogAndRefresh()"><i class="fa-solid fa-times"></i> 取消</button>
+        </div>
+    </form>
+
+    <script>
+        function doClose() {
+            var finalContent = $('#FINAL_CONTENT').val();
+            if (!finalContent || finalContent.trim() === '') {
+                alert('請輸入最終處理內容');
+                $('#FINAL_CONTENT').focus();
+                return;
+            }
+
+            if (!confirm('確定要結案嗎？結案後將移至「已結案」頁籤。')) {
+                return;
+            }
+
+            var agreeVal = $('input[name="AGREE"]:checked').val();
+            var agree = null;
+            if (agreeVal === 'true') agree = true;
+            else if (agreeVal === 'false') agree = false;
+
+            var data = {
+                SUG_ID: $('#SUG_ID').val(),
+                FINAL_CONTENT: finalContent,
+                AGREE: agree,
+                KEYWORDS: $('#KEYWORDS').val()
+            };
+
+            $.ajax({
+                url: '@Url.Action("DoClose", "SUG0010")',
+                type: 'POST',
+                data: data,
+                success: function (result) {
+                    if (result.success) {
+                        alert(result.message);
+                        parent.closeDialogAndRefresh();
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('結案失敗');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

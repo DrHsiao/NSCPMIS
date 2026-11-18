@@ -1,0 +1,186 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0040Model
+@{ 
+    ViewBag.Title = "工程填報";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- FontAwesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Scripts/plugins/bootstrap-fileinput/icon.mini.css" crossorigin="anonymous">
+    <link href="~/Scripts/plugins/bootstrap-fileinput/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        body {
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            font-family: "Inter", "Microsoft JhengHei", sans-serif;
+        }
+
+        #mainForm {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        #mainForm > div {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .with-nav-tabs {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            margin-bottom: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-header {
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #337ab7, #286090);
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+            padding: 0;
+            background-color: #ffffff;
+        }
+
+        .tab-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .tab-pane {
+            flex: 1;
+            display: none;
+            min-height: 0;
+        }
+
+        .tab-pane.show.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-pane iframe {
+            flex: 1;
+            width: 100%;
+            border: 0;
+            min-height: 0;
+        }
+    
+        /* 頁籤顏色修正 */
+        .card-header-tabs {
+            margin-bottom: -1px;
+        }
+        
+        .card-header-tabs .nav-link {
+            border: 1px solid transparent;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            padding: 10px 20px;
+        }
+
+        .card-header-tabs .nav-link:not(.active) {
+            color: #ffffff !important;
+            opacity: 0.85;
+        }
+
+        .card-header-tabs .nav-link:not(.active):hover {
+            opacity: 1;
+            color: #ffffff !important;
+            background-color: rgba(255,255,255,0.1);
+            border-color: transparent transparent transparent transparent;
+        }
+
+        .card-header-tabs .nav-link.active {
+            color: #286090 !important;
+            font-weight: bold;
+            background-color: #ffffff;
+            border-color: #dee2e6 #dee2e6 #ffffff;
+        }
+    </style>
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+<body>
+    @using(Html.BeginForm("PAGE8", "TDE0048", FormMethod.Post, new { data_toggle = "validator", role = "form", id = "mainForm", enctype = "multipart/form-data" })) {
+        @Html.AntiForgeryToken()
+
+        <div>
+            <div class="card border-0 mb-4 with-nav-tabs">
+                <div class="card-header pt-3 px-3">
+                    <ul class="nav nav-tabs card-header-tabs border-0" role="tablist">
+                        <li id="li1" role="presentation" class="nav-item">
+                            <button type="button" class="nav-link active" data-bs-target="#tab1" aria-controls="tab1" role="tab" data-bs-toggle="tab">
+                                <i class="fa-solid fa-file-lines me-2"></i>年度經費雨水箱(管)涵工程
+                            </button>
+                        </li>
+                        <li id="li2" role="presentation" class="nav-item" onclick="$('#t2').attr('src', '@Url.Content("~/TDE0048/")PAGE8_2?TD_CODE=@Model.TD_CODE');">
+                            <button type="button" class="nav-link" data-bs-target="#tab2" aria-controls="tab2" role="tab" data-bs-toggle="tab">
+                                <i class="fa-solid fa-paperclip me-2"></i>抽水站工程
+                            </button>
+                        </li>
+                        <li id="li3" role="presentation" class="nav-item" onclick="$('#t3').attr('src','@Url.Content("~/TDE0048/")PAGE8_3?TD_CODE=@Model.TD_CODE');">
+                            <button type="button" class="nav-link" data-bs-target="#tab3" aria-controls="tab3" role="tab" data-bs-toggle="tab">
+                                <i class="fa-solid fa-paperclip me-2"></i>雨水調節池工程
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card-body">
+                    <div class="tab-content h-100">
+                        <!-- Tab1 panes -->
+                        <div class="tab-pane fade show active h-100" id="tab1">
+                            <iframe id="t1" src="PAGE8_1?TD_CODE=@Model.TD_CODE"></iframe>
+                        </div>
+                        <div class="tab-pane fade h-100" id="tab2">
+                            <iframe id="t2" src=""></iframe>
+                        </div>
+                        <div class="tab-pane fade h-100" id="tab3">
+                            <iframe id="t3" src=""></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 不需重新載入 datepicker, iframe內會各自處理 -->
+</body>
+</html>

@@ -1,0 +1,178 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0030Model
+@{ ViewBag.Title = "計畫經費管制[1.1.3] ";
+    //Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <style>
+        .ui-dialog {
+            z-index: 4000;
+        }
+    </style>
+</head>
+<body style="padding:10px;">
+
+    @using(Html.BeginForm("", "PJE0030", FormMethod.Post, new { @class = "form", id = "mainForm" })) {
+        
+        <div style="margin-bottom:5px;">
+            @Html.HiddenFor(x => x.CRDMNDS.TID, new { @class = "form-control", form = "mainForm" })
+            @Html.HiddenFor(x => x.PID, new { @class = "form-control", form = "mainForm" })
+
+            @Html.HiddenFor(x => x.CRDMNDS.TD_CODE, new { @class = "form-control", form = "mainForm" })
+            <button name="action" type="submit" value="SaveCRDMNDS" id="RefBatchSearch" class="btn btn-primary">儲存</button>
+            <button name="action" type="button" class="btn btn-secondary" onclick="parent.closeRet();">返回列表</button>
+        </div>
+        
+        <div class="card border-primary mb-3">
+            <div class="card-header bg-primary text-white">工作計劃列表 </div>
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <td>
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon1">經費編號</span>
+                                @Html.TextBoxFor(x => x.CRDMNDS.FD_CODE, new { @class = "form-control", form = "mainForm", placeholder = "經費編號", @readonly = "readonly" })
+                            </div>
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon1">保留金額(元)</span>
+                                @Html.TextBoxFor(x => x.CRDMNDS.REV_FUND, new { @class = "form-control", form = "mainForm", placeholder = "保留金額", @readonly = "readonly" })
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon1">發生權責數(元)</span>
+                                @Html.TextBoxFor(x => x.CRDMNDS.OCR_FUND, new { @class = "form-control", form = "mainForm", placeholder = "發生權責數", @readonly = "readonly" })
+                            </div>
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon1">特別分配數(元)</span>
+                                @Html.TextBoxFor(x => x.CRDMNDS.SPD_FUND, new { @class = "form-control", form = "mainForm", placeholder = "特別分配數", @readonly = "readonly" })
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon1">保留原因</span>
+                                @Html.TextBoxFor(x => x.CRDMNDS.REV_RESN, new { @class = "form-control", form = "mainForm", placeholder = "保留原因", @readonly = "readonly" })
+                            </div>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card border-primary mb-3">
+            <div class="card-header bg-primary text-white">月分配數(元)</div>
+            <table class="table table-hover">
+                <tr>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">一月</span>
+                            @Html.TextBoxFor(x => x.CRDMNDS.M_01, new { @class = "form-control", form = "mainForm", placeholder = "一月" })
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">二月</span>
+                            @Html.TextBoxFor(x => x.CRDMNDS.M_02, new { @class = "form-control", form = "mainForm", placeholder = "二月" })
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">三月</span>
+                            @Html.TextBoxFor(x => x.CRDMNDS.M_03, new { @class = "form-control", form = "mainForm", placeholder = "三月" })
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">四月</span>
+                            @Html.TextBoxFor(x => x.CRDMNDS.M_04, new { @class = "form-control", form = "mainForm", placeholder = "四月" })
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">五月</span>
+                            @Html.TextBoxFor(x => x.CRDMNDS.M_05, new { @class = "form-control", form = "mainForm", placeholder = "五月" })
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">六月</span>
+                            @Html.TextBoxFor(x => x.CRDMNDS.M_06, new { @class = "form-control", form = "mainForm", placeholder = "六月" })
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">七月</span>
+                            @Html.TextBoxFor(x => x.CRDMNDS.M_07, new { @class = "form-control", form = "mainForm", placeholder = "七月" })
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">八月</span>
+                            @Html.TextBoxFor(x => x.CRDMNDS.M_08, new { @class = "form-control", form = "mainForm", placeholder = "八月" })
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">九月</span>
+                            @Html.TextBoxFor(x => x.CRDMNDS.M_09, new { @class = "form-control", form = "mainForm", placeholder = "九月" })
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">十月</span>
+                            @Html.TextBoxFor(x => x.CRDMNDS.M_10, new { @class = "form-control", form = "mainForm", placeholder = "十月" })
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">十一月</span>
+                            @Html.TextBoxFor(x => x.CRDMNDS.M_11, new { @class = "form-control", form = "mainForm", placeholder = "十一月" })
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">十二月</span>
+                            @Html.TextBoxFor(x => x.CRDMNDS.M_12, new { @class = "form-control", form = "mainForm", placeholder = "十二月" })
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    }
+    @if(ViewBag.msg != null) {
+        <script>
+            alert('@ViewBag.msg');
+        </script>
+    }
+</body>
+</html>

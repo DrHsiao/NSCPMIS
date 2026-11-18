@@ -1,0 +1,122 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0020Model
+@{ ViewBag.Title = "分支計畫維護 [1.1.2] ";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            分支計畫維護 [1.1.2]
+            <small></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                分支計畫維護 [1.1.2]
+            </li>
+        </ol>
+    </div>
+
+</div>
+
+@using(Html.BeginForm("", "PJE0020", FormMethod.Post, new { id = "mainForm" })) {
+
+    <div style="display:flex;width:100%">
+        <div style="width:50%; text-align:left;">
+
+        </div>
+        <div style="width: 50%; text-align: right;">
+            @Html.PagedListPager(Model.PJV_PJMFORM, page => Url.Action("",
+                new {
+                         page = page
+                     }),
+                new PagedListRenderOptions {
+                    DisplayItemSliceAndTotal = true,
+                    DisplayPageCountAndCurrentLocation = true,
+                    DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                    DisplayLinkToIndividualPages = false,
+
+                    ItemSliceAndTotalFormat = "顯示第 {0} - {1}筆, 共{2}筆",
+                    PageCountAndCurrentLocationFormat = "第 {0}頁 / 共 {1}頁",
+                }
+            )
+        </div>
+    </div>
+    <script>
+        $(window).on('load', function () {
+            $('#PID').val("");
+        });
+
+        function delCheck(pid) {
+
+
+            if (confirm('確定刪除?')) {
+                $('#PID').val(pid);
+            } else {
+                void ('')
+            }
+
+        }
+    </script>
+
+    
+
+    @Html.HiddenFor(f => f.PID)
+    
+    <input type="hidden" name="page" id="page" value="@Model.page" />
+
+
+
+    @Html.HiddenFor(f => f.ANPID, new { @id = "ANPID", @class = "form-control", @placeholder = "ANPID" })
+
+<div class="card border-primary mb-3">
+    <div class="card-header bg-primary text-white">分支計畫列表</div>
+    <table width="100%" class="table table-hover" style="display: block; overflow-x: auto; white-space: nowrap;">
+        <thead class="table-light">
+            <tr>
+                <th>計畫年度</th>
+                <th>計畫名稱</th>
+                <th>工作計畫編號</th>
+                <th>分支計畫編號</th>
+                <th>會計計畫編號</th>
+                <th>年度預算(元)</th>
+                <th>經管單位</th>
+                <th>經管人員</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var c in Model.PJV_PJMFORM) {
+                <tr>
+
+                    <td>@c.PJ_SYR</td>
+                    <td width="52%">
+                        @c.PID,
+                        @c.PJ_NAME
+                    </td>
+                    <td>@c.WK_CODE</td>
+                    <td>@c.PJ_CODE</td>
+                    <td>@c.W_CODE</td>
+                    <td align="right">@String.Format("{0:#,##0.00}", c.PJ_FUND)</td>
+                    <td>@c.ADV_DP_NAME</td>
+                    <td>@c.ADV_UID_NAME</td>
+
+                    <td>
+                        <button class="btn btn-primary" name="action" type="submit" value="SubItem" onclick="$('#PID').val('@c.PID')">分項</button>
+                        <button class="btn btn-primary" name="action" type="submit" value="Monthly" onClick="$('#PID').val('@c.PID')">月分配數</button>
+                        <button class="btn btn-primary" name="action" type="submit" value="Central" onclick="$('#PID').val('@c.PID');">中央款比例</button>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+</div>
+
+    @Html.PagedListPager(Model.PJV_PJMFORM, page => Url.Action("",
+    new { page = page }))
+
+}

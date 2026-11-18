@@ -1,0 +1,151 @@
+﻿@using PagedList.Mvc;
+@model WCals.ViewModels.FeedbackListViewModel
+
+@{
+    ViewBag.Title = "使用者意見查詢";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    ViewBag.CONTROLLER_NAME = this.ViewContext.RouteData.Values["controller"].ToString();
+}
+
+@section head{
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            @ViewBag.Title
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa fa-dashboard"></i>
+                <a href="@Url.Content("~")"> 首頁</a>
+            </li>
+            <li class="active">
+                <i class="fa fa-file"></i>
+                @ViewBag.Title
+            </li>
+        </ol>
+    </div>
+</div>
+
+@if (TempData["msg"] != null)
+{
+    <script>
+        alert('@TempData["msg"]');
+    </script>
+}
+
+@using (Html.BeginForm("FeedbackList", (string)ViewBag.CONTROLLER_NAME, FormMethod.Post))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title h5 mb-0">查詢 </h3>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <div class="mb-3">
+                            內容分類：
+                            @Html.DropDownListFor(f => f.FeedbackSearch.APL_TYPE, (SelectList)ViewBag.FeedbackTypeList, new { @class = "form-control" })
+                        </div>
+                        <p />
+                        <div class="mb-3">
+                            主旨：
+                            @Html.EditorFor(f => f.FeedbackSearch.QUE_HEAD, new { htmlAttributes = new { @type = "search", @placeholder = "主旨", @class = "form-control", maxlength = "50", autocomplete = "off" } })
+                        </div>
+                        <p />
+                        <div class="mb-3">
+                            內容：
+                            @Html.EditorFor(f => f.FeedbackSearch.QUE_DATA, new { htmlAttributes = new { @type = "search", @placeholder = "內容", @class = "form-control", maxlength = "50", autocomplete = "off" } })
+                        </div>
+                        <p />
+                        <div class="mb-3">
+                            查詢期間：
+                            @Html.EditorFor(f => f.FeedbackSearch.STARTDATE, new { htmlAttributes = new { @class = "form-control", id = "dateFrom", type = "date" } })
+                            至
+                            @Html.EditorFor(f => f.FeedbackSearch.ENDDATE, new { htmlAttributes = new { @class = "form-control", id = "dateTo", type = "date" } })
+                            <small>(預設顯示三個月內的資料)</small>
+                        </div>
+                        <p />
+                        <p>
+                            <input type="submit" class="btn btn-primary" value="查詢" />
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-6 text-left" style="margin: 20px 0;">
+        @Html.ActionLink("我要發問", "FeedbackCreate", null, new { @class = "btn btn-success btn-lg" })
+    </div>
+    <div class="col-6 text-right">
+        @Html.PagedListPager(Model.FeedbackList, page => Url.Action("FeedbackList",
+                                                                             new
+                                                                             {
+                                                                                 page,
+                                                                                 edit = 1
+                                                                             }),
+                                                                             new PagedListRenderOptions
+                                                                             {
+                                                                                 DisplayItemSliceAndTotal = true,
+                                                                                 DisplayPageCountAndCurrentLocation = true,
+                                                                                 DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                                                                                 DisplayLinkToIndividualPages = false,
+
+                                                                                 ItemSliceAndTotalFormat = "顯示第 {0} - {1}筆, 共{2}筆",
+                                                                                 PageCountAndCurrentLocationFormat = "第 {0}頁 / 共 {1}頁",
+                                                                             }
+                                                                         )
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="text-nowrap">
+                        <th>內容分類</th>
+                        <th>問題主旨</th>
+                        <th>留言數</th>
+                        <th>發問人</th>
+                        <th>發問日期</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.FeedbackList)
+                    {
+                        <tr>
+                            <td>@item.APL_TYPE_NAME</td>
+                            <td>@item.QUE_HEAD</td>
+                            <td>@item.RETURN_PEP</td>
+                            <td>@item.QUE_USER</td>
+                            @{
+                                if (@item.ADD_DT.HasValue)
+                                {
+                                    <td>@item.ADD_DT.Value.ToShortDateString()</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            }
+                            <td class="text-nowrap">
+                                @Html.ActionLink("內容", "FeedbackDetails", new { id = item.MAIN_ID }, new { @class = "btn btn-sm btn-primary" })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.PagedListPager(Model.FeedbackList, page => Url.Action("FeedbackList", new { page, edit = 1 }))
+    </div>
+</div>
+
+@section scripts{
+}

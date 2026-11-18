@@ -1,0 +1,153 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0040Model
+@{
+    ViewBag.Title = "估驗目期";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+   body {
+     padding: 10px;
+    }
+        .alert {
+            margin: 10px 0;
+      }
+        .toolbar {
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+       margin-bottom: 15px;
+        }
+        .table-responsive {
+            margin-top: 10px;
+      }
+        .table {
+     font-size: 13px;
+    }
+        .table th {
+            background-color: #337ab7;
+      color: white;
+   vertical-align: middle;
+        }
+    
+        /* 表格框線與排版美化 */
+        .table-bordered { border: 0 !important; }
+        .table-bordered th, .table-bordered td { border: 0 !important; border-bottom: 1px solid #e2e8f0 !important; }
+        .table > thead > tr > th { 
+            border-bottom: 2px solid #337ab7 !important; 
+            background-color: #f8fafc; 
+            color: #334155; 
+        }
+        .table > tbody > tr:last-child > td { border-bottom: 0 !important; }
+</style>
+</head>
+<body>
+@if(TempData["Success"] != null) {
+        <div class="alert alert-success alert-dismissible" role="alert">
+   <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+  @TempData["Success"]
+        </div>
+    }
+    @if(TempData["Error"] != null) {
+      <div class="alert alert-danger alert-dismissible" role="alert">
+    <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+          @TempData["Error"]
+  </div>
+    }
+
+ <div class="toolbar">
+        <button type="button" class="btn btn-primary btn-sm" onclick="openAdd('@ViewBag.TD_CODE');">
+     <i class="fa-solid fa-plus"></i> 新增估驗期別
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+   <tr>
+       <th style="width: 10%;">期別</th>
+       <th style="width: 15%;">估驗日期</th>
+      <th style="width: 15%;">估驗金額</th>
+     <th style="width: 15%;">已出帳</th>
+  <th style="width: 15%;">認可扣款</th>
+      <th style="width: 15%;">應付未付</th>
+   <th style="width: 10%;">調整金額</th>
+     <th style="width: 5%;">操作</th>
+   </tr>
+ </thead>
+            <tbody id="listBody">
+            @if(ViewBag.List1 != null) {
+    System.Data.DataTable dt = ViewBag.List1;
+         foreach(System.Data.DataRow row in dt.Rows) {
+    <tr>
+   <td>@row["SEQ_NO"]</td>
+    <td>@(row["ECC_DT"] != DBNull.Value ? row["ECC_DT"].ToString() : "")</td>
+        <td style="text-align: right;">@(row["ECC_FEE"] != DBNull.Value ? Convert.ToDecimal(row["ECC_FEE"]).ToString("N0") : "0")</td>
+        <td style="text-align: right;">@(row["ECCPRV_FEE"] != DBNull.Value ? Convert.ToDecimal(row["ECCPRV_FEE"]).ToString("N0") : "0")</td>
+        <td style="text-align: right;">@(row["ECCDIS_FEE"] != DBNull.Value ? Convert.ToDecimal(row["ECCDIS_FEE"]).ToString("N0") : "0")</td>
+        <td style="text-align: right;">@(row["PPAYDIS_FEE"] != DBNull.Value ? Convert.ToDecimal(row["PPAYDIS_FEE"]).ToString("N0") : "0")</td>
+        <td style="text-align: right;">@(row["ADJ_FEE"] != DBNull.Value ? Convert.ToDecimal(row["ADJ_FEE"]).ToString("N0") : "0")</td>
+        <td>
+            <button type="button" class="btn btn-sm btn-info" onclick="openEdit('@ViewBag.TD_CODE', @row["SEQ_NO"]);">
+        <i class="fa-solid fa-pen me-1"></i> 編輯
+</button>
+        </td>
+      </tr>
+        }
+    } else {
+         <tr>
+         <td colspan="8" style="text-align: center; color: #999;">尚無資料</td>
+      </tr>
+   }
+            </tbody>
+        </table>
+    </div>
+
+    <div id="editDialog" title="編輯估驗期別" style="padding: 5px;">
+      <iframe id="editFrame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script>
+  var h = $(window).height();
+     var w = $(window).width();
+
+        $("#editDialog").dialog({
+   autoOpen: false,
+            show: { duration: 1000 },
+   hide: { duration: 1000 },
+            maxWidth: w,
+            maxHeight: h,
+    width: w * 0.6,
+         height: h * 0.7,
+            modal: true
+        });
+
+        function openAdd(tdCode) {
+            $("#editFrame").attr("src", "@Url.Content("~/TDE0040/")PAGE6_2_Edit?TD_CODE=" + tdCode);
+   $("#editDialog").dialog("open");
+        }
+
+        function openEdit(tdCode, seqNo) {
+ $("#editFrame").attr("src", "@Url.Content("~/TDE0040/")PAGE6_2_Edit?TD_CODE=" + tdCode + "&SEQ_NO=" + seqNo);
+            $("#editDialog").dialog("open");
+        }
+
+        function closeDialog() {
+       $("#editDialog").dialog("close");
+            location.reload();
+        }
+  </script>
+</body>
+</html>

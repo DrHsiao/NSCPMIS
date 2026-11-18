@@ -1,0 +1,574 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.SGE0000Model
+@{ ViewBag.Title = "SGE0000EditAPMFORM";
+    //Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+    <link rel="stylesheet" href="~/Scripts/plugins/bootstrap-fileinput/icon.mini.css" crossorigin="anony上mous">
+    <link href="~/Scripts/plugins/bootstrap-fileinput/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+<body style="padding:5px;">
+    @using (Html.BeginForm("", "SGE0000", FormMethod.Post, new { id = "mainForm", enctype = "multipart/form-data" }))
+    {
+        @Html.HiddenFor(x => x.AID)
+        <a class="btn btn-secondary" href="@Url.Content("~/SGE0000/STEP01")?aid=@Model.AID">上一頁</a>
+        <a class="btn btn-secondary" href="@Url.Content("~/SGE0000/STEP03")?aid=@Model.AID">下一頁</a>
+
+
+        <br>
+        <br />
+        <!-- Nav tabs -->
+        <div class="card with-nav-tabs border-primary">
+            @*<div class="card-header bg-primary text-white">
+                    <ul class="nav nav-tabs">
+                        <li id="li1" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP01")?aid=@Model.AID" class="nav-link">申請內容基本資料</a></li>
+                        <li id="li2" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP02")?aid=@Model.AID" class="nav-link active">實施區域</a></li>
+                        <li id="li3" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP03")?aid=@Model.AID" class="nav-link">實行內容</a></li>
+                        <li id="li4" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP04")?aid=@Model.AID" class="nav-link">勘察評估事項</a></li>
+                        <li id="li5" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP05")?aid=@Model.AID" class="nav-link">財源分配</a></li>
+                        <li id="li6" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP06")?aid=@Model.AID" class="nav-link">檢附資料</a></li>
+                        <li id="li7" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP07")?aid=@Model.AID" class="nav-link">自評分數</a></li>
+                    </ul>
+                </div>*@
+
+
+
+            @if (ViewBag.dis == null)
+            {
+                <div class="card-header bg-primary text-white">
+                    <ul class="nav nav-tabs">
+                        <li id="li1" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP01")?aid=@Model.AID" class="nav-link">申請內容基本資料</a></li>
+                        <li id="li2" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP02")?aid=@Model.AID" class="nav-link active">實施區域</a></li>
+                        <li id="li3" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP03")?aid=@Model.AID" class="nav-link">實行內容</a></li>
+                        <li id="li4" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP04")?aid=@Model.AID" class="nav-link">勘察評估事項</a></li>
+                        <li id="li5" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP05")?aid=@Model.AID" class="nav-link">財源分配</a></li>
+                        <li id="li6" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP06")?aid=@Model.AID" class="nav-link">檢附資料</a></li>
+                        <li id="li7" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP07")?aid=@Model.AID" class="nav-link">自評分數</a></li>
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <div class="card-header bg-primary text-white">
+                    <ul class="nav nav-tabs">
+                        <li id="li1" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP01")?aid=@Model.AID&dis=true" class="nav-link">申請內容基本資料</a></li>
+                        <li id="li2" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP02")?aid=@Model.AID&dis=true" class="nav-link active">實施區域</a></li>
+                        <li id="li3" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP03")?aid=@Model.AID&dis=true" class="nav-link">實行內容</a></li>
+                        <li id="li4" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP04")?aid=@Model.AID&dis=true" class="nav-link">勘察評估事項</a></li>
+                        <li id="li5" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP05")?aid=@Model.AID&dis=true" class="nav-link">財源分配</a></li>
+                        <li id="li6" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP06")?aid=@Model.AID&dis=true" class="nav-link">檢附資料</a></li>
+                        <li id="li7" class="nav-item"><a href="@Url.Content("~/SGE0000/STEP07")?aid=@Model.AID&dis=true" class="nav-link">自評分數</a></li>
+                    </ul>
+                </div>
+            }
+
+
+
+
+            <div class="tab-content">
+
+
+                <!-- Tab2 panes -->
+                <div role="tabpanel" class="tab-pane active" id="tab2" style="padding:5px;">
+                    <button type="button" onClick="cp();" class="btn btn-success" onclick="">新增</button>
+                    <button onclick="return (confirm('儲存後為維持資料一致性, 將清除實行內容頁籤資料, 確定儲存?')); void ('');" class="btn btn-warning" name="action" type="submit" value="STEP02Save">儲存</button>
+
+
+
+                    @*@{
+                            var validStatus = new HashSet<string> { "-1", "00", "Z1", "Z2" };
+                        }
+                        @if (Model.APMFORM.AP_STAT != null && validStatus.Contains(Model.APMFORM.AP_STAT))
+                        {
+                            <button type="button" onClick="cp();" class="btn btn-success" onclick="">新增</button>
+                            <button onclick="return (confirm('儲存後為維持資料一致性, 將清除實行內容頁籤資料, 確定儲存?')); void ('');" class="btn btn-warning" name="action" type="submit" value="STEP02Save">儲存</button>
+                        }
+                        else
+                        {
+                            <script>
+                                $(document).ready(function () {
+                                    $(":input").prop("disabled", true);
+                                });
+                            </script>
+                        }*@
+
+                    <br>
+                    <table class="table" id="tab2_table">
+                        <thead class="table-light">
+                            <tr>
+                                <th nowrap>移動</th>
+                                <th nowrap>複製</th>
+                                <th nowrap>刪除</th>
+                                @*<th nowrap>鄉鎮別&nbsp;<span class="text-danger">*</span></th>*@
+                                <th nowrap id="th_town">鄉鎮別&nbsp;<span class="text-danger">*</span></th>
+                                <th nowrap>地點描述&nbsp;<span class="text-danger">*</span></th>
+                                <th nowrap>座標系統</th>
+                                <th nowrap id="th_x">X座標</th>
+                                <th nowrap id="th_y">Y座標</th>
+                                <th nowrap>Z座標</th>
+                            </tr>
+                        </thead>
+                        @{ System.Data.DataTable towns = ViewBag.towns1;}
+                        @{ System.Data.DataTable GIS_SYS = ViewBag.GIS_SYS;}
+                        @{ System.Data.DataTable APDLOCP = ViewBag.APDLOCP;}
+                        <tbody id="pe">
+                            @foreach (System.Data.DataRow d in APDLOCP.Rows)
+                            {
+                                <tr>
+                                    <td width="1" nowrap>
+                                        <button type="button" class="btn btn-secondary" onclick="moveDown(this, 'tab2_table')"><span class="fa-solid fa-chevron-up" aria-hidden="true"></span></button>
+                                        <button type="button" class="btn btn-secondary" onclick="moveUp(this, 'tab2_table')"><span class="fa-solid fa-chevron-down" aria-hidden="true"></span></button>
+                                    </td>
+                                    <td width="1"><button type="button" class="btn btn-secondary" onclick="duplicateRow(this, 'tab2_table')"><span class="fa-solid fa-copy" aria-hidden="true"></span></button></td>
+                                    <td width="1"><button type="button" class="btn btn-secondary" onclick="del(this, 'tab2_table');"><span class="fa-solid fa-minus" aria-hidden="true"></span></button></td>
+
+                                    <td>
+                                        <input type="hidden" name="LID" value="@d["LID"]" class="form-control" />
+                                        <select id="sel_@d["AID"]@d["LID"]" name="TOWN" class="form-select" required>
+                                            @foreach (System.Data.DataRow t in towns.Rows)
+                                            {
+                                                if (Convert.ToString(t["TOWN"]).Equals(Convert.ToString(d["TOWN"])))
+                                                {
+                                                    <option selected value="@t["TOWN"]">@t["TOWN"]</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@t["TOWN"]">@t["TOWN"]</option>
+                                                }
+                                            }
+
+                                        </select>
+                                    </td>
+                                    <td><input type="text" name="POS_SYB" value="@d["POS_SYB"]" class="form-control" required /></td>
+                                    <td>
+                                        <select name="GIS_SYS" class="form-select">
+                                            @foreach (System.Data.DataRow t in GIS_SYS.Rows)
+                                            {
+                                                if (Convert.ToString(t["id"]).Equals(Convert.ToString(d["GIS_SYS"])))
+                                                {
+                                                    <option selected value="@t["id"]">@t["name"]</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@t["id"]">@t["name"]</option>
+                                                }
+                                            }
+                                        </select>
+                                    </td>
+                                    <td><input type="text" name="GIS_X" value="@d["GIS_X"]" class="form-control" /></td>
+                                    <td><input type="text" name="GIS_Y" value="@d["GIS_Y"]" class="form-control" /></td>
+                                    <td><input type="text" name="GIS_Z" value="@d["GIS_Z"]" class="form-control" /></td>
+                                </tr>
+
+                            }
+
+                        </tbody>
+                    </table>
+
+
+
+
+                </div>
+
+
+            </div>
+        </div>
+
+
+    }
+
+
+
+
+    <script>
+
+
+        function duplicateSelRow(button, tbName) {
+            const rowIndex = getRowIndex(button, tbName);
+            const table = document.getElementById(tbName);
+            const tbody = table.querySelector("tbody");
+            const rows = tbody.querySelectorAll("tr");
+            var tr = "<tr id='sel_" + Math.floor(Math.random() * 888) + "'>";
+
+            if (rowIndex >= 0 && rowIndex < rows.length) {
+                const rowToCopy = rows[rowIndex]; // 取得要複製的行
+
+                var sel = rowToCopy.querySelectorAll("select");
+                var v = sel[0].value;
+                //alert(sel[0].value);
+                //輪詢取得tr目前值
+                /*for (i = 0; i < 6; i++) {
+                    tr += "<td>"
+                    tr += rowToCopy.cells[i].innerHTML;
+                    tr += "</td>"
+                }
+                tr+="</tr>"
+
+                alert(tr);*/
+                const newRow = rowToCopy.cloneNode(true); // 深度複製行及其內容
+                sel = newRow.querySelectorAll("select");
+                sel[0].value = v;
+                tbody.appendChild(newRow); // 將複製的行新增到 tbody 的最後
+            } else {
+                console.error("Invalid row index");
+            }
+        }
+    </script>
+    <table style="display:none;">
+        <tbody id="cp">
+            <tr>
+                <td width="1" nowrap>
+                    <button type="button" class="btn btn-secondary" onclick="moveDown(this, 'tab2_table')"><span class="fa-solid fa-chevron-up" aria-hidden="true"></span></button>
+                    <button type="button" class="btn btn-secondary" onclick="moveUp(this, 'tab2_table')"><span class="fa-solid fa-chevron-down" aria-hidden="true"></span></button>
+                </td>
+                <td width="1"><button type="button" class="btn btn-secondary" onclick="duplicateSelRow(this, 'tab2_table')"><span class="fa-solid fa-copy" aria-hidden="true"></span></button></td>
+                <td width="1"><button type="button" class="btn btn-secondary" onclick="del(this, 'tab2_table');"><span class="fa-solid fa-minus" aria-hidden="true"></span></button></td>
+
+                <td>
+                    <input type="hidden" name="LID" class="form-control" />
+                    @Html.DropDownListFor(x => x.TOWN, (SelectList)ViewBag.towns, "鄉鎮", new { @class = "form-select TOWN", @required = "required" })
+                </td>
+                <td><input type="text" name="POS_SYB" class="form-control POS_SYB" required /></td>
+                <td>
+                    <select name="GIS_SYS" class="form-select">
+                        @{ System.Data.DataTable GIS_SYSS = ViewBag.GIS_SYS;}
+                        <option value=""></option>
+                        @foreach (System.Data.DataRow t in GIS_SYSS.Rows)
+                        {
+
+                            <option value="@t["id"]">@t["name"]</option>
+
+                        }
+                    </select>
+                </td>
+                <td><input type="text" name="GIS_X" class="form-control" /></td>
+                <td><input type="text" name="GIS_Y" class="form-control" /></td>
+                <td>
+                    <input type="text" name="GIS_Z" class="form-control" />
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+
+
+
+
+
+
+    @if (ViewBag.msg != null)
+    {
+        <script>
+        alert("@ViewBag.msg");
+        </script>
+    }
+    <script>
+        $(".dt").datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: '68:168',
+            dateFormat: 'yymmdd',
+            //defaultDate: null,
+        });
+        $(".dt").datepickerTW({
+            onSelect: function (dateText) {
+                $('#mainForm').validator('validate');
+            }
+        });
+
+
+        $('.dt').click(function () {
+            //消掉前次輸入自帶的回期
+            $(this).delay(600).val("");
+        });
+    </script>
+
+
+    <!--動態判斷BEGIN-->
+    <script>
+        $(document).ready(function () {
+            //初始進入
+            isNormal();
+        });
+    </script>
+    <!--載入動作BEGIN-->
+    @if (Model.APMFORM.PJ_CATY_CODE.Equals("CA") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("CB") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("CC") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("CD") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("CE"))
+    {
+
+        <script>
+            //選擇CA,CB, CC, CD, CE五項中的一項時5項更名, 4項新欄位
+            $(document).ready(function () {
+                isCA_BCDE()
+            });
+        </script>
+
+    }
+
+    @if (Model.APMFORM.PJ_CATY_CODE.Equals("EA") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("EB") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("EC"))
+    {
+
+        <script>
+            // 選擇 EA, EB, EC 時將鄉鎮別更名
+            $(document).ready(function () {
+                isEA_EB_EC();
+            });
+        </script>
+    }
+
+    @if (Model.APMFORM.PJ_CATY_CODE.Equals("PA") ||
+    Model.APMFORM.PJ_CATY_CODE.Equals("PB"))
+    {
+
+        <script>
+            //選擇PA,PB, 2項中的一項時勘查評估頁籤不顯示
+            $(document).ready(function () {
+                isPA_PB();
+            });
+        </script>
+    }
+
+    @if (Model.APMFORM.PJ_CATY_CODE.Equals("PA"))
+    {
+        <script>
+            //選擇PA
+            $(document).ready(function () {
+                isPA()
+            });
+        </script>
+    }
+
+    @if (Model.APMFORM.PJ_CATY_CODE.Equals("PB"))
+    {
+        <script>
+            //選擇PB
+            $(document).ready(function () {
+                isPB()
+            });
+        </script>
+    }
+
+    @if (Model.APMFORM.PJ_CATY_CODE.Equals("OA") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("OB") ||
+        Model.APMFORM.PJ_CATY_CODE.Equals("OC"))
+    {
+
+        <script>
+            //選擇PA,PB, 2項中的一項時勘查評估頁籤不顯示
+            $(document).ready(function () {
+                isOA_OB_OC()
+            });
+        </script>
+    }
+    <!--載入動作END-->
+    <script>
+        //CA, CB, CC, CD, CE 9項變動
+        function isCA_BCDE() {
+            isNormal();//復原
+            $("#C_START_DT").html("辦理期程開始時間");
+            $("#C_AP_PJ_NAME").html("雨水下水道系統及幹線名稱");
+            $("#C_EXE_MCH").html("執行機關");
+            $("#C_END_DT").html("辦理期程完成時間");
+            //$("#C_ABCDE").show("slow");//水系、改善、保護、檢討
+            $("#S_WSYS_NAME").show("slow");
+            $("#S_IMPFLDAREA").show("slow");
+            $("#S_PRTPOPS").show("slow");
+            $("#S_REXM_PRJ").show("slow");
+            //水系、改善、保護、檢討
+            $("#C_BENEFITS").hide("slow");//隱藏或不輸出預期效益欄位
+            $("#C_IMPFLDAREA").html("改善淹水面積(ha)");
+            $("#li7").show("slow");//自評
+        }
+
+        // 針對 EA, EB, EC 的文字切換
+        function isEA_EB_EC() {
+            // 先呼叫 isNormal() 確保其他欄位回到預設狀態 (如果您有這個需求的話)
+            // isNormal();
+
+            // 將「鄉鎮別」改為「鄉鎮市區別」
+            $("#th_town").html("鄉鎮市區別&nbsp;<span class='text-danger'>*</span>");
+            $("#th_x").html("工程座標點位經度X座標&nbsp;<span class='text-danger'>*</span>");
+            $("#th_y").html("工程座標點位緯度Y座標&nbsp;<span class='text-danger'>*</span>");
+            // 2. 動態將畫面中所有的 GIS_X 與 GIS_Y 欄位設為必填 (包含既有資料與新增範本)
+            $("input[name='GIS_X'], input[name='GIS_Y']").prop("required", true);
+            $("#li7").show("slow");//自評
+        }
+
+        // 恢復預設文字 (建議加在 isNormal 函式裡面，或另外寫一個)
+        function resetTownLabel() {
+            $("#th_town").html("鄉鎮別&nbsp;<span class='text-danger'>*</span>");
+            $("#th_x").html("X座標");
+            $("#th_y").html("Y座標");
+            // 2. 動態取消 GIS_X 與 GIS_Y 欄位的必填限制
+            $("input[name='GIS_X'], input[name='GIS_Y']").prop("required", false);
+        }
+
+        function isPA() {
+            isPA_PB();
+            $("#S_NPSD_SYR").show("slow");
+        }
+
+        function isPB() {
+            isPA_PB();
+            $("#S_OPSD_SYR").show("slow");
+            $("#S_PPSD_SYR").show("slow");
+        }
+
+        function isOA_OB_OC() {
+            isNormal();//復原
+            $("#li4").hide("slow");//勘查評估頁籤不顯示
+            $("#S_WSYS_NAME").show("slow");//水系名稱
+            $("#C_AP_NAME").html("非工程措施名稱");
+            $("#C_AP_ALL_NOTE").html("辦理內容");
+            $("#C_REXM_PRJ").html("其他補充說明");
+            $("#li7").show("slow");//自評
+        }
+
+        function isPA_PB() {
+            isNormal();//復原
+            $("#li4").hide("slow");//勘查評估頁籤不顯示
+            $("#S_WSYS_NAME").show("slow");//水系名稱
+            $("#S_IMPFLDAREA").show("slow");//規劃(檢討)面積(ha)
+            $("#S_IMPALLAREA").show("slow");//規劃總面積(ha)
+            $("#C_IMPFLDAREA").html("規劃(檢討)面積(ha)");
+            $("#C_IMPALLAREA").html("規劃總面積(ha) ");
+            $("#C_BENEFITS").hide("slow");//隱藏或不輸出預期效益欄位
+            $("#li7").show("slow");//自評
+        }
+
+        //一般
+        function isNormal() {
+            $("#C_AP_NAME").html("工程名稱");
+            $("#C_AP_ALL_NOTE").html("工程內容");
+            //CA,CB, CC, CD, CE 9項
+            $("#C_START_DT").html("預定開始日期");
+            $("#C_AP_PJ_NAME").html("實施計畫名稱");
+            $("#C_EXE_MCH").html("預定執行單位");
+            $("#C_END_DT").html("預定完成日期");
+            //$("#C_ABCDE").hide("slow");//水系、改善、保護、檢討
+            $("#S_WSYS_NAME").hide("slow");//水系名稱
+            $("#S_IMPFLDAREA").hide("slow");//規劃(檢討)面積(ha)
+            $("#S_IMPALLAREA").hide("slow");//規劃總面積(ha)
+            $("#S_PRTPOPS").hide("slow");
+            $("#S_REXM_PRJ").hide("slow");
+            //水系、改善、保護、檢討
+            $("#C_BENEFITS").show("slow");//預期效益
+            //CA,CB, CC, CD, CE 9項
+
+            //選擇PA,PB, OA, OB, O
+            $("#li4").show("slow");//堪查評估事項
+            $("#li7").hide("slow");//自評
+            $("#C_REXM_PRJ").html("雨水下水道(重新)檢討規劃名稱");
+            $("#S_NPSD_SYR").hide("slow");
+            $("#S_OPSD_SYR").hide("slow");
+            $("#S_PPSD_SYR").hide("slow");
+
+            resetTownLabel();
+        }
+
+        $("#PJ_CATY_CODE").on("change", function () {
+            var c = $(this).val();
+            //選擇CA,CB, CC, CD, CE五項中的一項時5項更名, 4項新欄位
+            if (c == "CA" || c == "CB" || c == "CC" || c == "CD" || c == "CE") {
+                isCA_BCDE();
+            }
+            //選擇PA,PB中的一項
+            if (c == "PA" || c == "PB") {
+                //堪查評估事項
+                isPA_PB();
+            }
+            if (c == "PA") {
+                isPA();
+            }
+            if (c == "PB") {
+                //堪查評估事項
+                isPB();
+            }
+            //選擇OA, OB, OC中的一項
+            if (c == "OA" || c == "OB" || c == "OC") {
+                isOA_OB_OC();
+            }
+
+            // 💡 加入這段：選擇 EA, EB, EC 中的一項
+            if (c == "EA" || c == "EB" || c == "EC") {
+                isEA_EB_EC();
+            } else {
+                // 如果不是這三種，記得把它改回預設的「鄉鎮別」
+                resetTownLabel();
+            }
+        });
+        //動態判斷END/
+    </script>
+    @if (ViewBag.dis != null)
+    {
+        <script>
+            //初審複審
+            $(document).ready(function () {
+                $('#mainForm :input').prop('disabled', true);
+                $('button[type="submit"]').hide("slow");
+                $('.btn-success').hide("slow");
+                $('.btn-secondary').hide("slow");
+            });
+        </script>
+    }
+
+
+    <!--6/7追加-->
+    @if(ViewBag.isE==true)
+    {
+        <script>
+            //==E的
+            $(document).ready(function () {
+                $("#li7").show("slow");//自評
+            });
+        </script>
+    }
+    else if (ViewBag.isR == null)
+    {
+    <script>
+        //!=R的
+        $(document).ready(function () {
+            $("#li7").hide("slow");//自評
+        });
+    </script>
+    }
+    else
+    {
+    <script>
+        //==R的
+        $(document).ready(function () {
+            $("#li7").show("slow");//自評
+        });
+    </script>
+    }
+
+    <script src="~/Scripts/plugins/bootstrap-fileinput/fileinput.js"></script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/zh-TW.js"></script>
+    <script src="~/Scripts/SGE0000.js"></script>
+</body>
+</html>

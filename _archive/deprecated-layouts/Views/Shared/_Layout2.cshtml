@@ -1,0 +1,269 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>@ViewBag.Title</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="下水道工程管理系統" />
+    <meta name="author" content="China Productivity Center" />
+    <!--<link href="~/Content_/Site.css" rel="stylesheet" type="text/css" />-->
+    <!-- Bootstrap Core CSS -->
+    <link href="~/Content_/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content_/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="~/Content_/bootstrap-nav-panel.css" rel="stylesheet" />
+    <!-- Custom Fonts -->
+    <link href="~/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        /* 修正 jQuery UI Datepicker 在 Bootstrap 下跑版 */
+        .ui-datepicker {
+            width: auto !important;
+            font-size: 14px; /* 字體大小可調整 */
+        }
+
+            .ui-datepicker table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .ui-datepicker td,
+            .ui-datepicker th {
+                width: 2em; /* 每格寬度固定 */
+                height: 2em; /* 每格高度固定 */
+                text-align: center;
+                padding: 0; /* 移除多餘 padding */
+            }
+
+                .ui-datepicker td span,
+                .ui-datepicker td a {
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    line-height: 2em;
+                }
+
+
+
+        .gridcol {
+            box-sizing: border-box;
+            white-space: nowrap;
+        }        
+
+        .menuli {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        body {
+            padding: 15px;
+            padding-top: 30px;
+        }
+
+        .dropdown-submenu {
+            position: relative;
+        }
+
+            .dropdown-submenu > a::after {
+                display: block;
+                content: "";
+                float: right;
+                width: 0;
+                height: 0;
+                border-color: transparent;
+                border-style: solid;
+                border-width: 4px 0 4px 4px;
+                border-left-color: #000;
+                margin-top: 6px;
+                margin-right: -10px;
+            }
+
+            .dropdown-submenu > ul.dropdown-menu {
+                position: absolute;
+                left: 100%;
+                top: 0;
+                margin-left: 5px;
+            }
+
+        #navbar {
+            font-size: 18px;
+        }
+
+        .navbar-brand {
+            font-size: 20px;
+        }
+
+        .dropdown-submenu {
+            font-size: 18px;
+        }
+
+        .dropdown-menu a {
+            font-size: 18px;
+        }
+    </style>
+    <script src="~/Scripts_/numeral.min.js"></script>
+    <script type="text/javascript" src="~/Scripts_/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts_/moment.min.js"></script>
+    <script type="text/javascript" src="~/Scripts_/moment-taiwan.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/locale/zh-tw.js"></script>
+    <script type="text/javascript" src="~/Scripts_/JavaScript.js?s=20240402"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script type="text/javascript" src="~/Scripts_/bootstrap.js"></script>
+    <script src="~/Scripts_/validator.min.js"></script>
+    <!-- Morris Charts JavaScript -->
+    <script>
+        jQuery(document).ready(function ($) {
+            $('li.dropdown-submenu a[data-toggle="dropdown"]').on('click', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                $('li.dropdown-submenu').not($(this).parent()).removeClass('open');
+                $(this).parent().toggleClass('open');
+            });
+        });
+    </script>
+    <style>
+        .responsive-table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 800px; /* 強制最小寬度，觸發滾動 */
+        }
+
+        th, td {
+            white-space: nowrap;
+        }
+
+        @@media (max-width: 600px) {
+            table {
+                font-size: 14px;
+            }
+        }
+    </style>
+    @RenderSection("head", required: false)
+</head>
+<body onclick="$('#overlay').hide();">
+
+
+    <!-- navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top navbar-expand-lg">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+                <b>下水道工程管理系統</b>
+                <small><span class="label label-danger">@(System.Configuration.ConfigurationManager.ConnectionStrings["AppVersion"] != null ? System.Configuration.ConfigurationManager.ConnectionStrings["AppVersion"].ConnectionString : "版本未設定")</span></small>
+            </a>
+
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                @WCals.Helpers.WebSiteHelper.getMenuItems2()
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@WCals.Helpers.WebSiteHelper.getUserName() <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="@Url.Content("~/")Home/logout">登出</a></li>
+                        <li class="disabled"><a href="#">變更密碼</a></li>
+                    </ul>
+                </li>
+                <li><a href="#"></a></li>
+            </ul>
+        </div>
+    </nav>
+    @RenderBody()
+    @if (ViewBag.msg != null)
+    {
+        <script>
+            $(window).on('load', function () {
+                $('#webdialog').modal('show');
+            });
+        </script>
+        <div class="modal fade" id="webdialog" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close">
+                            <span aria-hidden="true">&times;</span> <span class="sr-only">Close</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">訊息</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h3>
+                            @ViewBag.msg
+                        </h3>
+                        @if (ViewBag.desc != null)
+                        {
+                            @ViewBag.desc
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-lg btn-primary" data-dismiss="modal" aria-hidden="true">關閉</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+
+
+
+
+
+
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+        /*
+        $(function () {
+            $('form').on('submit', function () {
+                $('#overlay').show(); // 顯示遮罩
+            });
+        });*/
+    </script>
+
+    <!-- 動態取得nav區塊的高度，防止頁面的文字被nav區塊檔住 -->
+    <script src="~/Scripts/utils/nav-adjust.js?v=@DateTime.Now.Ticks"></script>
+    <script>
+        NavAdjust.init();
+    </script>
+
+    <!-- 儲存系統操作紀錄(使用者點擊功能頁面紀錄) -->
+    <script src="~/Scripts/utils/menu-click.js?v=@DateTime.Now.Ticks"></script>
+    <script>
+        $(document).ready(function() {
+            MenuClick.init({
+                postUrl: '@Url.Action("MenuClick", "Log")' // Razor 產生後端 URL
+            });
+        });
+    </script>
+
+
+    <div id="overlay" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.3);
+    z-index: 9999;
+    text-align: center;
+">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        color: white; font-size: 20px;">
+            處理中，請稍候...
+        </div>
+    </div>
+</body>
+
+</html>

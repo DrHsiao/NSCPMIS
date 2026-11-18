@@ -1,0 +1,213 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0020Model
+@{ ViewBag.Title = "3.1.2每月辦理情形整批填報";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+
+
+<div class="row mb-3">
+    <div class="col-12">
+        <h3 class="fw-bold">
+            <i class="fa-solid fa-file-pen me-2"></i>3.1.2 每月辦理情形整批填報
+        </h3>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Content("~/")Home"><i class="fa-solid fa-house me-1"></i>首頁</a></li>
+                <li class="breadcrumb-item active">每月辦理情形整批填報</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-primary text-white fw-bold">
+        <i class="fa-solid fa-magnifying-glass me-1"></i> 查詢條件
+    </div>
+    <div class="card-body">
+        <form id="searchForm">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">年度計畫</label>
+                    @Html.DropDownList("pid", new SelectList(Model.pids, "Value", "Text"), new { @class = "form-select", id = "pid" })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">縣市別</label>
+                    @Html.DropDownList("city", (SelectList)ViewBag.cities, "請選擇縣市", new { @class = "form-select", id = "city", onchange = "GetTowns(this.value)" })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">鄉鎮別</label>
+                    @Html.DropDownList("town", (SelectList)ViewBag.towns, "請選擇鄉鎮", new { @class = "form-select", id = "town" })
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label">填報年度</label>
+                    <select name="year" id="year" class="form-select">
+                        <option value="">請選擇</option>
+                        @{
+                            int thisYear = DateTime.Now.Year - 1911;
+                            for(int y = thisYear; y >= thisYear - 2; y--) {
+                                <option value="@y" @(y == thisYear ? "selected" : "")>@y 年</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">填報月份</label>
+                    <select name="month" id="month" class="form-select">
+                        @for (int i = 1; i <= 12; i++) {
+                            <option value="@i">@i 月</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">工程編號</label>
+                    <input type="text" name="td_code" id="td_code" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">工程名稱</label>
+                    <input type="text" name="td_name" id="td_name" class="form-control" />
+                </div>
+                
+                <div class="col-12 text-end">
+                    <button type="button" class="btn btn-primary" onclick="search()"><i class="fa-solid fa-search me-1"></i>查詢</button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()"><i class="fa-solid fa-rotate-left me-1"></i>重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0" id="resultCard" style="display:none;">
+    <div class="card-header bg-primary text-white">
+         <ul class="nav nav-tabs card-header-tabs" id="mainTabs" role="tablist">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-type="C" data-url="@Url.Action("TAB1", "TDE0020")">設計及工程類</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-type="L" data-url="@Url.Action("TAB1", "TDE0020")">用地類</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-type="P" data-url="@Url.Action("TAB1", "TDE0020")">規劃類</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-type="M" data-url="@Url.Action("TAB1", "TDE0020")">PCM類</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-type="J" data-url="@Url.Action("TAB1", "TDE0020")">BOT促參規劃類</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-type="K" data-url="@Url.Action("TAB1", "TDE0020")">BOT促參類</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-type="S" data-url="@Url.Action("TAB1", "TDE0020")">其他類</button></li>
+        </ul>
+    </div>
+    <div class="card-body p-0 position-relative">
+        <div id="tabContent"></div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="@Url.Content("~/Scripts/MyDatepickerJ.js")"></script>
+    <script>
+        // 取得鄉鎮
+        function GetTowns(city) {
+            $("#town").html("<option value=''>請選擇鄉鎮</option>");
+            if (!city) return;
+            
+            $.ajax({
+                url: '@Url.Content("~/ASYNC/GetTowns")',
+                method: 'post',
+                data: { "city": city },
+                success: function (d) {
+                    var p = JSON.parse(d);
+                    for (var i = 0; i < p.length; i++) {
+                        $("#town").append("<option value='" + p[i].TOWN + "'>" + p[i].TOWN + "</option>");
+                    }
+                }
+            });
+        }
+
+        function resetForm() {
+            $("#searchForm")[0].reset();
+            // 3.1.2 鄉鎮別與縣市別連動：重置後依還原的縣市重載鄉鎮，而非清空
+            GetTowns($("#city").val());
+        }
+
+        // 查詢方法
+        function search() {
+            $("#resultCard").show();
+            // 觸發當前 active tab 的點擊事件
+            var $activeTab = $(".nav-link.active");
+            if($activeTab.length > 0) {
+                loadTabContent($activeTab);
+            } else {
+                $(".nav-link:first").trigger('click');
+            }
+        }
+
+        function loadTabContent($tab) {
+             var url = $tab.data("url");
+             var type = $tab.data("type");
+             
+             var params = {
+                 pid: $("#pid").val(),
+                 city: $("#city").val(),
+                 town: $("#town").val(),
+                 year: $("#year").val(),
+                 month: $("#month").val(),
+                 td_code: $("#td_code").val(),
+                 td_name: $("#td_name").val(),
+                 type: type,
+                 _t: new Date().getTime()
+             };
+
+             $('#overlay').fadeIn();
+             $("#tabContent").empty();
+             
+             $.ajax({
+                 url: url,
+                 type: 'GET', // Make sure it's GET if TAB1 is GET
+                 data: params,
+                 success: function(data) {
+                     $("#tabContent").html(data);
+                 },
+                 error: function(xhr, status, error) {
+                     var mainMsg = error || "未知錯誤";
+                     var details = "";
+
+                     if(xhr.responseText) {
+                         // 嘗試從 HTML Response 中抓取 Title (通常是 Exception Message)
+                         var match = xhr.responseText.match(/<title>(.*?)<\/title>/i);
+                         if (match && match[1]) {
+                             details = match[1];
+                         } else if (xhr.responseText.indexOf('<html') === -1) {
+                             // 如果不是 HTML，直接顯示內容
+                             details = xhr.responseText;
+                         }
+                     }
+
+                     var msg = '<div class="alert alert-danger m-3">';
+                     msg += '<h4><i class="fa-solid fa-triangle-exclamation me-2"></i>載入失敗 (' + xhr.status + ')</h4>';
+                     msg += '<hr>';
+                     if(details) {
+                         msg += '<p class="mb-0 fw-bold">' + details + '</p>';
+                     } else {
+                         msg += '<p class="mb-0">' + mainMsg + '</p>';
+                     }
+                     msg += '</div>';
+                     $("#tabContent").html(msg);
+                 },
+                 complete: function() {
+                     $('#overlay').fadeOut();
+                 }
+             });
+        }
+
+         $(document).ready(function () {
+             // 綁定 Tab 點擊事件
+             $("#mainTabs .nav-link").on('click', function(e) {
+                 e.preventDefault();
+                 // 樣式切換 logic from Home/Index
+                 
+                 
+
+                 loadTabContent($(this));
+             });
+
+             // 初始化日期 (如果需要)
+             // $("#month").val(new Date().getMonth() + 1); // Select current month?
+        });
+    </script>
+}
+
+
+

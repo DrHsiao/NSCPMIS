@@ -1,0 +1,103 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0030Model
+@{ ViewBag.Title = "計畫經費管制維護";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+<!-- jQuery library -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<!-- DataTables JS -->
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            檢視計畫經費
+            <small></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")PJE0030">檢視計畫經費</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                檢視計畫經費
+            </li>
+        </ol>
+    </div>
+</div>
+
+@using(Html.BeginForm("", "PJE0040", FormMethod.Post, new { id = "mainForm" })) {
+    <div style="float:right;">
+        @Html.PagedListPager(Model.MainList, page => Url.Action("",
+             new {
+                 page = page
+             }),
+             new PagedListRenderOptions {
+                 DisplayItemSliceAndTotal = true,
+                 DisplayPageCountAndCurrentLocation = true,
+                 DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                 DisplayLinkToIndividualPages = false,
+
+                 ItemSliceAndTotalFormat = "顯示第 {0} - {1}筆, 共{2}筆",
+                 PageCountAndCurrentLocationFormat = "第 {0}頁 / 共 {1}頁",
+             }
+         )
+    </div>
+
+    
+
+    <table width="100%" class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>期別 </th>
+                <th>核定日期</th>
+                <th>核定文號</th>
+                <th>經費鎖定</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if(Model.MainList != null) {
+
+                foreach(System.Data.DataRow c in Model.MainList) {
+                    <tr>
+
+                        <td>@c["SEQ_NO"]</td>
+                        <td>@c["AP_DT"]</td>
+                        <td>@c["AP_FN"]</td>
+                        <td></td>
+                        <td>
+                            
+                        </td>
+
+                    </tr>
+
+                }
+            }
+        </tbody>
+    </table>
+
+
+    @Html.PagedListPager(Model.MainList, page => Url.Action("",
+    new { page = page }))
+
+}
+
+
+
+
+
+
+
+
+
+
+
+

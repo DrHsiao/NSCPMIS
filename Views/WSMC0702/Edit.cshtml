@@ -1,0 +1,303 @@
+﻿@model WCals.ViewModels.OGCUSEREditViewModel
+
+@{
+    ViewBag.Title = "維護使用者";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            維護使用者
+
+            <small> 提供使用者的列表顯示</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="active">
+                <i class="fa-solid fa-file"></i>
+                <a href="/WSMC0702/Index"> 使用者管理 [0702]</a>
+            </li>
+            <li class="fa fa-file">
+                <i class="fa-solid fa-file"></i>
+                @Model.OGCUSER.USR_NAME
+            </li>
+        </ol>
+    </div>
+</div>
+
+<ul class="nav nav-tabs card-header-tabs" role="tablist">
+    <li class="active"><a data-bs-toggle="tab" href="#home"> 基本資料</a></li>
+    <li><a data-bs-toggle="tab" href="#menu1"> 部門/群組</a></li>
+</ul>
+<br />
+@using (Html.BeginForm())
+{
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <div class="row">
+                <div class="col-lg-12">
+
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.page)
+                    @Html.HiddenFor(model => model.VALIDATE_USR_ID)
+                    <div class="form-group">
+                        <label>AD帳號</label>
+                        @Html.EditorFor(model => model.VALIDATE_AD_USR_ID, new { htmlAttributes = new { @class = "form-control", placeholder = "AD帳號", maxlength = "50" } })
+                        @Html.ValidationMessageFor(f => f.VALIDATE_AD_USR_ID, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label>使用者名稱</label>
+                        @Html.EditorFor(model => model.OGCUSER.USR_NAME, new { htmlAttributes = new { @class = "form-control", placeholder = "使用者名稱", maxlength = "200" } })
+                    </div>
+
+                    @*<div class="form-group">
+                            <label>密碼</label>
+                            @Html.EditorFor(model => model.USR_PSW, new { htmlAttributes = new { @class = "form-control", placeholder = "密碼" } })
+                        </div>*@
+
+                    <div class="form-group">
+                        <label>電子郵件</label>
+                        @Html.EditorFor(model => model.OGCUSER.EMAIL, new { htmlAttributes = new { @class = "form-control", placeholder = "電子郵件", maxlength = "200" } })
+                    </div>
+                    <div class="form-group">
+                        <label>電話</label>
+                        @Html.EditorFor(model => model.OGCUSER.TEL_O, new { htmlAttributes = new { @class = "form-control", placeholder = "電話", maxlength = "50" } })
+                    </div>
+                    <div class="form-group">
+                        <label>行動電話</label>
+                        @Html.EditorFor(model => model.OGCUSER.TEL_M, new { htmlAttributes = new { @class = "form-control", placeholder = "行動電話", maxlength = "50" } })
+                    </div>
+                    <div class="form-group">
+                        <label>傳真電話</label>
+                        @Html.EditorFor(model => model.OGCUSER.TEL_F, new { htmlAttributes = new { @class = "form-control", placeholder = "傳真電話", maxlength = "50" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="menu1" class="tab-pane fade">
+            <div class="row">
+                <div class="col-lg-12">
+                    @Html.HiddenFor(f => f.OGCUSER.USR_ID, new { @id = "txtUSR_ID" })
+                    @Html.HiddenFor(f => f.jsonOGCDPUR_D, new { @id = "txtOGCDPUR_D" })
+                    @Html.HiddenFor(f => f.jsonOGCDPUR_G, new { @id = "txtOGCDPUR_G" })
+                    <input type="hidden" id="deptNoAndName">
+                    <input type="hidden" id="deptNo">
+                    <input type="hidden" id="deptName">
+
+                    <h4>所屬部門<input id="openModal" type="button" class="btn btn-success" value="修改部門" /></h4>
+                    <div class="row">
+                        <div class="col-lg-12 table-responsive">
+                            <div class="card shadow-sm border-0 mb-4 h-100">
+                                <table id="tbOGCDPUR_D" class="table table-bordered">
+                                    <thead>
+                                        <tr><th>部門編號</th><th>部門名稱</th></tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>所屬群組</h4>
+                    <div class="form-inline">
+                        @Html.DropDownList("ddlDEPT_NO_G", (SelectList)ViewBag.DEPT_NO_G, new { @class = "form-control" })
+                        <button type="button" id="btnSaveOGCDPUR_G" class="btn btn-success" onclick="saveOGCDPUR_G()">增加群組</button>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 table-responsive">
+                            <div class="card shadow-sm border-0 mb-4 h-100">
+                                <table id="tbOGCDPUR_G" class="table table-bordered">
+                                    <thead>
+                                        <tr><th>群組編號</th><th>群組名稱</th><th>#</th></tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <input type="submit" value="儲存" class="btn btn-primary" />
+        @Html.ActionLink("刪除", "Delete", new { id = Model.OGCUSER.USR_ID }, new { @class = "btn btn-danger", onclick = "return confirm('確定要刪除嗎?')" })
+        @Html.ActionLink("返回", "PagedIndex", new { page = TempData.Peek(WCals.Controllers.Constants.PAGE_NUMBER_KEY) }, new { @class = "btn btn-secondary" })
+
+    </div>
+}
+
+<div id="searchDeptModal" aria-labelledby="查詢部門" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h4 class="modal-title">查詢單位部門</h4>
+            </div>
+            <div class="modal-body" id="modalFormContainer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+    $("#openModal").click(function () {
+        $.ajax({
+            type: "Get",
+            url: '@Url.Action("OGCDEPTEditQuery", "WSMC0601")',
+            data: '',
+            cache: false,
+            success: function (data) {
+                $('#modalFormContainer').html(data);
+                $('#searchDeptModal').modal('show');
+            }
+        })
+    })
+
+        $("#searchDeptModal").on("submit", "#modalForm", function (e) {
+            e.preventDefault();  // prevent standard form submission
+
+            var form = $(this);
+            $.ajax({
+                url: form.attr("action"),
+                method: form.attr("method"),  // post
+                data: form.serialize(),
+                success: function (partialResult) {
+                    $("#modalFormContainer").html(partialResult);
+                }
+            });
+        });
+
+        $("#deptNo").change(function () {
+            saveOGCDPUR_D();
+        });
+
+        function saveOGCDPUR_D() {
+
+            var sample = [];
+            sample.push({
+                "DEPT_NO": $("#deptNo").val(),
+                "USR_ID": $("#txtUSR_ID").val(),
+                "DEPT_NAME": $("#deptName").val(),
+                "METHOD": "edit"
+            });
+
+            $("#txtOGCDPUR_D").val(JSON.stringify(sample));
+
+            showOGCDPURDataToList();
+        }
+
+        function saveOGCDPUR_G() {
+            var jsonStr = $("#txtOGCDPUR_G").val();
+            var sample = null;
+            if (jsonStr == "") {
+                sample = [];
+            }
+            else {
+                sample = JSON.parse(jsonStr);
+            }
+            var deptNo = $("#ddlDEPT_NO_G :selected").val();
+            var verifyResult = validateDuplicate(sample, deptNo);
+
+            if ('add' == verifyResult) {
+                sample.push({
+                    "DEPT_NO": $("#ddlDEPT_NO_G").val(),
+                    "USR_ID": $("#txtUSR_ID").val(),
+                    "DEPT_NAME": $("#ddlDEPT_NO_G :selected").text(),
+                    "METHOD": "new"
+                });
+            }
+            //console.log(verifyResult);
+            if ('add' == verifyResult || 'refresh' == verifyResult) {
+                $("#txtOGCDPUR_G").val(JSON.stringify(sample));
+
+                showOGCDPURDataToList();
+            }
+        }
+
+        function removeOGCDPUR(USR_ID, DEPT_NO, type) {
+            if (confirm("確定要刪除嗎?") == true) {
+                var sample;
+                var sampleJsonStr;
+                if ('D' == type) {
+                    sampleJsonStr = $("#txtOGCDPUR_D").val()
+                } else {
+                    sampleJsonStr = $("#txtOGCDPUR_G").val()
+                }
+                if (sampleJsonStr != "") {
+                    sample = jQuery.parseJSON(sampleJsonStr);
+                    for (var i = 0; i < sample.length; i++) {
+                        if (sample[i].DEPT_NO == DEPT_NO && sample[i].USR_ID == USR_ID) {
+                            if (sample[i].METHOD == 'original') {
+                                sample[i].METHOD = "delete";
+                            } else if (sample[i].METHOD == 'new') {
+                                sample.splice(i, 1);
+                            }
+
+                        }
+                    }
+                    var jsonstr = JSON.stringify(sample);
+                    if ('D' == type) {
+                        $("#txtOGCDPUR_D").val(jsonstr);
+                    } else {
+                        $("#txtOGCDPUR_G").val(jsonstr);
+                    }
+
+                    showOGCDPURDataToList();
+                }
+            }
+        }
+
+        function validateDuplicate(array, target) {
+            var result = 'add';
+            array.forEach(function (element) {
+                if (element.DEPT_NO == target) {
+                    if (element.METHOD != "delete") {
+                        alert("不可加入重複的群組");
+                        result = 'stop';
+                    } else {
+                        element.METHOD = "original";
+                        result = 'refresh';
+                    }
+                }
+            });
+            return result;
+        }
+
+        function showOGCDPURDataToList() {
+            $("#tbOGCDPUR_D tbody tr").remove();
+            $("#tbOGCDPUR_G tbody tr").remove();
+
+            var jsonStr = $("#txtOGCDPUR_D").val();
+            if (jsonStr != "") {
+                var sampleList = JSON.parse(jsonStr);
+                for (var i = 0; i < sampleList.length; i++) {
+                    if (sampleList[i].METHOD != "delete") {
+                        $("#tbOGCDPUR_D").find("tbody").append("<tr><td>" + sampleList[i].DEPT_NO + "</td><td>" + sampleList[i].DEPT_NAME + "</td></tr>");
+                    }
+                }
+            }
+
+            jsonStr = $("#txtOGCDPUR_G").val();
+            if (jsonStr != "") {
+                var sampleList = JSON.parse(jsonStr);
+                for (var i = 0; i < sampleList.length; i++) {
+                    if (sampleList[i].METHOD != "delete") {
+                        $("#tbOGCDPUR_G").find("tbody").append("<tr><td>" + sampleList[i].DEPT_NO + "</td><td>" + sampleList[i].DEPT_NAME + "</td><td><button type='button' class='btn btn-danger' onclick=\"removeOGCDPUR('" + sampleList[i].USR_ID + "','" + sampleList[i].DEPT_NO + "', 'G')\" >刪除</button></td></tr>");
+                    }
+                }
+            }
+        }
+
+        showOGCDPURDataToList();
+    </script>
+
+}

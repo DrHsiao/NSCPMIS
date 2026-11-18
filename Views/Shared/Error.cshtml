@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "錯誤訊息";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+@model System.Exception
+<section class="row">
+    <div class="col-md-12">
+        <h1>發生錯誤。</h1>
+        
+        @if (@Model.InnerException.InnerException.Message != "")
+        {
+            <h2 style="color:red">錯誤訊息：</h2>
+            <h3 style="color:red; font-style:italic">　@Model.InnerException.InnerException.Message</h3>
+        }
+        else
+        {
+            <h2>處理您的要求時發生錯誤。</h2>
+        }
+        <h3><a href="#" onClick="javascript:history.back(-1);" >返回上一頁</a></h3>
+    </div>
+</section>

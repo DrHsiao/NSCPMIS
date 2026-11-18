@@ -1,0 +1,279 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0011Model
+@{ ViewBag.Title = "計畫經費管制維護";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+
+@section head{
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            2.1.1中長程計畫維護
+            <small></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")PJE0011">2.1.1中長程計畫維護 </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                內容
+            </li>
+        </ol>
+    </div>
+</div>
+
+@using(Html.BeginForm("", "PJE0011", FormMethod.Post, new { id = "mainForm" })) {
+
+
+    <div>
+        <button class="btn btn-warning btn-lg" name="action" type="submit" value="Save">儲存</button>
+
+        @*<a class="btn btn-secondary btn-lg" href="PJE0011?page=@Model.page">返回</a>*@
+        <button class="btn btn-secondary btn-lg" name="action" type="submit" value="Search">返回</button>
+        @Html.HiddenFor(x => x.keyword)
+        @Html.HiddenFor(x => x.PPID)
+        @Html.HiddenFor(x => x.page1)
+        @Html.HiddenFor(x => x.page2)
+    </div>
+    <br />
+
+
+    <div class="card border-primary mb-3">
+        <div class="card-header bg-primary text-white">@Model.PJMFORM.PJ_NAME</div>
+        <table class="table">
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="input-group">
+                                <span class="input-group-text">計畫名稱</span>
+                                @Html.TextBoxFor(x => x.PJMFORM.PJ_NAME, new { @class = "form-control pjdfdcr", id = "PJMFORM_PJ_NAME", placeholder = "陳報日期", AutoComplete = "Off", form = "mainForm" })
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">計畫編號</span>
+                                @Html.TextBoxFor(x => x.PJMFORM.PJ_CODE, new { @class = "form-control", placeholder = "計畫編號", AutoComplete = "Off", form = "mainForm" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">樣板類型</span>
+                                @Html.DropDownListFor(x => x.PJMFORM.PJ_CATY, (SelectList)ViewBag.PJ_CATYS, new { @class = "form-control", form = "mainForm" })
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">承辦單位</span>
+                                @Html.DropDownListFor(x => x.PJMFORM.ADV_DP, (SelectList)ViewBag.depts, new { @class = "form-control", form = "mainForm" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">承辦人</span>
+                                @Html.DropDownListFor(x => x.PJMFORM.ADV_UID, (SelectList)ViewBag.users, new { @class = "form-control", form = "mainForm" })
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="input-group">
+                                <span class="input-group-text">實施計畫內容</span>
+                                @Html.TextAreaFor(x => x.PJMFORM.PJ_CONT, new { @class = "form-control", placeholder = "實施計畫內容", form = "mainForm" })
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="row">
+
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text">核定期程啟日</span>
+                                @Html.TextBoxFor(x => x.PJMFORM.STT_DT, new { @class = "form-control dt", id = "STT_DT", placeholder = "核定期程啟日", AutoComplete = "Off", form = "mainForm" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text">報局日期1</span>
+                                @Html.TextBoxFor(x => x.LEV1_DT, new { @class = "form-control dt", id = "PJMFORM_LEV1_DT", placeholder = "報局日期", AutoComplete = "Off", form = "mainForm" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text">*報局日期2</span>
+                                @Html.TextBoxFor(x => x.LEV2_DT, new { @class = "form-control dt", id = "PJMFORM_LEV2_DT", placeholder = "報局日期", AutoComplete = "Off", form = "mainForm" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text">報局日期3</span>
+                                @Html.TextBoxFor(x => x.LEV3_DT, new { @class = "form-control dt", id = "PJMFORM_LEV3_DT", placeholder = "報局日期", AutoComplete = "Off", form = "mainForm" })
+                            </div>
+                        </div>
+
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text">核定期程迄日</span>
+                                @Html.TextBoxFor(x => x.PJMFORM.END_DT, new { @class = "form-control dt", id = "END_DT", placeholder = "核定期程迄日", AutoComplete = "Off", form = "mainForm" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text">報局文號1</span>
+                                @Html.TextBoxFor(x => x.PJMFORM.LEV1_FN, new { @class = "form-control", id = "PJMFORM_LEV1_FN", placeholder = "報局文號", AutoComplete = "Off", form = "mainForm" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text">報局文號2</span>
+                                @Html.TextBoxFor(x => x.PJMFORM.LEV2_FN, new { @class = "form-control", id = "PJMFORM_LEV2_FN", placeholder = "報局文號", AutoComplete = "Off", form = "mainForm" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text">報局文號3</span>
+                                @Html.TextBoxFor(x => x.PJMFORM.LEV3_FN, new { @class = "form-control", id = "PJMFORM_LEV3_FN", placeholder = "報局文號", AutoComplete = "Off", form = "mainForm" })
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+
+    <div class="card border-primary mb-3">
+        <div class="card-header bg-primary text-white">
+            @* 六個頁籤共用下方唯一的 iframe#mf，內容由 getMF() 換 src 載入，
+               因此 href 一律指向實際存在的 #tab1（本頁只有這一個 tab-pane）。
+               【勿改成 #tab2~#tab6】BS5 切換頁籤時會隱藏目前的 pane 再顯示目標 pane，
+               目標不存在就會變成整片空白（BS3 找不到目標時不切換，所以舊版看起來正常）。 *@
+            <ul class="nav nav-tabs">
+                <li class="nav-item"><a class="nav-link active" href="#tab1" onclick="getMF('@Url.Action("/")EditPJDCATY?ppid=@Model.PPID')" data-bs-toggle="tab">系統別</a></li>
+                <li class="nav-item"><a class="nav-link" href="#tab1" onclick="getMF('@Url.Action("/")EditPJDCMCT?ppid=@Model.PPID')" data-bs-toggle="tab">申請執行方式</a></li>
+                <li class="nav-item"><a class="nav-link" href="#tab1" onclick="getMF('@Url.Action("/")EditPJDFUND?ppid=@Model.PPID')" data-bs-toggle="tab">計畫核定經費</a></li>
+                <li class="nav-item"><a class="nav-link" href="#tab1" onclick="getMF('@Url.Action("/")EditPJDDOCS?ppid=@Model.PPID')" data-bs-toggle="tab">計畫相關文件</a></li>
+                <li class="nav-item"><a class="nav-link" href="#tab1" onclick="getMF('@Url.Action("/")EditPJDSUPD?ppid=@Model.PPID')" data-bs-toggle="tab">計畫可補助機關</a></li>
+                <li class="nav-item"><a class="nav-link" href="#tab1" onclick="getMF('@Url.Action("/")EditPJDSYRC?ppid=@Model.PPID')" data-bs-toggle="tab">申請開放管制</a></li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="tab1">
+                    <iframe id="mf" src="" style="width:100%; height:640px; border:0px;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+
+
+
+@section scripts{
+
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+    <script type="text/javascript" src="~/Scripts/bootstrap-multiselect.min.js"></script>
+    <script>
+        function resizeIframe(obj) {
+            obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+        }
+        function getMF(url) {
+            //alert(url);
+            $("#mf").attr("src", url);
+
+            //alert($("#mf").contentWindow.document.documentElement.scrollHeight);
+            //$("#mf").height(1024);
+        }
+
+        $(document).ready(function () {
+            $(".optgroup").multiselect();
+            $("#mf").attr("src"," @Url.Action("/")EditPJDCATY?ppid=@Model.PPID" );
+        });
+
+        function getUnit(lid) {
+            alert(lid)
+
+            $(".optgroup1").html("");
+            for (i = 0; i < units.length; i++) {
+                if (units[i].AN_DEPT_NO==lid)
+                    $(".optgroup1").append("<option value='" + units[i].DEPT_NO + "'>" + units[i].DEPT_NAME + "</option>");
+
+            }
+        }
+        @{System.Data.DataTable ds = ViewBag.deptV1;}
+        @Html.Raw("units = [")
+        @foreach(System.Data.DataRow i in ds.Rows) {
+
+            @Html.Raw("{AN_DEPT_NO:'"+ i["AN_DEPT_NO"] + "', DEPT_NO: '" + i["DEPT_NO"] + "', DEPT_NAME: '" + i["DEPT_NAME"] +"'},")
+
+        }
+        @Html.Raw("]")
+
+
+
+
+
+
+
+
+        $(".dt").datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: '68:168',
+            dateFormat: 'yymmdd',
+            //defaultDate: new Date()
+        });
+        $('#PJDFDCR_APROV_DT').datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            dateFormat: 'yymmdd',
+            yearRange: '88:168',
+
+        });
+
+
+    </script>
+
+}
+
+
+

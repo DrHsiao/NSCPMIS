@@ -1,0 +1,1054 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.SGE0000Model
+@{ ViewBag.Title = "2.2.1 提案作業";
+    //Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+    <link rel="stylesheet" href="~/Scripts/plugins/bootstrap-fileinput/icon.mini.css" crossorigin="anonymous">
+    <link href="~/Scripts/plugins/bootstrap-fileinput/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+<body style="padding:5px;">
+    @using(Html.BeginForm("", "SGE0000", FormMethod.Post, new { id = "mainForm", enctype = "multipart/form-data" })) {
+        <div>
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist" id="syrTab">
+                <li id="li1" role="presentation" class="active"><a href="#tab1" aria-controls="tab1" role="tab" data-bs-toggle="tab">申請內容基本資料</a></li>
+                <li id="li2" role="presentation"><a href="#tab2" aria-controls="tab2" role="tab" data-bs-toggle="tab">實施區域</a></li>
+                <li id="li3" role="presentation" onclick="CpTo3();"><a href="#tab3" aria-controls="tab3" role="tab" data-bs-toggle="tab">實行內容</a></li>
+                <li id="li4" role="presentation"><a href="#tab4" aria-controls="tab4" role="tab" data-bs-toggle="tab">勘察評估事項</a></li>
+                <li id="li5" role="presentation"><a href="#tab5" aria-controls="tab5" role="tab" data-bs-toggle="tab">財源分配</a></li>
+                <li id="li6" role="presentation"><a href="#tab6" aria-controls="tab6" role="tab" data-bs-toggle="tab">檢附資料</a></li>
+            </ul>
+            <div class="tab-content">
+                <!-- Tab1 panes -->
+                <div role="tabpanel" class="tab-pane active" id="tab1">
+                    <div class="row row-no-gutters" style="padding:10px;">
+                        <div class="col-xs-6">
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(1) a').tab('show')">下一頁</a>
+                        </div>
+                        <div class="col-xs-6" style="text-align: right; color:#808080;">
+                            <h1><b>@WCals.classes.john.tools.GetStat(Model.APMFORM.AP_STAT)</b></h1>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead class="table-light">
+
+                            <tr>
+                                <td nowrap align="right">案件類別</td>
+                                <td width="50%">
+                                    @Html.DropDownListFor(x => x.APMFORM.PJ_CATY_CODE, (SelectList)ViewBag.PJ_CATY_CODE, "請選擇", new { @class = "form-select", form = "mainForm" })
+                                </td>
+                                <td nowrap align="right">辦理狀態:</td>
+                                <td width="100%">
+                                    <select name="EXT_FG" class="form-select">
+
+                                        @if(Model.APMFORM.EXT_FG.Value) {
+                                            <option selected value="Y">延續性工程</option>
+                                            <option value="N">新建工程</option>
+                                        } else {
+                                            <option value="Y">延續性工程</option>
+                                            <option selected value="N">新建工程</option>
+                                        }
+
+
+
+                                    </select>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td width="1" nowrap align="right">工程名稱</td>
+                            <td colspan="2">
+                                @Html.TextBoxFor(x => x.APMFORM.AP_NAME, new { @class = "form-control", placeholder = "工程名稱", AutoComplete = "Off", tabindex = "1" })
+                                @Html.HiddenFor(x => x.APMFORM.AID)
+
+                            </td>
+                            <td>
+
+                                @Html.HiddenFor(x => x.PPID)
+                                @Html.HiddenFor(x => x.YRC_ID)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap align="right">縣市別</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.APMFORM.CITY, (SelectList)ViewBag.cities, "縣市", new { @class = "form-select", onchange = "GetTown(this.value);" })
+
+                            </td>
+                            <td width="1" nowrap align="right">計畫名稱</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.APMFORM.AP_PJ_NAME, (SelectList)ViewBag.PJ_NAMES, "請選擇", new { @class = "form-select", form = "mainForm" })
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td width="1" nowrap align="right">受補助單位: @Model.APMFORM.FILL_DP</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.APMFORM.FILL_DP, (SelectList)ViewBag.FILL_MCHS_ALL, "請選擇", new { @class = "form-select", form = "mainForm" })
+
+                            </td>
+                            <td width="1" nowrap align="right">預定執行單位</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.APMFORM.EXE_MCH, new { @class = "form-control", placeholder = "預定執行單位", AutoComplete = "Off", tabindex = "1" })
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap align="right">預定開始日期</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.START_DT, new { @class = "form-control dt", placeholder = "核定期程啟日", AutoComplete = "Off", form = "mainForm" })
+                            </td>
+                            <td width="1" nowrap align="right">預定完成日期</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.END_DT, new { @class = "form-control dt", placeholder = "預定完成日期", AutoComplete = "Off", form = "mainForm" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap align="right">預期效益</td>
+                            <td colspan="3">
+                                @Html.TextAreaFor(x => x.APMFORM.BENEFITS, new { @class = "form-control", placeholder = "預期效益", AutoComplete = "Off" })
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap align="right">工程內容</td>
+                            <td colspan="3">
+                                @Html.TextAreaFor(x => x.APMFORM.AP_ALL_NOTE, new { @class = "form-control", placeholder = "工程內容", AutoComplete = "Off" })
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap align="right">本年度辦理內容</td>
+                            <td colspan="3">
+                                @Html.TextAreaFor(x => x.APMFORM.AP_YEAR_NOTE, new { @class = "form-control", placeholder = "本年度辦理內容", AutoComplete = "Off" })
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap align="right">備註說明</td>
+                            <td colspan="3">
+                                @Html.TextAreaFor(x => x.APMFORM.AP_NOTE, new { @class = "form-control", placeholder = "備註說明", AutoComplete = "Off" })
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap align="right">填表單位</td>
+                            <td>
+                                @WCals.Helpers.WebSiteHelper.getDeptName(WCals.Helpers.WebSiteHelper.getUserDept())
+                            </td>
+                            <td width="1" nowrap align="right">計畫聯絡人</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.APMFORM.CONT_NAME, new { @class = "form-control", placeholder = "計畫聯絡人", AutoComplete = "Off" })
+
+                            </td>
+                        </tr>
+
+
+
+
+                        <tr>
+                            <td width="1" nowrap align="right">聯絡人職稱</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.APMFORM.CONT_TITLE, new { @class = "form-control", placeholder = "聯絡人職稱", AutoComplete = "Off", @required = "required" })
+                            </td>
+                            <td width="1" nowrap align="right">聯絡人電話</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.APMFORM.CONT_TEL, new { @class = "form-control", placeholder = "聯絡人電話", AutoComplete = "Off" })
+
+                            </td>
+                        </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        <tr>
+                            <td width="1" nowrap align="right">聯絡人信箱</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.APMFORM.CONT_EMAIL, new { @class = "form-control", placeholder = "聯絡人信箱", AutoComplete = "Off" })
+                            </td>
+                            <td width="1" nowrap align="right">聯絡人傳真</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.APMFORM.CONT_FAX, new { @class = "form-control", placeholder = "聯絡人傳真", AutoComplete = "Off" })
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap align="right">預定徵收公告日</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.TF106_DT, new { @class = "form-control dt", placeholder = "預定徵收公告日", AutoComplete = "Off", form = "mainForm" })
+                            </td>
+                            <td width="1" nowrap align="right">預定用地取得完成日</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.TF108_DT, new { @class = "form-control dt", placeholder = "預定用地取得完成日", AutoComplete = "Off", form = "mainForm" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap align="right">預定設計完成日</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.TK103_DT, new { @class = "form-control dt", placeholder = "預定設計完成日", AutoComplete = "Off", form = "mainForm" })
+                            </td>
+                            <td width="1" nowrap align="right">預定發包日</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.TK105_DT, new { @class = "form-control dt", placeholder = "預定發包日", AutoComplete = "Off", form = "mainForm" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="1" nowrap align="right">預定開工日</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.TK106_DT, new { @class = "form-control dt", placeholder = "預定開工日", AutoComplete = "Off", form = "mainForm" })
+                            </td>
+                            <td width="1" nowrap align="right">預定完工日</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.TK107_DT, new { @class = "form-control dt", placeholder = "預定完工日", AutoComplete = "Off", form = "mainForm" })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td width="1" nowrap align="right">系統別 @Model.APMFORM.SYS_CATY</td>
+                            <td>
+                                @*Html.TextBoxFor(x => x.SYS_CATY, new { @class = "form-control", placeholder = "系統別", AutoComplete = "Off" })*@
+                                @Html.DropDownListFor(x => x.APMFORM.SYS_CATY, (SelectList)ViewBag.SYS_CATY, "其他", new { @class = "form-select" })
+                            </td>
+                            <td width="1" nowrap align="right">辦理層級</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.APMFORM.IPJ_CODE, (SelectList)ViewBag.IPJ_CODES, "辦理層級", new { @class = "form-select" })
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td width="1" nowrap align="right">縣市評估優先次序</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.APMFORM.S1_ORDER, new { @class = "form-control", placeholder = "縣市評估優先次序", AutoComplete = "Off" })
+                            </td>
+                            <td width="1" nowrap align="right">關注立委</td>
+                            <td>
+                                @Html.TextBoxFor(x => x.APMFORM.ATTENTION_PEOPLE, new { @class = "form-control", placeholder = "關注立委", AutoComplete = "Off" })
+
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    <table width="99%">
+                        <tr>
+                            <td align="left"></td>
+                            <td align="right"><a class="btn btn-secondary" onclick="$('#syrTab li:eq(1) a').tab('show')">下一頁</a></td>
+                        </tr>
+                    </table>
+
+
+
+                </div>
+
+                <!--tab2-->
+                <div role="tabpanel" class="tab-pane" id="tab2">
+
+                    <div class="row row-no-gutters" style="padding:10px;">
+                        <div class="col-xs-6">
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(0) a').tab('show')">上一頁</a>
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(2) a').tab('show')">下一頁</a>
+                        </div>
+                        <div class="col-xs-6" style="text-align: right; color:#808080;">
+                            <h1><b>@WCals.classes.john.tools.GetStat(Model.APMFORM.AP_STAT)</b></h1>
+                        </div>
+                    </div>
+
+
+
+
+
+                    <table class="table" id="tab2_table">
+                        <thead class="table-light">
+                            <tr>
+                                <th nowrap>移動</th>
+
+                                <th nowrap>複製</th>
+                                <th nowrap>刪除</th>
+
+                                <th nowrap>鄉鎮別</th>
+                                <th nowrap>地點描述</th>
+                                <th nowrap>X座標</th>
+                                <th nowrap>Y座標</th>
+                                <th nowrap>Z座標</th>
+                            </tr>
+                        </thead>
+
+                        @{ System.Data.DataTable APDLOCP = ViewBag.APDLOCP;}
+                        <tbody id="pe">
+                            @foreach(System.Data.DataRow d in APDLOCP.Rows) {
+                                <tr>
+                                    <td width="1" nowrap>
+                                        <button type="button" class="btn btn-secondary" onclick="moveDown(this, 'tab2_table')"><span class="fa-solid fa-chevron-up" aria-hidden="true"></span></button>
+                                        <button type="button" class="btn btn-secondary" onclick="moveUp(this, 'tab2_table')"><span class="fa-solid fa-chevron-down" aria-hidden="true"></span></button>
+                                    </td>
+                                    <td width="1"><button type="button" class="btn btn-secondary" onclick="duplicateRow(this, 'tab2_table')"><span class="fa-solid fa-copy" aria-hidden="true"></span></button></td>
+                                    <td width="1"><button type="button" class="btn btn-secondary" onclick="del(this, 'tab2_table');"><span class="fa-solid fa-minus" aria-hidden="true"></span></button></td>
+
+                                    <td>
+                                        <select name="TOWN" class="form-select">
+                                            <option value="@d["TOWN"]">@d["TOWN"]</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" name="POS_SYB" value="@d["POS_SYB"]" class="form-control" /></td>
+                                    <td><input type="text" name="GIS_Z" value="@d["GIS_X"]" class="form-control" /></td>
+                                    <td><input type="text" name="GIS_Z" value="@d["GIS_Y"]" class="form-control" /></td>
+                                    <td><input type="text" name="GIS_Z" value="@d["GIS_Z"]" class="form-control" /></td>
+                                </tr>
+
+                            }
+
+                        </tbody>
+                    </table>
+
+
+
+
+                    
+
+
+                    <div class="row row-no-gutters" style="padding:10px;">
+                        <div class="col-xs-6">
+
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(0) a').tab('show')">上一頁</a>
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(2) a').tab('show')">下一頁</a>
+
+
+                        </div>
+                        <div class="col-xs-6" style="text-align: right; color:#808080;">
+                            
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+                <!--tab3-->
+                <div role="tabpanel" class="tab-pane" id="tab3">
+
+                    <div class="row row-no-gutters" style="padding:10px;">
+                        <div class="col-xs-6">
+
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(1) a').tab('show')">上一頁</a>
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(3) a').tab('show')">下一頁</a>
+
+                        </div>
+                        <div class="col-xs-6" style="text-align: right; color:#808080;">
+                            <h1><b>@WCals.classes.john.tools.GetStat(Model.APMFORM.AP_STAT)</b></h1>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+                    <table class="table" id="tab3_table">
+                        <thead class="table-light">
+                            <tr>
+                                <th></th>
+                                <th nowrap>鄉鎮別</th>
+                                <th nowrap>地點*</th>
+                            </tr>
+                        </thead>
+                        @{ System.Data.DataTable APDWQTY;}
+                        <tbody id="table3_main_body">
+
+                            @foreach(System.Data.DataRow d in APDLOCP.Rows) {
+                                <tr>
+                                    <td width="1"><button onclick="$('#ag1').show();" class="btn btn-secondary" type="button"><span class="fa-solid fa-eye-slash" aria-hidden="true"></span></button></td>
+                                    <td nowrap width="200"><input class="form-control" type="text" value="@d["TOWN"]" /></td>
+                                    <td nowrap><input class="form-control" type="text" value="@d["POS_SYB"]" /></td>
+                                </tr>
+
+
+                                APDWQTY = (System.Data.DataTable)d["APDWQTY"];
+
+                                foreach(System.Data.DataRow dd in APDWQTY.Rows) {
+                                    <tr>
+                                        <td colspan="3" style="padding-left:50px;">
+
+                                            <table class="table ag" id="ag1">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th nowrap>移動</th>
+                                                        <th nowrap>複製</th>
+                                                        <th nowrap>刪除</th>
+
+                                                        <th nowrap>項目內容</th>
+                                                        <th nowrap>單位</th>
+                                                        <th nowrap>數量</th>
+                                                        <th nowrap>備註</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="table3_sub_body">
+                                                    <tr>
+                                                        <td width="1" nowrap>
+                                                            <button type="button" class="btn btn-secondary" onclick="moveUp(this)"><span class="fa-solid fa-chevron-up" aria-hidden="true"></span></button>
+                                                            <button type="button" class="btn btn-secondary" onclick="moveDown(this)"><span class="fa-solid fa-chevron-down" aria-hidden="true"></span></button>
+                                                        </td>
+                                                        <td width="1"><button type="button" class="btn btn-secondary" onclick="duplicateRow(this)"><span class="fa-solid fa-copy" aria-hidden="true"></span></button></td>
+                                                        <td width="1"><button type="button" class="btn btn-secondary" onclick="del(this);"><span class="fa-solid fa-minus" aria-hidden="true"></span></button></td>
+                                                        <td nowrap>
+                                                            <input type="hidden" name="MT_AID" value="xyz" style="width:60px;" />
+                                                            <input type="text" name="MT_DESC" value="@dd["MT_DESC"]" class="form-control" placeholder="項目內容" AutoComplete="Off" />
+                                                        </td>
+                                                        <td><input type="text" name="MT_UNIT" value="@dd["MT_UNIT"]" class="form-control" placeholder="單位" AutoComplete="Off" /></td>
+                                                        <td><input type="text" name="MT_QTY" value="@dd["MT_QTY"]" class="form-control" placeholder="數量" AutoComplete="Off" /></td>
+                                                        <td><input type="text" name="MT_SPEC" value="@dd["MT_SPEC"]" class="form-control" placeholder="備註" AutoComplete="Off" /></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                }
+
+
+                            }
+
+
+                        </tbody>
+                    </table>
+                    
+                    <div class="row row-no-gutters" style="padding:10px;">
+                        <div class="col-xs-6">
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(1) a').tab('show')">上一頁</a>
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(3) a').tab('show')">下一頁</a>
+
+                        </div>
+                        <div class="col-xs-6" style="text-align: right; color:#808080;">
+                            
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!--tab4-->
+                <div role="tabpanel" class="tab-pane" id="tab4">
+
+
+                    <div class="row row-no-gutters" style="padding:10px;">
+                        <div class="col-xs-6">
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(2) a').tab('show')">上一頁</a>
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(4) a').tab('show')">下一頁</a>
+                        </div>
+                        <div class="col-xs-6" style="text-align: right; color:#808080;">
+                            <h1><b>@WCals.classes.john.tools.GetStat(Model.APMFORM.AP_STAT)</b></h1>
+                        </div>
+                    </div>
+
+                    <table class="table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>評估事項</th>
+                                <th nowrap></th>
+                                <th nowrap></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td width="1" nowrap>1.符合系統規劃, @Model.SWW1_FG</td>
+                                <td>
+                                    @{
+                                        SelectListItem item;
+                                        List<SelectListItem> options = new List<SelectListItem>();
+                                        item = new SelectListItem { Text = "是", Value = "Y" };
+                                        options.Add(item);
+                                        item = new SelectListItem { Text = "否", Value = "N" };
+                                        options.Add(item);
+                                    }
+                                    @Html.DropDownListFor(x => x.SWW1_FG, options, "", new { @class = "form-select", form = "mainForm" })
+                                </td>
+                                <td width="50%"></td>
+                            </tr>
+                            <tr>
+                                <td nowrap>2.實施計畫是否通過</td>
+                                <td>
+                                    @Html.DropDownListFor(x => x.SWW2_FG, options, "", new { @class = "form-select", form = "mainForm" })
+                                </td>
+                                <td width="50%"></td>
+                            </tr>
+                            <tr>
+                                <td nowrap>3.用地變更程序</td>
+                                <td>
+                                    @Html.DropDownListFor(x => x.SWW3_FG, options, "", new { @class = "form-select", form = "mainForm" })
+
+                                </td>
+                                <td width="50%"></td>
+                            </tr>
+                            <tr>
+                                <td>4.用地取得</td>
+                                <td>
+                                    @Html.DropDownListFor(x => x.SWW4_FG, options, "", new { @class = "form-select", form = "mainForm" })
+
+                                </td>
+                                <td width="50%"></td>
+                            </tr>
+                            <tr>
+                                <td nowrap>5.下游管線廠站建設期程是否配合</td>
+                                <td>
+                                    @Html.DropDownListFor(x => x.SWW5_FG, options, "", new { @class = "form-select", form = "mainForm" })
+
+                                </td>
+                                <td width="50%"></td>
+                            </tr>
+                            <tr>
+                                <td>6.交維問題可否解決</td>
+                                <td>
+                                    @Html.DropDownListFor(x => x.SWW6_FG, options, "", new { @class = "form-select", form = "mainForm" })
+
+                                </td>
+                                <td width="50%"></td>
+                            </tr>
+                            <tr>
+                                <td>7.地下管線拆遷</td>
+                                <td>
+                                    @Html.DropDownListFor(x => x.SWW7_FG, options, "", new { @class = "form-select", form = "mainForm" })
+
+                                </td>
+                                <td width="50%"></td>
+                            </tr>
+                            <tr>
+                                <td nowrap>8.本工程已完成設計</td>
+                                <td nowrap>
+                                    @Html.DropDownListFor(x => x.SWW8_FG, options, "", new { @class = "form-select", form = "mainForm" })
+
+                                </td>
+                                <td width="50%">
+                                    @if(!string.IsNullOrEmpty(Model.SWW81_FG) && Model.SWW81_FG.Equals("Y")) {
+                                        <input type="checkbox" name="SWW81_FG" checked />
+                                    } else {
+                                        <input type="checkbox" name="SWW81_FG" />
+                                    }
+
+                                    辦理中
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td nowrap>9.本工程前一年度執行率%(新建工程免填)</td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.SWW9_FG, new { @class = "form-control", form = "mainForm" })
+
+                                </td>
+                                <td width="50%"></td>
+                            </tr>
+                            <tr>
+                                <td nowrap>10.前一年度配合款編列情形</td>
+                                <td>
+                                    @Html.DropDownListFor(x => x.SWW10_FG, options, "", new { @class = "form-select", form = "mainForm" })
+
+                                </td>
+                                <td width="50%"></td>
+                            </tr>
+                            <tr>
+                                <td>11.是否可配合納入預算</td>
+                                <td>
+                                    @Html.DropDownListFor(x => x.SWW11_FG, options, "", new { @class = "form-select", form = "mainForm" })
+
+                                </td>
+                                <td width="50%"></td>
+                            </tr>
+                            <tr>
+                                <td>其他</td>
+                                <td>
+                                    @Html.TextAreaFor(x => x.SWWOT_DESC, new { @class = "form-control", AutoComplete = "Off", tabindex = "1" })
+
+                                </td>
+                                <td width="50%"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="row row-no-gutters" style="padding:10px;">
+                        <div class="col-xs-6">
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(2) a').tab('show')">上一頁</a>
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(4) a').tab('show')">下一頁</a>
+                        </div>
+                        <div class="col-xs-6" style="text-align: right; color:#808080;">
+                            
+                        </div>
+                    </div>
+
+
+                    
+                </div>
+
+
+                <!--tab5-->
+                <div role="tabpanel" class="tab-pane" id="tab5">
+
+
+
+                    <div class="row row-no-gutters" style="padding:10px;">
+                        <div class="col-xs-6">
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(3) a').tab('show')">上一頁</a>
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(5) a').tab('show')">下一頁</a>
+                        </div>
+                        <div class="col-xs-6" style="text-align: right; color:#808080;">
+                            <h1><b>@WCals.classes.john.tools.GetStat(Model.APMFORM.AP_STAT)</b></h1>
+                        </div>
+                    </div>
+
+
+
+
+                    <table class="table">
+                        <thead class="table-light">
+                            <tr>
+                                <th colspan="4">工程總經費(元) </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td align="right">中央補助款</td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.APMFORM.TCEN_FUND, new { @class = "form-control", AutoComplete = "Off" })
+                                </td>
+                                <td align="right">地方配合款</td>
+                                <td>@Html.TextBoxFor(x => x.APMFORM.TLOC_FUND, new { @class = "form-control", AutoComplete = "Off" })</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">以前年度已編列 (單位：千元) </td>
+                            </tr>
+                            <tr>
+                                <td align="right">中央補助款</td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.APMFORM.RCEN_FUND, new { @class = "form-control", AutoComplete = "Off" })
+                                </td>
+                                <td align="right">地方配合款</td>
+                                <td>@Html.TextBoxFor(x => x.APMFORM.RLOC_FUND, new { @class = "form-control", AutoComplete = "Off" })</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <hr>
+                    <table class="table">
+                        <thead class="table-light">
+                            <tr>
+                                <th nowrap>年度</th>
+                                <th nowrap>經費層級</th>
+                                <th nowrap>程總經費 (元)</th>
+                                <th nowrap>經費描述</th>
+                            </tr>
+                        </thead>
+                        @{ System.Data.DataTable APDFUND = ViewBag.APDFUND;}
+                        <tbody id="fund_table_target">
+                            @foreach(System.Data.DataRow d in APDFUND.Rows) {
+                                <tr>
+                                    <td><input type="text" name="SYR" value="@d["SYR"]" class="form-control" style="width:100px;" /></td>
+                                    <td>
+                                        <select name="FIT_CODE" class="form-select" style="width:150px;">
+                                            <option value="00">中央補助款</option>
+                                            @if(Convert.ToString("FIT_CODE").Equals("11")) {
+                                                <option value="11" selected>地方配合款</option>
+                                            } else {
+                                                <option value="11">地方配合款</option>
+                                            }
+
+                                        </select>
+                                    </td>
+                                    <td><input type="text" value="@d["FUND"]" name="FUND" class="form-control" /></td>
+                                    <td width="100%"><input type="text" value="@d["FUND_DESC"]" name="FUND_DESC" class="form-control" /></td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+
+
+                   
+
+
+                    <div class="row row-no-gutters" style="padding:10px;">
+                        <div class="col-xs-6">
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(3) a').tab('show')">上一頁</a>
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(5) a').tab('show')">下一頁</a>
+                        </div>
+                        <div class="col-xs-6" style="text-align: right; color:#808080;">
+                            
+                        </div>
+                    </div>
+
+
+
+
+
+                </div>
+
+                <!--tab6-->
+                <div role="tabpanel" class="tab-pane" id="tab6">
+
+                    @{List<WCals.Models.CMPSGSModels.APDFILE> file = ViewBag.APDFILE;}
+                    
+
+                    <div class="row row-no-gutters" style="padding:10px;">
+                        <div class="col-xs-6">
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(4) a').tab('show')">上一頁</a>
+                        </div>
+                        <div class="col-xs-6" style="text-align: right; color:#808080;">
+                            <h1><b>@WCals.classes.john.tools.GetStat(Model.APMFORM.AP_STAT)</b></h1>
+                        </div>
+                    </div>
+
+
+
+
+
+
+                    <table class="table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>項目</th>
+                                <th>檔案說明</th>
+                                <th>檔案</th>
+                                <th>檔案大小</th>
+                            </tr>
+                        </thead>
+
+                        @if(file != null && file.Count > 0) {
+                            <tbody id="file_table_target">
+                                @foreach(WCals.Models.CMPSGSModels.APDFILE f in file) {
+                                    <tr>
+                                        <td>
+                                            <select name="FC_DESC" class="form-select">
+                                                <option value="@f.FC_DESC">@f.FC_DESC</option>
+
+                                            </select>
+
+                                        </td>
+                                        <td><input value="@f.FILE_MEMO" type="text" name="FILE_MEMO" class="form-control" /></td>
+                                        <td>
+                                            <a target="_blank" href="@Url.Content("~/")ASYNC/DownloadAPDFILE?aid=@Model.APMFORM.AID&fid=@f.FID">@f.FILE_PATH</a>
+
+                                        </td>
+                                        <td>@f.FILE_BODY.Length bytes</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        }
+
+                    </table>
+
+
+                    <div class="row row-no-gutters" style="padding:10px;">
+                        <div class="col-xs-6">
+                            <a class="btn btn-secondary" onclick="$('#syrTab li:eq(4) a').tab('show')">上一頁</a>
+                        </div>
+                        <div class="col-xs-6" style="text-align: right; color:#808080;">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    }
+
+
+    <table style="display:none;">
+        <tbody id="cp">
+            <tr>
+                <td width="1" nowrap>
+                    <button type="button" class="btn btn-secondary" onclick="moveDown(this, 'tab2_table')"><span class="fa-solid fa-chevron-up" aria-hidden="true"></span></button>
+                    <button type="button" class="btn btn-secondary" onclick="moveUp(this, 'tab2_table')"><span class="fa-solid fa-chevron-down" aria-hidden="true"></span></button>
+                </td>
+                <td width="1"><button type="button" class="btn btn-secondary" onclick="duplicateRow(this, 'tab2_table')"><span class="fa-solid fa-copy" aria-hidden="true"></span></button></td>
+                <td width="1"><button type="button" class="btn btn-secondary" onclick="del(this, 'tab2_table');"><span class="fa-solid fa-minus" aria-hidden="true"></span></button></td>
+
+                <td>@Html.DropDownListFor(x => x.TOWN, (SelectList)ViewBag.towns, "鄉鎮", new { @class = "form-select TOWN", form = "mainForm" })</td>
+                <td><input type="text" name="POS_SYB" class="form-control POS_SYB" /></td>
+                <td><input type="text" name="GIS_X" class="form-control" /></td>
+                <td><input type="text" name="GIS_Y" class="form-control" /></td>
+                <td><input type="text" name="GIS_Z" class="form-control" /></td>
+
+            </tr>
+        </tbody>
+    </table>
+
+    <table style="display:none;">
+        <tbody id="fund_table">
+            <tr>
+                <td><input type="text" name="SYR" class="form-control" style="width:100px;" /></td>
+                <td>
+                    <select name="FIT_CODE" class="form-select" style="width:150px;">
+                        <option value="00">中央補助款</option>
+                        <option value="11">地方配合款</option>
+                    </select>
+                </td>
+                <td><input type="text" name="FUND" class="form-control" /></td>
+                <td width="100%"><input type="text" name="FUND_DESC" class="form-control" /></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table style="display:none;">
+        <tbody id="file_table">
+            <tr>
+                <td>
+                    <select name="FC_DESC" class="form-select">
+                        <option value=""></option>
+                        <option value="工程用地位置簡圖">工程用地位置簡圖</option>
+                        <option value="現況照片">現況照片</option>
+                        <option value="計畫執行時程表">計畫執行時程表</option>
+                        <option value="機關補充資料">機關補充資料</option>
+                    </select>
+
+                </td>
+                <td><input type="text" name="FILE_MEMO" class="form-control" /></td>
+                <td>
+                    <input name="files" type="file" />
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+
+
+
+
+
+
+    @if(ViewBag.msg != null) {
+        <script>
+        alert("@ViewBag.msg");
+        </script>
+
+
+
+    }
+    <script>
+        $(".dt").datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: '68:168',
+            dateFormat: 'yymmdd',
+            //defaultDate: new Date()
+        });
+
+        //鄉鎮對應首頁縣市
+        function GetTown(city) {
+            //alert(city)
+            $(".TOWN").html("");
+            $.ajax({
+                url: '@Url.Content("~/")ASYNC/GetTowns',
+                method: 'post',
+                data: { "city": city },
+                success: function (d) {
+                    var p = jQuery.parseJSON(d);
+                    $(".TOWN").prepend("<option value=''>鄉鎮</option>");
+                    for (i = 0; i < p.length; i++) {
+                        $(".TOWN").append("<option value='" + p[i].TOWN + "'>" + p[i].TOWN + "</option>");
+                    }
+                }
+            });
+        }
+
+        function cp() {
+            $("#pe").append($("#cp").html());
+        }
+
+        function cpFund() {
+            $("#fund_table_target").append($("#fund_table").html());
+        }
+
+        function cpFile() {
+            $("#file_table_target").append($("#file_table").html());
+        }
+
+        function getRowIndex(button, tbName) {
+            const row = button.closest("tr"); // 找到按鈕所在的行
+            const table = document.getElementById(tbName);
+            const rowIndex = Array.from(table.querySelector("tbody").rows).indexOf(row); // 計算相對索引
+            //console.log("Row Index:", rowIndex);
+            return rowIndex;
+        }
+
+        function moveDown(button, tbName) {
+            const rowIndex = getRowIndex(button, tbName);
+            const table = document.getElementById(tbName);
+            const tbody = table.querySelector("tbody");
+            const rows = tbody.querySelectorAll("tr");
+            if (rowIndex > 0 && rowIndex < rows.length) {
+                const currentRow = rows[rowIndex];
+                const previousRow = rows[rowIndex - 1];
+                tbody.insertBefore(currentRow, previousRow);
+            }
+        }
+
+        function moveUp(button, tbName) {
+            const rowIndex = getRowIndex(button, tbName);
+            const table = document.getElementById(tbName);
+            const tbody = table.querySelector("tbody");
+            const rows = tbody.querySelectorAll("tr");
+            if (rowIndex >= 0 && rowIndex < rows.length - 1) {
+                const currentRow = rows[rowIndex];
+                const nextRow = rows[rowIndex + 1];
+                tbody.insertBefore(nextRow, currentRow);
+            }
+        }
+
+        function duplicateRow(button, tbName) {
+            const rowIndex = getRowIndex(button, tbName);
+            const table = document.getElementById(tbName);
+            const tbody = table.querySelector("tbody");
+            const rows = tbody.querySelectorAll("tr");
+
+            if (rowIndex >= 0 && rowIndex < rows.length) {
+                const rowToCopy = rows[rowIndex]; // 取得要複製的行
+                const newRow = rowToCopy.cloneNode(true); // 深度複製行及其內容
+                tbody.appendChild(newRow); // 將複製的行新增到 tbody 的最後
+            } else {
+                console.error("Invalid row index");
+            }
+        }
+
+        function del(button, tbName) {
+            const rowIndex = getRowIndex(button, tbName);
+            const table = document.getElementById(tbName);
+            const tbody = table.querySelector("tbody");
+            const rows = tbody.querySelectorAll("tr");
+
+            if (rowIndex >= 0 && rowIndex < rows.length) {
+                const rowToRemove = rows[rowIndex];
+                removeRow(rowToRemove); // 使用移除行的函式
+            } else {
+                console.error("Invalid row index");
+            }
+
+
+        }
+
+        function removeRow(row) {
+            if (row && row.parentNode) {
+                row.parentNode.removeChild(row); // 從父節點中移除該行
+            } else {
+                console.error("Invalid row or parentNode not found");
+            }
+        }
+
+        function CpTo3() {
+            //$("#table3_main_body").html("");
+
+            //$("#tab3").html($("#tab2")());
+            /*var towns = $(".TOWN");
+
+            var i = 0;
+
+            towns.each(function () {
+                var town = $(this).val();
+                var po = $(".POS_SYB").eq(i);
+                if (town.length > 0) {
+                    $("#table3_main_body").append(GenHtml(i, town, po.val()));
+                    i++;
+                }
+
+
+
+            })*/
+        }
+
+        $(document).ready(function () {
+            $(".file").fileinput({
+                showPreview: false,
+                showUpload: false,
+                allowedFileExtensions: ["jpg", "jpeg", "gif", "png"],
+                //elErrorContainer: "#errorBlock",
+                language: "zh-TW",
+            });
+            $("input,select,textarea,button").prop("disabled", true);
+            
+        });
+
+        function GenHtml(aid, town, pos) {
+
+            return '<tr>' +
+                '    <td width="1"><button onclick="$(\'#ag'+aid+'\').show();" class="btn btn-secondary" type="button"><span class="fa-solid fa-eye-slash" aria-hidden="true"></span></button></td>' +
+                '    <td nowrap width="200"><input form="mainForm" class="form-control" type="text" value="'+town+'"/></td>' +
+                '    <td nowrap><input class="form-control" type="text" value="'+pos+'"/></td>' +
+                '</tr>' +
+                '<tr>                                ' +
+                '    <td colspan="3" style="padding-left:50px;">' +
+                '        <table class="table ag" id="ag'+aid+'" style="display:none;">' +
+                '            <thead class="table-light">' +
+                '                <tr>' +
+                '                    <th nowrap>移動</th>' +
+                '                    <th nowrap>複製</th>' +
+                '                    <th nowrap>刪除</th>' +
+                '                    ' +
+                '                    <th nowrap>項目內容</th>' +
+                '                    <th nowrap>單位</th>' +
+                '                    <th nowrap>數量</th>' +
+                '                    <th nowrap>備註</th>' +
+                '                </tr>' +
+                '            </thead>' +
+                '            <tbody id="table3_sub_body'+aid+'">' +
+                '                <tr>' +
+                '                    <td width="1" nowrap>' +
+                '                        <button type="button" class="btn btn-secondary" onclick="moveDown(this, \'ag' + aid +'\')"><span class="fa-solid fa-chevron-up" aria-hidden="true"></span></button>' +
+                '                        <button type="button" class="btn btn-secondary" onclick="moveUp(this, \'ag' + aid +'\')"><span class="fa-solid fa-chevron-down" aria-hidden="true"></span></button>' +
+                '                    </td>' +
+                '                    <td width="1"><button type="button" class="btn btn-secondary" onclick="duplicateRow(this, \'ag' + aid +'\')"><span class="fa-solid fa-copy" aria-hidden="true"></span></button></td>' +
+                '                    <td width="1"><button type="button" class="btn btn-secondary" onclick="del(this, \'ag' + aid +'\');"><span class="fa-solid fa-minus" aria-hidden="true"></span></button></td>                                                ' +
+                '                    <td nowrap><input  form="mainForm" type="text" name="MT_AID" value="' + town +'" style="width:60px;" form = "mainForm" /><input type="text" name="MT_DESC" value="" class = "form-control" placeholder = "項目內容" AutoComplete = "Off"/></td>' +
+                '                    <td><input type="text"  form="mainForm" name="MT_UNIT" value="" class="form-control" placeholder="單位" AutoComplete="Off" /></td>' +
+                '                    <td><input type="text"  form="mainForm" name="MT_QTY" value="" class="form-control" placeholder="數量" AutoComplete="Off" /></td>' +
+                '                    <td><input type="text"  form="mainForm" name="MT_SPEC" value="" class="form-control" placeholder="備註" AutoComplete="Off" /></td>' +
+                '                </tr>' +
+                '            </tbody>' +
+                '        </table>' +
+                '    </td>' +
+                '</tr>'
+        }
+    </script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/fileinput.js"></script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/zh-TW.js"></script>
+
+</body>
+</html>

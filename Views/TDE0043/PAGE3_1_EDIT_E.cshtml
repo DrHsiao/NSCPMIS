@@ -1,0 +1,1261 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0040Model
+@{
+    ViewBag.Title = "XML Import";
+    Layout = null;
+
+    var existingTreeData = ViewBag.ExistingTreeData as List<WCals.Models.CMETMSModels.TDDBGAC>;
+    var existingGridData = ViewBag.ExistingGridData as List<WCals.Models.CMETMSModels.TDDWQTY>;
+    bool hasExistingData = ViewBag.HasExistingData ?? false;
+    int treeCount = ViewBag.TreeCount ?? 0;
+    int gridCount = ViewBag.GridCount ?? 0;
+
+    var recTpDict = new Dictionary<string, string>();
+    recTpDict.Add("B", "\u9810\u7B97\u66F8");
+    recTpDict.Add("C", "\u5951\u7D04\u66F8");
+    string recTpName = recTpDict.ContainsKey(Model.REC_TP) ? recTpDict[Model.REC_TP] : "\u6A19\u55AE";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .header-area {
+            padding: 10px 15px;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+            flex-shrink: 0;
+        }
+
+        .content-area {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* 左側樹狀區域 */
+        .tree-panel {
+            width: 400px;
+            min-width: 200px;
+            max-width: 800px;
+            background: #fff;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .tree-header {
+            padding: 10px;
+            background: #337ab7;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .tree-content {
+            flex: 1;
+            overflow: auto;
+            padding: 5px;
+        }
+
+        /* 分隔線拖拉區域 */
+        .splitter {
+            width: 6px;
+            background: #e0e0e0;
+            cursor: col-resize;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+
+        .splitter:hover,
+        .splitter.dragging {
+            background: #337ab7;
+        }
+
+        /* 右側表格區域 */
+        .table-panel {
+            flex: 1;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 10px;
+            background: #5cb85c;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .table-content {
+            flex: 1;
+            overflow: auto;
+            padding: 0;
+        }
+
+        /* 樹狀結構樣式 */
+        .tree-view {
+            font-family: "微軟正黑體", "Microsoft JhengHei", sans-serif;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .tree-view ul {
+            list-style: none;
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .tree-view > ul {
+            padding-left: 5px;
+        }
+
+        .tree-node {
+            padding: 3px 5px;
+            cursor: pointer;
+            border-radius: 3px;
+            display: inline-block;
+            min-width: 100%;
+        }
+
+        .tree-node:hover {
+            background-color: #e8f4fc;
+        }
+
+        .tree-node.selected {
+            background-color: #337ab7;
+            color: white;
+        }
+
+        .tree-node .toggle-icon {
+            display: inline-block;
+            width: 16px;
+            text-align: center;
+            margin-right: 3px;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .tree-node.selected .toggle-icon {
+            color: white;
+        }
+
+        .tree-node .node-icon {
+            margin-right: 5px;
+            color: #f0ad4e;
+        }
+
+        .tree-node.selected .node-icon {
+            color: #fff;
+        }
+
+        .tree-node .node-amount {
+            color: #999;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        .tree-node.selected .node-amount {
+            color: #ccc;
+        }
+
+        .tree-children {
+            display: none;
+        }
+
+        .tree-children.expanded {
+            display: block;
+        }
+
+        /* 項目類型標記 - 預設隱藏 */
+        .item-type-badge {
+            display: none;
+            padding: 1px 5px;
+border-radius: 3px;
+       font-size: 10px;
+  margin-left: 5px;
+        }
+   
+  /* 只有變動單價類型才顯示（滑鼠移過或選中時） */
+   .tree-node:hover .item-type-badge.item-type-V {
+        display: inline-block;
+        }
+        
+        .tree-node.selected .item-type-badge.item-type-V {
+    display: inline-block;
+   }
+ 
+        /* 主、一般、小計 永遠不顯示 */
+        .item-type-M,
+      .item-type-G, 
+        .item-type-S { 
+     display: none !important; 
+        }
+        
+        .item-type-V { background: #f0ad4e; color: white; }
+        
+        /* 已刪除項目 - 刪除線樣式 */
+   .tree-node.deleted .node-text {
+         text-decoration: line-through;
+            color: #999;
+    }
+        
+        .tree-node.deleted .node-amount {
+text-decoration: line-through;
+            color: #bbb;
+        }
+        
+        .tree-node.deleted .node-icon {
+      color: #ccc;
+        }
+        
+        .tree-node.selected.deleted .node-text,
+        .tree-node.selected.deleted .node-amount {
+color: #aaa;
+    }
+
+        /* 右側表格樣式 */
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .detail-table th {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 8px 10px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .detail-table td {
+            border: 1px solid #ddd;
+            padding: 6px 10px;
+        }
+
+        .detail-table tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .detail-table tr:hover {
+            background: #fff3cd;
+        }
+
+        .detail-table tr.selected {
+            background: #cce5ff;
+        }
+
+        .detail-table .col-amount {
+            text-align: right;
+            font-family: Consolas, monospace;
+        }
+
+        .detail-table .col-checkbox {
+            text-align: center;
+            width: 40px;
+        }
+
+        /* 上傳區域樣式 */
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background-color: #f9f9f9;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #337ab7;
+            background-color: #e8f4fc;
+        }
+
+        .upload-icon {
+            font-size: 36px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        /* 載入中遮罩 */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        /* 空狀態提示 */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #999;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        /* 標案資訊區域 */
+        .tender-info {
+            padding: 10px 15px;
+            background: #d9edf7;
+            border-bottom: 1px solid #bce8f1;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .tender-info strong {
+            color: #31708f;
+        }
+
+        /* 已匯入資訊區域 */
+        .existing-info {
+            padding: 10px 15px;
+            background: #dff0d8;
+            border-bottom: 1px solid #d6e9c6;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .existing-info strong {
+            color: #3c763d;
+        }
+
+        /* 工具列 */
+        .toolbar {
+            padding: 8px 15px;
+            background: #f8f8f8;
+            border-bottom: 1px solid #ddd;
+            flex-shrink: 0;
+        }
+
+        /* 快速更新區域 */
+        .quick-update-panel {
+            padding: 15px;
+            background: #fcf8e3;
+            border-bottom: 1px solid #faebcc;
+        }
+    
+        /* 表格框線與排版美化 */
+        .table-bordered { border: 0 !important; }
+        .table-bordered th, .table-bordered td { border: 0 !important; border-bottom: 1px solid #e2e8f0 !important; }
+        .table > thead > tr > th { 
+            border-bottom: 2px solid #337ab7 !important; 
+            background-color: #f8fafc; 
+            color: #334155; 
+        }
+        .table > tbody > tr:last-child > td { border-bottom: 0 !important; }
+</style>
+</head>
+<body>
+    <!-- 載入中遮罩 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fa-solid fa-arrows-rotate fa-spin" style="font-size: 48px; color: #337ab7;"></i>
+            <p style="margin-top: 15px; font-size: 16px;">處理中，請稍候...</p>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- 標題區域 -->
+        <div class="header-area">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 style="margin: 0;">
+                        <i class="fa-solid fa-upload"></i> @recTpName 匯入
+                        <small class="text-muted">工程編號：@Model.TD_CODE</small>
+                    </h4>
+                </div>
+                <div class="col-md-6 text-right">
+                    @if(hasExistingData) {
+                        <button type="button" class="btn btn-primary shadow-sm btn-sm" id="btnQuickUpdate">
+                            <i class="fa-solid fa-arrows-rotate"></i> 快速更新
+                        </button>
+                    }
+                    <button type="button" class="btn btn-primary btn-sm" id="btnSelectFile">
+                        <i class="fa-solid fa-folder-open"></i> 選擇檔案
+                    </button>
+                    <button type="button" class="btn btn-success btn-sm" id="btnSaveToDb" style="display: none;">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> 儲存至資料庫
+                    </button>
+                    <button type="button" onclick="top.close3_1_Edit_e();" class="btn btn-outline-secondary shadow-sm btn-sm"><i class="fa-solid fa-xmark me-1"></i> 關閉</button>
+                    <input type="file" id="xmlFileInput" accept=".xml" style="display: none;" />
+                    <input type="file" id="quickUpdateFileInput" accept=".xml" style="display: none;" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 已匯入資料資訊 (若有) -->
+        @if (hasExistingData) {
+            <div class="existing-info" id="existingInfoBar">
+                <i class="fa-solid fa-circle-check"></i>
+                <strong>已匯入資料：</strong>
+                樹狀結構 <span class="badge">@treeCount</span> 筆，
+                工項明細 <span class="badge">@gridCount</span> 筆
+                <span style="margin-left: 15px;" class="text-muted">
+                    (點擊「快速更新」可重新上傳 XML 覆蓋現有資料)
+                </span>
+            </div>
+        }
+
+        <!-- 標案資訊 (解析後顯示) -->
+        <div class="tender-info" id="tenderInfoBar" style="display: none;">
+            <span><strong>契約編號：</strong><span id="infoContractNo">-</span></span>
+            <span style="margin-left: 20px;"><strong>招標機關：</strong><span id="infoProcuringEntity">-</span></span>
+            <span style="margin-left: 20px;"><strong>工程名稱：</strong><span id="infoContractTitle">-</span></span>
+            <span style="margin-left: 20px;"><strong>類型：</strong><span id="infoDocumentType">-</span></span>
+        </div>
+
+        <!-- 統計資訊 (解析後顯示) -->
+        <div class="toolbar" id="statsBar" style="display: none;">
+            <span><strong>項目統計：</strong></span>
+            <span class="badge item-type-M">主項目 <span id="statMainItem">0</span></span>
+            <span class="badge item-type-G">一般項目 <span id="statGeneral">0</span></span>
+            <span class="badge item-type-V">變動單價 <span id="statVariable">0</span></span>
+            <span class="badge item-type-S">小計 <span id="statSubtotal">0</span></span>
+        </div>
+
+        <!-- 初始顯示區域：若已有資料則顯示樹狀結構，否則顯示上傳區 -->
+        @if (hasExistingData) {
+            <!-- 樹狀+表格區域 (已有資料) -->
+            <div class="content-area" id="dataPanel">
+                <!-- 左側樹狀結構 -->
+                <div class="tree-panel" id="treePanel">
+                    <div class="tree-header">
+                        <i class="fa-solid fa-rectangle-list"></i> 詳細價目表 (TDDBGAC)
+                        <span class="badge" style="background: rgba(255,255,255,0.3);">@treeCount</span>
+                    </div>
+                    <div class="tree-content" id="treeContent">
+                        <div class="tree-view" id="treeView"></div>
+                    </div>
+                </div>
+
+                <!-- 分隔線 -->
+                <div class="splitter" id="splitter"></div>
+
+                <!-- 右側表格 -->
+                <div class="table-panel" id="tablePanel">
+                    <div class="table-header">
+                        <i class="fa-solid fa-table-cells"></i> 工項明細 (TDDWQTY)
+                        <span class="badge" style="background: rgba(255,255,255,0.3);">@gridCount</span>
+                        <span id="tableTitle" style="margin-left: 10px; font-weight: normal;"></span>
+                    </div>
+                    <div class="table-content" id="tableContent">
+                        <div class="empty-state" id="emptyState">
+                            <div class="icon"><i class="fa-solid fa-hand-point-left"></i></div>
+                            <p>請在左側樹狀結構中選擇項目</p>
+                        </div>
+                        <table class="detail-table" id="detailTable" style="display: none;">
+                            <thead id="detailTableHead"></thead>
+                            <tbody id="detailTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 上傳區域 (隱藏) -->
+            <div class="content-area" id="uploadPanel" style="display: none;">
+                <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+                    <div class="upload-area" id="uploadArea" style="width: 500px;">
+                        <div class="upload-icon">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </div>
+                        <h4>拖曳 XML 檔案至此處，或點擊選擇檔案</h4>
+                        <p class="text-muted">工程會(PCCESS)電子資料格式 </p>
+                        <button type="button" class="btn btn-primary btn-lg" onclick="$('#xmlFileInput').click();">
+                            <i class="fa-solid fa-folder-open"></i> 選擇檔案
+                        </button>
+                        <div id="selectedFileInfo" style="display: none; margin-top: 15px;" class="alert alert-info">
+                            <strong>已選擇檔案：</strong><span id="selectedFileName"></span>
+                            <button type="button" class="btn btn-success btn-sm" id="btnUpload" style="margin-left: 10px;">
+                                <i class="fa-solid fa-upload"></i> 開始解析
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        } else {
+            <!-- 初始上傳區域 -->
+            <div class="content-area" id="uploadPanel">
+                <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+                    <div class="upload-area" id="uploadArea" style="width: 500px;">
+                        <div class="upload-icon">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </div>
+                        <h4>拖曳 XML 檔案至此處，或點擊選擇檔案</h4>
+                        <p class="text-muted">工程會(PCCESS)電子資料格式</p>
+                        <button type="button" class="btn btn-primary btn-lg" onclick="$('#xmlFileInput').click();">
+                            <i class="fa-solid fa-folder-open"></i> 選擇檔案
+                        </button>
+                        <div id="selectedFileInfo" style="display: none; margin-top: 15px;" class="alert alert-info">
+                            <strong>已選擇檔案：</strong><span id="selectedFileName"></span>
+                            <button type="button" class="btn btn-success btn-sm" id="btnUpload" style="margin-left: 10px;">
+                                <i class="fa-solid fa-upload"></i> 開始解析
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 樹狀+表格區域 (解析後顯示) -->
+            <div class="content-area" id="dataPanel" style="display: none;">
+                <!-- 左側樹狀結構 -->
+                <div class="tree-panel" id="treePanel">
+                    <div class="tree-header">
+                        <i class="fa-solid fa-rectangle-list"></i> 詳細價目表
+                    </div>
+                    <div class="tree-content" id="treeContent">
+                        <div class="tree-view" id="treeView"></div>
+                    </div>
+                </div>
+
+                <!-- 分隔線 -->
+                <div class="splitter" id="splitter"></div>
+
+                <!-- 右側表格 -->
+                <div class="table-panel" id="tablePanel">
+                    <div class="table-header">
+                        <i class="fa-solid fa-table-cells"></i> 子項目明細
+                        <span id="tableTitle" style="margin-left: 10px; font-weight: normal;"></span>
+                    </div>
+                    <div class="table-content" id="tableContent">
+                        <div class="empty-state" id="emptyState">
+                            <div class="icon"><i class="fa-solid fa-hand-point-left"></i></div>
+                            <p>請在左側樹狀結構中選擇項目</p>
+                        </div>
+                        <table class="detail-table" id="detailTable" style="display: none;">
+                            <thead id="detailTableHead"></thead>
+                            <tbody id="detailTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var TD_CODE = '@Model.TD_CODE';
+        var SEQ_NO = @Model.SEQ_NO;
+        var REC_TP = '@Model.REC_TP';
+        var hasExistingData = @(hasExistingData ? "true" : "false");
+        var selectedFile = null;
+        var parsedData = null;
+        var detailListData = [];
+
+        // 已匯入的資料 (從 Controller 傳入)
+        var existingTreeData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(existingTreeData ?? new List<WCals.Models.CMETMSModels.TDDBGAC>()));
+        var existingGridData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(existingGridData ?? new List<WCals.Models.CMETMSModels.TDDWQTY>()));
+
+        $(document).ready(function () {
+            initUploadArea();
+            initSplitter();
+
+            // 如果已有資料，載入並顯示樹狀結構
+         if (hasExistingData) {
+       buildExistingTreeView(existingTreeData);
+      }
+
+            // 選擇檔案按鈕
+        $('#btnSelectFile').click(function () {
+                $('#xmlFileInput').click();
+   });
+
+ // 快速更新按鈕
+$('#btnQuickUpdate').click(function () {
+           $('#quickUpdateFileInput').click();
+            });
+
+ // 檔案選擇
+            $('#xmlFileInput').change(function () {
+      if (this.files.length > 0) {
+         handleFileSelect(this.files[0]);
+              }
+    });
+
+    // 快速更新檔案選擇
+       $('#quickUpdateFileInput').change(function () {
+     if (this.files.length > 0) {
+    if (confirm('確定要重新匯入嗎？')) {
+        quickUpdate(this.files[0]);
+         }
+ }
+      });
+
+     // 上傳按鈕 (使用 event delegation 確保動態元素也能綁定)
+       $(document).on('click', '#btnUpload', function () {
+         if (selectedFile) {
+     uploadAndParseXml(selectedFile);
+         }
+   });
+
+       // 儲存到資料庫
+            $('#btnSaveToDb').click(function () {
+  saveToDatabase();
+         });
+     });
+
+        // 初始化上傳區域拖曳功能
+        function initUploadArea() {
+            var uploadArea = document.getElementById('uploadArea');
+            if (!uploadArea) return;
+
+            uploadArea.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                $(this).addClass('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', function (e) {
+                e.preventDefault();
+                $(this).removeClass('dragover');
+            });
+
+            uploadArea.addEventListener('drop', function (e) {
+                e.preventDefault();
+                $(this).removeClass('dragover');
+                var files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileSelect(files[0]);
+                }
+            });
+        }
+
+        // 初始化分隔線拖拉功能
+        function initSplitter() {
+            var splitter = document.getElementById('splitter');
+            var treePanel = document.getElementById('treePanel');
+            if (!splitter || !treePanel) return;
+
+            var isResizing = false;
+
+            splitter.addEventListener('mousedown', function (e) {
+                isResizing = true;
+                $(splitter).addClass('dragging');
+                document.body.style.cursor = 'col-resize';
+                document.body.style.userSelect = 'none';
+            });
+
+            document.addEventListener('mousemove', function (e) {
+                if (!isResizing) return;
+                var newWidth = e.clientX;
+                if (newWidth >= 200 && newWidth <= 800) {
+                    treePanel.style.width = newWidth + 'px';
+                }
+            });
+
+            document.addEventListener('mouseup', function (e) {
+                if (isResizing) {
+                    isResizing = false;
+                    $(splitter).removeClass('dragging');
+                    document.body.style.cursor = '';
+                    document.body.style.userSelect = '';
+                }
+            });
+        }
+
+        function handleFileSelect(file) {
+            if (file.name.toLowerCase().endsWith('.xml')) {
+                selectedFile = file;
+      
+      // 更新所有的檔案資訊顯示區域 (因為有兩個 uploadPanel)
+       $('.upload-area #selectedFileName, #selectedFileName').text(file.name + ' (' + formatFileSize(file.size) + ')');
+    $('.upload-area #selectedFileInfo, #selectedFileInfo').show();
+
+      // 如果已有資料，切換到上傳面板
+                if (hasExistingData) {
+     $('#dataPanel').hide();
+       $('#uploadPanel').show();
+         $('#existingInfoBar').hide();
+      }
+         } else {
+     alert('請選擇 XML 檔案');
+ }
+  }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+
+        function formatNumber(num) {
+            if (num == null || num === '') return '';
+            var n = parseFloat(num);
+            if (isNaN(n)) return num;
+            return n.toLocaleString('zh-TW');
+        }
+
+        // 快速更新 (直接上傳並匯入)
+        function quickUpdate(file) {
+            var formData = new FormData();
+            formData.append('xmlFile', file);
+            formData.append('TD_CODE', TD_CODE);
+            formData.append('SEQ_NO', SEQ_NO);
+            formData.append('REC_TP', REC_TP);
+            formData.append('__RequestVerificationToken', $('input[name="__RequestVerificationToken"]').val());
+
+            $('#loadingOverlay').show();
+
+            $.ajax({
+                url: '@Url.Action("PAGE3_1_EDIT_E_QuickUpdate", "TDE0043")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    $('#loadingOverlay').hide();
+                    if (result.success) {
+                        alert(result.message);
+                        // 重新載入頁面以顯示新資料
+                        location.reload();
+                    } else {
+                        alert('更新失敗：' + result.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $('#loadingOverlay').hide();
+                    alert('更新失敗：' + error);
+                }
+            });
+        }
+
+        function uploadAndParseXml(file) {
+            var formData = new FormData();
+            formData.append('xmlFile', file);
+            formData.append('TD_CODE', TD_CODE);
+            formData.append('SEQ_NO', SEQ_NO);
+            formData.append('REC_TP', REC_TP);
+            formData.append('__RequestVerificationToken', $('input[name="__RequestVerificationToken"]').val());
+
+            $('#loadingOverlay').show();
+
+            $.ajax({
+                url: '@Url.Action("PAGE3_1_EDIT_E_Upload", "TDE0043")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    $('#loadingOverlay').hide();
+                    if (result.success) {
+                        parsedData = result;
+                        displayParsedData(result);
+                    } else {
+                        alert('解析失敗：' + result.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $('#loadingOverlay').hide();
+                    alert('上傳失敗：' + error);
+                }
+            });
+        }
+
+        // 顯示解析後的資料
+        function displayParsedData(result) {
+            // 顯示標案資訊
+            if (result.tenderInfo) {
+                $('#infoContractNo').text(result.tenderInfo.contractNo || '-');
+                $('#infoProcuringEntity').text(result.tenderInfo.procuringEntity || '-');
+                $('#infoContractTitle').text(result.tenderInfo.contractTitle || '-');
+                $('#infoDocumentType').text(result.tenderInfo.documentType === 'budget' ? 'Budget' : 'Contract');
+                $('#tenderInfoBar').show();
+            }
+
+            // 顯示統計資訊
+            if (result.itemStats) {
+                $('#statMainItem').text(result.itemStats.mainItemCount);
+                $('#statGeneral').text(result.itemStats.generalCount);
+                $('#statVariable').text(result.itemStats.variablePriceCount);
+                $('#statSubtotal').text(result.itemStats.subtotalCount);
+                $('#statsBar').show();
+            }
+
+            // 切換顯示區域
+            $('#uploadPanel').hide();
+            $('#existingInfoBar').hide();
+            $('#dataPanel').show();
+            $('#btnSaveToDb').show();
+
+            // 載入 DetailList 並建立樹狀結構
+            loadDetailListAndBuildTree();
+        }
+
+        // 載入 DetailList 資料並建立樹狀結構
+        function loadDetailListAndBuildTree() {
+            $('#loadingOverlay').show();
+
+            $.ajax({
+                url: '@Url.Action("PAGE3_1_EDIT_E_GetTableData", "TDE0043")',
+                type: 'GET',
+                data: { TD_CODE: TD_CODE, REC_TP: REC_TP, SEQ_NO: SEQ_NO, tableName: 'DetailList', page: 1, pageSize: 10000 },
+                success: function (result) {
+                    $('#loadingOverlay').hide();
+                    if (result.success) {
+                        detailListData = result.data;
+                        buildTreeView(result.data);
+                    } else {
+                        alert('載入資料失敗：' + result.message);
+                    }
+                },
+                error: function () {
+                    $('#loadingOverlay').hide();
+                    alert('載入失敗');
+                }
+            });
+        }
+
+        // 建立樹狀結構 (從新解析的 XML)
+        function buildTreeView(data) {
+            var itemMap = {};
+            var rootItems = [];
+
+            $.each(data, function (i, item) {
+   item.children = [];
+          itemMap[item.ItemKey] = item;
+   });
+
+            $.each(data, function (i, item) {
+                if (item.ParentItemKey && itemMap[item.ParentItemKey]) {
+     itemMap[item.ParentItemKey].children.push(item);
+        } else {
+              rootItems.push(item);
+             }
+            });
+
+            var html = '<ul>' + buildTreeNodes(rootItems) + '</ul>';
+          $('#treeView').html(html);
+            bindTreeEvents();
+      }
+
+        // 遞迴建立樹節點 (從新解析的 XML)
+ function buildTreeNodes(items) {
+       var html = '';
+   $.each(items, function (i, item) {
+  var hasChildren = item.children && item.children.length > 0;
+var itemNo = item.ItemNo || '';
+                var desc = item.Description || '(無說明)';
+         var displayText = itemNo ? itemNo + ' ' + desc : desc;
+        var amount = item.Amount ? formatNumber(item.Amount) : '';
+          var itemKind = item.ItemKind || '';
+            
+   // 轉換 ItemKind 為 ITEM_TYPE
+                var itemType = '';
+  switch (itemKind) {
+           case 'mainItem': itemType = 'M'; break;
+           case 'general': itemType = 'G'; break;
+   case 'variablePrice': itemType = 'V'; break;
+           case 'subtotal': itemType = 'S'; break;
+                }
+
+         html += '<li>';
+        html += '<div class="tree-node" data-item-key="' + item.ItemKey + '" data-item-type="' + itemType + '">';
+
+       if (hasChildren) {
+ html += '<span class="toggle-icon"><i class="fa-solid fa-plus"></i></span>';
+    } else {
+         html += '<span class="toggle-icon"></span>';
+  }
+
+     if (hasChildren) {
+         html += '<i class="fa-solid fa-folder node-icon"></i>';
+    } else {
+         html += '<i class="fa-solid fa-file node-icon"></i>';
+         }
+
+// 項目類型標記
+                if (itemType) {
+      var typeName = '';
+             switch (itemType) {
+            case 'M': typeName = '主'; break;
+            case 'G': typeName = '一般'; break;
+        case 'V': typeName = '變動'; break;
+    case 'S': typeName = '小計'; break;
+              }
+     if (typeName) {
+        html += '<span class="item-type-badge item-type-' + itemType + '">' + typeName + '</span>';
+       }
+   }
+
+       html += '<span class="node-text">' + displayText + '</span>';
+     if (amount) {
+    html += '<span class="node-amount">(' + amount + ')</span>';
+              }
+
+      html += '</div>';
+
+  if (hasChildren) {
+  html += '<ul class="tree-children">' + buildTreeNodes(item.children) + '</ul>';
+    }
+
+            html += '</li>';
+  });
+  return html;
+  }
+
+        // 綁定樹狀結構事件 (新解析的 XML 資料)
+        function bindTreeEvents() {
+   $('.tree-node').click(function (e) {
+          e.stopPropagation();
+
+  var $node = $(this);
+        var itemKey = $node.data('item-key');
+         var $children = $node.siblings('.tree-children');
+         var $toggleIcon = $node.find('.toggle-icon i');
+              var $folderIcon = $node.find('.node-icon');
+
+  $('.tree-node').removeClass('selected');
+    $node.addClass('selected');
+
+      if ($children.length > 0) {
+          $children.toggleClass('expanded');
+
+  if ($children.hasClass('expanded')) {
+   $toggleIcon.removeClass('fa-plus').addClass('fa-minus');
+    $folderIcon.removeClass('fa-folder').addClass('fa-folder-open');
+    } else {
+ $toggleIcon.removeClass('fa-minus').addClass('fa-plus');
+   $folderIcon.removeClass('fa-folder-open').addClass('fa-folder');
+  }
+     }
+
+     showChildItems(itemKey);
+        });
+      }
+
+        // 顯示子項目 (新解析的 XML 資料)
+        function showChildItems(parentItemKey) {
+  // 過濾出屬於該父項目的工項
+       var childItems = [];
+            $.each(detailListData, function (i, item) {
+            if (item.ParentItemKey == parentItemKey) {
+    childItems.push(item);
+        }
+   });
+
+         // 找出被選中的項目
+      var selectedItem = null;
+            $.each(detailListData, function (i, item) {
+   if (item.ItemKey == parentItemKey) {
+         selectedItem = item;
+           return false;
+   }
+       });
+
+     if (selectedItem) {
+           var itemNo = selectedItem.ItemNo || '';
+       var desc = selectedItem.Description || '';
+  $('#tableTitle').text(itemNo ? itemNo + ' ' + desc : desc);
+    }
+
+     if (childItems.length === 0) {
+        $('#emptyState').show().find('p').text('此項目沒有子項目');
+          $('#detailTable').hide();
+                return;
+            }
+
+ var headHtml = '<tr>';
+         headHtml += '<th>項次</th>';
+            headHtml += '<th>說明</th>';
+       headHtml += '<th>單位</th>';
+        headHtml += '<th class="col-amount">數量</th>';
+   headHtml += '<th class="col-amount">單價</th>';
+  headHtml += '<th class="col-amount">複價</th>';
+   headHtml += '<th>類型</th>';
+   headHtml += '<th>綱要編碼</th>';
+            headHtml += '</tr>';
+      $('#detailTableHead').html(headHtml);
+
+ var bodyHtml = '';
+            $.each(childItems, function (i, item) {
+     var itemKind = item.ItemKind || '';
+    var typeName = '';
+      var typeClass = '';
+      switch (itemKind) {
+               case 'mainItem': typeName = '主'; typeClass = 'M'; break;
+         case 'general': typeName = '一般'; typeClass = 'G'; break;
+            case 'variablePrice': typeName = '變動'; typeClass = 'V'; break;
+        case 'subtotal': typeName = '小計'; typeClass = 'S'; break;
+            }
+     
+      bodyHtml += '<tr>';
+            bodyHtml += '<td>' + (item.ItemNo || '') + '</td>';
+   bodyHtml += '<td>' + (item.Description || '') + '</td>';
+     bodyHtml += '<td>' + (item.Unit || '') + '</td>';
+             bodyHtml += '<td class="col-amount">' + formatNumber(item.Quantity) + '</td>';
+        bodyHtml += '<td class="col-amount">' + formatNumber(item.Price) + '</td>';
+   bodyHtml += '<td class="col-amount">' + formatNumber(item.Amount) + '</td>';
+            bodyHtml += '<td><span class="item-type-badge item-type-' + typeClass + '" style="display:inline-block;">' + typeName + '</span></td>';
+    bodyHtml += '<td>' + (item.RefItemCode || '') + '</td>';
+        bodyHtml += '</tr>';
+            });
+            $('#detailTableBody').html(bodyHtml);
+
+            $('#emptyState').hide();
+        $('#detailTable').show();
+        }
+
+        // 建立樹狀結構 (從已匯入的 TDDBGAC 資料)
+        // 使用 AC_ITEM_CODE (ItemKey) 和 AN_AC_ITEM_CODE (ParentItemKey) 建立父子關係
+        function buildExistingTreeView(data) {
+ var itemMap = {};
+  var rootItems = [];
+
+  // 先建立所有項目的 Map (以 AC_ITEM_CODE/ItemKey 為 key)
+   $.each(data, function (i, item) {
+        item.children = [];
+    item.ItemKey = item.AC_ITEM_CODE; // AC_ITEM_CODE 存的是 ItemKey
+            item.ParentItemKey = item.AN_AC_ITEM_CODE; // AN_AC_ITEM_CODE 存的是 ParentItemKey
+           itemMap[item.AC_ITEM_CODE] = item;
+   });
+
+          // 建立父子關係 (使用 AN_AC_ITEM_CODE 作為 ParentItemKey)
+    $.each(data, function (i, item) {
+          if (item.AN_AC_ITEM_CODE && itemMap[item.AN_AC_ITEM_CODE]) {
+           itemMap[item.AN_AC_ITEM_CODE].children.push(item);
+                } else {
+          rootItems.push(item);
+        }
+            });
+
+            var html = '<ul>' + buildExistingTreeNodes(rootItems) + '</ul>';
+      $('#treeView').html(html);
+            bindExistingTreeEvents();
+ }
+
+   // 遞迴建立樹節點 (從已匯入的 TDDBGAC)
+     // IT_CODE 存的是項次編號 (壹、一、1 等)，用於顯示
+        // AC_ITEM_CODE 存的是 ItemKey，用於識別
+        function buildExistingTreeNodes(items) {
+            var html = '';
+      $.each(items, function (i, item) {
+      var hasChildren = item.children && item.children.length > 0;
+    var itemNo = item.IT_CODE || ''; // IT_CODE 存的是項次編號
+    var desc = item.AC_ITEM_DESC || '(無說明)';
+  var displayText = itemNo ? itemNo + ' ' + desc : desc;
+                var amount = item.BUDGET_FEE ? formatNumber(item.BUDGET_FEE) : '';
+       var itemType = item.ITEM_TYPE || '';
+        // 檢查是否為已刪除項目
+     var isDeleted = item.DEL_FG === true || item.DEL_FG === 'Y' || item.DEL_FG === 1 || item.DEL_FG === 'True';
+      var deletedClass = isDeleted ? ' deleted' : '';
+
+        html += '<li>';
+          html += '<div class="tree-node' + deletedClass + '" data-item-key="' + item.AC_ITEM_CODE + '" data-item-type="' + itemType + '">';
+
+              if (hasChildren) {
+  html += '<span class="toggle-icon"><i class="fa-solid fa-plus"></i></span>';
+       } else {
+          html += '<span class="toggle-icon"></span>';
+                }
+
+          if (hasChildren) {
+          html += '<i class="fa-solid fa-folder node-icon"></i>';
+       } else {
+           html += '<i class="fa-solid fa-file node-icon"></i>';
+    }
+
+    // 項目類型標記
+           if (itemType) {
+                 var typeName = '';
+ switch (itemType) {
+            case 'M': typeName = '主'; break;
+    case 'G': typeName = '一般'; break;
+  case 'V': typeName = '變動'; break;
+ case 'S': typeName = '小計'; break;
+      }
+   if (typeName) {
+     html += '<span class="item-type-badge item-type-' + itemType + '">' + typeName + '</span>';
+  }
+            }
+
+             html += '<span class="node-text">' + displayText + '</span>';
+           if (amount) {
+           html += '<span class="node-amount">(' + amount + ')</span>';
+                }
+
+             html += '</div>';
+
+       if (hasChildren) {
+      html += '<ul class="tree-children">' + buildExistingTreeNodes(item.children) + '</ul>';
+      }
+
+     html += '</li>';
+          });
+      return html;
+        }
+
+        // 綁定樹狀結構事件 (已匯入的資料)
+   function bindExistingTreeEvents() {
+    $('.tree-node').click(function (e) {
+  e.stopPropagation();
+
+       var $node = $(this);
+     var itemKey = $node.data('item-key');
+     var $children = $node.siblings('.tree-children');
+          var $toggleIcon = $node.find('.toggle-icon i');
+          var $folderIcon = $node.find('.node-icon');
+
+   $('.tree-node').removeClass('selected');
+       $node.addClass('selected');
+
+       if ($children.length > 0) {
+          $children.toggleClass('expanded');
+
+    if ($children.hasClass('expanded')) {
+              $toggleIcon.removeClass('fa-plus').addClass('fa-minus');
+       $folderIcon.removeClass('fa-folder').addClass('fa-folder-open');
+          } else {
+  $toggleIcon.removeClass('fa-minus').addClass('fa-plus');
+  $folderIcon.removeClass('fa-folder-open').addClass('fa-folder');
+  }
+                }
+
+       showExistingChildItems(itemKey);
+  });
+        }
+
+        // 顯示子項目 (已匯入的 TDDWQTY 資料)
+  // AC_ITEM_CODE 在 TDDWQTY 中存的是 ParentItemKey
+        function showExistingChildItems(parentItemKey) {
+  // 過濾出屬於該父項目的工項 (使用 AC_ITEM_CODE 作為 ParentItemKey)
+    var childItems = [];
+            $.each(existingGridData, function (i, item) {
+                if (item.AC_ITEM_CODE == parentItemKey) {
+  childItems.push(item);
+    }
+            });
+
+       // 找出被選中的項目
+        var selectedItem = null;
+   $.each(existingTreeData, function (i, item) {
+      if (item.AC_ITEM_CODE == parentItemKey) {
+ selectedItem = item;
+  return false;
+                }
+            });
+
+            if (selectedItem) {
+          var itemNo = selectedItem.IT_CODE || '';
+var desc = selectedItem.AC_ITEM_DESC || '';
+          $('#tableTitle').text(itemNo ? itemNo + ' ' + desc : desc);
+      }
+
+      if (childItems.length === 0) {
+      $('#emptyState').show().find('p').text('此項目沒有工項明細');
+      $('#detailTable').hide();
+          return;
+     }
+
+            var headHtml = '<tr>';
+         headHtml += '<th>工項編號</th>';
+      headHtml += '<th>品名</th>';
+     headHtml += '<th>單位</th>';
+   headHtml += '<th class="col-amount">數量</th>';
+            headHtml += '<th class="col-amount">單價</th>';
+ headHtml += '<th class="col-amount">複價</th>';
+       headHtml += '<th>類型</th>';
+            headHtml += '<th>綱要編碼</th>';
+            headHtml += '</tr>';
+       $('#detailTableHead').html(headHtml);
+
+            var bodyHtml = '';
+   $.each(childItems, function (i, item) {
+           var typeName = item.WK_TYPE === 'V' ? '變動' : '一般';
+       bodyHtml += '<tr>';
+         bodyHtml += '<td>' + (item.WK_ITEM_NO || '') + '</td>';
+          bodyHtml += '<td>' + (item.WK_ITEM || '') + '</td>';
+   bodyHtml += '<td>' + (item.WK_UNIT || '') + '</td>';
+         bodyHtml += '<td class="col-amount">' + formatNumber(item.WK_QTY) + '</td>';
+         bodyHtml += '<td class="col-amount">' + formatNumber(item.WK_PRICE) + '</td>';
+   bodyHtml += '<td class="col-amount">' + formatNumber(item.BD_PRICE) + '</td>';
+    bodyHtml += '<td><span class="item-type-badge item-type-' + item.WK_TYPE + '">' + typeName + '</span></td>';
+       bodyHtml += '<td>' + (item.IT_CODE || '') + '</td>';
+                bodyHtml += '</tr>';
+            });
+        $('#detailTableBody').html(bodyHtml);
+
+$('#emptyState').hide();
+            $('#detailTable').show();
+        }
+
+        function saveToDatabase() {
+            if (!confirm('將解析後的資料儲存到資料庫?')) {
+                return;
+            }
+
+            $('#loadingOverlay').show();
+
+            $.ajax({
+                url: '@Url.Action("PAGE3_1_EDIT_E_SaveToDatabase", "TDE0043")',
+                type: 'POST',
+                data: {
+                    TD_CODE: TD_CODE,
+                    SEQ_NO: SEQ_NO,
+                    REC_TP: REC_TP,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (result) {
+                    $('#loadingOverlay').hide();
+                    if (result.success) {
+                        alert(result.message);
+                        // 重新載入頁面以顯示新資料
+                        location.reload();
+                    } else {
+                        alert('儲存失敗：' + result.message);
+                    }
+                },
+                error: function () {
+                    $('#loadingOverlay').hide();
+                    alert('儲存失敗');
+                }
+            });
+        }
+    </script>
+
+    @Html.AntiForgeryToken()
+</body>
+</html>

@@ -1,0 +1,267 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0030Model
+@{ ViewBag.Title = "SGE0000EditAPMFORM";
+    //Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+
+    <link rel="stylesheet" href="~/Scripts/plugins/bootstrap-fileinput/icon.mini.css" crossorigin="anony上mous">
+    <link href="~/Scripts/plugins/bootstrap-fileinput/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+    <style>
+        /* === BS3 相容層（配色）v2：nav-tabs／分頁／藍色 header 頁籤，接軌系統主色 #337ab7 === */
+        .pagination { --bs-pagination-color: #337ab7; --bs-pagination-hover-color: #286090; --bs-pagination-focus-color: #286090; --bs-pagination-active-bg: #337ab7; --bs-pagination-active-border-color: #337ab7; margin: 10px 0; flex-wrap: wrap; }
+        .nav-tabs:not(.card-header-tabs) .nav-link { color: #337ab7; }
+        .nav-tabs:not(.card-header-tabs) .nav-link:hover, .nav-tabs:not(.card-header-tabs) .nav-link:focus { color: #286090; }
+        .nav-tabs:not(.card-header-tabs) .nav-link.active { color: #495057; font-weight: 600; }
+        .card-header.bg-primary { background-color: #337ab7 !important; color: #fff !important; border-bottom: 1px solid #ddd; padding: 10px 15px; font-weight: bold; }
+        .card-header .card-title { margin: 0; font-size: 1.1rem; }
+        .card-header-tabs { margin-bottom: -11px; border-bottom: none; }
+        .card-header-tabs .nav-item { margin-bottom: 0; }
+        .card-header-tabs .nav-link { border: 1px solid transparent; color: rgba(255,255,255,0.9) !important; margin-right: 2px; padding: 8px 15px; border-radius: 4px 4px 0 0; }
+        .card-header-tabs .nav-link:hover { background-color: rgba(255,255,255,0.15); border-color: transparent; }
+        .card-header-tabs .nav-link.active { background-color: #ffffff !important; color: #337ab7 !important; border-color: #dddddd #dddddd #ffffff !important; font-weight: bold; }
+    </style>
+    <script>
+        /* === BS3 相容層（裝飾器）v2：BS3 標記自動補 BS5 class，舊 view 免改標記 === */
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('ul.nav-tabs > li').forEach(function (li) {
+                li.classList.add('nav-item');
+                var a = li.querySelector(':scope > a');
+                if (!a) return;
+                a.classList.add('nav-link');
+                if (li.classList.contains('active')) { li.classList.remove('active'); a.classList.add('active'); }
+                if (a.getAttribute('data-toggle') === 'tab') { a.setAttribute('data-bs-toggle', 'tab'); a.removeAttribute('data-toggle'); }
+            });
+            document.querySelectorAll('ul.nav-tabs').forEach(function (ul) {
+                if (ul.closest('.card-header')) { ul.classList.add('card-header-tabs'); }
+            });
+            document.querySelectorAll('.tab-pane.in').forEach(function (p) { p.classList.remove('in'); p.classList.add('show'); });
+            document.querySelectorAll('ul.pagination > li').forEach(function (li) {
+                li.classList.add('page-item');
+                var el = li.querySelector(':scope > a, :scope > span');
+                if (el) el.classList.add('page-link');
+            });
+        });
+    </script>
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+<body style="padding:5px;">
+    @using(Html.BeginForm("", "PJE0030", FormMethod.Post, new { id = "mainForm", enctype = "multipart/form-data" })) {
+
+        <table width="100%" class="table">
+            <tr>
+                <td style="padding:1px;">
+                    @Html.DropDownListFor(x => x.CITY, (SelectList)ViewBag.cities, "縣市", new { @class = "form-control map", form = "mainForm", Onchange = "GetTowns(this.value)" })
+                </td>
+
+                <td style="padding:1px;">
+                    <div class="input-group">
+                        <span class="input-group-text">鄉鎮</span>
+                        @Html.DropDownListFor(x => x.TOWN, (SelectList)ViewBag.towns, "鄉鎮", new { id = "town1", @class = "form-control map", form = "mainForm" })
+
+                    </div>
+                </td>
+                <td style="padding:1px;">
+                    <div class="input-group">
+                        <span class="input-group-text">編號</span>
+                        @Html.TextBoxFor(x => x.WK_CODE, new { id = "no1-1", @class = "form-control", form = "mainForm", placeholder = "編號" })
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-top:5px;">
+                    <div class="input-group">
+                        <span class="input-group-text">名稱</span>
+                        @Html.TextBoxFor(x => x.TD_NAME, new { @class = "form-control", form = "mainForm", placeholder = "名稱" })
+                    </div>
+                </td>
+                <td style="padding:1px;">
+                    @*<button type="button" style="width:100%;" class="btn btn-primary" onclick='sh();'>查詢</button>*@
+                    <button style="width:100%;" class="btn btn-primary" name="action" type="submit" value="RefSelectSearch">查詢</button>
+                    <script>
+                        function refs() {
+                            var city = $("#CITY_SELECT").val();
+                            var town = $("#town1").val();
+                            var name = $("#name1").val();
+                            var no = $("#no1-1").val();
+                            window.location.replace("@Url.Content("~/")PJE0030/RefSelectSearch?city="+city+"&town="+town+"&name="+name+"&no="+no);
+                        }
+
+                        function sh() {
+                            //alert();
+                            var city = $("#CITY_SELECT").val();
+                            var town = $("#town1").val();
+                            var name = $("#name1").val();
+                            var no = $("#no1-1").val();
+                            $.ajax({
+                                url: '@Url.Content("~/")PJE0030/GetCMETMSModel',
+                            method: 'post',
+                                data: { "city": city },
+                                data: { "town": city },
+                                data: { "name": city },
+                                data: { "no": city },
+                                success: function (d) {
+                                var p = jQuery.parseJSON(d);
+                                alert(p[0])
+                                }
+                            });
+                        }
+
+                        function GetTowns(city) {
+                            //$("#town1").val(city);
+                            //alert(city);
+                            $("#town1").html("");
+                               $.ajax({
+                                   url: '@Url.Content("~/")ASYNC/GetTownsById',
+                                   method: 'post',
+                                   data: { "city": city },
+                                   success: function (d) {
+                                       var p = jQuery.parseJSON(d);
+                                       $("#town1").prepend("<option value=''>鄉鎮</option>");
+                                       for (i = 0; i < p.length; i++) {
+                                           $("#town1").append("<option value='" + p[i].TOWN + "'>" + p[i].TOWN + "</option>");
+                                       }
+                                   }
+                               });
+
+                           }
+                    </script>
+                </td>
+            </tr>
+
+        </table>
+
+
+
+        if(Model.MainList != null) {
+
+            @Html.PagedListPager(Model.MainList, page => Url.Action("RefSelectSearch",
+                new {
+                    page = page,
+                    no = Model.WK_CODE,
+                    name = Model.TD_NAME,
+                    city = Model.CITY,
+                    town = Model.TOWN,
+                    model = Model
+                }),
+                new PagedListRenderOptions {
+                    DisplayItemSliceAndTotal = true,
+                    DisplayPageCountAndCurrentLocation = true,
+                    DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                    DisplayLinkToIndividualPages = false,
+
+                    ItemSliceAndTotalFormat = "顯示第 {0} - {1}筆, 共{2}筆",
+                    PageCountAndCurrentLocationFormat = "第 {0}頁 / 共 {1}頁",
+                }
+            )
+
+            <div class="card mb-3" style="overflow: auto;">
+                @{PagedList.IPagedList<System.Data.DataRow> list = Model.MainList;}
+                <table width="100%" class="table table-hover" style="overflow-x: auto; white-space: nowrap;">
+                    <thead class="table-light">
+                        <tr>
+                            <th></th>
+                            <th>工程編號</th>
+                            <th>工程名稱</th>
+                            <th>縣市別</th>
+                            <th>鄉鎮別</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach(System.Data.DataRow c in list) {
+                            <tr>
+                                <td><button type="button" class="btn btn-secondary" onclick="update_parent('@c["TD_CODE"]')">引用</button></td>
+                                <td>@c["SIP_TD_CODE"]</td>
+                                <td>@c["TD_NAME"]</td>
+                                <td>@c["TD_CITY"]</td>
+                                <td>@c["TD_TOWN"]</td>
+
+
+
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @Html.PagedListPager(list, page => Url.Action("RefSelectSearch",
+              new {
+                  page = page,
+                  no=Model.WK_CODE,
+                  name=Model.TD_NAME,
+                  city=Model.CITY,
+                  town=Model.TOWN,
+                  model = Model
+            }))
+
+        }
+    }
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+
+
+
+
+
+
+    @if(ViewBag.msg != null) {
+        <script>
+        alert("@ViewBag.msg");
+        </script>
+
+
+
+    }
+    <script>
+        $(".dt").datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: '68:168',
+            dateFormat: 'yymmdd',
+            //defaultDate: new Date()
+        });
+        function update_parent(value) {
+            //alert($('#refs', window.parent.frames[0].document).val("xxxxxxx"));
+            //window.editor.formSubmit();
+            //$('#refs', window.parent.document).val(value);
+            //$('#refs', window.parent.frames[0].document).val(value);
+            window.parent.frames[1].refs(value);
+            window.parent.refselClose();
+
+            
+            
+            
+        }
+
+
+
+
+
+
+    </script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/fileinput.js"></script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/zh-TW.js"></script>
+    <script src="~/Scripts/SGE0000.js"></script>
+</body>
+</html>

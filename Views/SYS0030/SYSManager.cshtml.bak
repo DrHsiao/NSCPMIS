@@ -1,0 +1,161 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.SYS0030Model
+
+@{Layout = null;}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>SYSManager</title>
+    <meta charset="utf-8" />
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="~/Scripts/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="~/Content/themes/base/jquery-ui.theme.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-select.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Scripts/plugins/bootstrap-fileinput/icon.mini.css" crossorigin="anonymous">
+    <link href="~/Scripts/plugins/bootstrap-fileinput/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    @using(Html.BeginForm("", "SYS0030", FormMethod.Post, new { id = "mainForm", @class = "form-horizontal" })) {
+        if(ViewBag.Message != null) {
+            <div class="alert alert-info" style="margin: 10px;">@ViewBag.Message</div>
+        }
+        <div class="table-responsive" style="overflow-x:auto;">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th nowrap>縣市別</th>
+                        <th nowrap>下水道系統編號</th>
+                        <th nowrap>下水道系統名稱</th>
+                        <th nowrap>建設情形</th>
+                        <th nowrap>是否補助</th>
+                        <th nowrap></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+
+                        <td>
+                            <select name="CITY" class="form-control">
+                                <option value="">縣市別</option>
+                                @foreach(System.Data.DataRow c in ViewBag.Cities.Rows) {
+
+                                    if(Convert.ToString(c["CITY"]).Equals(Model.CITY)) {
+                                        <option selected vlaue="@c["CITY"]">@c["CITY"]</option>
+                                    } else {
+                                        <option vlaue="@c["CITY"]">@c["CITY"]</option>
+                                    }
+
+                                }
+
+                            </select>
+
+
+
+                        </td>
+
+
+                        <td>@Html.TextBoxFor(x => x.SYS_ID, new { @class = "form-control", placeholder = "系統編號", AutoComplete = "Off" })</td>
+                        <td>@Html.TextBoxFor(x => x.SYS_NAME, new { @class = "form-control", placeholder = "系統名稱", AutoComplete = "Off" })</td>
+                        <td>
+                            @Html.TextBoxFor(x => x.CONST_TP, new { @class = "form-control", placeholder = "建設中", AutoComplete = "Off" })
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(x => x.IS_SUP, new SelectList(new[] { new { Value = "Y", Text = "Y" }, new { Value = "N", Text = "N" } }, "Value", "Text"),
+                           "是否補助", new { @class = "form-control", form = "mainForm", Onchange = "GetTowns(this.value)" })
+                        </td>
+
+                        <td>
+
+
+                            <button class="btn btn-primary" type="submit" formaction="@Url.Action("SYSManagerSearch", "SYS0030")">查詢</button>
+                            <button class="btn btn-success" type="submit" formaction="@Url.Action("SYSManagerAdd", "SYS0030")">新增</button>
+                        </td>
+                    </tr>
+                    <!-- 可繼續複製其他列 -->
+                </tbody>
+            </table>
+            @if(Model.List1 != null) {
+                @Html.PagedListPager(Model.List1, page => Url.Action("SYSManagerSearch", "SYS0030",
+                new {
+                    page = page,
+                    CITY = Model.CITY,
+                    SYS_ID = Model.SYS_ID,
+                    SYS_NAME = Model.SYS_NAME,
+                    CONST_TP = Model.CONST_TP,
+                    IS_SUP = Model.IS_SUP,
+
+                }))
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th nowrap>縣市別</th>
+                            <th nowrap>下水道系統編號</th>
+                            <th nowrap>下水道系統名稱</th>
+                            <th nowrap>建設情形</th>
+                            <th nowrap>是否補助</th>
+                            <th nowrap></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(System.Data.DataRow d in Model.List1) {
+                            <tr>
+                                <td>
+
+                                    <select name="CITYS" class="form-control">
+                                        <option value="">縣市別</option>
+                                        @foreach(System.Data.DataRow c in ViewBag.Cities.Rows) {
+
+                                            if(Convert.ToString(c["CITY"]).Equals(Convert.ToString(d["CITY"]))) {
+                                                <option selected vlaue="@c["CITY"]">@c["CITY"]</option>
+                                            } else {
+                                                <option vlaue="@c["CITY"]">@c["CITY"]</option>
+                                            }
+                                        }
+                                    </select>
+
+                                </td>
+                                <td><input type="text" name="SYS_IDS" value="@d["SYS_ID"]" class="form-control" /></td>
+                                <td><input type="text" name="SYS_NAMES" value="@d["SYS_NAME"]" class="form-control" /></td>
+                                <td>
+                                    <input type="text" name="SYS_NAMES" value="@d["CONST_TP"]" class="form-control" />
+                                </td>
+                                <td>
+                                    <select name="IS_SUPS" class="form-control">
+                                        <option value="">縣市別</option>
+
+
+                                        @if(Convert.ToString(d["IS_SUP"]).Equals("Y")) {
+                                            <option selected vlaue="Y">Y</option>
+                                            <option vlaue="N">N</option>
+                                        } else {
+                                            <option vlaue="Y">Y</option>
+                                            <option selected vlaue="N">N</option>
+                                        }
+
+                                    </select>
+                                </td>
+                                <td>
+                                    <button class="btn btn-warning" type="submit" formaction="@Url.Action("SYSManagerSearch", "SYS0030")">修改</button>
+                                    <button class="btn btn-danger" name="action" type="button" onclick="if(!confirm('確定刪除？')) { return false; } " value="Del" value="Save">刪除</button>
+                                </td>
+                            </tr>
+
+                        }
+
+                        <!-- 可繼續複製其他列 -->
+                    </tbody>
+                </table>
+
+
+            }
+        </div>
+     }
+</body>
+</html>

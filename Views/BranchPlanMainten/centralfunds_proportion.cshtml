@@ -1,0 +1,93 @@
+﻿@model IEnumerable<WCals.Models.CMEPMSModels.PJDCTSP>
+@{
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<style>
+    .table th {
+        text-align: center;
+    }
+    .table tr {
+        text-align: center;
+    }
+    
+</style>
+
+<div class="card mb-3"><div class="card-body">
+    <form action="@Url.Action("centralfunds_proportion_Save","BranchPlanMainten")">
+        <h1>分支計畫</h1>
+        <hr />
+        <br />
+        <div class="form-horizontal">
+            <div class="form-group">
+                <span class="col-form-label col-md-2">分支計畫名稱</span>
+                <div class="col-md-3">
+                    <input name="branch_plan" value="@ViewBag.branch_plan" type="text" readonly class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫年分</span>
+                <div class="col-md-3">
+                    <input name="branch_SYR" value="@ViewBag.branch_SYR" type="text" readonly class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <br />
+        <h1 style="display:inline-block; vertical-align:middle">中央款比例</h1>
+        <div id="button" style="display:inline-block; margin-left: 25px">
+            <input type="button" value="修改" onclick="Edit()" class="btn btn-primary" />
+        </div>
+        <br />
+        <br />
+
+        <table class="table table-bordered" style="width:30%; margin-left:210px ">
+            <tr>
+                <td>縣市別</td>
+                <td>比例</td>
+            </tr>
+            @if (Model.Count() > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <th class="CITY">@item.CITY</th>
+                        <th class="VALUE">@item.SUP_RATIO</th>
+                    </tr>
+                }
+            }
+            else
+            {
+                foreach (var item in ViewBag.CITY)
+                {
+                    <tr>
+                        <th class="CITY">@item.CITY</th>
+                        <th class="VALUE">0</th>
+                    </tr>
+                }
+            }
+
+        </table>
+    </form>
+</div></div>
+
+
+
+<script>
+    function Edit()
+    {
+        var ALLCITY = document.querySelectorAll('.CITY');
+        var ALLVALUE = document.querySelectorAll('.VALUE');
+
+        ALLVALUE.forEach(function (th) {
+            originvalue = th.textContent;
+            $(th).empty();
+            $(th).append('<input name="VALUE" class="form-control" value="' + originvalue + '" />');
+        })
+
+        $('#button').empty();
+        $('#button').append('<input type="submit" value="存檔" onclick="Save()" class="btn btn-primary" />');
+        $('#button').append('<input type="submit" name=button style="margin-left:5px" value="返回" onclick="Return()" class="btn btn-primary" />');
+    }
+</script>

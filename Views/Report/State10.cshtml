@@ -1,0 +1,237 @@
+﻿@model IEnumerable<WCals.Models.CMBASEModels.SiteCityViewModel>
+
+@{
+    ViewBag.Title = "例行性管考報表：F-1.相關計畫年度補助經費表";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head{
+    <link rel="stylesheet" href="~/Content/views/report.css">
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            例行性管考報表[0.1.1]
+
+            <small> </small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/Home")"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                例行性管考報表
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                F-1.相關計畫年度補助經費表
+            </li>
+        </ol>
+    </div>
+</div>
+
+<form method="post" action="@Url.Action("ReportPrint10")" class="my-text">
+    @*<h2>例行性管考報表:</h2>*@
+
+    報表類型:
+    <select id="choose">
+        <option value="1" @{if (ViewBag.State == "1") { <text> selected</text> }}>A-1.一億元以上工程計畫執行情形表</option>
+        <option value="2" @{if (ViewBag.State == "2") { <text> selected</text> }}>A-2.細項執行情形表</option>
+        <option value="3" @{if (ViewBag.State == "3") { <text> selected</text> }}>A-3.跨年度一億元以上工程計畫執行情形表</option>
+        <option value="4" @{if (ViewBag.State == "4") { <text> selected</text> }}>A-4.跨年度細項執行情形表</option>
+        <option value="5" @{if (ViewBag.State == "5") { <text> selected</text> }}>A-5.細項執行情形表(前瞻計畫)</option>
+        <option value="6" @{if (ViewBag.State == "6") { <text> selected</text> }}>B-1.修正預算作業表</option>
+        <option value="7" @{if (ViewBag.State == "7") { <text> selected</text> }}>C-1.99年振興經濟表格</option>
+        <option value="8" @{if (ViewBag.State == "8") { <text> selected</text> }}>D-1.公共建設推動會報執行情形表</option>
+        <option value="9" @{if (ViewBag.State == "9") { <text> selected</text> }}>E-1.工程細項執行表(自訂欄位)</option>
+        <option value="10" @{if (ViewBag.State == "10") { <text> selected</text> }}>F-1.相關計畫年度補助經費表</option>
+        <option value="12" @{if (ViewBag.State == "12") { <text> selected</text> }}>H-1.在建工程抽查/查核/督導統計表</option>
+    </select>
+    <br />
+
+    <table class="table table-bordered table-hover" style="text-align: left; width:95%">
+        <tr>
+            <td>
+                計畫種類:
+            </td>
+            <td id="Water_Type" colspan="4">
+                <input type="radio" name="water_type" value="雨水使用" class="Type-checkbox" /><span> </span>雨水
+                <input type="radio" name="water_type" value="污水使用" class="Type-checkbox" /><span> </span>污水
+                <input type="radio" name="water_type" value="再生水使用" class="Type-checkbox" /><span> </span>再生水
+
+            </td>
+        </tr>
+        <tr>
+            <td class="fixed-column">
+                計畫分類:
+            </td>
+            <td id="Plan">
+                <div class="Plan-List" data-id="雨水使用">
+                    <input type="checkbox" name="master_plan" value="118" />
+                    <span>前瞻基礎建設計畫-全國水環境改善計畫</span>
+                    <br />
+                </div>
+                <div class="Plan-List" data-id="雨水使用">
+                    <input type="checkbox" name="master_plan" value="122" />
+                    <span>前瞻基礎建設計畫-縣市管河川及區域排水整體改善計畫</span>
+                    <br />
+                </div>
+                <div class="Plan-List" data-id="雨水使用">
+                    <input type="checkbox" name="master_plan" value="134" />
+                    <span>前瞻基礎建設計畫-科學城低碳智慧環境基礎建置-污水系統建置部分</span>
+                    <br />
+                </div>
+                <div class="Plan-List" data-id="雨水使用">
+                    <input type="checkbox" name="master_plan" value="176" />
+                    <span>前瞻基礎建設計畫第1期(106-107年)-再生水工程推動計畫</span>
+                    <br />
+                </div>
+                <div class="Plan-List" data-id="雨水使用">
+                    <input type="checkbox" name="master_plan" value="198" />
+                    <span>前瞻基礎建設計畫第2期(108-109年)-再生水工程推動計畫</span>
+                    <br />
+                </div>
+                <div class="Plan-List" data-id="雨水使用">
+                    <input type="checkbox" name="master_plan" value="215" />
+                    <span>前瞻基礎建設計畫第2期(108-109年)-建構開放政府及智慧城鄉服務</span>
+                    <br />
+                </div>
+                <div class="Plan-List" data-id="雨水使用">
+                    <input type="checkbox" name="master_plan" value="246" />
+                    <span>前瞻基礎建設計畫-全國水環境改善計畫</span>
+                    <br />
+                </div>
+                <div class="Plan-List" data-id="雨水使用">
+                    <input type="checkbox" name="master_plan" value="61" />
+                    <span>流域綜合治理計畫-雨水下水道(第1期)103-104年</span>
+                    <br />
+                </div>
+                <div class="Plan-List" data-id="雨水使用">
+                    <input type="checkbox" name="master_plan" value="96" />
+                    <span>流域綜合治理計畫-雨水下水道(第2期)105-106年</span>
+                    <br />
+                </div>
+                <div class="Plan-List" data-id="雨水使用">
+                    <input type="checkbox" name="master_plan" value="139" />
+                    <span>流域綜合治理計畫-雨水下水道(第3期)107-108年</span>
+                    <br />
+                </div>
+                @foreach (var item in ViewBag.PJ_BAG)
+                {
+
+                    if (item.MASTER_PID == "118" || item.MASTER_PID == "122" || item.MASTER_PID == "134" || item.MASTER_PID == "176" || item.MASTER_PID == "198" || item.MASTER_PID == "215" || item.MASTER_PID == "246" || item.MASTER_PID == "61" || item.MASTER_PID == "96" || item.MASTER_PID == "139")
+                    {
+                        @*<div>
+                                <input type="checkbox" name="plan" hidden value="@item.ProjectNameID" data-id="@item.Water_Type" class="@item.MASTER_PID" />
+                                <span hidden>@item.PJ_NAME</span>
+                            </div>*@
+                    }
+                    else
+                    {
+                        <div class="Plan-List" data-id="@item.Water_Type">
+                            <input type="checkbox" name="plan" value="@item.ProjectNameID" class="@item.MASTER_PID" />
+                            <span>@item.PJ_NAME</span>
+                            <br />
+                        </div>
+                    }
+                }
+            </td>
+        </tr>
+        <tr>
+            <td class="fixed-column">
+                縣市別:
+            </td>
+            <td id="Year">
+                @{ int i = 0;}
+                @foreach (var item in ViewBag.CITY)
+                {
+                    if (i > 1 && i % 8 == 0)
+                    {
+                        <br />
+                    }
+                    <input type="checkbox" value="@item.CITY" data-id="@item.CITY" name="CITY" class="Year-checkbox">
+                    <a href="#plan-item" onclick="ShowPlan('@item.CITY')">@item.CITY</a>
+                    i++;
+                }
+            </td>
+        </tr>
+        <tr>
+            <td>
+                鄉鎮別:
+            </td>
+            <td id="Town" colspan="4">
+                @{ int j = 0;}
+                @foreach (var item in ViewBag.CITY)
+                {
+                    <div class="plan-item" data-id="@item.CITY" hidden>
+                        <input type="checkbox" data-id="@item.CITY" class="selectALL">
+                        <span>全選框</span>
+                        <br />
+                        @foreach (var item2 in ViewBag.TOWN)
+                        {
+                            if (item2.CITY == item.CITY)
+                            {
+
+                                <input type="checkbox" name="CITY_TOWN" value="@item2.CITY+@item2.TOWN" class="@item.CITY Town-checkbox" data-id="@item.CITY" />
+                                <span>@item2.TOWN</span>
+
+                                j++;
+                            }
+                        }
+                    </div>
+                }
+            </td>
+        </tr>
+        <tr>
+            <td>
+                年分區間:
+            </td>
+            <td>
+                <select name="year1">
+                    @foreach (var item4 in ViewBag.Year2)
+                    {
+                        <option>@item4.SYR</option>
+                    }
+                </select>
+                -
+                <select name="year2">
+                    @foreach (var item3 in ViewBag.Year)
+                    {
+                        <option>@item3.SYR</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                實支數:
+            </td>
+            <td>
+                <input type="checkbox" name="Row" onclick="uncheckCancel()" />
+                <span> </span>
+                有
+                <span> </span>
+                <input type="checkbox" name="Field" onclick="uncheckFinish()" />
+                <span> </span>
+                無
+                <span> </span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+                <button type="submit"> EXCEL匯出</button>
+                <button type="submit" name="ods" value="1">ODS匯出</button>
+            </td>
+        </tr>
+    </table>
+</form>
+
+@section scripts {
+    <script type="text/javascript">
+        var stateUrl = '@Url.Action("ChooseState", "Report")';
+    </script>
+
+    <script src="~/Scripts/Report/State10.js" type="text/javascript"></script>
+}

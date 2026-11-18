@@ -1,0 +1,205 @@
+﻿@{
+    Layout = null; // 或繼承您專案的 Layout2
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+
+<style type="text/css">
+    /* 🎯 程式碼編輯器專用等寬字型防線 */
+    .sql-editor {
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 15px;
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+        resize: vertical;
+        min-height: 180px;
+        width: 100%;
+        padding: 10px;
+        line-height: 1.5;
+    }
+
+    .msg-panel {
+        font-family: 'Consolas', monospace;
+        word-break: break-all;
+        white-space: pre-line;
+    }
+
+    .ui-dialog {
+        z-index: 5000 !important; /* 剛性攔截，確保彈窗權重絕對凌駕於常規 View 組件之上 */
+    }
+</style>
+
+<div class="container-fluid" style="padding: 15px;">
+    <div class="card border-primary">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fa-solid fa-database"></i> 主控台</h3>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label for="TxtStr">請輸入：</label>
+                <textarea id="TxtStr" class="form-control sql-editor" placeholder="查詢"></textarea>
+            </div>
+
+            <div class="form-group">
+                <button type="button" id="BtnExecute" class="btn btn-success btn-lg">
+                    <i class="fa-solid fa-play"></i> 執行
+                </button>
+                <button type="button" id="BtnClear" class="btn btn-secondary btn-lg">清空內容</button>
+            </div>
+
+            <div id="MsgBlock" style="display:none;" class="alert msg-panel">
+                <strong id="MsgTitle"></strong> <span id="MsgContent"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="ResultDialog" title="結果" style="display: none; padding: 10px;">
+    <div class="alert alert-info" style="margin-bottom:10px; padding:8px;">
+        總共 <span id="LblCount" class="badge rounded-pill text-white" style="background-color:#337ab7;">0</span> 筆。
+    </div>
+    <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
+        <table id="GridResult" class="table table-bordered table-striped table-hover">
+            <thead class="table-light">
+                <tr id="GridHeader">
+                </tr>
+            </thead>
+            <tbody id="GridBody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var w = $(window).width();
+        var h = $(window).height();
+
+        // 初始化查詢結果彈窗門禁
+        $("#ResultDialog").dialog({
+            autoOpen: false,
+            show: { duration: 300 },
+            hide: { duration: 300 },
+            width: w * 0.85,
+            height: h * 0.8,
+            maxWidth: w,
+            maxHeight: h,
+            modal: true
+        });
+
+        // 清空功能
+        $("#BtnClear").click(function () {
+            $("#TxtStr").val("").focus();
+            $("#MsgBlock").hide();
+        });
+
+        // 核心執行按鈕事件
+        $("#BtnExecute").click(function () {
+            var strText = $("#TxtStr").val().trim();
+            if (strText === "") {
+                alert("請先輸入！");
+                $("#TxtStr").focus();
+                return;
+            }
+
+            // 隱藏前次狀態，顯示載入中
+            $("#MsgBlock").removeClass("alert-success alert-danger alert-info").addClass("alert-info").show();
+            $("#MsgTitle").text("執行中...");
+            $("#MsgContent").text("正在向資料庫伺服器索要通道並傳遞指令...");
+
+
+            var encodedStr = btoa(unescape(encodeURIComponent(strText)));
+
+            // 🧩 發送非同步 AJAX 進入後端 Controller
+            $.ajax({
+                url: '@Url.Content("~/")SGE0000/QueryExecutor', // 🎯 實體路由對接點
+                method: 'POST',
+                data: { "str": encodedStr },
+                success: function (res) {
+                    // 1. 
+                    console.log("SQL 伺服器回傳原始資料：", res);
+
+                    // 清空前次網格與狀態樣式
+                    $("#GridHeader").html("");
+                    $("#GridBody").html("");
+                    $("#MsgBlock").removeClass("alert-info alert-success alert-danger");
+
+                    // 2. 非 JSON 安全防禦閘門
+                    if (typeof res === "string" || !res || res.isSuccess === undefined) {
+                        $("#MsgBlock").addClass("alert-danger");
+                        $("#MsgTitle").text("🔴 伺服器回傳格式錯誤：");
+                        $("#MsgContent").text("後端未回傳預期的 JSON 物件。請按 F12 查看 Console 錯誤。");
+                        return;
+                    }
+
+                    if (res.isSuccess) {
+                        // 🟢 寫入成功提示
+                        $("#MsgBlock").addClass("alert-success");
+                        $("#MsgTitle").text("🟢 執行成功：");
+                        $("#MsgContent").text(res.message);
+
+                        // 3. 🎯 剛性相容性校準：自動相容大小寫 dataList 或 DataList 路由
+                        var list = res.dataList || res.DataList;
+                        var isSelect = res.isSelect || res.IsSelect;
+
+                        if (isSelect) {
+                            if (list && list.length > 0) {
+                                // 提取第一筆資料的所有欄位名稱作為表頭 <th> 依據
+                                var columns = Object.keys(list[0]);
+
+                                // 4. 繪製表頭 <th>
+                                $.each(columns, function (i, colName) {
+                                    $("#GridHeader").append("<th nowrap class='bg-primary' style='color:white;'>" + colName + "</th>");
+                                });
+
+                                // 5. 繪製資料列 <td>
+                                $.each(list, function (index, rowData) {
+                                    var $tr = $("<tr></tr>");
+                                    $.each(columns, function (i, colName) {
+                                        var rawVal = rowData[colName];
+                                        var cellValue = "";
+
+                                        if (rawVal === null || rawVal === undefined) {
+                                            cellValue = "<span class='text-muted'>NULL</span>";
+                                        } else if (typeof rawVal === "string" && rawVal.indexOf("/Date(") >= 0) {
+                                            // 🧩 精確攔截微軟 JSON 日期格式並清洗為民國年
+                                            var timestamp = parseInt(rawVal.replace(/\/Date\((.*?)\)\//, '$1'), 10);
+                                            var d = new Date(timestamp);
+                                            cellValue = (d.getFullYear() - 1911) + "/" + ("0" + (d.getMonth() + 1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2);
+                                        } else {
+                                            cellValue = rawVal;
+                                        }
+                                        $tr.append("<td nowrap>" + cellValue + "</td>");
+                                    });
+                                    $("#GridBody").append($tr);
+                                });
+
+                                // 6. 🎯 剛性鎖定：確保「有資料、且渲染完成後」才更新計數並彈出視窗
+                                $("#LblCount").text(list.length);
+                                $("#ResultDialog").dialog("open");
+                            } else {
+                                // 💡 狀況 A：是 SELECT 語法，但資料庫目前查無任何實體資料列
+                                $("#MsgBlock").removeClass("alert-success").addClass("alert-info");
+                                $("#MsgTitle").text("ℹ️ 查詢完成：");
+                                $("#MsgContent").text("指令執行成功，但沒有資料（0 rows returned）。");
+                            }
+                        }
+                    } else {
+                        // 🔴 寫入後端 catch 丟出的實體資料庫異常
+                        $("#MsgBlock").addClass("alert-danger");
+                        $("#MsgTitle").text("🔴 伺服器異常：");
+                        $("#MsgContent").text(res.errorMessage || "未知錯誤（請檢驗後端邏輯）。");
+                    }
+                },
+                error: function () {
+                    $("#MsgBlock").removeClass("alert-info").addClass("alert-danger");
+                    $("#MsgTitle").text("❌ 網路連線失敗：");
+                    $("#MsgContent").text("無法與 Web 伺服器建立握手連線，請檢查系統層級權限。");
+                }
+            });
+        });
+    });
+</script>

@@ -1,0 +1,700 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0040Model
+@{ ViewBag.Title = "3.1.4 工程登記冊";
+    Layout = "~/Views/Shared/_Layout2.cshtml"; }
+
+
+@section head{
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/themes/base/jquery-ui.theme.css" rel="stylesheet" />
+    <style>
+        .pagination {
+            margin: 0;
+        }
+
+        .ui-dialog {
+            z-index: 4000;
+        }
+    </style>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            3.1.4 工程登記冊
+            <small></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="active">
+                <i class="fa fa-file"></i>
+                <a href="@Url.Content("~/")TDE0040">3.1.4 工程登記冊 </a>
+            </li>
+
+        </ol>
+    </div>
+</div>
+
+@using (Html.BeginForm("", "TDE0040", FormMethod.Post, new { id = "mainForm" }))
+{
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">查詢</div>
+        <table class="table table-bordered">
+
+
+            <tr>
+                <td>
+                    <div class="row">
+
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">工程編號</span>
+                                @Html.TextBoxFor(x => x.TD_CODE, new { @class = "form-control", form = "mainForm", placeholder = "工程編號" })
+
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">工程名稱</span>
+                                @Html.TextBoxFor(x => x.TD_NAME, new { @class = "form-control", form = "mainForm", placeholder = "工程名稱" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">案件類別</span>
+                                @Html.DropDownListFor(x => x.CATY_CODE, (SelectList)ViewBag.CATY_COD, "類型", new { @class = "form-control", form = "mainForm" })
+                            </div>
+                        </div>
+
+
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="row">
+
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">縣市別</span>
+                                @*@Html.DropDownListFor(x => x.CITY, (SelectList)ViewBag.cities, "縣市", new { @class = "form-control", form = "mainForm", id = "CITY", onchange = "GetTowns(this.value)" })*@
+                                @Html.DropDownList("city", (SelectList)ViewBag.cities, null, new { @class = "form-control", form = "mainForm", Onchange = "GetTowns(this.value)" })
+
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">鄉鎮別</span>
+                                @Html.DropDownListFor(x => x.TOWN, (SelectList)ViewBag.towns, "鄉鎮", new { @class = "form-control", form = "mainForm", id = "TOWN" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">辦理層級</span>
+                                @Html.DropDownListFor(x => x.IPJ_CODE, (SelectList)ViewBag.N_IPJ_CODE, "辦理層級", new { @class = "form-control", form = "mainForm" })
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="row">
+
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">執行狀況</span>
+                                <select name="TD_STAT_DESC" class="form-control">
+                                    <option value="">請選擇</option>
+                                    <option value="未發包" @(Model.TD_STAT_DESC == "未發包" ? "selected" : "")>未發包</option>
+                                    <option value="已發包" @(Model.TD_STAT_DESC == "已發包" ? "selected" : "")>已發包</option>
+                                    <option value="停工中" @(Model.TD_STAT_DESC == "停工中" ? "selected" : "")>停工中</option>
+                                    <option value="已開工施工中" @(Model.TD_STAT_DESC == "已開工施工中" ? "selected" : "")>已開工施工中</option>
+                                    <option value="已完工" @(Model.TD_STAT_DESC == "已完工" ? "selected" : "")>已完工</option>
+                                    <option value="尚未完成規劃設計" @(Model.TD_STAT_DESC == "尚未完成規劃設計" ? "selected" : "")>尚未完成規劃設計</option>
+                                    <option value="已完成規劃設計" @(Model.TD_STAT_DESC == "已完成規劃設計" ? "selected" : "")>已完成規劃設計</option>
+                                    <option value="尚未完成用地取得" @(Model.TD_STAT_DESC == "尚未完成用地取得" ? "selected" : "")>尚未完成用地取得</option>
+                                    <option value="已完成用地取得" @(Model.TD_STAT_DESC == "已完成用地取得" ? "selected" : "")>已完成用地取得</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">年度</span>
+                                @Html.DropDownList("SYR", (SelectList)ViewBag.SYRS, "請選擇", new { @class = "form-control", form = "mainForm", onchange = "GetPids(this.value)" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">計畫別</span>
+                                @Html.DropDownList("PID", (SelectList)ViewBag.PIDS, "請選擇", new { @class = "form-control", form = "mainForm" })
+
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    <div class="row">
+
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">下水道系統</span>
+                                <select name="SYS_ID_FG" class="form-control">
+                                    <option value="">請選擇</option>
+                                    <option value="Y" @(Model.SYS_ID_FG == "Y" ? "selected" : "")>已填寫</option>
+                                    <option value="N" @(Model.SYS_ID_FG == "N" ? "selected" : "")>尚未填寫</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">實施計畫</span>
+                                <select name="SYS_PJ_FG" class="form-control">
+                                    <option value="">請選擇</option>
+                                    <option value="Y" @(Model.SYS_PJ_FG == "Y" ? "selected" : "")>已填寫</option>
+                                    <option value="N" @(Model.SYS_PJ_FG == "N" ? "selected" : "")>尚未填寫</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary" type="submit" formaction="@Url.Action("Search", "TDE0040")">查詢</button>
+                            @*<button class="btn btn-primary" type="submit" formaction="@Url.Action("Test", "TDE0040")">測試</button>*@
+                            @*<button class="btn btn-success" value="Save">列印</button>*@
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+
+        </table>
+
+    </div>
+
+
+
+
+
+    if (Model.List1 != null)
+    {
+
+        @Html.PagedListPager(Model.List1, page => Url.Action("Search",
+            new
+                 {
+                PID = Model.PID,
+                TD_CODE = Model.TD_CODE,
+                TD_NAME = Model.TD_NAME,
+                CITY = Model.CITY,
+                TOWN = Model.TOWN,
+                CATY_CODE = Model.CATY_CODE,
+                IPJ_CODE = Model.IPJ_CODE,
+                TD_STAT_DESC = Model.TD_STAT_DESC,
+                SYR = Model.SYR,
+                SYS_ID_FG = Model.SYS_ID_FG,
+                SYS_PJ_FG = Model.SYS_PJ_FG,
+                page1 = page
+            }))
+        <div class="panel panel-primary">
+            <div class="panel-heading">查詢列表</div>
+            <div class="table" style="overflow-x: auto; height:120%;">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th nowrap></th>
+                            @*<th nowrap>年度</th>*@
+
+                            <th nowrap>工程編號</th>
+                            <th nowrap>工程名稱</th>
+                            <th nowrap>執行單位</th>
+                            <th nowrap>案件類別</th>
+                            <th nowrap>執行狀態</th>
+                            <th nowrap>下水道系統</th>
+
+                            <th nowrap>實施計畫</th>
+                            <th nowrap>分支計畫</th>
+                            @*<th nowrap>GIS圖資檢覈</th>*@
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (System.Data.DataRow c in Model.List1)
+                        {
+                            <tr>
+                                <td style="width:90px;">
+
+                                    <div class="btn-group" style="width:90px;">
+                                        <button type="button" class="btn btn-default">填報</button>
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a onclick="open1('@c["TD_CODE"]');">工程資料</a></li>
+                                            <li><a onclick="open2('@c["TD_CODE"]');">經費來源</a></li>
+                                            <li><a onclick="open3('@c["TD_CODE"]');">預算管制</a></li>
+                                            <li><a onclick="open4('@c["TD_CODE"]');">圖文管制</a></li>
+                                            <li><a onclick="open5('@c["TD_CODE"]');">進度管制</a></li>
+                                            <li><a onclick="open6('@c["TD_CODE"]');">施工資料</a></li>
+                                            <li><a onclick="open7('@c["TD_CODE"]');">查核缺失</a></li>
+                                            <li><a onclick="open8('@c["TD_CODE"]');">工程填報(雨)</a></li>
+                                            <li><a onclick="open9('@c["TD_CODE"]');">工程填報(污)</a></li>
+                                            @*<li role="separator" class="divider"></li>
+                                                <li><a href="#">Separated link</a></li>*@
+                                        </ul>
+                                    </div>
+                                    @*<button class="btn btn-default" name="action" type="button" onclick="Open_SYSInfo();">列印</button>*@
+
+
+                                    @*<button class="btn btn-danger" name="action" type="button" onclick="if(!confirm('確定刪除？')) { return false; } " value="Del">刪除</button>*@
+
+                                </td>
+
+                                @*<td style="width:90px;">@c["PID_SYR_ALL"]</td>*@
+                                <td nowrap>@c["TD_CODE"]</td>
+                                <td nowrap>@c["TD_NAME"]</td>
+                                <td nowrap>@c["ADV_DP_DESC"]</td>
+                                <td nowrap>@c["CATY_CODE_DESC"]</td>
+                                <td nowrap>@c["TD_STAT_DESC"]</td>
+                                <td nowrap>@c["SYS_NAME"]</td>
+                                <td nowrap>@c["PF_PJ_NAME"]</td>
+                                <td style="white-space: pre-line; min-width: 150px;">@c["PJ_NAME_ALL"]</td>
+                                @*<td nowrap>未匯入GN</td>*@
+
+                            </tr>
+                        }
+
+                        <!-- 可繼續複製其他列 -->
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    }
+
+
+
+
+    <div id="editDiv" title="編輯" style="padding:5px; color:#ffffff;">
+        <iframe id="editFrame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+
+    <div id="PAGE3_1_EDIT" title="編輯" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE3_1_EDITFrame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+
+    <div id="PAGE3_1_EDIT_C" title="編輯" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE3_1_EDITFrame_c" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+    <div id="PAGE3_1_EDIT_E" title="編輯" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE3_1_EDITFrame_e" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+    <div id="PAGE3_1_EDIT_F" title="編輯" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE3_1_EDITFrame_f" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+
+    <div id="PAGE2" title="經費來源" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE2Frame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+    <div id="PAGE2_1" title="年度經費" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE2_1Frame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+    <div id="PAGE2_1_1" title="預算分配" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE2_1_1Frame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+    <div id="PAGE2_1_2" title="中央款分配數" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE2_1_2Frame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+
+
+    <div id="PAGE2_2" title="保留款" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE2_2Frame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+
+
+    <div id="PAGE5" title="進度管制" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE5Frame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+    <div id="PAGE4" title="圖文管制" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE4Frame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+
+    <div id="PAGE6" title="施工資料" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE6Frame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+    <div id="PAGE6_2" title="估驗進度" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE6_2Frame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+    <div id="PAGE7" title="查核缺失" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE7Frame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+
+    <div id="PAGE8" title="工程填報(雨)" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE8Frame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+    <div id="PAGE9" title="工程填報(污)" style="padding:5px; color:#ffffff;">
+        <iframe id="PAGE9Frame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+    <!-- 編輯對話框 -->
+    <div id="PAGE5_2_Edit" title="編輯分月進度" style="padding: 5px; display: none;">
+        <iframe id="PAGE5_2_EditFrame" src="" style="width: 100%; height: 100%; border: 0px;"></iframe>
+    </div>
+
+
+
+
+}
+
+
+<script>
+        var h = $(window).height();
+        var w = $(window).width();
+
+        $(document).ready(function () {
+        // 1. 防呆回補：如果網頁重載後「縣市別」原本就有選定值，自動觸發鄉鎮連動
+            var initialCity = $("#city").val();
+            var savedTown = '@Model.TOWN';
+        if (initialCity) {
+            GetTowns(initialCity, savedTown);
+        }
+
+        // 2. 核心回補：如果網頁重載後「年度」有值，自動撈回該年度計畫清單，並強制 re-select 剛剛選的計畫
+        var initialSyr = $("#SYR").val();
+        var savedPid = '@Model.PID'; // 剛性自後端 Model 綁定取回查詢前的 PID 選定值
+
+        if (initialSyr) {
+            GetPids(initialSyr, savedPid);
+        }
+    });
+
+    // 縣市鄉鎮動態對應
+    function GetTowns(city, callbackTown) {
+        $("#TOWN").html("");
+        $.ajax({
+    url: '@Url.Content("~/")ASYNC/GetTowns',
+            method: 'post',
+  data: { "city": city },
+    success: function (d) {
+              var p = jQuery.parseJSON(d);
+   $("#TOWN").prepend("<option value=''>鄉鎮</option>");
+        for (i = 0; i < p.length; i++) {
+            // 🎯 比對當前生成的鄉鎮是否吻合重載前勾選的鄉鎮，是的話加上 selected
+            var isSelected = (callbackTown && p[i].TOWN == callbackTown) ? " selected" : "";
+  $("#TOWN").append("<option value='" + p[i].TOWN + "'>" + p[i].TOWN + "</option>");
+        }
+        // 🎯 雙重門禁防禦：強制鎖定選取狀態
+        if (callbackTown) {
+            $("#TOWN").val(callbackTown);
+        }
+   }
+        });
+    }
+
+    ActionDialog("editDiv",0.8, 0.9);
+    ActionDialog("PAGE3_1_EDIT", 0.75, 0.85);
+    ActionDialog("PAGE3_1_EDIT_C", 0.75, 0.85);
+    ActionDialog("PAGE3_1_EDIT_D", 0.75, 0.85);
+    ActionDialog("PAGE3_1_EDIT_E", 0.75, 0.85);
+    ActionDialog("PAGE3_1_EDIT_F", 0.75, 0.85);
+
+    ActionDialog("PAGE4", 0.8, 0.9);
+
+    ActionDialog("PAGE2", 0.8, 0.9);
+    ActionDialog("PAGE2_1_1", 0.75, 0.85);
+    ActionDialog("PAGE2_1_2", 0.75, 0.85);
+    ActionDialog("PAGE2_2", 0.75, 0.85);
+
+
+    ActionDialog("PAGE5", 0.8, 0.9);
+    ActionDialog("PAGE5_2_Edit", 0.75, 0.85);
+
+
+
+
+
+    ActionDialog("PAGE6", 0.8, 0.9);
+    ActionDialog("PAGE6_2", 0.85, 0.9);
+
+    ActionDialog("PAGE7", 0.8, 0.9);
+
+    ActionDialog("PAGE8", 0.8, 0.9);
+
+    ActionDialog("PAGE9", 0.8, 0.9);
+
+    function ActionDialog(id, wRatio, hRatio) {
+
+        // 防呆：如果沒給值或給了 NaN，就使用預設比例
+        wRatio = (typeof wRatio === "number" && !isNaN(wRatio)) ? wRatio : 0.8;
+        hRatio = (typeof hRatio === "number" && !isNaN(hRatio)) ? hRatio : 0.9;
+
+        $("#" + id).dialog({
+            autoOpen: false,
+            show: { duration: 1000 },
+            hide: { duration: 1000 },
+            maxWidth: w,
+            maxHeight: h,
+            width: w * wRatio,
+            height: h * hRatio,
+            modal: true
+        });
+    }
+
+    // 編輯分月進度
+function editMscd(id) {
+    $("#PAGE5_2_EditFrame").attr("src", "@Url.Action("PAGE5_2_Edit", "TDE0045")?ID=" + id);
+    $("#PAGE5_2_Edit").dialog("open");
+}
+
+// 關閉對話框並重新載入
+function closeEditDialog() {
+    $("#editDialog").dialog("close");
+    // 重新載入當前年度的資料
+    var syr = $('#syrSelect').val();
+    if (syr) {
+        //loadMscdBySyr(syr);
+        alert("重新載入 ");
+    } else {
+        location.reload();
+    }
+}
+
+
+    //page1
+    function open1(tdcode) {
+            $("#editFrame").attr("src", "@Url.Content("~/TDE0040/")PAGE1?TD_CODE="+tdcode);
+            $("#editDiv").dialog("open");
+        }
+
+    function close1() {
+
+         $("#editDiv").dialog("close");
+    }
+
+    //page2
+    function open2(tdcode) {
+        $("#PAGE2Frame").attr("src", "@Url.Content("~/TDE0042/")PAGE2?TD_CODE="+tdcode);
+        $("#PAGE2").dialog("open");
+    }
+
+    function close2() {
+
+        $("#PAGE2").dialog("close");
+    }
+
+    function open2_1_1(PID, TID, USR_ID, TD_CODE) {
+    $("#PAGE2_1_1Frame").attr("src", "@Url.Content("~/TDE0042/")PAGE2_1_1?PID=" + PID + "&TID=" + TID + "&USR_ID=" + USR_ID + "&TD_CODE=" + TD_CODE);
+  $("#PAGE2_1_1").dialog("open");
+    }
+
+    function close2_1_1() {
+     $("#PAGE2_1_1").dialog("close");
+    }
+
+    // 當 PAGE2_1_1 選取期別時，載入對應的 CTDMNDS 資料到 PAGE2_1_2
+    function onSeqNoSelected(TD_CODE, SEQ_NO, PID) {
+  console.log('onSeqNoSelected: TD_CODE=' + TD_CODE + ', SEQ_NO=' + SEQ_NO + ', PID=' + PID);
+        // 載入對應的月份分配資料到 PAGE2_1_2
+        $("#PAGE2_1_2Frame").attr("src", "@Url.Content("~/TDE0042/")PAGE2_1_2?TD_CODE=" + TD_CODE + "&SEQ_NO=" + SEQ_NO + "&PID=" + PID);
+    }
+
+    function open2_1_2(PID, TID, TD_CODE) {
+        $("#PAGE2_1_2Frame").attr("src", "@Url.Content("~/TDE0042/")PAGE2_1_2?PID=" + PID + "&TID=" + TID + "&TD_CODE=" + TD_CODE);
+        $("#PAGE2_1_2").dialog("open");
+    }
+
+    function close2_1_2() {
+        $("#PAGE2_1_2").dialog("close");
+    }
+
+    //page3
+    function open3(tdcode) {
+        $("#editFrame").attr("src", "@Url.Content("~/TDE0043/")PAGE3?TD_CODE="+tdcode);
+        $("#editDiv").dialog("open");
+    }
+
+    function close3() {
+         $("#editDiv").dialog("close");
+    }
+
+    function open3_1_Edit(tdcode, seq_no, rec_tp) {
+
+    $("#PAGE3_1_EDITFrame").attr("src", "@Url.Content("~/TDE0043")/PAGE3_1_EDIT?TD_CODE="+tdcode+"&SEQ_NO="+seq_no+"&REC_TP="+rec_tp);
+        $("#PAGE3_1_EDIT").dialog("open");
+
+    }
+
+    function close3_1_Edit() {
+        //$("#PAGE3_1_EDITFrame").dialog("close");
+        $("#PAGE3_1_EDIT").dialog("close");
+    }
+
+    function open3_1_Edit_c(tdcode, seq_no, rec_tp) {
+
+        $("#PAGE3_1_EDITFrame_c").attr("src", "@Url.Content("~/TDE0043")/PAGE3_1_EDIT_C?TD_CODE=" + tdcode + "&SEQ_NO=" + seq_no + "&REC_TP=" + rec_tp);
+        $("#PAGE3_1_EDIT_C").dialog("open");
+    }
+
+    function close3_1_Edit_c() {
+        $("#PAGE3_1_EDIT_C").dialog("close");
+    }
+
+    function open3_1_Edit_d(tdcode, seq_no, rec_tp) {
+
+        $("#PAGE3_1_EDITFrame_c").attr("src", "@Url.Content("~/TDE0043")/PAGE3_1_EDIT_D?TD_CODE=" + tdcode + "&SEQ_NO=" + seq_no + "&REC_TP=" + rec_tp);
+        $("#PAGE3_1_EDIT_C").dialog("open");
+    }
+
+    function close3_1_Edit_d() {
+        $("#PAGE3_1_EDIT_C").dialog("close");
+    }
+
+    function open3_1_Edit_e(tdcode, seq_no, rec_tp) {
+
+        $("#PAGE3_1_EDITFrame_e").attr("src", "@Url.Content("~/TDE0043")/PAGE3_1_EDIT_E?TD_CODE=" + tdcode + "&SEQ_NO=" + seq_no + "&REC_TP=" + rec_tp);
+        $("#PAGE3_1_EDIT_E").dialog("open");
+    }
+
+    function close3_1_Edit_e() {
+        $("#PAGE3_1_EDIT_E").dialog("close");
+    }
+
+    function open3_1_Edit_f(tdcode, seq_no, rec_tp) {
+
+        $("#PAGE3_1_EDITFrame_F").attr("src", "@Url.Content("~/TDE0043")/PAGE3_1_EDIT_F?TD_CODE=" + tdcode + "&SEQ_NO=" + seq_no + "&REC_TP=" + rec_tp);
+        $("#PAGE3_1_EDIT_F").dialog("open");
+    }
+
+    function close3_1_Edit_f() {
+        $("#PAGE3_1_EDIT_F").dialog("close");
+    }
+
+    //page4 - 圖文管制 (支援 PAGE6 和 PAGE6_2)
+    function open4(tdcode) {
+
+        $("#PAGE4Frame").attr("src", "@Url.Content("~/TDE0040/")PAGE4?TD_CODE=" + tdcode);
+        $("#PAGE4").dialog("open");
+    }
+
+    function close4() {
+        $("#PAGE4").dialog("close");
+    }
+
+    // page4_2 - 估驗進度
+  function open4_2(tdcode) {
+  $("#PAGE6_2Frame").attr("src", "@Url.Content("~/TDE0040/")PAGE6_2?TD_CODE=" + tdcode);
+      $("#PAGE6_2").dialog("open");
+    }
+
+    function close4_2() {
+        $("#PAGE6_2").dialog("close");
+    }
+
+    //page5
+    function open5(tdcode) {
+        $("#PAGE5Frame").attr("src", "@Url.Content("~/TDE0045/")PAGE5?TD_CODE="+tdcode);
+        $("#PAGE5").dialog("open");
+    }
+
+    function close5() {
+
+        $("#PAGE5").dialog("close");
+    }
+
+    //page6
+    function open6(tdcode) {
+        $("#editFrame").attr("src", "@Url.Content("~/TDE0046/")PAGE6?TD_CODE="+tdcode);
+        $("#editDiv").dialog("open");
+    }
+
+    function close6() {
+
+     $("#editDiv").dialog("close");
+    }
+
+    //page7
+    function open7(tdcode) {
+        $("#PAGE7Frame").attr("src", "@Url.Content("~/TDE0047/")PAGE7?TD_CODE="+tdcode);
+        $("#PAGE7").dialog("open");
+    }
+
+    function close7() {
+
+        $("#PAGE7").dialog("close");
+    }
+
+    //page8
+    function open8(tdcode) {
+        $("#PAGE8Frame").attr("src", "@Url.Content("~/TDE0048/")PAGE8?TD_CODE="+tdcode);
+        $("#PAGE8").dialog("open");
+    }
+    function close8() {
+        $("#PAGE8").dialog("close");
+    }
+
+    //page9
+    function open9(tdcode) {
+        $("#PAGE9Frame").attr("src", "@Url.Content("~/TDE0049/")PAGE9?TD_CODE="+tdcode);
+        $("#PAGE9").dialog("open");
+    }
+    function close9() {
+        $("#PAGE9").dialog("close");
+    }
+
+    // 年度計畫別動態對應
+    function GetPids(syr, callbackPid) {
+    // 1. 先清空目前的選項
+    $("#PID").html("<option value=''>請選擇</option>");
+
+    // 2. 如果沒有選年度，就不發送請求
+    if (!syr) return;
+
+    // 3. 發送 AJAX 請求抓取當年度計畫
+    $.ajax({
+        url: '@Url.Content("~/TDE0040")/GetPidsBySyr', // 呼叫後端 API
+        method: 'post',
+        data: { "syr": syr },
+        success: function (d) {
+            var p = jQuery.parseJSON(d);
+            for (var i = 0; i < p.length; i++) {
+                var isSelected = (callbackPid && p[i].PID == callbackPid) ? " selected" : "";
+                $("#PID").append("<option value='" + p[i].PID + "'" + isSelected + ">" + p[i].PJ_NAME + "</option>");
+            }
+            // 🎯 雙重門禁保禦：強制鎖定選取狀態
+            if (callbackPid) {
+                $("#PID").val(callbackPid);
+            }
+        },
+        error: function () {
+            alert("計畫資料載入失敗！");
+        }
+    });
+    }
+</script>

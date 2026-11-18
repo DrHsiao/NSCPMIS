@@ -1,0 +1,428 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJEModel
+@{ ViewBag.Title = "分支工作計劃維護 [1.1.1]";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            分支工作計劃維護
+            <small></small>
+            <br /><small>@Model.CurrentProjectName</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i>
+                <a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")PJE0010?pid=@Model.PID&EditPID=@Model.EditPID&page=@Model.page&ANPID=@Model.ANPID">工作計劃維護</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")PJE0010/Branch?pid=@Model.PID&EditPID=@Model.EditPID&page=@Model.page&ANPID=@Model.ANPID&branchPage=@Model.branchPage">分支工作計劃維護</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                編輯
+            </li>
+        </ol>
+    </div>
+</div>
+
+@using(Html.BeginForm("", "PJE0010", FormMethod.Post, new { id = "mainForm", data_toggle = "validator", role = "form" })) {
+
+
+
+
+    <button name="action" type="submit" value="BranchSave" id="BranchSave" class="btn btn-warning btn-lg">儲存</button>@*<button formnovalidate name="action" type="submit" onclick="" value="Branch" id="BranchBack" class="btn btn-secondary btn-lg">返回列表</button>*@
+
+    if(@Model.EditPID == 0) {
+        <button type="button" onclick="history.back();" class="btn btn-secondary btn-lg">返回列表</button>
+
+    } else {
+        <button name="action" type="submit" onclick="" value="Branch" id="BranchBack" class="btn btn-secondary btn-lg">返回列表</button>
+
+    }
+
+
+    
+
+    <input type="hidden" name="PID" id="PID" value="@Model.PID" />
+    <input type="hidden" name="EditPID" id="EditPID" value="@Model.EditPID" />
+    <input type="hidden" name="page" id="page" value="@Model.page" />
+    <input type="hidden" name="branchPage" id="branchPage" value="@Model.branchPage" />
+    <input type="hidden" name="ANPID" id="ANPID" value="@Model.ANPID" />
+
+
+
+
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="fname" class="col-form-label">起始年度</label>
+                <select readonly class="form-select" id="SYR" name="PJMFORM.SYR" placeholder="年度" value="@Model.PJMFORM.SYR">
+                    <option value="@Model.PJMFORM.SYR">@Model.PJMFORM.SYR</option>
+                </select>
+                <div class="help-block with-errors"></div>
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="lname" class="col-form-label">終止年度</label>
+                <select class="form-select" id="END_SYR" name="PJMFORM.END_SYR" value="@Model.PJMFORM.SYR">
+                    @{
+                        int syear, syearEnd;
+                        if(Model.PJMFORM_P == null) {
+                            syear = Convert.ToInt32(Model.PJMFORM.SYR);
+
+                            try {
+                                syearEnd = Convert.ToInt32(Model.PJMFORM.END_SYR);
+                            } catch {
+
+                                syearEnd = syear + 10;
+                            }
+                        } else {
+                            syear = Convert.ToInt32(Model.PJMFORM_P.SYR);
+
+                            try {
+                                syearEnd = Convert.ToInt32(Model.PJMFORM_P.END_SYR);
+                            } catch {
+                                syearEnd = syear + 10;
+                            }
+                        }
+
+
+                    }
+                    @for(int i = syear; i <= syearEnd; i++) {
+                        if(Model.PJMFORM.END_SYR == Convert.ToString(i)) {
+                            <option selected value="@i">@i</option>
+                        } else {
+                            <option value="@i">@i</option>
+                        }
+                    }
+                </select>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="form-group has-feedback">
+                <label for="inputTwitter" class="col-form-label">計畫名稱</label>
+                <div class="input-group">
+                    <span class="input-group-text">計畫名稱</span>
+                    <input type="text" class="form-control" id="PJ_NAME" name="PJMFORM.PJ_NAME" placeholder="名稱" value="@Model.PJMFORM.PJ_NAME" required>
+                </div>
+                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                <div class="help-block with-errors"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+
+
+            <div class="form-group has-feedback">
+                <label for="inputTwitter" class="col-form-label">分支計畫編號</label>
+                <div class="input-group">
+                    <span class="input-group-text">分支計畫編號</span>
+                    <input type="text" class="form-control" id="PJ_CODE" name="PJMFORM.PJ_CODE" placeholder="分支計畫編號" value="@Model.PJMFORM.PJ_CODE" required>
+                </div>
+                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                <div class="help-block with-errors"></div>
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <div class="form-group has-feedback">
+                <label for="inputTwitter" class="col-form-label">年度預算(元)</label>
+                <div class="input-group">
+                    <span class="input-group-text">年度預算(元)</span>
+                    <input type="text" class="form-control" id="PJ_FUND" pattern="^\d+(\.\d+)?$" name="PJMFORM.PJ_FUND" placeholder="年度預算" value="@Model.PJMFORM.PJ_FUND" required>
+                </div>
+                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                <div class="help-block with-errors"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-6">
+
+
+            <div class="form-group has-feedback">
+                <label for="inputTwitter" class="col-form-label">工作計畫編號</label>
+                <div class="input-group">
+                    <span class="input-group-text">工作計畫編號</span>
+                    <input type="text" readonly class="form-control" id="WK_CODE" name="PJMFORM.WK_CODE" placeholder="工作計畫編號" value="@Model.PJMFORM.WK_CODE" required>
+                </div>
+                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                <div class="help-block with-errors"></div>
+            </div>
+
+
+        </div>
+
+        <div class="col-md-6">
+            
+
+            <div class="form-group has-feedback">
+                <label for="SIP_W_CODE" class="col-form-label">工作計畫簡碼</label>
+                @Html.TextBoxFor(x => x.PJMFORM.SIP_W_CODE, new { @class = "form-control", form = "mainForm", placeholder = "工作計畫簡碼", @required = "required" })
+
+                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                <div class="help-block with-errors"></div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+    <div class="row">
+        <div class="col-md-6">
+
+
+            <div class="form-group has-feedback">
+                <label for="inputTwitter" class="col-form-label">會計計畫編號</label>
+                <div class="input-group">
+                    <span class="input-group-text">會計計畫編號</span>
+                    <input type="text" class="form-control" id="W_CODE_N" name="PJMFORM.W_CODE_N" placeholder="會計計畫編號" value="@Model.PJMFORM.W_CODE_N" required>
+                </div>
+                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                <div class="help-block with-errors"></div>
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="form-group has-feedback">
+                <label for="inputTwitter" class="col-form-label">經費來源代碼(公務預算:00000)</label>
+                <div class="input-group">
+                    <span class="input-group-text">經費來源代碼(公務預算:00000)</span>
+                    <input type="text" class="form-control" id="E_CODE_N" name="PJMFORM.E_CODE_N" placeholder="經費來源代碼(公務預算:00000)" value="@Model.PJMFORM.E_CODE_N" required>
+                </div>
+                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                <div class="help-block with-errors"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-md-6">
+
+            <div class="form-group has-feedback">
+                <label for="inputTwitter" class="col-form-label">
+                    保留款會計計畫編號
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">保留款會計計畫編號</span>
+                    <input type="text" class="form-control" id="W_CODE" name="PJMFORM.W_CODE" placeholder="保留款會計計畫編號" value="@Model.PJMFORM.W_CODE" required>
+                </div>
+                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                <div class="help-block with-errors"></div>
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="form-group has-feedback">
+                <label for="inputTwitter" class="col-form-label">
+                    保留款經費來源代碼(公務預算:00000)
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">保留款經費來源代碼(公務預算:00000)</span>
+                    <input type="text" class="form-control" id="E_CODE" name="PJMFORM.E_CODE" placeholder="保留款經費來源代碼(公務預算:00000)" value="@Model.PJMFORM.E_CODE" required>
+                </div>
+                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                <div class="help-block with-errors"></div>
+            </div>
+
+
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="FUND_CATY" class="col-form-label">經費類別</label>
+                @Html.DropDownListFor(x => x.PJMFORM.FUND_CATY, (SelectList)ViewBag.FUND_CATY, "請選擇", new { @class = "form-control map", form = "mainForm" })
+
+            </div>
+        </div>
+        <div class="col-md-6">
+
+            <div class="form-group has-feedback">
+                <label for="inputTwitter" class="col-form-label">
+                    計畫序號
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">計畫序號</span>
+                    <input type="number" min="0" class="form-control" id="GP_ORDER" name="PJMFORM.GP_ORDER" placeholder="計畫序號" value="@Model.PJMFORM.GP_ORDER" required>
+                </div>
+                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                <div class="help-block with-errors"></div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="CONT_DESC" class="col-form-label">辦理內容</label>
+                <input type="text" class="form-control" id="CONT_DESC" name="PJMFORM.CONT_DESC" value="@Model.PJMFORM.CONT_DESC">
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+
+
+            @{
+                SelectListItem item;
+                List<SelectListItem> options = new List<SelectListItem>();
+                item = new SelectListItem { Text = "請選擇", Value = "" };
+                options.Add(item);
+                item = new SelectListItem { Text = "雨水使用", Value = "雨水使用" };
+                options.Add(item);
+                item = new SelectListItem { Text = "污水使用", Value = "污水使用" };
+                options.Add(item);
+                item = new SelectListItem { Text = "再生水使用", Value = "再生水使用" };
+                options.Add(item);
+                item = new SelectListItem { Text = "其他使用", Value = "其他使用" };
+                options.Add(item);
+            }
+
+
+            <div class="form-group">
+                <label for="CONT_DESC" class="col-form-label">計畫種類</label>
+                @Html.DropDownListFor(x => x.PJMFORM.Water_Type, options, new { @class = "form-control", form = "mainForm" })
+
+            </div>
+
+
+
+
+        </div>
+
+    </div>
+
+
+    @*<div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="W_CODE" class="col-form-label">
+                        計畫種類
+                    </label>
+                    <select name="Water_Type" class="form-select">
+                        @if(Model.PJMFORM.Water_Type.Equals("雨水使用")) {<option selected value="雨水使用">雨水</option>} else {<option value="雨水使用">雨水</option>}
+                        @if(Model.PJMFORM.Water_Type.Equals("污水使用")) {<option selected value="污水使用">污水</option>          } else {<option value="污水使用">污水</option>}
+                        @if(Model.PJMFORM.Water_Type.Equals("再生水使用")) {<option selected value="再生水使用">再生水</option>       } else {<option value="再生水使用">再生水</option>}
+                        @if(Model.PJMFORM.Water_Type.Equals("其他使用")) {<option selected value="其他使用">其他</option>          } else {<option value="其他使用">其他</option>}
+
+                    </select>
+                </div>
+            </div>
+
+
+
+        </div>*@
+
+
+
+}
+
+
+
+<script>
+
+    $('form').on('submit', function (e) {
+        if ($(e.originalEvent.submitter).is('[formnovalidate]')) {
+            e.preventDefault(); // 停止預設的驗證行為
+            this.submit(); // 強制提交表單
+        }
+    });
+
+    //儲存按鍵
+
+
+    /*
+    $().ready(function () {
+        $("#mainForm").validate({
+
+            ignore: ".ignore"
+
+
+
+
+        });
+        // mainForm特殊用語
+        $("#mainForm").validate({
+            rules: {
+
+                PJ_FUND: {
+                    required: true,
+                    minlength: 2
+                },
+                E_CODE_N: {
+                    required: true,
+                    minlength: 2
+                },
+                WK_CODE: "required",//無特殊規則
+                SIP_W_CODE: "required",//無特殊規則
+
+            },
+            messages: {
+
+                PJ_FUND: {
+                    required: "請輸入金額",
+                    minlength: "最少2位數"
+                },
+                E_CODE_N: {
+                    required: "请請輸入金額",
+                    minlength: "最少2位數"
+                },
+
+            },
+
+            WK_CODE: "請輸入正確代碼",
+            SIP_W_CODE: "請輸入正確代碼",
+        })
+
+    })
+    */
+</script>
+
+
+<script src="~/Scripts/validator.min.js"></script>

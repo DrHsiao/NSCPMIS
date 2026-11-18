@@ -1,0 +1,208 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.SGEModel
+@{ ViewBag.Title = "中長程計畫維護";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+@section head{
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+
+
+}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            2.1.1中長程計畫維護
+            <small class="text-muted fs-6"></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-gauge"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")PJE0011">2.1.1中長程計畫維護</a>
+            </li>
+            <li class="breadcrumb-item active">
+                <i class="fa-solid fa-file"></i>
+                提案管理**
+            </li>
+        </ol>
+    </div>
+</div>
+
+
+@using(Html.BeginForm("", "SGE0000", FormMethod.Post, new { id = "mainForm" })) {
+
+
+
+    @Html.HiddenFor(x => x.page)
+    @Html.HiddenFor(x => x.PPID)
+
+
+
+
+    <div style="display:flex;width:100%">
+        <div style="width:50%; text-align:left;">
+            <table>
+                <tr>
+                    <td style="padding-left:5px;">
+                        <div class="input-group">
+                            <span class="input-group-text">提案批次</span>
+                            @Html.DropDownListFor(x => x.YRC, (SelectList)ViewBag.yrcs, "請選擇...", new { @class = "form-select", form = "mainForm" })
+                        </div>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+        <div style="width: 50%; text-align: right;">
+            @Html.PagedListPager(Model.List1, page => Url.Action("",
+                new {
+                    page = page,
+                    tab = Request.Params["tab"],
+                    ppid = @Model.PPID,
+                    yrc = @Model.YRC
+                }),
+                new PagedListRenderOptions {
+                    DisplayItemSliceAndTotal = true,
+                    DisplayPageCountAndCurrentLocation = true,
+                    DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                    DisplayLinkToIndividualPages = false,
+
+                    ItemSliceAndTotalFormat = "顯示第 {0} - {1}筆, 共{2}筆",
+                    PageCountAndCurrentLocationFormat = "第 {0}頁 / 共 {1}頁",
+                }
+            )
+        </div>
+    </div>
+
+
+    <br />
+
+    <div class="card with-nav-tabs border-primary">
+        <div class="card-header bg-primary text-white">
+            <ul class="nav nav-tabs">
+                @if(Request.Params["tab"] == null || Request.Params["tab"] == "1") {
+                    <li class="nav-item"><a href="@Url.Content("~/")PJE0011/ProposalManage?tab=1&ppid=@Model.PPID&yrc=@Model.YRC&page=@Model.page" class="nav-link active">提案中</a></li>
+                }
+                else {
+                    <li class="nav-item"><a href="@Url.Content("~/")PJE0011/ProposalManage?tab=1&ppid=@Model.PPID&yrc=@Model.YRC&page=@Model.page" class="nav-link">提案中</a></li>
+                }
+                @if(Request.Params["tab"] == "2") {
+                    <li class="nav-item"><a href="@Url.Content("~/")PJE0011/ProposalManage?tab=2&ppid=@Model.PPID&yrc=@Model.YRC&page=@Model.page" class="nav-link active">初審中</a></li>
+                }
+                else {
+                    <li class="nav-item"><a href="@Url.Content("~/")PJE0011/ProposalManage?tab=2&ppid=@Model.PPID&yrc=@Model.YRC&page=@Model.page" class="nav-link">初審中</a></li>
+                }
+                @if(Request.Params["tab"] == "3") {
+                    <li class="nav-item"><a href="@Url.Content("~/")PJE0011/ProposalManage?tab=3&ppid=@Model.PPID&yrc=@Model.YRC&page=@Model.page" class="nav-link active">複審中</a></li>
+                }
+                else {
+                    <li class="nav-item"><a href="@Url.Content("~/")PJE0011/ProposalManage?tab=3&ppid=@Model.PPID&yrc=@Model.YRC&page=@Model.page" class="nav-link">複審中</a></li>
+                }
+                @if(Request.Params["tab"] == "4") {
+                    <li class="nav-item"><a href="@Url.Content("~/")PJE0011/ProposalManage?tab=4&ppid=@Model.PPID&yrc=@Model.YRC&page=@Model.page" class="nav-link active">核定中</a></li>
+                }
+                else {
+                    <li class="nav-item"><a href="@Url.Content("~/")PJE0011/ProposalManage?tab=4&ppid=@Model.PPID&yrc=@Model.YRC&page=@Model.page" class="nav-link">核定中</a></li>
+                }
+                @if(Request.Params["tab"] == "5") {
+                    <li class="nav-item"><a href="@Url.Content("~/")PJE0011/ProposalManage?tab=5&ppid=@Model.PPID&yrc=@Model.YRC&page=@Model.page" class="nav-link active">已成案</a></li>
+                }
+                else {
+                    <li class="nav-item"><a href="@Url.Content("~/")PJE0011/ProposalManage?tab=5&ppid=@Model.PPID&yrc=@Model.YRC&page=@Model.page" class="nav-link">已成案</a></li>
+                }
+                @if(Request.Params["tab"] == "6") {
+                    <li class="nav-item"><a href="@Url.Content("~/")PJE0011/ProposalManage?tab=6&ppid=@Model.PPID&yrc=@Model.YRC&page=@Model.page" class="nav-link active">未過初審</a></li>
+                }
+                else {
+                    <li class="nav-item"><a href="@Url.Content("~/")PJE0011/ProposalManage?tab=6&ppid=@Model.PPID&yrc=@Model.YRC&page=@Model.page" class="nav-link">未過初審</a></li>
+                }
+                @if(Request.Params["tab"] == "7") {
+                    <li class="nav-item"><a href="@Url.Content("~/")PJE0011/ProposalManage?tab=7&ppid=@Model.PPID&yrc=@Model.YRC&page=@Model.page" class="nav-link active">未過複審</a></li>
+                }
+                else {
+                    <li class="nav-item"><a href="@Url.Content("~/")PJE0011/ProposalManage?tab=7&ppid=@Model.PPID&yrc=@Model.YRC&page=@Model.page" class="nav-link">未過複審</a></li>
+                }
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content">
+                <div class="tab-pane fade show" id="tab1">
+                    <button class="btn btn-primary">內容</button>
+                    <button class="btn btn-primary">送件</button>
+                </div>
+                <div class="tab-pane fade show" id="tab2">
+                    <button class="btn btn-primary">內容</button>
+                </div>
+                <div class="tab-pane fade show" id="tab3">
+                    <button class="btn btn-primary">內容</button>
+                </div>
+                <div class="tab-pane fade show" id="tab4">
+                    <button class="btn btn-primary">內容</button>
+                </div>
+                <div class="tab-pane fade show" id="tab5">
+                    <button class="btn btn-primary">內容</button>
+                </div>
+                <div class="tab-pane fade show" id="tab6">
+                    <button class="btn btn-primary">內容</button>
+                </div>
+                <div class="tab-pane fade show" id="tab7">
+                    <button class="btn btn-primary">內容</button>
+                </div>
+            </div>
+        </div>
+        <table width="100%" class="table table-hover" style="overflow-x: auto; white-space: nowrap;">
+            <thead class="table-light">
+                <tr>
+                    <th>提案編號</th>
+                    <th>提案計畫名稱</th>
+                    <th>提案工程名稱</th>
+                    <th>年度</th>
+                    <th>縣市別</th>
+                    <th>鄉鎮別</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(System.Data.DataRow c in Model.List1) {
+                    <tr>
+                        <td>@c["AP_CODE"]</td>
+                        <td>@c["AP_PJ_NAME"]</td>
+                        <td>@c["AP_NAME"]</td>
+                        <td>@c["SYR"]</td>
+                        <td>@c["CITY"]</td>
+                        <td>@c["TOWN"]</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+
+
+    @Html.PagedListPager(Model.List1, page => Url.Action("",
+                new {
+                    page = page,
+                    tab = Request.Params["tab"],
+                    ppid = @Model.PPID,
+                    yrc = @Model.YRC
+                }))
+
+
+
+
+    <script>
+@if(Request.Params["tab"] == null) {
+
+    @Html.Raw("$('#tab1').addClass('active');")
+}
+else {
+    @Html.Raw("$('#tab" + Request.Params["tab"] + "').addClass('active');")
+}
+    </script>
+
+}
+

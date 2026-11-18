@@ -1,0 +1,141 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJE0020Model
+@{ ViewBag.Title = "分支計畫維護 [1.1.2]";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+@using(Html.BeginForm("", "PJE0020", FormMethod.Post, new { id = "mainForm" })) {
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            分支計畫維護 [1.1.2]
+            <small>月分配數</small>
+            <br /><small>@Model.CurrentProjectName</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")PJE0020">分支計畫維護 [1.1.2]</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                月分配數
+            </li>
+        </ol>
+    </div>
+</div>
+<button class="btn btn-success btn-lg" type="button" onclick="$('#tg').prepend($('#cp').html());">新增</button>
+<button class="btn btn-warning btn-lg" name="action" type="submit" value="MonthlySave">儲存</button>
+<a class="btn btn-secondary btn-lg" href="@Url.Content("~/")PJE0020?page=@Model.page">返回列表</a>
+@Html.HiddenFor(f => f.PID)
+@Html.HiddenFor(f => f.page)
+<table style="display:none;">
+    <tbody id="cp">
+        <tr>
+            <td>
+                <input type="hidden" name="PIDS" />
+                <input type="hidden" name="delKey" id="delKey_0" />
+                
+                @{int begin = Convert.ToInt32(Model.PJMFORM.SYR);}
+                @{int end = Convert.ToInt32(Model.PJMFORM.END_SYR);}
+                <select name="SYRS" class="form-select">
+                    @for(int i = begin; i <=end; i++) {
+                        <option value="@i">@i 年</option>
+                    }
+                </select>
+
+
+
+            </td>
+            <td><input type="text" class="form-control" name="M_01" /></td>
+            <td><input type="text" class="form-control" name="M_02" /></td>
+            <td><input type="text" class="form-control" name="M_03" /></td>
+            <td><input type="text" class="form-control" name="M_04" /></td>
+            <td><input type="text" class="form-control" name="M_05" /></td>
+            <td><input type="text" class="form-control" name="M_06" /></td>
+            <td><input type="text" class="form-control" name="M_07" /></td>
+            <td><input type="text" class="form-control" name="M_08" /></td>
+            <td><input type="text" class="form-control" name="M_09" /></td>
+            <td><input type="text" class="form-control" name="M_10" /></td>
+            <td><input type="text" class="form-control" name="M_11" /></td>
+            <td><input type="text" class="form-control" name="M_12" /></td>
+            <td>
+            </td>
+
+        </tr>
+        </tbody>
+</table>
+
+<br /><br />
+<div class="card border-primary mb-3">
+    <div class="card-header bg-primary text-white">月分配(元)</div>
+    <table width="100%" class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>年度</th>
+                <th>一月</th>
+                <th>二月</th>
+                <th>三月</th>
+                <th>四月</th>
+                <th>五月</th>
+                <th>六月</th>
+                <th>七月</th>
+                <th>八月</th>
+                <th>九月</th>
+                <th>十月</th>
+                <th>十一月</th>
+                <th>十二月</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="tg">
+            @{
+                System.Data.DataTable list = ViewBag.list;
+            }
+
+            @foreach(System.Data.DataRow c in list.Rows) {
+                <tr onclick="del('@c["SYR"]')">
+                    <td>
+                        <input type="hidden" name="PIDS" value="@c["PID"]" />
+                        <input type="hidden" name="delKey" id="delKey_@c["SYR"]" />
+
+
+
+
+
+
+                        <input type="text" readonly class="form-control" name="SYRS" value="@c["SYR"]" />
+                    </td>
+                    <td><input type="text" class="form-control" name="M_01" value="@c["M_01"]" /></td>
+                    <td><input type="text" class="form-control" name="M_02" value="@c["M_02"]" /></td>
+                    <td><input type="text" class="form-control" name="M_03" value="@c["M_03"]" /></td>
+                    <td><input type="text" class="form-control" name="M_04" value="@c["M_04"]" /></td>
+                    <td><input type="text" class="form-control" name="M_05" value="@c["M_05"]" /></td>
+                    <td><input type="text" class="form-control" name="M_06" value="@c["M_06"]" /></td>
+                    <td><input type="text" class="form-control" name="M_07" value="@c["M_07"]" /></td>
+                    <td><input type="text" class="form-control" name="M_08" value="@c["M_08"]" /></td>
+                    <td><input type="text" class="form-control" name="M_09" value="@c["M_09"]" /></td>
+                    <td><input type="text" class="form-control" name="M_10" value="@c["M_10"]" /></td>
+                    <td><input type="text" class="form-control" name="M_11" value="@c["M_11"]" /></td>
+                    <td><input type="text" class="form-control" name="M_12" value="@c["M_12"]" /></td>
+                    <td>
+                        <button class="btn btn-danger" name="action" type="submit" onClick="del('@c["SYR"]'); return (confirm('確定刪除?')); void ('')" value="MonthlyDel">刪除</button>
+                    </td>
+
+                </tr>
+
+            }
+        </tbody>
+    </table>
+</div>
+
+
+}
+
+<script>
+    function del(id) {
+        $("#delKey_" + id).val("*");
+    }
+</script>

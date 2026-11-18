@@ -1,0 +1,297 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0051Model
+@{
+    ViewBag.Title = "工程進度監控";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 5px;
+        }
+        .table th, .table td {
+            white-space: nowrap;
+        }
+        .pagination {
+            margin: 10px 0;
+        }
+    </style>
+    <link href="~/Content/bs3-compat.css" rel="stylesheet" />
+</head>
+<body>
+    @{
+        int currentTab = Model.tab;
+        string pageName = "";
+        switch (currentTab)
+        {
+            case 1: pageName = "開/完工日填報不全"; break;
+            case 2: pageName = "進度未填(前月)"; break;
+            case 3: pageName = "進度異常(前月)"; break;
+            case 4: pageName = "工程相關經費未填"; break;
+            case 5: pageName = "連續三個月落後"; break;
+        }
+    }
+
+    <div class="card shadow-sm border-0 mb-4 h-100">
+        <div class="card-header bg-primary text-white fw-bold">@pageName</div>
+        <div class="card-body" style="overflow-x: auto;">
+
+            @* 頁籤1: 開/完工日填報不全 *@
+            @if (currentTab == 1)
+            {
+                if (Model.List_TDDCNYM != null && Model.List_TDDCNYM.Count > 0)
+                {
+                    @Html.PagedListPager(Model.List_TDDCNYM, page => Url.Action("Tab",
+                        new { tab = 1, TD_CODE = Model.TD_CODE, TD_NAME = Model.TD_NAME, CITY = Model.CITY, TOWN = Model.TOWN, page1 = page }))
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>工程編號</th>
+                                <th>工程名稱</th>
+                                <th>填報單位</th>
+                                <th>案件類別</th>
+                                <th>縣市別</th>
+                                <th>區別</th>
+                                <th>預定開工日</th>
+                                <th>實際開工日</th>
+                                <th>預定完工日</th>
+                                <th>實際完工日</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (System.Data.DataRow row in Model.List_TDDCNYM)
+                            {
+                                <tr>
+                                    <td>
+                                        @*<a href="@Url.Content("~/TDE0040/PAGE1")?TD_CODE=@row["S1_HLK"]" target="_top" class="btn btn-sm btn-info">檢視</a>*@
+                                        <button type="button" class="btn btn-sm btn-warning" onclick="top.openEditDialog('@row["TD_CODE"]');">編輯</button>
+                                    </td>
+                                    <td>@row["TD_CODE"]</td>
+                                    <td>@row["TD_NAME"]</td>
+                                    <td>@row["ADV_DP_DESC"]</td>
+                                    <td>@row["CATY_CODE_DESC"]</td>
+                                    <td>@row["TD_CITY"]</td>
+                                    <td>@row["ADM_DIST"]</td>
+                                    <td>@row["TK106_PDT"]</td>
+                                    <td>@row["TK106_RDT"]</td>
+                                    <td>@row["TK107_PDT"]</td>
+                                    <td>@row["TK107_RDT"]</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-info">目前無資料</div>
+                }
+            }
+
+            @* 頁籤2: 進度未填(前月) *@
+            @if (currentTab == 2)
+            {
+                if (Model.List_TDDCNSD != null && Model.List_TDDCNSD.Count > 0)
+                {
+                    @Html.PagedListPager(Model.List_TDDCNSD, page => Url.Action("Tab",
+                        new { tab = 2, TD_CODE = Model.TD_CODE, TD_NAME = Model.TD_NAME, CITY = Model.CITY, TOWN = Model.TOWN, page2 = page }))
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>工程編號</th>
+                                <th>工程名稱</th>
+                                <th>填報單位</th>
+                                <th>案件類別</th>
+                                <th>縣市別</th>
+                                <th>區別</th>
+                                <th>預定進度</th>
+                                <th>實際進度</th>
+                                <th>辦理情形</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (System.Data.DataRow row in Model.List_TDDCNSD)
+                            {
+                                <tr>
+                                    <td>
+                                        @*<a href="@Url.Content("~/TDE0040/PAGE1")?TD_CODE=@row["S1_HLK"]" target="_top" class="btn btn-sm btn-info">檢視</a>*@
+                                        <button type="button" class="btn btn-sm btn-warning" onclick="top.openEditDialog2('@row["TD_CODE"]');">編輯</button>
+                                    </td>
+                                    <td>@row["TD_CODE"]</td>
+                                    <td>@row["TD_NAME"]</td>
+                                    <td>@row["ADV_DP_DESC"]</td>
+                                    <td>@row["CATY_CODE_DESC"]</td>
+                                    <td>@row["TD_CITY"]</td>
+                                    <td>@row["ADM_DIST"]</td>
+                                    <td>@row["PRE_SCHD"]</td>
+                                    <td>@row["REL_SCHD"]</td>
+                                    <td>@row["EXECT_DESC"]</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-info">目前無資料</div>
+                }
+            }
+
+            @* 頁籤3: 進度異常(前月) *@
+            @if (currentTab == 3)
+            {
+                if (Model.List_TDDCN != null && Model.List_TDDCN.Count > 0)
+                {
+                    @Html.PagedListPager(Model.List_TDDCN, page => Url.Action("Tab",
+                        new { tab = 3, TD_CODE = Model.TD_CODE, TD_NAME = Model.TD_NAME, CITY = Model.CITY, TOWN = Model.TOWN, page3 = page }))
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>工程編號</th>
+                                <th>工程名稱</th>
+                                <th>填報單位</th>
+                                <th>預定進度</th>
+                                <th>實際進度</th>
+                                <th>進度差異</th>
+                                <th>落後原因</th>
+                                <th>解決方式</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (System.Data.DataRow row in Model.List_TDDCN)
+                            {
+                                <tr>
+                                    <td>
+                                        @*<a href="@Url.Content("~/TDE0040/PAGE1")?TD_CODE=@row["S1_HLK"]" target="_top" class="btn btn-sm btn-info">檢視</a>*@
+                                        <button type="button" class="btn btn-sm btn-warning" onclick="top.openEditDialog3('@row["TD_CODE"]');">編輯</button>
+                                    </td>
+                                    <td>@row["TD_CODE"]</td>
+                                    <td>@row["TD_NAME"]</td>
+                                    <td>@row["ADV_DP_DESC"]</td>
+                                    <td>@row["PRE_SCHD"]</td>
+                                    <td>@row["REL_SCHD"]</td>
+                                    <td>@row["DIFF_SCHD"]</td>
+                                    <td>@row["DELAY_RESN"]</td>
+                                    <td>@row["RESLV_MTHD"]</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-info">目前無資料</div>
+                }
+            }
+
+            @* 頁籤4: 工程相關經費未填 *@
+            @if (currentTab == 4)
+            {
+                if (Model.List_TDDCNFD != null && Model.List_TDDCNFD.Count > 0)
+                {
+                    @Html.PagedListPager(Model.List_TDDCNFD, page => Url.Action("Tab",
+                        new { tab = 4, TD_CODE = Model.TD_CODE, TD_NAME = Model.TD_NAME, CITY = Model.CITY, TOWN = Model.TOWN, page4 = page }))
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>工程編號</th>
+                                <th>工程名稱</th>
+                                <th>填報單位</th>
+                                <th>執行狀態</th>
+                                <th>預算金額</th>
+                                <th>發包金額</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (System.Data.DataRow row in Model.List_TDDCNFD)
+                            {
+                                <tr>
+                                    <td>
+                                        @*<a href="@Url.Content("~/TDE0040/PAGE1")?TD_CODE=@row["S1_HLK"]" target="_top" class="btn btn-sm btn-info">檢視</a>*@
+                                        <button type="button" class="btn btn-sm btn-warning" onclick="top.openEditDialog4('@row["TD_CODE"]');">編輯</button>
+                                    </td>
+                                    <td>@row["TD_CODE"]</td>
+                                    <td>@row["TD_NAME"]</td>
+                                    <td>@row["ADV_DP_DESC"]</td>
+                                    <td>@row["TD_STAT_DESC"]</td>
+                                    <td style="text-align:right;">@(row["BUDGET_FUND"] != DBNull.Value ? string.Format("{0:N0}", row["BUDGET_FUND"]) : "")</td>
+                                    <td style="text-align:right;">@(row["CTRCT_FUND"] != DBNull.Value ? string.Format("{0:N0}", row["CTRCT_FUND"]) : "")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-info">目前無資料</div>
+                }
+            }
+
+            @* 頁籤5: 連續三個月落後 *@
+            @if (currentTab == 5)
+            {
+                if (Model.List_TDDMSCD != null && Model.List_TDDMSCD.Count > 0)
+                {
+                    @Html.PagedListPager(Model.List_TDDMSCD, page => Url.Action("Tab",
+                        new { tab = 5, TD_CODE = Model.TD_CODE, TD_NAME = Model.TD_NAME, CITY = Model.CITY, TOWN = Model.TOWN, page5 = page }))
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>工程編號</th>
+                                <th>工程名稱</th>
+                                <th>填報單位</th>
+                                <th>預定進度</th>
+                                <th>實際進度</th>
+                                <th>進度差異</th>
+                                <th>落後原因</th>
+                                <th>解決方式</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (System.Data.DataRow row in Model.List_TDDMSCD)
+                            {
+                                <tr>
+                                    <td>
+                                        @*<a href="@Url.Content("~/TDE0040/PAGE1")?TD_CODE=@row["S1_HLK"]" target="_top" class="btn btn-sm btn-info">檢視</a>*@
+                                        <button type="button" class="btn btn-sm btn-warning" onclick="top.openEditDialog5('@row["TD_CODE"]');">編輯</button>
+                                    </td>
+                                    <td>@row["TD_CODE"]</td>
+                                    <td>@row["TD_NAME"]</td>
+                                    <td>@row["ADV_DP_DESC"]</td>
+                                    <td>@row["PRE_SCHD"]</td>
+                                    <td>@row["REL_SCHD"]</td>
+                                    <td>@row["DIFF_SCHD"]</td>
+                                    <td>@row["DELAY_RESN"]</td>
+                                    <td>@row["RESLV_MTHD"]</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-info">目前無資料</div>
+                }
+            }
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

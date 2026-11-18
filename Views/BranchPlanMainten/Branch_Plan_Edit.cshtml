@@ -1,0 +1,393 @@
+﻿@model WCals.ViewModels.NewModelsCMEPMSModels.PJMFORM
+@{
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<div class="card mb-3"><div class="card-body">
+    <h1>分支計畫</h1>
+    <hr />
+    <div class="form-horizontal">
+
+        <div class="form-group">
+            <span class="col-form-label col-md-2">主計畫名稱</span>
+            <div class="col-md-3">
+                <input id="MASTER_PJ_NAME" value="@ViewBag.Master_Plan_Name" readonly type="text" class="form-control" />
+            </div>
+            <div class="col-md-7">
+                <a href="@Url.Action("Index","BranchPlanMainten")" class="btn btn-primary">返回</a>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="col-form-label col-md-2">主計畫年分</span>
+            <div class="col-md-3">
+                <input id="MASTER_SYR" value="@ViewBag.Master_Plan_SYR" readonly type="text" class="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="col-form-label col-md-2">分支計畫名稱</span>
+            <div class="col-md-3">
+                <input id="BRANCH_PLAN" value="@Model.PJ_NAME" readonly type="text" class="form-control" />
+            </div>
+
+        </div>
+
+        <input type="text" name="PID" value="@ViewBag.PID" id="PID" hidden />
+
+        <div class="form-group">
+            <span class="col-form-label col-md-2">分支計畫年度</span>
+            <div class="col-md-3">
+                <input id="BRANCH_PLAN_SYR" value="@Model.SYR" readonly type="text" class="form-control" />
+            </div>
+
+        </div>
+
+
+        <br />
+        <h1>計畫內容</h1>
+        <hr />
+        <form id="CRUD_FORM" action="@Url.Action("Branch_Plan_Edit_Function","BranchPlanMainten")">
+
+            <div class="form-group" hidden>
+                <span class="col-form-label col-md-2">主計畫名稱隱藏</span>
+                <div class="col-md-3">
+                    <input name="Master_Plan_Name"  value="@ViewBag.PJ_NAME" readonly type="text" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group" hidden>
+                <span class="col-form-label col-md-2">主計畫年分隱藏</span>
+                <div class="col-md-3">
+                    <input name="Master_Plan_SYR" value="@ViewBag.PJ_SYR" readonly type="text" class="form-control" />
+                </div>
+            </div>
+
+            <input type="text" name="PID" value="@ViewBag.PID" id="PID" hidden />
+
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫年度</span>
+                <div class="col-md-3">
+                    <input id="SYR_STATUS" name="SYR" value="@Model.SYR" type="text" class="form-control" required/>
+                </div>
+                <div class="col-md-7">
+                    <input type="submit" value="存檔" class="btn btn-secondary" />
+                    <a href="@Url.Action("Index","BranchPlanMainten")" class="btn btn-primary">返回</a>
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫名稱</span>
+                <div class="col-md-3">
+                    <input id="PJ_NAME" name="PJ_NAME" value="@Model.PJ_NAME" type="text" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">工作計畫編號</span>
+                <div class="col-md-3">
+                    <input id="WK_CODE" name="WK_CODE" readonly type="text" value="@Model.WK_CODE" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">工作計畫簡碼</span>
+                <div class="col-md-3">
+                    <input id="SIP_W_CODE" name="SIP_W_CODE" type="text" value="@Model.SIP_W_CODE" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">分支計畫編號</span>
+                <div class="col-md-3">
+                    <input id="PJ_CODE" name="PJ_CODE" type="text" value="@Model.PJ_CODE" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">年度預算(元)</span>
+                <div class="col-md-3">
+                    <input id="PJ_FUND" name="PJ_FUND" type="text" value="@Model.PJ_FUND" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">會計計畫編號</span>
+                <div class="col-md-3">
+                    <input id="W_CODE_N" name="W_CODE_N" type="text" value="@Model.W_CODE_N" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">
+                    經費來源代碼<br />
+                    (公務預算:00000)
+                </span>
+                <div class="col-md-3">
+                    <input id="E_CODE_N" name="E_CODE_N" type="text" value="@Model.E_CODE_N" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">
+                    保留款<br />
+                    會計計畫編號
+                </span>
+                <div class="col-md-3">
+                    <input id="W_CODE" name="W_CODE" type="text" value="@Model.W_CODE" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">
+                    保留款<br />
+                    經費來源代碼<br />
+                    (公務預算:00000)
+                </span>
+                <div class="col-md-3">
+                    <input id="E_CODE" name="E_CODE" type="text" value="@Model.E_CODE" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經管單位</span>
+                <div class="col-md-3">
+                    <select id="ADV_DP_NAME" name="ADV_DP" class="form-select" required>
+                        @foreach (var item in ViewBag.DEPT)
+                        {
+                            <option @(item.DEPT_NAME == ViewBag.ADV_DP_NAME ? "selected" : "")>
+                                @item.DEPT_NAME
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經管人員</span>
+                <div class="col-md-3">
+                    <select id="ADV_UID_NAME" name="ADV_UID" class="form-select" required>
+
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經費類別</span>
+                <div class="col-md-3">
+                    <input id="FUND_CATY" name="FUND_CATY" type="text" value="@Model.FUND_CATY" class="form-control" required/>
+                </div>
+            </div>
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫序號</span>
+                <div class="col-md-3">
+                    <input id="GP_ORDER" name="GP_ORDER" type="text" value="@Model.GP_ORDER" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">主計畫種類</span>
+                <div class="col-md-3">
+                    @*<input id="Water_Type" name="Water_Type" value="@Model.Water_Type" type="text" class="form-control" />*@
+                    <select id="TYPE" name="Water_Type" class="form-select" required>
+                        <option @(Model.Water_Type == null ? "selected" : "") disabled>
+                            請選擇
+                        </option>
+                        <option @(Model.Water_Type == "雨水使用" ? "selected" : "")>
+                            雨水使用
+                        </option>
+                        <option @(Model.Water_Type == "污水使用" ? "selected" : "")>
+                            污水使用
+                        </option>
+                        <option @(Model.Water_Type == "營管使用" ? "selected" : "")>
+                            營管使用
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">辦理內容概述</span>
+                <div class="col-md-3">
+                    <input id="CONT_DESC" name="CONT_DESC" type="text" value="@Model.CONT_DESC" class="form-control" required/>
+                </div>
+            </div>
+        </form>
+
+        <div class="form-group">
+            <span class="col-form-label col-md-2"></span>
+            <div class="col-md-3">
+            </div>
+        </div>
+
+    </div>
+
+</div></div>
+
+
+<script>
+    $(function () {
+        $("#P").change(function () {
+            var selectPJ_NAME = $(this).val();
+            var PID = $("#PID").val();
+            $.ajax({
+                url: '@Url.Action("Choose_Branch_PJ_NAME", "WorkPlanMainten")',
+                type: 'post',
+                //cache: false,
+                //async: false,
+                data: { PJ_NAME: selectPJ_NAME, PID: PID },
+                success: function (data1) {
+                    var data = JSON.parse(data1);
+                    $("#SYR").empty();
+                    $("#SYR").append($('<option value="" disabled selected ></option>').val('').text('請選擇'));
+                    $.each(data, function (i, item) {
+                        $("#SYR").append($('<option></option>').val(item.SYR).text(item.SYR));
+                    })
+                }
+            })
+        })
+    })
+</script>
+
+<script>
+    $(function () {
+        $("#SYR").change(function () {
+            var selectSYR = $(this).val();
+            var selectPJ_NAME = $("#P").val();
+            $.ajax({
+                url: '@Url.Action("Choose_Branch_SYR", "WorkPlanMainten")',
+                type: 'post',
+                //async: false,
+                //cache: false,
+                data: { PJ_NAME: selectPJ_NAME, SYR: selectSYR },
+                success: function (data1) {
+                    var data = JSON.parse(data1);
+                    $("#SYR_STATUS").empty();
+                    $("#SYR_STATUS").val(data.SYR);
+                    $("#PJ_NAME").empty();
+                    $("#PJ_NAME").val(data.PJ_NAME);
+                    $("#WK_CODE").empty();
+                    $("#WK_CODE").val(data.WK_CODE);
+                    $("#SIP_W_CODE").empty();
+                    $("#SIP_W_CODE").val(data.SIP_W_CODE);
+                    $("#PJ_CODE").empty();
+                    $("#PJ_CODE").val(data.PJ_CODE);
+                    $("#PJ_FUND").empty();
+                    $("#PJ_FUND").val(data.PJ_FUND);
+                    $("#W_CODE_N").empty();
+                    $("#W_CODE_N").val(data.W_CODE_N);
+                    $("#E_CODE_N").empty();
+                    $("#E_CODE_N").val(data.E_CODE_N);
+                    $("#W_CODE").empty();
+                    $("#W_CODE").val(data.W_CODE);
+                    $("#E_CODE").empty();
+                    $("#E_CODE").val(data.E_CODE);
+                    $("#ADV_DP_NAME").empty();
+                    $("#ADV_DP_NAME").val(data.ADV_DP_NAME);
+                    $("#ADV_UID_NAME").empty();
+                    $("#ADV_UID_NAME").val(data.ADV_UID_NAME);
+                    $("#FUND_CATY").empty();
+                    $("#FUND_CATY").val(data.FUND_CATY);
+                    $("#GP_ORDER").empty();
+                    $("#GP_ORDER").val(data.GP_ORDER);
+                    $("#CONT_DESC").empty();
+                    $("#CONT_DESC").val(data.CONT_DESC);
+                    $("#Water_Type").empty();
+                    $("#Water_Type").val(data.Water_Type);
+                }
+            })
+        })
+    })
+</script>
+
+
+<script>
+    function Form_Return(action) {
+        if (action === 'Edit') {
+            document.getElementById('CRUD_FORM').onsubmit = function () {
+                return Edit();
+            };
+        }
+        else {
+            document.getElementById('CRUD_FORM').onsubmit = null;
+        }
+    };
+</script>
+
+
+<script>
+    function Edit() {
+        var inputPJ_NAME = document.getElementById('P').value;
+        var inputSYR = document.getElementById('SYR').value;
+        if (inputPJ_NAME.trim() === '' || inputSYR.trim() === '') {
+            alert('請先選擇分支計畫名稱及分支計畫年度!!');
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+</script>
+
+<script>
+    if ($("#ADV_DP_NAME").val() != "") {
+
+        var DEPT = $("#ADV_DP_NAME").val();
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Branch_Plan_DEPTNAME_AJAX", "WorkPlanMainten")',
+            data: { DEPT_NAME: DEPT },
+            success: function (data1) {
+                var data = JSON.parse(data1);
+                var DEPT_selected = '@ViewBag.APV_UID_NAME';
+                if (data.length > 0) {
+                    $('#ADV_UID_NAME').empty();
+                    $.each(data, function (i, item) {
+                        if (item.USER_NAME == DEPT_selected) {
+                            $('#ADV_UID_NAME').append($('<option selected></option>').val(item.USER_ID).text(item.USER_NAME));
+                        }
+                        else { 
+                            $('#ADV_UID_NAME').append($('<option></option>').val(item.USER_ID).text(item.USER_NAME));
+                        }
+                    })
+                }
+                else {
+                    $('#ADV_UID_NAME').empty();
+                    $('#ADV_UID_NAME').append('<option></option>').val("").text("----");
+                }
+            }
+        })
+    }
+    
+</script>
+
+
+<script>
+
+    $('#ADV_DP_NAME').change(function () {
+
+        var DEPT_NAME = $('#ADV_DP_NAME').val();
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Branch_Plan_DEPTNAME_AJAX", "WorkPlanMainten")',
+            data: { DEPT_NAME: DEPT_NAME },
+            success: function (data1) {
+                var data = JSON.parse(data1);
+                if (data.length > 0) {
+                    $('#ADV_UID_NAME').empty();
+                    $('#ADV_UID_NAME').append($('<option value="" selected disabled></option>').val('').text('請選擇'));
+                    $.each(data, function (i, item) {
+                        $('#ADV_UID_NAME').append($('<option></option>').val(item.USER_NAME).text(item.USER_NAME));
+                    })
+                }
+                else {
+                    $('#ADV_UID_NAME').empty();
+                    $('#ADV_UID_NAME').append($('<option></option>').val('').text('------'));
+                }
+            }
+        });
+    })
+</script>

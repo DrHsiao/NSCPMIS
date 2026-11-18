@@ -1,0 +1,139 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0040Model
+@{ ViewBag.Title = "工程填報(污)";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="~/Scripts/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="~/Content/themes/base/jquery-ui.theme.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-select.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Scripts/plugins/bootstrap-fileinput/icon.mini.css" crossorigin="anonymous">
+    <link href="~/Scripts/plugins/bootstrap-fileinput/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+    <style>
+      html, body {
+        height: 100%;
+          margin: 0;
+     padding: 0;
+        }
+
+        body {
+            padding: 5px;
+    box-sizing: border-box;
+      display: flex;
+       flex-direction: column;
+        }
+
+        #mainForm {
+      flex: 1;
+    display: flex;
+     flex-direction: column;
+        min-height: 0;
+        }
+
+            #mainForm > div {
+   flex: 1;
+           display: flex;
+         flex-direction: column;
+        min-height: 0;
+  }
+
+        .panel.with-nav-tabs {
+            flex: 1;
+            display: flex;
+         flex-direction: column;
+            min-height: 0;
+        margin-bottom: 0;
+        }
+
+  .panel-heading {
+            flex-shrink: 0;
+        }
+
+        .panel-body {
+    flex: 1;
+  display: flex;
+  flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+ padding: 0;
+  }
+
+   .tab-content {
+            flex: 1;
+         display: flex;
+   flex-direction: column;
+   min-height: 0;
+        }
+
+    .tab-pane {
+   flex: 1;
+      display: none;
+            min-height: 0;
+        }
+
+.tab-pane.active {
+            display: flex;
+                flex-direction: column;
+            }
+
+    .tab-pane iframe {
+  flex: 1;
+          width: 100%;
+   border: 0;
+        min-height: 0;
+            }
+    </style>
+</head>
+<body>
+    @using(Html.BeginForm("PAGE9", "TDE0049", FormMethod.Post, new { data_toggle = "validator", role = "form", id = "mainForm", enctype = "multipart/form-data" })) {
+
+        @Html.AntiForgeryToken()
+
+        <div>
+      <div class="panel with-nav-tabs panel-primary">
+<div class="panel-heading">
+  <ul class="nav nav-tabs">
+         <li id="li1" role="presentation" class="active"><a href="#tab1" aria-controls="tab1" role="tab" data-toggle="tab">管線工程</a></li>
+     <li id="li2" role="presentation" onclick="$('#t2').attr('src', '@Url.Content("~/TDE0049/")PAGE9_2?TD_CODE=@Model.TD_CODE');"><a href="#tab2" aria-controls="tab2" role="tab" data-toggle="tab">污水處理廠工程</a></li>
+         <li id="li3" role="presentation" onclick="$('#t3').attr('src','@Url.Content("~/TDE0049/")PAGE9_3?TD_CODE=@Model.TD_CODE');"><a href="#tab3" aria-controls="tab3" role="tab" data-toggle="tab">抽水站工程</a></li>
+  </ul>
+            </div>
+
+         <div class="panel-body">
+        <div class="tab-content">
+               <!-- Tab1 panes -->
+          <div class="tab-pane fade in active" id="tab1">
+    <iframe id="t1" src="PAGE9_1?TD_CODE=@Model.TD_CODE"></iframe>
+      </div>
+   <div class="tab-pane fade" id="tab2">
+             <iframe id="t2" src=""></iframe>
+   </div>
+              <div class="tab-pane fade" id="tab3">
+       <iframe id="t3" src=""></iframe>
+            </div>
+   </div>
+                </div>
+        </div>
+        </div>
+    }
+
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/fileinput.js"></script>
+    <script src="~/Scripts/plugins/bootstrap-fileinput/zh-TW.js"></script>
+    <script src="~/Scripts/bootstrap-select.js"></script>
+    <script src="~/Scripts/validator.min.js"></script>
+</body>
+</html>

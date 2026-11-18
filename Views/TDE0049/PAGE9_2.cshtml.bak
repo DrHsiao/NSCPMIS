@@ -1,0 +1,148 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0040Model
+@{ ViewBag.Title = "污水處理廠工程";
+    Layout = null;
+
+    // 取得資料
+ var data = ViewBag.Data as System.Data.DataRow;
+bool isNew = ViewBag.IsNew ?? true;
+
+  // 預設值
+    string defaultPSC2 = @"(1) 處理廠名稱：___
+(2) 設計處理量：___ CMD
+(3) 處理等級：___級處理
+(4) 處理流程：___
+(5) 工程總經費：___ 元。";
+
+    string defaultPE2 = @"後續可供用戶接管___戶，提升___污水系統用戶接管率___%，提升全縣(市)普及率___%。";
+
+    string defaultPPI2 = @"(1) 主辦機關：___縣（市）政府
+(2) 代辦機關：〈國土署下水道工程分署〉
+(3) 補助機關：內政部國土管理署
+(4) 設計監造單位：_____公司
+(5) 經費來源：（特別預算名稱）中央___元、地方___元。
+(6) 施工期程：__日曆天（工作天），___年___月___日開工，預計___年___月___日完工。";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="~/Scripts/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="~/Content/themes/base/jquery-ui.theme.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+ <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Scripts/plugins/bootstrap-fileinput/icon.mini.css" crossorigin="anonymous">
+    <link href="~/Scripts/plugins/bootstrap-fileinput/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+    <style>
+        .table-form th {
+     text-align: right;
+       vertical-align: middle !important;
+      white-space: nowrap;
+       background-color: #f5f7fa;
+        }
+
+        .table-form textarea {
+      resize: vertical;
+        }
+
+        .alert {
+   margin: 10px 0;
+        }
+
+     .status-bar {
+          background-color: #337ab7;
+ color: white;
+ padding: 8px 15px;
+       margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .status-bar .btn-group {
+            float: right;
+        }
+    </style>
+</head>
+<body style="padding: 10px;">
+    @if(TempData["Success"] != null) {
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  @TempData["Success"]
+        </div>
+}
+    @if(TempData["Error"] != null) {
+     <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            @TempData["Error"]
+        </div>
+    }
+    @if(ViewBag.TableError != null) {
+        <div class="alert alert-warning" role="alert">
+          @ViewBag.TableError
+     </div>
+    }
+
+    @using(Html.BeginForm("PAGE9_2_Save", "TDE0049", FormMethod.Post, new { data_toggle = "validator", role = "form", id = "mainForm", enctype = "multipart/form-data" })) {
+
+        @Html.AntiForgeryToken()
+     <input type="hidden" name="TD_CODE" value="@ViewBag.TD_CODE" />
+        <input type="hidden" name="IsNew" value="@isNew.ToString().ToLower()" />
+
+      <div class="status-bar">
+            <span><i class="glyphicon glyphicon-edit"></i> @(isNew ? "新增模式" : "修改狀態")</span>
+            <div class="btn-group">
+    <button type="submit" class="btn btn-warning btn-sm">
+      <i class="glyphicon glyphicon-floppy-disk"></i> 存檔
+    </button>
+ <button type="button" class="btn btn-default btn-sm" onclick="close9();">
+           <i class="glyphicon glyphicon-remove"></i> 取消
+       </button>
+  </div>
+        </div>
+
+        <div class="table-responsive">
+   <table class="table table-bordered table-condensed table-form">
+       <colgroup>
+  <col style="width:25%">
+      <col style="width:75%">
+        </colgroup>
+    <tbody>
+           <tr>
+              <th>
+            計畫範圍及內容：
+   </th>
+      <td>
+       <textarea class="form-control" name="P_S_C_2" rows="6">@(data != null && data["P_S_C_2"] != DBNull.Value ? data["P_S_C_2"].ToString() : defaultPSC2)</textarea>
+       </td>
+          </tr>
+
+                    <tr>
+                <th>
+     預期效益<br>
+              <small>（面積、人口或環境改善效益）：</small>
+          </th>
+           <td>
+              <textarea class="form-control" name="P_E_2" rows="3">@(data != null && data["P_E_2"] != DBNull.Value ? data["P_E_2"].ToString() : defaultPE2)</textarea>
+      </td>
+            </tr>
+
+  <tr>
+      <th>工程基本資訊：</th>
+          <td>
+    <textarea class="form-control" name="P_P_I_2" rows="7">@(data != null && data["P_P_I_2"] != DBNull.Value ? data["P_P_I_2"].ToString() : defaultPPI2)</textarea>
+                </td>
+                 </tr>
+    </tbody>
+    </table>
+        </div>
+    }
+
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script src="~/Scripts/validator.min.js"></script>
+</body>
+</html>

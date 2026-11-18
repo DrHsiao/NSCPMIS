@@ -1,0 +1,441 @@
+﻿@model WCals.ViewModels.NewModels.SUG0010Model
+@{
+    ViewBag.Title = "編輯建議案";
+    Layout = null;
+    bool isEdit = Model.SUG_ID > 0;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .btn-toolbar {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .dept-section, .file-section {
+            margin-top: 20px;
+        }
+        .ui-datepicker { z-index: 1050 !important; }
+        .dept-list table, .file-list table {
+            width: 100%;
+            font-size: 13px;
+        }
+        .dept-list table th, .file-list table th {
+            background: #eee;
+        }
+    </style>
+</head>
+<body>
+    <div id="saveMessage" class="alert alert-success" style="display:none; position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:9999;">
+        <i class="fa-solid fa-check"></i> 已儲存
+    </div>
+
+    <form id="editForm">
+        <input type="hidden" id="SUG_ID" name="SUG_ID" value="@Model.SUG_ID" />
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-primary text-white fw-bold"><i class="fa-solid fa-file-lines me-2"></i>基本資料</div>
+            <div class="card-body">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">交辦日期</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-regular fa-calendar"></i></span>
+                            <input type="text" id="INSTRUCT_DATE" name="INSTRUCT_DATE" class="form-control datepicker" autocomplete="off"
+                                   value="@(Model.INSTRUCT_DATE.HasValue ? Model.INSTRUCT_DATE.Value.ToString("yyyy/MM/dd") : "")" placeholder="yyyy/MM/dd" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">交辦人</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-user-check"></i></span>
+                            <input type="text" id="INSTRUCT_NAME" name="INSTRUCT_NAME" class="form-control"
+                                   value="@Model.INSTRUCT_NAME" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">建議日期</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-regular fa-calendar"></i></span>
+                            <input type="text" id="SUG_DATE" name="SUG_DATE" class="form-control datepicker" autocomplete="off"
+                                   value="@(Model.SUG_DATE.HasValue ? Model.SUG_DATE.Value.ToString("yyyy/MM/dd") : "")" placeholder="yyyy/MM/dd" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">建議人</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-regular fa-user"></i></span>
+                            <input type="text" id="SUG_NAME" name="SUG_NAME" class="form-control"
+                                   value="@Model.SUG_NAME" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">職稱</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-id-badge"></i></span>
+                            <input type="text" id="SUG_JOB" name="SUG_JOB" class="form-control"
+                                   value="@Model.SUG_JOB" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">建議內容</label>
+                    <textarea id="SUG_CONTENT" name="SUG_CONTENT" class="form-control" rows="5">@Model.SUG_CONTENT</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">關鍵字</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa-solid fa-tags"></i></span>
+                        <input type="text" id="KEYWORDS" name="KEYWORDS" class="form-control"
+                               value="@Model.KEYWORDS" placeholder="多個關鍵字請用逗號分隔" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mb-4">
+            <button type="button" class="btn btn-primary px-4 shadow-sm" onclick="saveData()"><i class="fa-regular fa-floppy-disk me-1"></i> 儲存</button>
+            <button type="button" class="btn btn-secondary px-4 shadow-sm" onclick="parent.closeDialogAndRefresh()"><i class="fa-solid fa-times me-1"></i> 關閉</button>
+        </div>
+
+        <!-- 承辦單位區塊 -->
+        <div class="card shadow-sm border-0 mb-4 dept-section">
+            <div class="card-header bg-success text-white fw-bold"><i class="fa-solid fa-sitemap me-2"></i>承辦單位</div>
+            <div class="card-body">
+                @if (!isEdit)
+                {
+                    <div class="alert alert-warning m-0"><i class="fa-solid fa-circle-exclamation me-2"></i>請先儲存基本資料後，才能新增承辦單位</div>
+                }
+                else
+                {
+                    <div class="row g-2 mb-3 align-items-center">
+                        <div class="col-md-4">
+                            <select id="deptLevel1" class="form-select" onchange="loadSubDepts(this.value)">
+                                <option value="">-- 選擇上層部門 --</option>
+                                @foreach (var item in (List<SelectListItem>)ViewBag.DeptLevel1)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="deptLevel2" class="form-select">
+                                <option value="">-- 選擇部門 --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-check pt-1">
+                                <input class="form-check-input" type="checkbox" id="isMainDept" />
+                                <label class="form-check-label fw-bold" for="isMainDept">主辦單位</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <button type="button" class="btn btn-success shadow-sm w-100" onclick="addDept()"><i class="fa-solid fa-plus me-1"></i> 新增</button>
+                        </div>
+                    </div>
+                }
+
+                @if (isEdit)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>部門名稱</th>
+                                    <th>類型</th>
+                                    <th>回覆狀態</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deptListBody">
+                                @if (Model.DetailList != null)
+                                {
+                                    foreach (System.Data.DataRow row in Model.DetailList.Rows)
+                                    {
+                                        bool isMain = row["MAIN_DP"] != DBNull.Value && Convert.ToBoolean(row["MAIN_DP"]);
+                                        bool hasReply = row["REPLY_CONTENT"] != DBNull.Value && !string.IsNullOrEmpty(row["REPLY_CONTENT"].ToString());
+                                        <tr>
+                                            <td>@row["DEPT_NAME"]</td>
+                                            <td>@Html.Raw(isMain ? "<span class='badge bg-primary shadow-sm'>主辦</span>" : "<span class='badge bg-success shadow-sm'>協辦</span>")</td>
+                                            <td>@Html.Raw(hasReply ? "<span class='badge bg-success shadow-sm'>已回覆</span>" : "<span class='badge bg-warning text-dark shadow-sm'>待回覆</span>")</td>
+                                            <td>
+                                                <button type="button" class="btn btn-outline-danger btn-sm"
+                                                        onclick="removeDept('@row["FROM_DP"]', '@row["TO_DP"]')">
+                                                    <i class="fa-solid fa-trash me-1"></i> 刪除
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- 附件區塊 -->
+        <div class="card shadow-sm border-0 mb-4 file-section">
+            <div class="card-header bg-info text-dark fw-bold"><i class="fa-solid fa-paperclip me-2"></i>附件管理</div>
+            <div class="card-body">
+                @if (!isEdit)
+                {
+                    <div class="alert alert-warning m-0"><i class="fa-solid fa-circle-exclamation me-2"></i>請先儲存基本資料後，才能上傳附件</div>
+                }
+                else
+                {
+                    <div class="row g-2 mb-3 mt-1">
+                        <div class="col-md-9">
+                            <input type="file" id="fileInput" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-info w-100 shadow-sm text-dark fw-bold" onclick="uploadFile()"><i class="fa-solid fa-cloud-arrow-up me-1"></i> 上傳</button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>檔案名稱</th>
+                                    <th width="150">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fileListBody">
+                                @if (Model.FileList != null)
+                                {
+                                    foreach (System.Data.DataRow row in Model.FileList.Rows)
+                                    {
+                                        <tr>
+                                            <td class="text-start">@row["F_PATH"]</td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="@Url.Action("DownloadFile", "SUG0010", new { SUG_ID = Model.SUG_ID, F_ID = row["F_ID"] })"
+                                                       class="btn btn-outline-info" target="_blank" title="下載">
+                                                        <i class="fa-solid fa-download"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-outline-danger"
+                                                            onclick="deleteFile('@row["F_ID"]')" title="刪除">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </form>
+
+    <script>
+        $(function () {
+            // 初始化日期選擇器 (jQuery UI)
+            $('.datepicker').datepicker({
+                dateFormat: 'yy/mm/dd',
+                changeMonth: true,
+                changeYear: true
+            });
+
+            // 檢查是否剛儲存完成
+            var urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('saved') === '1') {
+                $('#saveMessage').show().delay(3000).fadeOut();
+                // 通知父視窗重新整理列表
+                if (parent && parent.refreshCurrentTab) {
+                    parent.refreshCurrentTab();
+                }
+            }
+        });
+
+        // 儲存資料
+        function saveData() {
+            var data = {
+                SUG_ID: $('#SUG_ID').val(),
+                INSTRUCT_DATE: $('#INSTRUCT_DATE').val(),
+                INSTRUCT_NAME: $('#INSTRUCT_NAME').val(),
+                SUG_DATE: $('#SUG_DATE').val(),
+                SUG_JOB: $('#SUG_JOB').val(),
+                SUG_NAME: $('#SUG_NAME').val(),
+                SUG_CONTENT: $('#SUG_CONTENT').val(),
+                KEYWORDS: $('#KEYWORDS').val()
+            };
+
+            $.ajax({
+                url: '@Url.Action("Save", "SUG0010")',
+                type: 'POST',
+                data: data,
+                success: function (result) {
+                    if (result.success) {
+                        if ($('#SUG_ID').val() == '0' && result.SUG_ID > 0) {
+                            // 新增成功，跳轉到編輯模式
+                            window.location.href = '@Url.Action("Edit", "SUG0010")' + '?SUG_ID=' + result.SUG_ID + '&saved=1';
+                        } else {
+                            // 更新成功，重新整理頁面
+                            window.location.href = '@Url.Action("Edit", "SUG0010")' + '?SUG_ID=' + $('#SUG_ID').val() + '&saved=1';
+                        }
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('儲存失敗');
+                }
+            });
+        }
+
+        // 載入下層部門
+        function loadSubDepts(anDeptNo) {
+            $('#deptLevel2').html('<option value="">-- 選擇部門 --</option>');
+            if (!anDeptNo) return;
+
+            $.ajax({
+                url: '@Url.Action("GetSubDepts", "SUG0010")',
+                type: 'POST',
+                data: { AN_DEPT_NO: anDeptNo },
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        $('#deptLevel2').append('<option value="' + data[i].DEPT_NO + '">' + data[i].DEPT_NAME + '</option>');
+                    }
+                }
+            });
+        }
+
+        // 新增承辦單位
+        function addDept() {
+            var toDp = $('#deptLevel2').val();
+            if (!toDp) {
+                alert('請選擇部門');
+                return;
+            }
+
+            var data = {
+                SUG_ID: $('#SUG_ID').val(),
+                TO_DP: toDp,
+                MAIN_DP: $('#isMainDept').is(':checked')
+            };
+
+            $.ajax({
+                url: '@Url.Action("AddDept", "SUG0010")',
+                type: 'POST',
+                data: data,
+                success: function (result) {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('新增失敗');
+                }
+            });
+        }
+
+        // 刪除承辦單位
+        function removeDept(fromDp, toDp) {
+            if (!confirm('確定要刪除此承辦單位嗎？')) return;
+
+            $.ajax({
+                url: '@Url.Action("RemoveDept", "SUG0010")',
+                type: 'POST',
+                data: {
+                    SUG_ID: $('#SUG_ID').val(),
+                    FROM_DP: fromDp,
+                    TO_DP: toDp
+                },
+                success: function (result) {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('刪除失敗');
+                }
+            });
+        }
+
+        // 上傳附件
+        function uploadFile() {
+            var fileInput = document.getElementById('fileInput');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('請選擇檔案');
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('SUG_ID', $('#SUG_ID').val());
+            formData.append('file', fileInput.files[0]);
+
+            $.ajax({
+                url: '@Url.Action("UploadFile", "SUG0010")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('上傳失敗');
+                }
+            });
+        }
+
+        // 刪除附件
+        function deleteFile(fId) {
+            if (!confirm('確定要刪除此附件嗎？')) return;
+
+            $.ajax({
+                url: '@Url.Action("DeleteFile", "SUG0010")',
+                type: 'POST',
+                data: {
+                    SUG_ID: $('#SUG_ID').val(),
+                    F_ID: fId
+                },
+                success: function (result) {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('刪除失敗');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

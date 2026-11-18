@@ -1,0 +1,411 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0020Model
+@{ ViewBag.Title = "SGE0000EditAPMFORM";
+    Layout = "~/Views/Shared/_FLayout.cshtml";
+    //Layout = null;
+
+}
+@section head{
+
+    <style>
+        .tPh {
+            width: 100px;
+        }
+        .save-status {
+            /*font-size: 11px;
+            margin-top: 2px;
+            height: 14px;*/
+        }
+        .save-status.saving {
+            color: #f0ad4e;
+        }
+        .save-status.saved {
+            color: #5cb85c;
+        }
+        .save-status.error {
+            color: #d9534f;
+        }
+        .text-field-group {
+            width: 200px;
+        }
+        .text-field-group .form-control {
+            width: calc(100% - 34px);
+        }
+        /* 固定前3欄 */
+        .table-scroll-wrapper {
+            overflow-x: auto;
+            overflow-y: visible;
+            width: 100%;
+        }
+        .table-scroll-wrapper > table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: max-content;
+            min-width: 100%;
+        }
+        .sticky-col {
+            position: -webkit-sticky !important;
+            position: sticky !important;
+            z-index: 100;
+        }
+        .sticky-col-1 {
+            left: 0px;
+            min-width: 70px;
+            background-color: inherit;
+        }
+        .sticky-col-2 {
+            left: 70px;
+            min-width: 70px;
+            background-color: inherit;
+        }
+        .sticky-col-3 {
+            left: 140px;
+            min-width: 280px;
+            background-color: inherit;
+            box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2);
+        }
+        thead tr {
+            background-color: #f5f5f5;
+        }
+        thead .sticky-col {
+            background-color: #f5f5f5 !important;
+            z-index: 101;
+        }
+        tbody tr {
+            background-color: #fff;
+        }
+        tbody tr:nth-of-type(odd) {
+            background-color: #f9f9f9;
+        }
+        tbody tr:nth-of-type(odd) .sticky-col {
+            background-color: #f9f9f9 !important;
+        }
+        tbody tr:nth-of-type(even) .sticky-col {
+            background-color: #fff !important;
+        }
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        tbody tr:hover .sticky-col {
+            background-color: #f5f5f5 !important;
+        }
+    </style>
+
+}
+@using(Html.BeginForm("", "TDE0020/TAB1", FormMethod.Post, new { data_toggle = "validator", role = "form", id = "mainForm", enctype = "multipart/form-data" })) {
+
+    <input type="hidden" name="pid" value="@Model.pid" />
+    <input type="hidden" name="town" value="@Model.town" />
+    <input type="hidden" name="city" value="@Model.city" />
+    <input type="hidden" name="year" value="@Model.year" />
+    <input type="hidden" name="month" value="@Model.month" />
+    <input type="hidden" name="td_code" value="@Model.td_code" />
+    <input type="hidden" name="td_name" value="@Model.td_name" />
+    <input type="hidden" name="type" value="@Model.type" />
+
+    
+
+    <div class="table-scroll-wrapper">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th nowrap class="sticky-col sticky-col-1">縣市</th>
+                    <th nowrap class="sticky-col sticky-col-2">鄉鎮</th>
+                    <th nowrap class="sticky-col sticky-col-3">工程編號、名稱</th>
+                    <th nowrap>累計分配數</th>
+                    <th nowrap>實際支用數</th>
+                    <th nowrap>應付未付數</th>
+                    <th nowrap>結餘數</th>
+                    @{System.Data.DataTable cols = ViewBag.cols;}
+
+                    @foreach(System.Data.DataRow d in cols.Rows) {
+                        <th nowrap>預定@(d["IT_NAME"])</th>
+                        <th nowrap>實際@(d["IT_NAME"])</th>
+                    }
+                    <th nowrap>落後原因或辦理情況</th>
+                    <th nowrap>落後解決對策</th>
+                    <th nowrap>備註</th>
+                    <th nowrap>引用前月</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(System.Data.DataRow c in Model.List1) {
+                    <tr>
+                        <td nowrap class="sticky-col sticky-col-1">@c["CITY"]</td>
+                        <td nowrap class="sticky-col sticky-col-2">@c["TOWN"]</td>
+                        <td nowrap class="sticky-col sticky-col-3">
+                            <a href="#">@c["TD_NAME"]</a> @c["SYR"], @c["SMN"]<br />
+                            @c["TD_CODE"]
+                        </td>
+                        <td nowrap>@c["L_PLN_COST"]</td>
+                        <td nowrap>@c["L_REL_COST"]</td>
+                        <td nowrap>@c["L_UNPAY_COST"]</td>
+                        <td nowrap>@c["SAVE_FEE"]</td>
+                        @foreach(System.Data.DataRow d in cols.Rows) {
+
+                            try {
+                                { var a = @c[d["IT_CODE"] + "_REL_SDT"]; }
+
+                                <td>
+                                    <div class="input-group" style="width:130px;">
+                                        <input type="text" value="@c[d["IT_CODE"]+"_REL_SDT"]" class="form-control tPh dt dt-save"
+                                               data-td-code="@c["TD_CODE"]" data-syr="@Model.year" data-smn="@Model.month"
+                                               data-it-code="@d["IT_CODE"]" data-field="REL_SDT" />
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default  btn-save-dt" type="button" title="儲存"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="save-status"></div>
+                                </td>
+                                <td>
+                                    <div class="input-group" style="width:130px;">
+                                        <input type="text" value="@c[d["IT_CODE"]+"_REL_EDT"]" class="form-control tPh dt dt-save"
+                                               data-td-code="@c["TD_CODE"]" data-syr="@Model.year" data-smn="@Model.month"
+                                               data-it-code="@d["IT_CODE"]" data-field="REL_EDT" />
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default btn-save-dt" type="button" title="儲存"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="save-status"></div>
+                                </td>
+
+                            } catch {
+                                <td>
+                                    <div class="input-group" style="width:130px;">
+                                        <input type="text" value="" class="form-control tPh dt dt-save"
+                                               data-td-code="@c["TD_CODE"]" data-syr="@Model.year" data-smn="@Model.month"
+                                               data-it-code="@d["IT_CODE"]" data-field="REL_SDT" />
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default btn-save-dt" type="button" title="儲存"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="save-status"></div>
+                                </td>
+                                <td>
+                                    <div class="input-group" style="width:130px;">
+                                        <input type="text" value="" class="form-control tPh dt dt-save"
+                                               data-td-code="@c["TD_CODE"]" data-syr="@Model.year" data-smn="@Model.month"
+                                               data-it-code="@d["IT_CODE"]" data-field="REL_EDT" />
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default btn-save-dt" type="button" title="儲存"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="save-status"></div>
+                                </td>
+
+                            }
+                        }
+                        <td>
+                            <div class="input-group" style="width:130px;">
+                                <textarea class="form-control txt-save" rows="1" maxlength="200"
+                                          data-td-code="@c["TD_CODE"]" data-syr="@Model.year" data-smn="@Model.month"
+                                          data-field="DELAY_RESN">@c["DELAY_RESN"]</textarea>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default  btn-save-txt" type="button" title="儲存"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                </span>
+                            </div>
+                            <div class="save-status"></div>
+                        </td>
+                        <td>
+                            <div class="input-group" style="width:130px;">
+                                <textarea class="form-control txt-save" rows="1" maxlength="200"
+                                          data-td-code="@c["TD_CODE"]" data-syr="@Model.year" data-smn="@Model.month"
+                                          data-field="RESLV_MTHD">@c["RESLV_MTHD"]</textarea>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default btn-save-txt" type="button" title="儲存"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                </span>
+                            </div>
+                            <div class="save-status"></div>
+                        </td>
+                        <td>
+                            <div class="input-group" style="width:130px;">
+                                <textarea class="form-control txt-save" rows="1" maxlength="200"
+                                          data-td-code="@c["TD_CODE"]" data-syr="@Model.year" data-smn="@Model.month"
+                                          data-field="EXECT_DESC">@c["EXECT_DESC"]</textarea>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default btn-save-txt" type="button" title="儲存"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                </span>
+                            </div>
+                            <div class="save-status"></div>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-default btn-sm btn-copy-prev"
+                                    data-td-code="@c["TD_CODE"]" data-syr="@Model.year" data-smn="@Model.month"
+                                    data-type="@Model.type">引用前月</button>
+                            <div class="save-status"></div>
+                        </td>
+                    </tr>
+                }
+                <!-- 可繼續複製其他列 -->
+            </tbody>
+        </table>
+    </div>
+    <div text-align: right;" onclick="fIn();">
+        @Html.PagedListPager(Model.List1, page1 => Url.Action("TAB1",
+         new {
+             page = page1,
+             pid = Model.pid,
+             td_code=Model.td_code,
+             td_name=Model.td_name,
+             city = Model.city,
+             town = Model.town,
+             type = Model.type,
+             year=Model.year,
+             month=Model.month
+         }),
+         new PagedListRenderOptions {
+             DisplayItemSliceAndTotal = true,
+             DisplayPageCountAndCurrentLocation = true,
+             DisplayLinkToLastPage = PagedListDisplayMode.Never,
+             DisplayLinkToIndividualPages = true,
+
+             ItemSliceAndTotalFormat = "顯示第 {0} - {1}筆, 共{2}筆",
+             PageCountAndCurrentLocationFormat = "第 {0}頁 / 共 {1}頁",
+         }
+     )
+    </div>
+}
+<script>
+    window.parent.$("#loadingMask").fadeOut();
+    function fIn() {
+        window.parent.$("#loadingMask").fadeIn();
+    }
+
+    // 顯示儲存狀態
+    function showStatus($el, status, msg) {
+        var $status = $el.closest('td').find('.save-status');
+        $status.removeClass('saving saved error').addClass(status).text(msg);
+        if (status === 'saved') {
+            setTimeout(function () { $status.fadeOut(function () { $(this).text('').show(); }); }, 2000);
+        }
+    }
+
+    // 儲存日期欄位
+    function saveDateField($input) {
+        var data = {
+            td_code: $input.data('td-code'),
+            syr: $input.data('syr'),
+            smn: $input.data('smn'),
+            it_code: $input.data('it-code'),
+            field: $input.data('field'),
+            value: $input.val()
+        };
+
+        showStatus($input, 'saving', '儲存中...');
+
+        $.ajax({
+            url: '@Url.Content("~/TDE0020/SaveDateField")',
+            method: 'POST',
+            data: data,
+            success: function (res) {
+                if (res.success) {
+                    showStatus($input, 'saved', '已儲存');
+                } else {
+                    showStatus($input, 'error', res.message || '儲存失敗');
+                }
+            },
+            error: function () {
+                showStatus($input, 'error', '儲存失敗');
+            }
+        });
+    }
+
+    // 儲存文字欄位
+    function saveTextField($input) {
+        var data = {
+            td_code: $input.data('td-code'),
+            syr: $input.data('syr'),
+            smn: $input.data('smn'),
+            field: $input.data('field'),
+            value: $input.val()
+        };
+
+        showStatus($input, 'saving', '儲存中...');
+
+        $.ajax({
+            url: '@Url.Content("~/TDE0020/SaveTextField")',
+            method: 'POST',
+            data: data,
+            success: function (res) {
+                if (res.success) {
+                    showStatus($input, 'saved', '已儲存');
+                } else {
+                    showStatus($input, 'error', res.message || '儲存失敗');
+                }
+            },
+            error: function () {
+                showStatus($input, 'error', '儲存失敗');
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        // 民國年日期選擇器
+        $(".dt-save").datepickerTW({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: '68:168',
+            dateFormat: 'yymmdd'
+        });
+
+        // 日期欄位 - 點擊按鈕儲存
+        $(".btn-save-dt").on('click', function () {
+            var $input = $(this).closest('.input-group').find('.dt-save');
+            saveDateField($input);
+        });
+
+        // 文字欄位 - 點擊按鈕儲存
+        $(".btn-save-txt").on('click', function () {
+            var $input = $(this).closest('.input-group').find('.txt-save');
+            saveTextField($input);
+        });
+
+        // 引用前月
+        $(".btn-copy-prev").on('click', function () {
+            var $btn = $(this);
+            var $row = $btn.closest('tr');
+            var $status = $btn.closest('td').find('.save-status');
+            var data = {
+                td_code: $btn.data('td-code'),
+                syr: $btn.data('syr'),
+                smn: $btn.data('smn'),
+                type: $btn.data('type')
+            };
+
+            $status.removeClass('saving saved error').addClass('saving').text('載入中...');
+            $btn.prop('disabled', true);
+
+            $.ajax({
+                url: '@Url.Content("~/TDE0020/CopyFromPrevMonth")',
+                method: 'POST',
+                data: data,
+                success: function (res) {
+                    if (res.success) {
+                        // 更新文字欄位
+                        $row.find('.txt-save[data-field="DELAY_RESN"]').val(res.data.DELAY_RESN || '');
+                        $row.find('.txt-save[data-field="RESLV_MTHD"]').val(res.data.RESLV_MTHD || '');
+                        $row.find('.txt-save[data-field="EXECT_DESC"]').val(res.data.EXECT_DESC || '');
+
+                        // 更新日期欄位
+                        if (res.data.dateFields) {
+                            $.each(res.data.dateFields, function (itCode, fields) {
+                                $row.find('.dt-save[data-it-code="' + itCode + '"][data-field="REL_SDT"]').val(fields.REL_SDT || '');
+                                $row.find('.dt-save[data-it-code="' + itCode + '"][data-field="REL_EDT"]').val(fields.REL_EDT || '');
+                            });
+                        }
+
+                        $status.removeClass('saving').addClass('saved').text('已引用前月資料');
+                        setTimeout(function () { $status.fadeOut(function () { $(this).text('').show(); }); }, 2000);
+                    } else {
+                        $status.removeClass('saving').addClass('error').text(res.message || '引用失敗');
+                    }
+                    $btn.prop('disabled', false);
+                },
+                error: function () {
+                    $status.removeClass('saving').addClass('error').text('引用失敗');
+                    $btn.prop('disabled', false);
+                }
+            });
+        });
+    });
+</script>

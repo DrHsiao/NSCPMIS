@@ -1,0 +1,236 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<div class="card mb-3"><div class="card-body">
+    <div class="form-horizontal">
+        <form action="@Url.Action("branchPlan","WorkPlanMainten")">
+            <h1>主計畫</h1>
+            <hr />
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫名稱</span>
+                <div class="col-md-3">
+                    <select id="P" name="PJ_NAME" required="required" class="form-select">
+                        <option value="" disabled selected>請選擇</option>
+                        @foreach (var item in ViewBag.PJ_NAME)
+                        {
+                            <option>@item.PJ_NAME</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫年度區間</span>
+                <div class="col-md-3">
+                    <select id="SYR" name="PJ_SYR" required="required" class="form-select">
+                    </select>
+                </div>
+                <div class="col-md-7">
+                    <input type="submit" value="分支計畫維護" class="btn btn-danger" />
+                    @*<a href="@Url.Action("branchPlan","WorkPlanMainten", new {PJ_NAME =  , PJ_SYR = })" class="btn btn-danger">分支計畫維護</a>*@
+                </div>
+            </div>
+        </form>
+        <br />
+        <h1>主計畫內容</h1>
+        <hr />
+        <form id="CRUD_FORM" action="@Url.Action("CRUD_SORT","WorkPlanMainten")">
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">起始年度</span>
+                <div class="col-md-3">
+                    <input id="start_Year" name="SYR" readonly type="text" class="form-control" />
+                </div>
+                <div class="col-md-7">
+                    <input type="submit" name="CRUD" value="新增" class="btn btn-secondary" onclick="Form_Return('Create')"/>
+                    <input type="submit" name="CRUD" value="修改" class="btn btn-primary" onclick="Form_Return('Edit')" />
+                    <input type="submit" name="CRUD" value="刪除" class="btn btn-danger" onclick="Form_Return('Edit')"/>
+
+                    @*<a href="@Url.Action("create","WorkPlanMainten")" class="btn btn-secondary">新增</a>*@
+                    @*<a href="@Url.Action("edit","WorkPlanMainten")" class="btn btn-primary">修改</a>*@
+                    @*<a href="@Url.Action("delete","WorkPlanMainten")" class="btn btn-danger">刪除</a>*@
+
+                </div>
+            </div>
+
+            <div class="form-group" hidden>
+                <span class="col-form-label col-md-2">PID</span>
+                <div class="col-md-3">
+                    <input id="PID" name="PID" type="text" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">終止年度</span>
+                <div class="col-md-3">
+                    <input id="end_Year" name="End_SYR" readonly type="text" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫名稱</span>
+                <div class="col-md-3">
+                    <input id="PJ_NAME" name="PJ_NAME" readonly type="text" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">工作計畫編號</span>
+                <div class="col-md-3">
+                    <input id="WK_CODE" name="WK_CODE" readonly type="text" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">年度預算</span>
+                <div class="col-md-3">
+                    <input id="FUND" name="PJ_FUND" readonly type="text" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經管單位</span>
+                <div class="col-md-3">
+                    <input id="DEPT" name="ADV_DP_NAME" readonly type="text" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經管人員</span>
+                <div class="col-md-3">
+                    <input id="USER" name="APV_UID_NAME" readonly type="text" class="form-control" />
+                </div>
+            </div>
+
+            @*<div class="form-group">
+            <span class="col-form-label col-md-2">主計畫種類</span>
+            <div class="col-md-3">
+                <input id="TYPE" name="Water_Type" type="text" class="form-control" />
+            </div>
+        </div>*@
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經管單位 ID</span>
+                <div class="col-md-3">
+                    <input id="DEPT_ID" name="ADV_DP" readonly type="text" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經管人員 ID</span>
+                <div class="col-md-3">
+                    <input id="USER_ID" name="ADV_UID" readonly type="text" class="form-control" />
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</div></div>
+
+
+<script>
+    $(function () {
+        $("#P").change(function () {
+            var selectedValue = $(this).val();
+            $.ajax({
+                url: '@Url.Action("Choose_PJ_NAME", "WorkPlanMainten")',
+                type: 'post',
+                cache: false,
+                async: false,
+                data: { PJ_NAME: selectedValue },
+                success: function (data1) {
+                    var data = JSON.parse(data1);
+
+                    if (data.length > 0) {
+                        $('#SYR').empty();
+                        $('#SYR').append($('<option value="" disabled selected></option>').val('').text('請選擇'));
+                        $.each(data, function (i, item) {
+                            $('#SYR').append($('<option></option>').val(item.PJ_SYR).text(item.PJ_SYR));
+                        })
+                    }
+                    else {
+                        $('#SYR').empty();
+                        $('#SYR').append($('<option></option>').val('').text('-----'));
+                    }
+                }
+            })
+        })
+    })
+</script>
+
+<script>
+    $(function () {
+        $("#SYR").change(function () {
+            var selectedSYR = $(this).val();
+            var selectedPJ_NAME = $("#P").val();
+            $.ajax({
+                url: '@Url.Action("Choose_SYR", "WorkPlanMainten")',
+                type: 'post',
+                cache: false,
+                async: false,
+                data: { PJ_SYR: selectedSYR , PJ_NAME: selectedPJ_NAME},
+                success: function (data1) {
+                    var data = JSON.parse(data1);
+                    $("#start_Year").empty();
+                    $("#start_Year").val(data.SYR);
+                    $("#end_Year").empty();
+                    $("#end_Year").val(data.END_SYR);
+                    $("#PJ_NAME").empty();
+                    $("#PJ_NAME").val(data.PJ_NAME);
+                    $("#WK_CODE").empty();
+                    $("#WK_CODE").val(data.WK_CODE);
+                    $("#FUND").empty();
+                    $("#FUND").val(data.PJ_FUND);
+                    $("#DEPT").empty();
+                    $("#DEPT").val(data.ADV_DP_NAME);
+                    $("#USER").empty();
+                    $("#USER").val(data.ADV_UID_NAME);
+                    $("#DEPT_ID").empty();
+                    $("#DEPT_ID").val(data.ADV_DP);
+                    $("#USER_ID").empty();
+                    $("#USER_ID").val(data.ADV_UID);
+                    $("#PID").empty();
+                    $("#PID").val(data.PID);
+                }
+            })
+        })
+    })
+</script>
+
+
+
+<script>
+    function Form_Return(action) {
+        if (action === 'Edit')
+        {
+            document.getElementById('CRUD_FORM').onsubmit = function () {
+                return Edit();
+            };
+        }
+        else
+        {
+            document.getElementById('CRUD_FORM').onsubmit = null;
+        }
+    };
+</script>
+
+
+<script>
+    function Edit() {
+        var inputPJ_NAME = document.getElementById('P').value;
+        var inputSYR = document.getElementById('SYR').value;
+        if (inputPJ_NAME.trim() === '' || inputSYR.trim() === '' ) {
+            alert('請先選擇計畫名稱及計畫年度區間!!');
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+</script>
+
+

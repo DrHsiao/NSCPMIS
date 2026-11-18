@@ -1,0 +1,123 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.PJEModel
+@{ ViewBag.Title = "工作計劃維護 [1.1.1] ";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+@section head{
+
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    @*<link href="~/Content/themes/base/jquery-ui.theme.css" rel="stylesheet" />*@
+
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            工作計劃維護[1.1.1]
+            <small>工作計劃列表</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                工作計劃維護
+            </li>
+        </ol>
+    </div>
+</div>
+@using (Html.BeginForm("", "PJE0010", FormMethod.Post, new { id = "mainForm" }))
+{
+    <div style="display:flex;width:100%">
+        <div style="width:50%; text-align:left;">
+            <button class="btn btn-success btn-lg" name="action" type="submit" value="Add">新增計畫</button>
+        </div>
+        <div style="width: 50%; text-align: right;">
+            @Html.PagedListPager(Model.PJV_PJMFORM, page => Url.Action("Index", "PJE0010",
+         new
+              {
+             page = page
+         }),
+         new PagedListRenderOptions
+              {
+             DisplayItemSliceAndTotal = true,
+             DisplayPageCountAndCurrentLocation = true,
+             DisplayLinkToLastPage = PagedListDisplayMode.Never,
+             DisplayLinkToIndividualPages = false,
+
+             ItemSliceAndTotalFormat = "顯示第 {0} - {1}筆, 共{2}筆",
+             PageCountAndCurrentLocationFormat = "第 {0}頁 / 共 {1}頁",
+         }
+     )
+        </div>
+    </div>
+
+
+
+
+
+
+
+    @Html.HiddenFor(f => f.PID)
+    <input type="hidden" name="page" id="page" value="@Model.page" />
+    @Html.HiddenFor(f => f.ANPID, new { @id = "ANPID", @class = "form-control", @placeholder = "ANPID" })
+
+
+    <div class="card border-primary mb-3">
+        <div class="card-header bg-primary text-white">工作計劃列表</div>
+        <table class="table table-hover" style="display:block; overflow-x: auto; white-space: nowrap;">
+            <thead class="table-light">
+                <tr>
+                    <th>計畫年度</th>
+                    <th>計畫名稱</th>
+                    <th>工作計畫編號</th>
+                    <th>年度預算(元)</th>
+                    <th>經管單位</th>
+                    <th>經管人員</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.PJV_PJMFORM)
+                {
+                    <tr>
+                        <td>@c.PJ_SYR</td>
+                        <td width="100%">@c.PJ_NAME</td>
+                        <td>@c.WK_CODE</td>
+                        <td align="right">@String.Format("{0:#,##0.00}", c.PJ_FUND)</td>
+                        <td>@c.ADV_DP_NAME</td>
+                        <td>@c.ADV_UID_NAME</td>
+                        <td>
+                            <button class="btn btn-primary" name="action" type="submit" value="Edit" onclick="$('#PID').val('@c.PID')">修改</button>
+                            @*<button class="btn btn-danger" name="action" type="submit" value="Del" onClick="delCheck('@c.PID')">刪除</button>*@
+                            <button class="btn btn-danger" name="action" type="submit" value="Del" onclick="return delCheck('@c.PID')">刪除</button>
+                            <button class="btn btn-primary" name="action" type="submit" value="Branch" onclick="$('#PID').val('@c.PID');$('#ANPID').val('@c.PID')">分支計畫</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @Html.PagedListPager(Model.PJV_PJMFORM, page => Url.Action("Index", "PJE0010", new { page = page }))
+
+    <script>
+
+        $(window).on('load', function () {
+            $('#PID').val("");
+        });
+
+        function delCheck(pid) {
+
+            if (!confirm("確定要刪除這筆資料嗎 ?")) {
+                return false;
+            }
+
+            $('#PID').val(pid);
+
+            return true;
+        }
+
+    </script>
+}

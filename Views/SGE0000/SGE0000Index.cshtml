@@ -1,0 +1,220 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.SGEModel
+@{ ViewBag.Title = "2.2.1 提案作業";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml"; }
+
+@section head{
+
+    <link href="~/Content/bootstrap-nav-panel.css" rel="stylesheet" />
+    <style type="text/css">
+        .ui-dialog {
+            z-index: 4000;
+        }
+    </style>
+}
+
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            2.2.1 提案作業
+            <small class="text-muted fs-6"></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-gauge"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active">
+                <i class="fa-solid fa-file"></i>
+                2.2.1 提案作業
+            </li>
+        </ol>
+    </div>
+</div>
+@using(Html.BeginForm("", "SGE0000", FormMethod.Post, new { id = "mainForm" })) {
+    
+
+    @Html.HiddenFor(x => x.PPID)
+    @Html.HiddenFor(x => x.AP_STAT)
+    @Html.HiddenFor(x => x.YRC_ID)
+    @Html.HiddenFor(x => x.PJ_NAME)
+    @Html.HiddenFor(x => x.PSG_NAME)
+    <div class="card with-nav-tabs border-primary">
+        <div class="card-header bg-primary text-white">
+            <ul class="nav nav-tabs">
+                <li class="nav-item"><a href="#tab1" data-bs-toggle="tab" class="nav-link active">開放提案</a></li>
+                <li class="nav-item"><a href="#tab2" data-bs-toggle="tab" class="nav-link">停止提案</a></li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="tab1">
+                    @foreach(var c in Model.MainList) {
+                        <div class="card border-primary">
+                            <div class="card-body responsive-table-container">
+                                <table width="100%" class="table">
+
+                                    <tr>
+                                        <td>
+                                            <button class="btn btn-success" type="button" onclick="AddAPMFORM('@c["PPID"]', '@c["YRC_ID"]')">新增提案</button>
+                                            <h4>@c["SYR"] - @c["PJ_NAME"] <small class="text-muted fs-6">@c["PSG_NAME"], @c["USR_NAME"] @c["STAT_NO"]</small></h4>
+
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="999" onclick="$('#PJ_NAME').val('@c["PJ_NAME"]'),$('#PSG_NAME').val('@c["PSG_NAME"]')">
+                                            <button onClick="$('#YRC_ID').val('@c["YRC_ID"]'),$('#AP_STAT').val('-1'),$('#PPID').val('@c["PPID"]');" class="btn btn-secondary" name="action" value="ProposalDetailList"><span class="badge text-bg-light rounded-pill">@c["step1c"]</span> 提案中</button>
+                                            <button onClick="$('#YRC_ID').val('@c["YRC_ID"]'),$('#AP_STAT').val('00'),$('#PPID').val('@c["PPID"]');" class="btn btn-secondary" name="action" value="ProposalDetailList"><span class="badge text-bg-light rounded-pill">@c["step00c"]</span> 待收件</button>
+                                            <button onClick="$('#YRC_ID').val('@c["YRC_ID"]'),$('#AP_STAT').val('10'),$('#PPID').val('@c["PPID"]');" class="btn btn-secondary" name="action" value="ProposalDetailList"><span class="badge text-bg-light rounded-pill">@c["step10c"]</span> 初審中</button>
+                                            <button onClick="$('#YRC_ID').val('@c["YRC_ID"]'),$('#AP_STAT').val('15'),$('#PPID').val('@c["PPID"]');" class="btn btn-secondary" name="action" value="ProposalDetailList"><span class="badge text-bg-light rounded-pill">@c["step15c"]</span> 複審中</button>
+                                            <button onClick="$('#YRC_ID').val('@c["YRC_ID"]'),$('#AP_STAT').val('20'),$('#PPID').val('@c["PPID"]');" class="btn btn-secondary" name="action" value="ProposalDetailList"><span class="badge text-bg-light rounded-pill">@c["step20c"]</span> 核定中</button>
+                                            <button onClick="$('#YRC_ID').val('@c["YRC_ID"]'),$('#AP_STAT').val('90'),$('#PPID').val('@c["PPID"]');" class="btn btn-secondary" name="action" value="ProposalDetailList"><span class="badge text-bg-light rounded-pill">@c["stepzzc"]</span> 已成案</button>
+                                            <button onClick="$('#YRC_ID').val('@c["YRC_ID"]'),$('#AP_STAT').val('Z1'),$('#PPID').val('@c["PPID"]');" class="btn btn-secondary" name="action" value="ProposalDetailList"><span class="badge text-bg-light rounded-pill">@c["stepz1c"]</span> 未過初審</button>
+                                            <button onClick="$('#YRC_ID').val('@c["YRC_ID"]'),$('#AP_STAT').val('Z2'),$('#PPID').val('@c["PPID"]');" class="btn btn-secondary" name="action" value="ProposalDetailList"><span class="badge text-bg-light rounded-pill">@c["stepz2c"]</span> 未過複審</button>
+                                        </td>
+                                    </tr>
+
+
+                                </table>
+                               </div>
+                            </div>
+                            }
+                            @Html.PagedListPager(Model.MainList, page => Url.Action("",
+                                 new {
+                                     page = page
+                            }))
+                        </div>
+                <div class="tab-pane fade show" id="tab2">
+                       
+                    <div class="card">
+                        <table width="100%" class="table table-hover">
+                            <tbody>
+                                @foreach(var c in Model.List2) {
+                                    <tr>
+                                        <td class="label-default"></td>
+                                        <td><b>@c["PJ_NAME"]</b></td>
+                                        <td>@c["PSG_NAME"]</td>
+                                        <td>@c["SYR"]</td>
+                                        <td>@c["DEPT_NAME"]</td>
+                                        <td>@c["USR_NAME"]</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="999">
+                                            <button disabled class="btn btn-secondary" type="button"><span class="badge text-bg-light rounded-pill">@c["step00c"]</span> 提案中  </button>
+                                            <button disabled class="btn btn-secondary" type="button"><span class="badge text-bg-light rounded-pill">@c["step10c"]</span> 初審中  </button>
+                                            <button disabled class="btn btn-secondary" type="button"><span class="badge text-bg-light rounded-pill">@c["step15c"]</span> 複審中  </button>
+                                            <button disabled class="btn btn-secondary" type="button"><span class="badge text-bg-light rounded-pill">@c["step20c"]</span> 核定中  </button>
+                                            <button disabled class="btn btn-secondary" type="button"><span class="badge text-bg-light rounded-pill">@c["stepzzc"]</span> 已成案  </button>
+                                            <button disabled class="btn btn-secondary" type="button"><span class="badge text-bg-light rounded-pill">@c["stepz1c"]</span> 未過初審</button>
+                                            <button disabled class="btn btn-secondary" type="button"><span class="badge text-bg-light rounded-pill">@c["stepz2c"]</span> 未過複審</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+    <div id="editFrame" title="編輯-" style="padding:0px;">
+
+        <iframe id="editor" src="" style="border:0px;"></iframe>
+
+
+    </div>
+}
+
+<script>
+    var h = $(window).height();
+    var w = $(window).width();
+    $(function () {
+        
+        $("#dialog").dialog({
+
+            autoOpen: false,
+            show: {
+                duration: 1000
+            },
+            hide: {
+                duration: 1000
+            },
+            
+            width: w-200, // overcomes width:'auto' and maxWidth bug
+            
+            height: h,
+            modal: true,
+            fluid: true, //new option
+            resizable: true
+        });
+
+
+        $("#editFrame").dialog({
+            autoOpen: false,
+            show: {                
+                duration: 1000
+            },
+            hide: {
+                //effect: "explode",
+                //effect: "drop",
+                duration: 1000
+            },
+            
+            width: w-200, // overcomes width:'auto' and maxWidth bug
+            //maxWidth: 800,
+            height: h-100,
+            modal: true,
+            fluid: true, //new option
+            resizable: true
+        });
+
+
+
+    });
+    function AddAPMFORM(ppid, yrcid) {
+        $("#editor").width(w-200);
+        $("#editor").height(h-100);
+        //$("#PPID").val(ppid);
+        //$("#YRC_ID").val(yrcid);
+        //$("#editor").attr("src","@Url.Content("~/SGE0000/AddAPMFORM")?ppid="+ppid+"&yrcid="+yrcid );
+        $("#editor").attr("src", "@Url.Content("~/SGE0000/EditAPMFORM")?aid=0&ppid=" + ppid + "&yrcid=" + yrcid);
+        $("#editFrame").dialog("open");
+    }
+
+    $('#editFrame').on('dialogclose', function (event) {
+        location.reload();
+    });
+</script>
+
+
+
+@section scripts{
+
+    <script type="text/javascript" src="~/Scripts/jquery.datepick.js"></script>
+    <script type="text/javascript" src="~/Scripts/MyDatepickerJ.js"></script>
+
+
+}

@@ -1,0 +1,182 @@
+﻿@model WCals.ViewModels.NewModels.SMCNEWS
+
+@{
+    ViewBag.Title = "編輯公告內容";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+    var controllerName = this.ViewContext.RouteData.Values["controller"].ToString();
+    ViewBag.URL_PARENT_NAME = "公告列表[" + controllerName.Substring(4) + "]";
+
+}
+    <link href="~/Content/glyphicons.css" rel="stylesheet" />
+<link type="text/css" href="/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            編輯公告內容
+            <small>提供維護公告內容</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li>
+                <i class="fa-solid fa-dashboard"></i>
+                @Html.ActionLink((String)ViewBag.URL_PARENT_NAME, "Index")
+            </li>
+            <li class="active">
+                <i class="fa-solid fa-file"></i>
+                @Model.subject
+            </li>
+        </ol>
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(f => f.DID);
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <label>公告編號</label>
+                @Html.TextBoxFor(f => f.DID, new { @class = "form-control", @placeholder = "公告編號", @readonly = "readonly" })
+            </div>
+            <div class="form-group">
+                <label>公告主旨</label>
+                @Html.TextBoxFor(f => f.SUBJECT, new { @class = "form-control", @placeholder = "公告主旨", maxlength = "50" })
+            </div>
+            @*<div class="form-group">
+                    <label>內容描述</label>
+                    @Html.TextBoxFor(f => f.DESP, new { @class = "form-control", @placeholder = "內容描述", maxlength = "100" })
+                </div>*@
+            <div class="form-group">
+                <label>公告內容</label>
+                @Html.TextAreaFor(f => f.CONTENT, new { @class = "form-control", rows = "15", @placeholder = "公告內容", maxlength = "4000" })
+            </div>
+            @{
+                if ((Boolean)ViewData["MainDept"] == true)
+                {
+                    <div class="form-group">
+                        <label>公告對象</label>
+                        @Html.DropDownListFor(f => f.TO_DP, (SelectList)ViewBag.DEPT_NO, "全部單位", new { @class = "form-control" })
+                    </div>
+                }
+            }
+
+            <div class="form-group">
+                <label>開始日期</label>
+                @Html.EditorFor(f => f.START_DT,
+                   new
+                        {
+                            htmlAttributes = new
+                            {
+                       @class = "form-control",
+                                @placeholder = "開始日期",
+                                id = "dateFrom"
+                   }
+                        })
+            </div>
+
+            <div class="form-group">
+                <label>結束日期</label>
+                @Html.EditorFor(f => f.END_DT,
+                   new
+                        {
+                            htmlAttributes = new
+                            {
+                       @class = "form-control",
+                                @placeholder = "結束日期",
+                                id = "dateTo"
+                   }
+                        })
+            </div>
+            <div class="form-group">
+                <label>公告檔案</label>
+                @Html.TextBox("FileUpload1", Model.FILENAME, new { type = "file", @id = "FileUpload1" })
+                <p class="help-block">請選取檔案後, 再按下檔案上傳按鈕, 系統顯示檔案上傳成功即表示上傳成功</p>
+                <button type="button" id="btnPicUpload" class="btn btn-success">檔案上傳</button>
+                @Html.HiddenFor(f => f.FILENAME, new { id = "hfFileName" })
+                @Html.HiddenFor(f => f.DESP, new { id = "hfDesp" })
+                <br /><a id="hrefFileName" href="#">@Model.DESP</a>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">送出</button>
+                @Html.ActionLink("刪除", "Delete", new { id = Model.DID }, new { @class = "btn btn-danger", onclick = "return confirm('確定要刪除嗎?')" })
+                @Html.ActionLink("返回", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+    <!-- Moment JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+    <!-- Bootstrap Datetime Picker JavaScript -->
+    <script type="text/javascript" src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/ajaxfileupload.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#btnPicUpload").click(function () {
+                if ($("#FileUpload1").val() == '') {
+                    alert('請先選擇欲上傳的檔案');
+                } else {
+                     //這段是參數設定,而這裡我是用.ashx處理
+                    $.ajaxFileUpload({
+                        url: "@Url.Action("UploadFile")",
+                        secureuri: false,
+                        fileElementId: "FileUpload1",
+                        dataType: "JSON",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data, status) {
+                            var obj = JSON.parse(data);
+                            alert(obj.Msg);
+                            $("#hfFileName").val(obj.HashedFileName);
+                            $("#hrefFileName").html(obj.FileName);
+                            $("#hfDesp").val(obj.FileName);
+                        },
+                        error: function (data, status, e) {
+                            alert(e);
+                        }
+                    });
+                }
+            });
+        });
+
+
+        $(function () {
+            $("#hrefFileName").click(function (e) {
+                e.preventDefault();  //stop the browser from following
+                var hrefFileName = $("#hfFileName").val();
+                var fileName = $("#hfDesp").val();
+                window.location.href = '/WSMC0706/DownloadFile?hrefFileName=' + hrefFileName + '&fileName=' + encodeURIComponent(fileName);
+            });
+
+            $("#dateFrom").datetimepicker({
+                locale: 'zh-tw',
+                format: 'YYYY/MM/DD',
+                useCurrent: false,
+                widgetPositioning: {
+                    horizontal: 'left',
+                    vertical: 'bottom'
+                }
+            }).on("dp.change", function (e) {
+                $('#dateTo').data("DateTimePicker").minDate(e.date);
+            });
+
+            $("#dateTo").datetimepicker({
+                locale: 'zh-tw',
+                format: 'YYYY/MM/DD',
+                useCurrent: false,
+                widgetPositioning: {
+                    horizontal: 'left',
+                    vertical: 'bottom'
+                }
+            }).on("dp.change", function (e) {
+                $('#dateFrom').data("DateTimePicker").maxDate(e.date);
+            });
+        });
+
+    </script>
+
+}

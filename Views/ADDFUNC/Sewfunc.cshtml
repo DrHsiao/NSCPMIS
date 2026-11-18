@@ -1,0 +1,345 @@
+﻿@{
+    ViewBag.Title = "實支數匯入[汙水科]";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head{
+    <link rel="stylesheet" href="~/Content/views/report.css">
+}
+
+<!-- DataTables 核心樣式 -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
+
+<!-- DataTables 核心 JS -->
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+<!-- DataTables 固定表頭套件 -->
+<link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.4.0/css/fixedHeader.dataTables.min.css" />
+<script src="https://cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
+
+<style>
+
+    body {
+        overflow-y: auto;
+    }
+
+    .FixedContainer {
+        position: fixed;
+        top: 8%;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .upTable {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px;
+        width: 500px;
+        border-radius: 10px;
+        font-size: 18px
+    }
+
+    .downTable {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 650px;
+        width: 1800px;
+        border-radius: 10px;
+        border: 2px solid #808080;
+    }
+
+        .downTable table {
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+
+        .downTable th, .downTable td {
+            padding: 8px 12px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .downTable *, .downTable {
+            box-sizing: border-box;
+        }
+
+    div.dataTables_scrollBody {
+        overflow-x: scroll !important;
+    }
+
+    /*表格內容*/
+    #previewTable tbody td {
+        font-size: 12px;
+        padding: 8px 12px;
+        /*line-height: 1.2;*/
+    }
+</style>
+
+<body>
+    <div class="FixedContainer">
+
+        <!-- 上方區塊:範例檔案、檔案選擇、操作按鈕 -->
+        <div class="upTable">
+            <a id="downloadAll" class="btn btn-primary btn-sm active">範例下載</a>
+
+            <span class="btn btn-secondary btn-file">
+                <input type="file" id="excelFile" accept=".xlsx,.xls" />
+            </span>
+            <div>
+                <button id="previewBtn" class="btn btn-primary btn-sm">資料預覽</button>
+                <button id="uploadBtn" class="btn btn-primary btn-sm">資料上傳</button>
+                <span style="font-size:16px;">[匯入資料預覽如下]</span>
+            </div>
+        </div>
+
+        <!-- DataTable 預覽表格 -->
+        <div class="downTable">
+            <div style="height: 100%; width: 100%;">
+                <table id="previewTable" class="display nowrap" style="width:100%; font-size: 16px;"></table>
+            </div>
+        </div>
+
+        <!-- 上傳進度條 (預設隱藏) -->
+        <div id="uploadProgressContainer" style="display:none; width: 100%; margin-top:10px;">
+            <div class="progress">
+                <div id="uploadProgressBar"
+                     class="progress-bar progress-bar-striped progress-bar-animated"
+                     role="progressbar"
+                     style="width: 0%">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+<!-- SheetJS : 讀取 Excel(xlsx / xls) -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script>
+
+    /// 範例檔案下載
+    document.getElementById("downloadAll").addEventListener("click", function () {
+
+        function download(url) {
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        download("@Url.Content("~/Templates/實支數匯入範例檔案.xlsx")");
+        download("@Url.Content("~/Templates/實支數匯入範例格式說明.pptx")");
+    });
+
+    /// 進度條控制[模擬上傳進度] -> 實際進度由後端回應決定
+    /// ---------------------------------------------------------------------------------
+    function startProgressBar() {
+        const bar = document.getElementById("uploadProgressBar");
+        const container = document.getElementById("uploadProgressContainer");
+
+        bar.style.width = "0%";
+        container.style.display = "block";
+
+        let progress = 0;
+
+        window.progressInterval = setInterval(() => {
+            if (progress < 90) {
+                progress += Math.random() * 10;
+                bar.style.width = progress + "%";
+            }
+        }, 300);
+    }
+
+    function finishProgressBar() {
+        const bar = document.getElementById("uploadProgressBar");
+
+        clearInterval(window.progressInterval);
+
+        bar.style.width = "100%";
+
+        setTimeout(() => {
+            document.getElementById("uploadProgressContainer").style.display = "none";
+        }, 1000);
+    }
+    /// ---------------------------------------------------------------------------------
+
+    /// DataTable 預覽按鈕事件
+    document.getElementById("previewBtn").addEventListener("click", async () => {
+
+        const fileInput = document.getElementById("excelFile");
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert("請選擇 Excel 檔案");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        startProgressBar();
+
+        try {
+            const response = await fetch('@Url.Action("PreviewExcel", "ADDFUNC")', {
+                method: "POST",
+                body: formData
+            });
+
+            finishProgressBar();
+
+        if (!response.ok) throw new Error("上傳失敗");
+
+            const data = await response.json();
+            console.log("後端回傳：", data);
+
+            renderDataTable(data.data);
+
+        } catch (error) {
+            console.error("傳送錯誤：", error);
+            alert("Excel 上傳或解析失敗！");
+        }
+    });
+
+    /// 初始化 DataTable 建立
+    function renderDataTable(data) {
+
+        const table = $('#previewTable');
+
+        table.empty(); /// 清空舊資料
+
+        if (!data || data.length === 0) {
+            table.html("<tr><td>無資料</td></tr>");
+            return;
+        }
+
+        const headers = Object.keys(data[0]);
+
+        /// 產生表頭
+        const thead = $('<thead><tr></tr></thead>');
+        headers.forEach(h => {
+            thead.find('tr').append($('<th>').text(h));
+        });
+        table.append(thead);
+
+        /// 產生資料列
+        const tbody = $('<tbody></tbody>');
+        data.forEach(row => {
+            const tr = $('<tr></tr>');
+            headers.forEach(h => {
+                tr.append($('<td>').text(row[h]));
+            });
+            tbody.append(tr);
+        });
+        table.append(tbody);
+
+        /// 初始化 / 重建 DataTable
+        if ($.fn.DataTable.isDataTable('#previewTable')) {
+            table.DataTable().clear().destroy();
+        }
+
+        table.DataTable({
+            scrollX: true,
+            scrollY :605,
+            scrollCollapse: true,
+            paging: false,
+            searching: false,
+            info: false,
+            autoWidth: false,
+            ordering: true,
+            fixedHeader: true
+        });
+    }
+
+    /// Excel 格式即時驗證
+    document.getElementById("excelFile").addEventListener("change", async function () {
+
+        const file = this.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("File", file);
+
+        try {
+                const response = await fetch('@Url.Action("ValidateExcelFormat", "ADDFUNC")', {
+                    method: "POST",
+                    body: formData
+            });
+
+            const result = await response.json();
+
+        if (!result.success) {
+                alert("Excel 格式錯誤：\n" + result.message);
+
+                /// 清空檔案, 防止繼續操作
+                this.value = "";
+
+                /// 同時關閉預覽, 上傳按鈕
+                $("#previewBtn").prop("disabled", true);
+                $("#uploadBtn").prop("disabled", true);
+
+                return;
+            }
+
+            /// 格式正確 -> 開啟功能按鈕
+            $("#previewBtn").prop("disabled", false);
+            $("#uploadBtn").prop("disabled", false);
+
+            alert("Excel 格式正確，可以進行預覽");
+
+        } catch (e) {
+            alert("格式檢查失敗：" + e.message);
+            this.value = "";
+        }
+    });
+
+    /// 資料上傳事件[寫DB]
+    document.getElementById("uploadBtn").addEventListener("click", async () => {
+
+        const fileInput = document.getElementById("excelFile");
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert("請選擇 Excel 檔案");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("File", file);
+
+        startProgressBar();
+
+        try {
+            const response = await fetch('@Url.Action("InsertTDDSTET", "ADDFUNC")', {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+
+            finishProgressBar();
+
+            if (!result.success) {
+                alert("上傳失敗：\n" + result.message);
+                return;
+            }
+
+            alert(result.message);   // 例如：匯入成功，共 120 筆資料
+
+        } catch (e) {
+            alert("資料寫入失敗：" + e.message);
+        }
+    });
+
+</script>

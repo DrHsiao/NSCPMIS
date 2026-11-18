@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>@ViewBag.Title</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="下水道工程管理系統" />
+    <meta name="author" content="China Productivity Center" />
+
+    <!-- Bootstrap Core CSS -->
+    <link href="~/Content_/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link href="~/Content_/sb-admin.css" rel="stylesheet" />
+
+    <!-- Morris Charts CSS -->
+    <link href="~/Content_/plugins/morris.css" rel="stylesheet" />
+
+    <!-- Custom Fonts -->
+    <link href="~/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        .menuli {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        
+    </style>    
+    <script src="~/Scripts_/numeral.min.js"></script>
+    <script type="text/javascript" src="~/Scripts_/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts_/moment.min.js"></script>
+    <script type="text/javascript" src="~/Scripts_/moment-taiwan.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/locale/zh-tw.js"></script>
+    <script type="text/javascript" src="~/Scripts_/JavaScript.js?s=20240402"></script>
+    @RenderSection("head", required: false)
+</head>
+<body>
+
+
+    <div id="wrapper">
+        @{ Html.RenderPartial("Header"); }
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+
+
+    @if(ViewBag.msg != null) {
+        <script>
+            $(window).on('load', function () {
+
+                $('#webdialog').modal('show');
+
+            });
+        </script>
+        <div class="modal fade" id="webdialog" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close">
+                            <span aria-hidden="true">&times;</span> <span class="sr-only">Close</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">訊息</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h3>
+                            @ViewBag.msg
+                        </h3>
+                        @if(ViewBag.desc != null) {
+                            @ViewBag.desc
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-lg btn-primary" data-dismiss="modal" aria-hidden="true">關閉</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+
+    <!-- Bootstrap Core JavaScript -->
+    <script type="text/javascript" src="~/Scripts_/bootstrap.js"></script>
+    <!-- Morris Charts JavaScript -->
+    <script type="text/javascript" src="~/Scripts_/plugins/morris/raphael.min.js"></script>
+    <script src="~/Scripts_/validator.min.js"></script>
+    @RenderSection("scripts", required: false)
+
+</body>
+
+</html >

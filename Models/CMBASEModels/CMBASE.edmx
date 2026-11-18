@@ -1,0 +1,1816 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="CMBASEModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ATWLOGR">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="decimal" Precision="19" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="USR_ID" Type="varchar" MaxLength="50" />
+          <Property Name="DEPT_NO" Type="varchar" MaxLength="50" />
+          <Property Name="PROG_ID" Type="varchar" MaxLength="50" />
+          <Property Name="PROG_NAME" Type="varchar" MaxLength="500" />
+          <Property Name="IP" Type="varchar" MaxLength="50" />
+          <Property Name="CMD" Type="varchar" MaxLength="8000" />
+          <Property Name="ADD_DT" Type="datetime" />
+        </EntityType>
+        <EntityType Name="CBWEMAL">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="decimal" Precision="19" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MAIL_TO" Type="varchar" MaxLength="500" />
+          <Property Name="MAIL_FROM" Type="varchar" MaxLength="500" />
+          <Property Name="SUBJECT" Type="varchar" MaxLength="100" />
+          <Property Name="CONTENT" Type="varchar" MaxLength="1000" />
+          <Property Name="PROC_FG" Type="bit" />
+          <Property Name="TRANS_DT" Type="datetime" />
+          <Property Name="ADD_DT" Type="datetime" />
+          <Property Name="UPD_DT" Type="datetime" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="CBWSMSR">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="decimal" Precision="19" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NT_USER" Type="varchar" MaxLength="50" />
+          <Property Name="AN_ADDR" Type="varchar" MaxLength="200" />
+          <Property Name="AN_CONT" Type="varchar" MaxLength="200" />
+          <Property Name="TEL" Type="varchar" MaxLength="50" />
+          <Property Name="PROC_FG" Type="bit" />
+          <Property Name="ADD_DT" Type="datetime" />
+          <Property Name="UPD_DT" Type="datetime" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="DSMLIST">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="decimal" Precision="19" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NT_SUBJECT" Type="varchar" MaxLength="2000" />
+          <Property Name="NT_DT" Type="varchar" MaxLength="50" />
+          <Property Name="NT_TM" Type="varchar" MaxLength="50" />
+          <Property Name="NT_CATY" Type="varchar" MaxLength="50" />
+          <Property Name="NT_USER" Type="varchar" MaxLength="50" />
+          <Property Name="NT_CONT" Type="varchar" MaxLength="2000" />
+          <Property Name="NT_RPLY" Type="varchar" MaxLength="2000" />
+          <Property Name="NT_FG" Type="bit" />
+          <Property Name="ADV_UID" Type="varchar" MaxLength="50" />
+          <Property Name="RPLY_USER" Type="varchar" MaxLength="50" />
+          <Property Name="ADD_DT" Type="datetime" />
+          <Property Name="UPD_DT" Type="datetime" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="dtproperties">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="property" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="objectid" Type="int" />
+          <Property Name="property" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="value" Type="varchar" MaxLength="255" />
+          <Property Name="uvalue" Type="nvarchar" MaxLength="255" />
+          <Property Name="lvalue" Type="image" />
+          <Property Name="version" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MACPOST">
+          <Key>
+            <PropertyRef Name="CITY" />
+            <PropertyRef Name="TOWN" />
+          </Key>
+          <Property Name="CITY_ID" Type="varchar" MaxLength="2" Nullable="false" />
+          <Property Name="TOWN_ID" Type="varchar" MaxLength="2" Nullable="false" />
+          <Property Name="CITY" Type="varchar" MaxLength="8" Nullable="false" />
+          <Property Name="TOWN" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="LIFE_CATY" Type="varchar" MaxLength="5" />
+          <Property Name="PTCOD" Type="varchar" MaxLength="10" />
+          <Property Name="ADD_DT" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_DT" Type="varchar" MaxLength="7" />
+          <Property Name="UPD_TM" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="10" />
+          <Property Name="P_PRICE" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="OGCDEPT">
+          <Key>
+            <PropertyRef Name="DEPT_NO" />
+            <PropertyRef Name="DATA_TP" />
+          </Key>
+          <Property Name="DEPT_NO" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="AN_DEPT_NO" Type="nvarchar" MaxLength="50" />
+          <Property Name="O_DEPT_NO" Type="nvarchar" MaxLength="200" />
+          <Property Name="DNO" Type="nvarchar" MaxLength="50" />
+          <Property Name="DEPT_NAME" Type="nvarchar" MaxLength="50" />
+          <Property Name="SMP_DEPT_NAME" Type="nvarchar" MaxLength="50" />
+          <Property Name="AD_DEPT_NO" Type="varchar" MaxLength="50" />
+          <Property Name="AD_DEPT_NAME" Type="nvarchar" MaxLength="50" />
+          <Property Name="DEPT_CHIEF" Type="nvarchar" MaxLength="50" />
+          <Property Name="DEPT_WGT" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="DATA_TP" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CITYLIST" Type="nvarchar" MaxLength="2000" />
+          <Property Name="DPU_ID" Type="nvarchar" MaxLength="50" />
+          <Property Name="UNIT_ID" Type="nvarchar" MaxLength="50" />
+          <Property Name="DEF_PAGE" Type="nvarchar" MaxLength="100" />
+          <Property Name="MGR_FG" Type="bit" />
+          <Property Name="DEPT_STAT" Type="bit" />
+          <Property Name="ADD_DT" Type="datetime" />
+          <Property Name="UPD_DT" Type="datetime" />
+          <Property Name="UPD_UID" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="OGCDPUR">
+          <Key>
+            <PropertyRef Name="DEPT_NO" />
+            <PropertyRef Name="USR_ID" />
+            <PropertyRef Name="DATA_TP" />
+          </Key>
+          <Property Name="DEPT_NO" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="USR_ID" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DATA_TP" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ADD_DT" Type="datetime" />
+          <Property Name="UPD_DT" Type="datetime" />
+          <Property Name="UPD_UID" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="OGCORIGI">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="float" Nullable="false" />
+          <Property Name="USER_ID" Type="nvarchar(max)" />
+          <Property Name="ORIGINAL_PSW" Type="nvarchar(max)" />
+        </EntityType>
+        <!--產生期間發現錯誤:
+警告 6002: 資料表/檢視 'CMBASE.dbo.OGCTITLE' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+        <EntityType Name="OGCTITLE">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TITLE" Type="nvarchar" MaxLength="50" />
+          <Property Name="NAME" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="OGCUATH">
+          <Key>
+            <PropertyRef Name="DEPT_NO" />
+            <PropertyRef Name="PRG_ID" />
+            <PropertyRef Name="DATA_TP" />
+          </Key>
+          <Property Name="DEPT_NO" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="PRG_ID" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="DATA_TP" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ADD_DT" Type="varchar" MaxLength="50" />
+          <Property Name="UPD_DT" Type="varchar" MaxLength="50" />
+          <Property Name="UPD_TM" Type="varchar" MaxLength="50" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="OGCUSER">
+          <Key>
+            <PropertyRef Name="USR_ID" />
+          </Key>
+          <Property Name="USR_ID" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LDAP_ID" Type="varchar" MaxLength="50" />
+          <Property Name="USR_NAME" Type="nvarchar" MaxLength="200" />
+          <Property Name="USR_PSW" Type="nvarchar" MaxLength="200" />
+          <Property Name="AGENT" Type="nvarchar" MaxLength="50" />
+          <Property Name="EMAIL" Type="nvarchar" MaxLength="200" />
+          <Property Name="TITLE" Type="nvarchar" MaxLength="50" />
+          <Property Name="TEL_O" Type="nvarchar" MaxLength="50" />
+          <Property Name="TEL_M" Type="nvarchar" MaxLength="50" />
+          <Property Name="TEL_F" Type="nvarchar" MaxLength="50" />
+          <Property Name="USR_STAT" Type="bit" />
+          <Property Name="NOTE" Type="nvarchar" MaxLength="50" />
+          <Property Name="DEPT_DESC" Type="nvarchar" MaxLength="100" />
+          <Property Name="SUB_DEPT" Type="nvarchar" MaxLength="100" />
+          <Property Name="ADM_DP" Type="nvarchar" MaxLength="100" />
+          <Property Name="ADM_UID" Type="nvarchar" MaxLength="50" />
+          <Property Name="ADDRESS" Type="nvarchar" MaxLength="200" />
+          <Property Name="ADD_DT" Type="datetime" />
+          <Property Name="UPD_DT" Type="datetime" />
+          <Property Name="UPD_UID" Type="nvarchar" MaxLength="50" />
+          <Property Name="FALL_TIME" Type="int" />
+        </EntityType>
+        <!--產生期間發現錯誤:
+警告 6002: 資料表/檢視 'CMBASE.dbo.OTCDEPT' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+        <EntityType Name="OTCDEPT">
+          <Key>
+            <PropertyRef Name="DEPT_NO" />
+            <PropertyRef Name="DATA_TP" />
+          </Key>
+          <Property Name="DEPT_NO" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="AN_DEPT_NO" Type="varchar" MaxLength="50" />
+          <Property Name="O_DEPT_NO" Type="varchar" MaxLength="50" />
+          <Property Name="DNO" Type="varchar" MaxLength="50" />
+          <Property Name="DEPT_NAME" Type="varchar" MaxLength="50" />
+          <Property Name="DEPT_CHIEF" Type="varchar" MaxLength="50" />
+          <Property Name="DEPT_WGT" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="DATA_TP" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="DPU_ID" Type="varchar" MaxLength="50" />
+          <Property Name="UNIT_ID" Type="varchar" MaxLength="50" />
+          <Property Name="ADD_DT" Type="varchar" MaxLength="50" />
+          <Property Name="UPD_DT" Type="varchar" MaxLength="50" />
+          <Property Name="UPD_TM" Type="varchar" MaxLength="50" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="50" />
+          <Property Name="DEF_PAGE" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <!--產生期間發現錯誤:
+警告 6002: 資料表/檢視 'CMBASE.dbo.OTCDPUR' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+        <EntityType Name="OTCDPUR">
+          <Key>
+            <PropertyRef Name="DEPT_NO" />
+            <PropertyRef Name="USR_ID" />
+            <PropertyRef Name="DATA_TP" />
+          </Key>
+          <Property Name="DEPT_NO" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="USR_ID" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="DATA_TP" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ADD_DT" Type="varchar" MaxLength="50" />
+          <Property Name="UPD_DT" Type="varchar" MaxLength="50" />
+          <Property Name="UPD_TM" Type="varchar" MaxLength="50" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="OTCUSER">
+          <Key>
+            <PropertyRef Name="USR_ID" />
+          </Key>
+          <Property Name="USR_ID" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="USR_NAME" Type="nvarchar" MaxLength="200" />
+          <Property Name="USR_PSW" Type="varchar" MaxLength="200" />
+          <Property Name="AGENT" Type="varchar" MaxLength="50" />
+          <Property Name="EMAIL" Type="varchar" MaxLength="200" />
+          <Property Name="TEL_O" Type="varchar" MaxLength="50" />
+          <Property Name="TEL_M" Type="varchar" MaxLength="50" />
+          <Property Name="TEL_F" Type="varchar" MaxLength="50" />
+          <Property Name="USR_STAT" Type="varchar" MaxLength="5" />
+          <Property Name="NOTE" Type="varchar" MaxLength="50" />
+          <Property Name="ADD_DT" Type="varchar" MaxLength="50" />
+          <Property Name="UPD_DT" Type="varchar" MaxLength="50" />
+          <Property Name="UPD_TM" Type="varchar" MaxLength="50" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="50" />
+          <Property Name="DEPT_DESC" Type="varchar" MaxLength="100" />
+          <Property Name="SUB_DEPT" Type="varchar" MaxLength="100" />
+          <Property Name="ADM_DP" Type="varchar" MaxLength="100" />
+          <Property Name="ADM_UID" Type="varchar" MaxLength="50" />
+          <Property Name="ADDRESS" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="SECCITY">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="decimal" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DEPT_NO" Type="nvarchar" MaxLength="50" />
+          <Property Name="USR_ID" Type="nvarchar" MaxLength="50" />
+          <Property Name="CITY" Type="nvarchar" MaxLength="50" />
+          <Property Name="ADD_DT" Type="datetime" />
+          <Property Name="UPD_DT" Type="datetime" />
+          <Property Name="UPD_UID" Type="nvarchar" MaxLength="50" />
+          <Property Name="TOWN" Type="nvarchar" MaxLength="50" />
+          <Property Name="AREA" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="SMCAUTH">
+          <Key>
+            <PropertyRef Name="DEPT_NO" />
+            <PropertyRef Name="SYS_ID" />
+            <PropertyRef Name="DATA_TP" />
+          </Key>
+          <Property Name="DEPT_NO" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="SYS_ID" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="DATA_TP" Type="varchar" MaxLength="2" Nullable="false" />
+          <Property Name="CUS_FG" Type="bit" />
+          <Property Name="ADD_DT" Type="datetime" />
+          <Property Name="UPD_DT" Type="datetime" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="SMCCODE">
+          <Key>
+            <PropertyRef Name="SYS_ID" />
+            <PropertyRef Name="CATY_ID" />
+            <PropertyRef Name="CATY_COD" />
+          </Key>
+          <Property Name="SYS_ID" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="CATY_ID" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="CATY_COD" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="CODE_DESC" Type="varchar" MaxLength="50" />
+          <Property Name="DESC_COD" Type="varchar" MaxLength="10" />
+          <Property Name="SPEC_FG" Type="varchar" MaxLength="1" />
+          <Property Name="ADD_DT" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_DT" Type="varchar" MaxLength="7" />
+          <Property Name="UPD_TM" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="SMCFILETMP">
+          <Key>
+            <PropertyRef Name="FRM_ID" />
+            <PropertyRef Name="KEY_ID" />
+            <PropertyRef Name="ITEM_ID" />
+            <PropertyRef Name="USR_ID" />
+          </Key>
+          <Property Name="FRM_ID" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="KEY_ID" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="ITEM_ID" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="USR_ID" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="PHOTO_NAME" Type="nvarchar" MaxLength="100" />
+          <Property Name="PHOTO_FULL" Type="image" />
+          <Property Name="PHOTO_POSTER" Type="image" />
+          <Property Name="PHOTO_THUMB" Type="image" />
+          <Property Name="UPD_DT" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SMCLOGS">
+          <Key>
+            <PropertyRef Name="DID" />
+          </Key>
+          <Property Name="DID" Type="decimal" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="USR_ID" Type="nvarchar" MaxLength="50" />
+          <Property Name="LOGIN_IP" Type="nvarchar" MaxLength="20" />
+          <Property Name="LOGIN_DT" Type="datetime" />
+          <Property Name="LOGIN_STATE" Type="varchar" MaxLength="1" />
+          <Property Name="ACTION_TYPE" Type="varchar" MaxLength="1" />
+          <Property Name="ACTION_DESC" Type="nvarchar" MaxLength="500" />
+          <Property Name="ADD_DT" Type="datetime" />
+          <Property Name="UPD_DT" Type="datetime" />
+          <Property Name="UPD_UID" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="SMCMENU3">
+          <Key>
+            <PropertyRef Name="SYS_ID" />
+          </Key>
+          <Property Name="SYS_ID" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="AN_SYS_ID" Type="varchar" MaxLength="50" />
+          <Property Name="SYS_NAME" Type="nvarchar" MaxLength="100" />
+          <Property Name="GSYSID" Type="varchar" MaxLength="50" />
+          <Property Name="HOSTNAME" Type="varchar" MaxLength="50" />
+          <Property Name="DBNAME" Type="varchar" MaxLength="50" />
+          <Property Name="DBUID" Type="varchar" MaxLength="50" />
+          <Property Name="DBPSW" Type="varchar" MaxLength="50" />
+          <Property Name="APP_PATH" Type="varchar" MaxLength="100" />
+          <Property Name="FILE_PATH" Type="varchar" MaxLength="50" />
+          <Property Name="HTTPNAME" Type="varchar" MaxLength="50" />
+          <Property Name="TARGET" Type="varchar" MaxLength="50" />
+          <Property Name="DATA_TP" Type="varchar" MaxLength="2" />
+          <Property Name="SYS_ORD" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="SMCNEWS">
+          <Key>
+            <PropertyRef Name="NEWSID" />
+          </Key>
+          <Property Name="NEWSID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="HEADLINE" Type="nvarchar" MaxLength="500" />
+          <Property Name="SUMMARY" Type="nvarchar" MaxLength="500" />
+          <Property Name="STARTDATE" Type="datetime" />
+          <Property Name="ENDDATE" Type="datetime" />
+          <Property Name="BODY" Type="text" />
+          <Property Name="STATUS" Type="int" />
+          <Property Name="TYPE" Type="varchar" MaxLength="10" />
+          <Property Name="ADD_DT" Type="datetime" />
+          <Property Name="UPD_DT" Type="datetime" />
+          <Property Name="UPD_UID" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="SMCNEWSCODE">
+          <Key>
+            <PropertyRef Name="SYS_ID" />
+            <PropertyRef Name="CATY_ID" />
+            <PropertyRef Name="CATY_COD" />
+          </Key>
+          <Property Name="SYS_ID" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="CATY_ID" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="CATY_COD" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="CODE_DESC" Type="varchar" MaxLength="50" />
+          <Property Name="DESC_COD" Type="varchar" MaxLength="10" />
+          <Property Name="SPEC_FG" Type="varchar" MaxLength="1" />
+          <Property Name="ADD_DT" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_DT" Type="varchar" MaxLength="7" />
+          <Property Name="UPD_TM" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="SMCNEWSDOC">
+          <Key>
+            <PropertyRef Name="NEWSID" />
+            <PropertyRef Name="FILID" />
+          </Key>
+          <Property Name="NEWSID" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="FILID" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="FILE_DESC" Type="nvarchar" MaxLength="2000" />
+          <Property Name="FILE_PATH" Type="nvarchar" MaxLength="500" />
+          <Property Name="FILE_BODY" Type="image" />
+          <Property Name="FILE_SIZE" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="ADD_DT" Type="datetime" />
+          <Property Name="UPD_DT" Type="datetime" />
+          <Property Name="UPD_UID" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <!--產生期間發現錯誤:
+警告 6002: 資料表/檢視 'CMBASE.dbo.SMCPOST' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+        <EntityType Name="SMCPOST">
+          <Key>
+            <PropertyRef Name="CITY" />
+            <PropertyRef Name="TOWN" />
+          </Key>
+          <Property Name="CITY_ID" Type="char" MaxLength="2" />
+          <Property Name="CITY" Type="varchar" MaxLength="8" Nullable="false" />
+          <Property Name="TOWN" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="LIFE_CATY" Type="varchar" MaxLength="5" />
+          <Property Name="CPA_CITY_ID" Type="varchar" MaxLength="2" />
+          <Property Name="CPA_TOWN_ID" Type="varchar" MaxLength="2" />
+          <Property Name="PTCOD" Type="varchar" MaxLength="10" />
+          <Property Name="AREA" Type="varchar" MaxLength="50" />
+          <Property Name="SUP1" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="SUP2" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="MEB" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="POP_CNT" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="DOR_CNT" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="ADD_DT" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_DT" Type="varchar" MaxLength="7" />
+          <Property Name="UPD_TM" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="SMCPOSTN">
+          <Key>
+            <PropertyRef Name="CITY" />
+            <PropertyRef Name="TOWN" />
+          </Key>
+          <Property Name="CITY_ID" Type="char" MaxLength="2" />
+          <Property Name="CITY" Type="varchar" MaxLength="8" Nullable="false" />
+          <Property Name="TOWN" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="LIFE_CATY" Type="varchar" MaxLength="5" />
+          <Property Name="CPA_CITY_ID" Type="varchar" MaxLength="2" />
+          <Property Name="CPA_TOWN_ID" Type="varchar" MaxLength="2" />
+          <Property Name="PTCOD" Type="varchar" MaxLength="10" />
+          <Property Name="AREA" Type="varchar" MaxLength="50" />
+          <Property Name="SUP1" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="SUP2" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="MEB" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="POP_CNT" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="DOR_CNT" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="ADD_DT" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_DT" Type="varchar" MaxLength="7" />
+          <Property Name="UPD_TM" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="SMCPROG">
+          <Key>
+            <PropertyRef Name="PRG_ID" />
+          </Key>
+          <Property Name="PRG_ID" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="PRG_NAME" Type="varchar" MaxLength="50" />
+          <Property Name="PRG_SEQ" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="MOD_ID" Type="varchar" MaxLength="10" />
+          <Property Name="MOD_NAME" Type="varchar" MaxLength="50" />
+          <Property Name="MOD_SEQ" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="PRG_TP" Type="varchar" MaxLength="1" />
+          <Property Name="PRG_DIR" Type="varchar" MaxLength="50" />
+          <Property Name="ADD_DT" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_DT" Type="varchar" MaxLength="7" />
+          <Property Name="UPD_TM" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="SMCROAD">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ZIP" Type="varchar" MaxLength="10" />
+          <Property Name="CITY" Type="nvarchar" MaxLength="255" />
+          <Property Name="TOWN" Type="nvarchar" MaxLength="255" />
+          <Property Name="ROAD" Type="nvarchar" MaxLength="255" />
+          <Property Name="NOTE" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="SMCSYSC">
+          <Key>
+            <PropertyRef Name="SYS_ID" />
+          </Key>
+          <Property Name="SYS_ID" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="SYS_NAME" Type="varchar" MaxLength="100" />
+          <Property Name="GSYS_ID" Type="varchar" MaxLength="50" />
+          <Property Name="HOSTNAME" Type="varchar" MaxLength="100" />
+          <Property Name="DBNAME" Type="varchar" MaxLength="100" />
+          <Property Name="DBUID" Type="varchar" MaxLength="100" />
+          <Property Name="DBPSW" Type="varchar" MaxLength="100" />
+          <Property Name="FILE_PATH" Type="varchar" MaxLength="500" />
+          <Property Name="HTTPNAME" Type="varchar" MaxLength="500" />
+          <Property Name="TARGET" Type="varchar" MaxLength="50" />
+          <Property Name="LEV" Type="int" />
+          <Property Name="DATA_TP" Type="varchar" MaxLength="2" />
+          <Property Name="SYS_ORD" Type="int" />
+        </EntityType>
+        <EntityType Name="UMCLOGR">
+          <Key>
+            <PropertyRef Name="USR_ID" />
+          </Key>
+          <Property Name="USR_ID" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="USR_PSW" Type="varchar" MaxLength="30" />
+          <Property Name="LOG_CNT" Type="int" />
+          <Property Name="ADD_DT" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_DT" Type="varchar" MaxLength="7" />
+          <Property Name="UPD_TM" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="UMCUSER_TEMP">
+          <Key>
+            <PropertyRef Name="IC_SN" />
+          </Key>
+          <Property Name="USR_ID" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="IC_SN" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="WORK_GP" Type="varchar" MaxLength="100" />
+          <Property Name="FL_GP" Type="varchar" MaxLength="100" />
+          <Property Name="SC_NO" Type="varchar" MaxLength="100" />
+          <Property Name="DEPT_NO" Type="varchar" MaxLength="50" />
+          <Property Name="CITYLIST" Type="varchar" MaxLength="200" />
+          <Property Name="RATE" Type="varchar" MaxLength="50" />
+          <Property Name="MAG_SC_NO" Type="varchar" MaxLength="50" />
+          <Property Name="USR_NAME" Type="varchar" MaxLength="20" />
+          <Property Name="PASSWD" Type="varchar" MaxLength="20" />
+          <Property Name="EMAIL" Type="varchar" MaxLength="100" />
+          <Property Name="TEL_O" Type="varchar" MaxLength="20" />
+          <Property Name="TEL_H" Type="varchar" MaxLength="20" />
+          <Property Name="TEL_M" Type="varchar" MaxLength="20" />
+          <Property Name="TEL_F" Type="varchar" MaxLength="20" />
+          <Property Name="U_STAT" Type="int" />
+          <Property Name="V_DATE" Type="datetime" />
+          <Property Name="STOP_FG" Type="varchar" MaxLength="1" />
+          <Property Name="NOTE" Type="text" />
+          <Property Name="MAG_FG" Type="varchar" MaxLength="1" />
+          <Property Name="SRV_TP" Type="varchar" MaxLength="50" />
+          <Property Name="CPAMI_DEPT_NO" Type="varchar" MaxLength="50" />
+          <Property Name="ADD_DT" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_DT" Type="varchar" MaxLength="7" />
+          <Property Name="UPD_TM" Type="varchar" MaxLength="8" />
+          <Property Name="UPD_UID" Type="varchar" MaxLength="10" />
+          <Property Name="LMT_DT" Type="varchar" MaxLength="7" />
+        </EntityType>
+        <!--產生期間發現錯誤:
+警告 6002: 資料表/檢視 'CMBASE.dbo.SMV_SMCCITY' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+        <EntityType Name="SMV_SMCCITY">
+          <Key>
+            <PropertyRef Name="CITY" />
+          </Key>
+          <Property Name="CITY" Type="varchar" MaxLength="8" Nullable="false" />
+        </EntityType>
+        <!--產生期間發現錯誤:
+警告 6002: 資料表/檢視 'CMBASE.dbo.SMV_SMCTOWN' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+        <EntityType Name="SMV_SMCTOWN">
+          <Key>
+            <PropertyRef Name="CITY" />
+            <PropertyRef Name="TOWN" />
+          </Key>
+          <Property Name="CITY" Type="varchar" MaxLength="8" Nullable="false" />
+          <Property Name="TOWN" Type="varchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="CMBASEModelStoreContainer">
+          <EntitySet Name="ATWLOGR" EntityType="Self.ATWLOGR" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CBWEMAL" EntityType="Self.CBWEMAL" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CBWSMSR" EntityType="Self.CBWSMSR" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DSMLIST" EntityType="Self.DSMLIST" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="dtproperties" EntityType="Self.dtproperties" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MACPOST" EntityType="Self.MACPOST" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OGCDEPT" EntityType="Self.OGCDEPT" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OGCDPUR" EntityType="Self.OGCDPUR" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OGCORIGI" EntityType="Self.OGCORIGI" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OGCUATH" EntityType="Self.OGCUATH" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OGCUSER" EntityType="Self.OGCUSER" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OTCUSER" EntityType="Self.OTCUSER" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SECCITY" EntityType="Self.SECCITY" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMCAUTH" EntityType="Self.SMCAUTH" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMCCODE" EntityType="Self.SMCCODE" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMCFILETMP" EntityType="Self.SMCFILETMP" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMCLOGS" EntityType="Self.SMCLOGS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMCMENU3" EntityType="Self.SMCMENU3" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMCNEWS" EntityType="Self.SMCNEWS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMCNEWSCODE" EntityType="Self.SMCNEWSCODE" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMCNEWSDOC" EntityType="Self.SMCNEWSDOC" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMCPOSTN" EntityType="Self.SMCPOSTN" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMCPROG" EntityType="Self.SMCPROG" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMCROAD" EntityType="Self.SMCROAD" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMCSYSC" EntityType="Self.SMCSYSC" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UMCLOGR" EntityType="Self.UMCLOGR" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UMCUSER_TEMP" EntityType="Self.UMCUSER_TEMP" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OGCTITLE" EntityType="Self.OGCTITLE" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [OGCTITLE].[ID] AS [ID], 
+    [OGCTITLE].[TITLE] AS [TITLE], 
+    [OGCTITLE].[NAME] AS [NAME]
+    FROM [dbo].[OGCTITLE] AS [OGCTITLE]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="OTCDEPT" EntityType="Self.OTCDEPT" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [OTCDEPT].[DEPT_NO] AS [DEPT_NO], 
+    [OTCDEPT].[AN_DEPT_NO] AS [AN_DEPT_NO], 
+    [OTCDEPT].[O_DEPT_NO] AS [O_DEPT_NO], 
+    [OTCDEPT].[DNO] AS [DNO], 
+    [OTCDEPT].[DEPT_NAME] AS [DEPT_NAME], 
+    [OTCDEPT].[DEPT_CHIEF] AS [DEPT_CHIEF], 
+    [OTCDEPT].[DEPT_WGT] AS [DEPT_WGT], 
+    [OTCDEPT].[DATA_TP] AS [DATA_TP], 
+    [OTCDEPT].[DPU_ID] AS [DPU_ID], 
+    [OTCDEPT].[UNIT_ID] AS [UNIT_ID], 
+    [OTCDEPT].[ADD_DT] AS [ADD_DT], 
+    [OTCDEPT].[UPD_DT] AS [UPD_DT], 
+    [OTCDEPT].[UPD_TM] AS [UPD_TM], 
+    [OTCDEPT].[UPD_UID] AS [UPD_UID], 
+    [OTCDEPT].[DEF_PAGE] AS [DEF_PAGE]
+    FROM [dbo].[OTCDEPT] AS [OTCDEPT]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="OTCDPUR" EntityType="Self.OTCDPUR" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [OTCDPUR].[DEPT_NO] AS [DEPT_NO], 
+    [OTCDPUR].[USR_ID] AS [USR_ID], 
+    [OTCDPUR].[DATA_TP] AS [DATA_TP], 
+    [OTCDPUR].[ADD_DT] AS [ADD_DT], 
+    [OTCDPUR].[UPD_DT] AS [UPD_DT], 
+    [OTCDPUR].[UPD_TM] AS [UPD_TM], 
+    [OTCDPUR].[UPD_UID] AS [UPD_UID]
+    FROM [dbo].[OTCDPUR] AS [OTCDPUR]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="SMCPOST" EntityType="Self.SMCPOST" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [SMCPOST].[CITY_ID] AS [CITY_ID], 
+    [SMCPOST].[CITY] AS [CITY], 
+    [SMCPOST].[TOWN] AS [TOWN], 
+    [SMCPOST].[LIFE_CATY] AS [LIFE_CATY], 
+    [SMCPOST].[CPA_CITY_ID] AS [CPA_CITY_ID], 
+    [SMCPOST].[CPA_TOWN_ID] AS [CPA_TOWN_ID], 
+    [SMCPOST].[PTCOD] AS [PTCOD], 
+    [SMCPOST].[AREA] AS [AREA], 
+    [SMCPOST].[SUP1] AS [SUP1], 
+    [SMCPOST].[SUP2] AS [SUP2], 
+    [SMCPOST].[MEB] AS [MEB], 
+    [SMCPOST].[POP_CNT] AS [POP_CNT], 
+    [SMCPOST].[DOR_CNT] AS [DOR_CNT], 
+    [SMCPOST].[ADD_DT] AS [ADD_DT], 
+    [SMCPOST].[UPD_DT] AS [UPD_DT], 
+    [SMCPOST].[UPD_TM] AS [UPD_TM], 
+    [SMCPOST].[UPD_UID] AS [UPD_UID]
+    FROM [dbo].[SMCPOST] AS [SMCPOST]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="SMV_SMCCITY" EntityType="Self.SMV_SMCCITY" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [SMV_SMCCITY].[CITY] AS [CITY]
+    FROM [dbo].[SMV_SMCCITY] AS [SMV_SMCCITY]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="SMV_SMCTOWN" EntityType="Self.SMV_SMCTOWN" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [SMV_SMCTOWN].[CITY] AS [CITY], 
+    [SMV_SMCTOWN].[TOWN] AS [TOWN]
+    FROM [dbo].[SMV_SMCTOWN] AS [SMV_SMCTOWN]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="CMBASEModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ATWLOGR">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Decimal" Precision="19" Scale="0" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="USR_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DEPT_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PROG_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PROG_NAME" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="IP" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CMD" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="ADD_DT" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="CBWEMAL">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Decimal" Precision="19" Scale="0" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MAIL_TO" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="MAIL_FROM" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="SUBJECT" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CONTENT" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="PROC_FG" Type="Boolean" />
+          <Property Name="TRANS_DT" Type="DateTime" Precision="3" />
+          <Property Name="ADD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="CBWSMSR">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Decimal" Precision="19" Scale="0" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NT_USER" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AN_ADDR" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="AN_CONT" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="TEL" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PROC_FG" Type="Boolean" />
+          <Property Name="ADD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="DSMLIST">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Decimal" Precision="19" Scale="0" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NT_SUBJECT" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Name="NT_DT" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NT_TM" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NT_CATY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NT_USER" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NT_CONT" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Name="NT_RPLY" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Name="NT_FG" Type="Boolean" />
+          <Property Name="ADV_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="RPLY_USER" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ADD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="dtproperties">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="property" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="objectid" Type="Int32" />
+          <Property Name="property" Type="String" MaxLength="64" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="value" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="uvalue" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="lvalue" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="version" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MACPOST">
+          <Key>
+            <PropertyRef Name="CITY" />
+            <PropertyRef Name="TOWN" />
+          </Key>
+          <Property Name="CITY_ID" Type="String" MaxLength="2" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TOWN_ID" Type="String" MaxLength="2" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CITY" Type="String" MaxLength="8" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TOWN" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LIFE_CATY" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="PTCOD" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="ADD_DT" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_DT" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_TM" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_UID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="P_PRICE" Type="Decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="OGCDEPT">
+          <Key>
+            <PropertyRef Name="DEPT_NO" />
+            <PropertyRef Name="DATA_TP" />
+          </Key>
+          <Property Name="DEPT_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="AN_DEPT_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="O_DEPT_NO" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="DNO" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DEPT_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SMP_DEPT_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AD_DEPT_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AD_DEPT_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DEPT_CHIEF" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DEPT_WGT" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="DATA_TP" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CITYLIST" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="DPU_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UNIT_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DEF_PAGE" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="MGR_FG" Type="Boolean" />
+          <Property Name="DEPT_STAT" Type="Boolean" />
+          <Property Name="ADD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="OGCDPUR">
+          <Key>
+            <PropertyRef Name="DEPT_NO" />
+            <PropertyRef Name="USR_ID" />
+            <PropertyRef Name="DATA_TP" />
+          </Key>
+          <Property Name="DEPT_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="USR_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DATA_TP" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ADD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="OGCUATH">
+          <Key>
+            <PropertyRef Name="DEPT_NO" />
+            <PropertyRef Name="PRG_ID" />
+            <PropertyRef Name="DATA_TP" />
+          </Key>
+          <Property Name="DEPT_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PRG_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DATA_TP" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ADD_DT" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_DT" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_TM" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="OGCUSER">
+          <Key>
+            <PropertyRef Name="USR_ID" />
+          </Key>
+          <Property Name="USR_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="LDAP_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="USR_NAME" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="USR_PSW" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="AGENT" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="EMAIL" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="TITLE" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TEL_O" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TEL_M" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TEL_F" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="USR_STAT" Type="Boolean" />
+          <Property Name="NOTE" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DEPT_DESC" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SUB_DEPT" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ADM_DP" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ADM_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ADDRESS" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ADD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FALL_TIME" Type="Int32" />
+        </EntityType>
+        <EntityType Name="OTCUSER">
+          <Key>
+            <PropertyRef Name="USR_ID" />
+          </Key>
+          <Property Name="USR_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USR_NAME" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="USR_PSW" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="AGENT" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EMAIL" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="TEL_O" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TEL_M" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TEL_F" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="USR_STAT" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="NOTE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ADD_DT" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_DT" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_TM" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DEPT_DESC" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="SUB_DEPT" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ADM_DP" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ADM_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ADDRESS" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SECCITY">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Decimal" Precision="18" Scale="0" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DEPT_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="USR_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CITY" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ADD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TOWN" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AREA" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SMCAUTH">
+          <Key>
+            <PropertyRef Name="DEPT_NO" />
+            <PropertyRef Name="SYS_ID" />
+            <PropertyRef Name="DATA_TP" />
+          </Key>
+          <Property Name="DEPT_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SYS_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DATA_TP" Type="String" MaxLength="2" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CUS_FG" Type="Boolean" />
+          <Property Name="ADD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SMCFILETMP">
+          <Key>
+            <PropertyRef Name="FRM_ID" />
+            <PropertyRef Name="KEY_ID" />
+            <PropertyRef Name="ITEM_ID" />
+            <PropertyRef Name="USR_ID" />
+          </Key>
+          <Property Name="FRM_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="KEY_ID" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ITEM_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USR_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PHOTO_NAME" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PHOTO_FULL" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="PHOTO_POSTER" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="PHOTO_THUMB" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="UPD_DT" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="SMCNEWS">
+          <Key>
+            <PropertyRef Name="NEWSID" />
+          </Key>
+          <Property Name="NEWSID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="HEADLINE" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="SUMMARY" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="STARTDATE" Type="DateTime" Precision="3" />
+          <Property Name="ENDDATE" Type="DateTime" Precision="3" />
+          <Property Name="BODY" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="STATUS" Type="Int32" />
+          <Property Name="TYPE" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="ADD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SMCNEWSCODE">
+          <Key>
+            <PropertyRef Name="SYS_ID" />
+            <PropertyRef Name="CATY_ID" />
+            <PropertyRef Name="CATY_COD" />
+          </Key>
+          <Property Name="SYS_ID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CATY_ID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CATY_COD" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CODE_DESC" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DESC_COD" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="SPEC_FG" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="ADD_DT" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_DT" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_TM" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_UID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SMCNEWSDOC">
+          <Key>
+            <PropertyRef Name="NEWSID" />
+            <PropertyRef Name="FILID" />
+          </Key>
+          <Property Name="NEWSID" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="FILID" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="FILE_DESC" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="FILE_PATH" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="FILE_BODY" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="FILE_SIZE" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="ADD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SMCPOSTN">
+          <Key>
+            <PropertyRef Name="CITY" />
+            <PropertyRef Name="TOWN" />
+          </Key>
+          <Property Name="CITY_ID" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="CITY" Type="String" MaxLength="8" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TOWN" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LIFE_CATY" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="CPA_CITY_ID" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="CPA_TOWN_ID" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="PTCOD" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="AREA" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SUP1" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="SUP2" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="MEB" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="POP_CNT" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="DOR_CNT" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="ADD_DT" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_DT" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_TM" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_UID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SMCPROG">
+          <Key>
+            <PropertyRef Name="PRG_ID" />
+          </Key>
+          <Property Name="PRG_ID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PRG_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PRG_SEQ" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="MOD_ID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="MOD_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="MOD_SEQ" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="PRG_TP" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="PRG_DIR" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ADD_DT" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_DT" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_TM" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_UID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SMCROAD">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ZIP" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="CITY" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TOWN" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ROAD" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="NOTE" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SMCSYSC">
+          <Key>
+            <PropertyRef Name="SYS_ID" />
+          </Key>
+          <Property Name="SYS_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SYS_NAME" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="GSYS_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="HOSTNAME" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="DBNAME" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="DBUID" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="DBPSW" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FILE_PATH" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="HTTPNAME" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="TARGET" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LEV" Type="Int32" />
+          <Property Name="DATA_TP" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="SYS_ORD" Type="Int32" />
+        </EntityType>
+        <EntityType Name="UMCLOGR">
+          <Key>
+            <PropertyRef Name="USR_ID" />
+          </Key>
+          <Property Name="USR_ID" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USR_PSW" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="LOG_CNT" Type="Int32" />
+          <Property Name="ADD_DT" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_DT" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_TM" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_UID" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="UMCUSER_TEMP">
+          <Key>
+            <PropertyRef Name="IC_SN" />
+          </Key>
+          <Property Name="USR_ID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="IC_SN" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="WORK_GP" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FL_GP" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="SC_NO" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="DEPT_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CITYLIST" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="RATE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="MAG_SC_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="USR_NAME" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="PASSWD" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="EMAIL" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="TEL_O" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="TEL_H" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="TEL_M" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="TEL_F" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="U_STAT" Type="Int32" />
+          <Property Name="V_DATE" Type="DateTime" Precision="3" />
+          <Property Name="STOP_FG" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="NOTE" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="MAG_FG" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="SRV_TP" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CPAMI_DEPT_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ADD_DT" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_DT" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_TM" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_UID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="LMT_DT" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="OGCTITLE">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TITLE" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="OTCDEPT">
+          <Key>
+            <PropertyRef Name="DEPT_NO" />
+            <PropertyRef Name="DATA_TP" />
+          </Key>
+          <Property Name="DEPT_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="AN_DEPT_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="O_DEPT_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DNO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DEPT_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DEPT_CHIEF" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DEPT_WGT" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="DATA_TP" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DPU_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UNIT_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ADD_DT" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_DT" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_TM" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DEF_PAGE" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="OTCDPUR">
+          <Key>
+            <PropertyRef Name="DEPT_NO" />
+            <PropertyRef Name="USR_ID" />
+            <PropertyRef Name="DATA_TP" />
+          </Key>
+          <Property Name="DEPT_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USR_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DATA_TP" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ADD_DT" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_DT" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_TM" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SMCPOST">
+          <Key>
+            <PropertyRef Name="CITY" />
+            <PropertyRef Name="TOWN" />
+          </Key>
+          <Property Name="CITY_ID" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="CITY" Type="String" MaxLength="8" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TOWN" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LIFE_CATY" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="CPA_CITY_ID" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="CPA_TOWN_ID" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="PTCOD" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="AREA" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SUP1" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="SUP2" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="MEB" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="POP_CNT" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="DOR_CNT" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="ADD_DT" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_DT" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_TM" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_UID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityContainer Name="CMBASEEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ATWLOGR" EntityType="Self.ATWLOGR" />
+          <EntitySet Name="CBWEMAL" EntityType="Self.CBWEMAL" />
+          <EntitySet Name="CBWSMSR" EntityType="Self.CBWSMSR" />
+          <EntitySet Name="DSMLIST" EntityType="Self.DSMLIST" />
+          <EntitySet Name="dtproperties" EntityType="Self.dtproperties" />
+          <EntitySet Name="MACPOST" EntityType="Self.MACPOST" />
+          <EntitySet Name="OGCDEPT" EntityType="Self.OGCDEPT" />
+          <EntitySet Name="OGCDPUR" EntityType="CMBASEModel.OGCDPUR" />
+          <EntitySet Name="OGCUATH" EntityType="Self.OGCUATH" />
+          <EntitySet Name="OGCUSER" EntityType="Self.OGCUSER" />
+          <EntitySet Name="OTCUSER" EntityType="Self.OTCUSER" />
+          <EntitySet Name="SECCITY" EntityType="Self.SECCITY" />
+          <EntitySet Name="SMCAUTH" EntityType="Self.SMCAUTH" />
+          <EntitySet Name="SMCFILETMP" EntityType="Self.SMCFILETMP" />
+          <EntitySet Name="SMCNEWS" EntityType="Self.SMCNEWS" />
+          <EntitySet Name="SMCNEWSCODE" EntityType="Self.SMCNEWSCODE" />
+          <EntitySet Name="SMCNEWSDOC" EntityType="Self.SMCNEWSDOC" />
+          <EntitySet Name="SMCPOSTN" EntityType="Self.SMCPOSTN" />
+          <EntitySet Name="SMCPROG" EntityType="Self.SMCPROG" />
+          <EntitySet Name="SMCROAD" EntityType="Self.SMCROAD" />
+          <EntitySet Name="SMCSYSC" EntityType="Self.SMCSYSC" />
+          <EntitySet Name="UMCLOGR" EntityType="Self.UMCLOGR" />
+          <EntitySet Name="UMCUSER_TEMP" EntityType="Self.UMCUSER_TEMP" />
+          <EntitySet Name="OGCTITLE" EntityType="Self.OGCTITLE" />
+          <EntitySet Name="OTCDEPT" EntityType="Self.OTCDEPT" />
+          <EntitySet Name="OTCDPUR" EntityType="Self.OTCDPUR" />
+          <EntitySet Name="SMCPOST" EntityType="Self.SMCPOST" />
+          <EntitySet Name="SMCMENU3" EntityType="CMBASEModel.SMCMENU3" />
+          <EntitySet Name="OGCORIGI" EntityType="CMBASEModel.OGCORIGI" />
+          <EntitySet Name="SMCCODE" EntityType="CMBASEModel.SMCCODE" />
+          <EntitySet Name="SMCLOGS" EntityType="CMBASEModel.SMCLOGS" />
+          <EntitySet Name="SMV_SMCCITY" EntityType="CMBASEModel.SMV_SMCCITY" />
+          <EntitySet Name="SMV_SMCTOWN" EntityType="CMBASEModel.SMV_SMCTOWN" />
+        </EntityContainer>
+        <EntityType Name="SMCMENU3">
+          <Key>
+            <PropertyRef Name="SYS_ID" />
+          </Key>
+          <Property Name="SYS_ID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AN_SYS_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SYS_NAME" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="GSYSID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="HOSTNAME" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DBNAME" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DBUID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DBPSW" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="APP_PATH" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FILE_PATH" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="HTTPNAME" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TARGET" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DATA_TP" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="SYS_ORD" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="OGCORIGI">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Double" Nullable="false" />
+          <Property Name="USER_ID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ORIGINAL_PSW" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SMCCODE">
+          <Key>
+            <PropertyRef Name="SYS_ID" />
+            <PropertyRef Name="CATY_ID" />
+            <PropertyRef Name="CATY_COD" />
+          </Key>
+          <Property Name="SYS_ID" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="CATY_ID" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="CATY_COD" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="CODE_DESC" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DESC_COD" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="SPEC_FG" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="ADD_DT" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_DT" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_TM" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="UPD_UID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SMCLOGS">
+          <Key>
+            <PropertyRef Name="DID" />
+          </Key>
+          <Property Name="DID" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="USR_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LOGIN_IP" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="LOGIN_DT" Type="DateTime" Precision="3" />
+          <Property Name="LOGIN_STATE" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="ACTION_TYPE" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="ACTION_DESC" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ADD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_DT" Type="DateTime" Precision="3" />
+          <Property Name="UPD_UID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SMV_SMCCITY">
+          <Key>
+            <PropertyRef Name="CITY" />
+          </Key>
+          <Property Name="CITY" Type="String" Nullable="false" MaxLength="8" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SMV_SMCTOWN">
+          <Key>
+            <PropertyRef Name="CITY" />
+            <PropertyRef Name="TOWN" />
+          </Key>
+          <Property Name="CITY" Type="String" Nullable="false" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="TOWN" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="CMBASEModelStoreContainer" CdmEntityContainer="CMBASEEntities">
+          <EntitySetMapping Name="ATWLOGR">
+            <EntityTypeMapping TypeName="CMBASEModel.ATWLOGR">
+              <MappingFragment StoreEntitySet="ATWLOGR">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="USR_ID" ColumnName="USR_ID" />
+                <ScalarProperty Name="DEPT_NO" ColumnName="DEPT_NO" />
+                <ScalarProperty Name="PROG_ID" ColumnName="PROG_ID" />
+                <ScalarProperty Name="PROG_NAME" ColumnName="PROG_NAME" />
+                <ScalarProperty Name="IP" ColumnName="IP" />
+                <ScalarProperty Name="CMD" ColumnName="CMD" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CBWEMAL">
+            <EntityTypeMapping TypeName="CMBASEModel.CBWEMAL">
+              <MappingFragment StoreEntitySet="CBWEMAL">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="MAIL_TO" ColumnName="MAIL_TO" />
+                <ScalarProperty Name="MAIL_FROM" ColumnName="MAIL_FROM" />
+                <ScalarProperty Name="SUBJECT" ColumnName="SUBJECT" />
+                <ScalarProperty Name="CONTENT" ColumnName="CONTENT" />
+                <ScalarProperty Name="PROC_FG" ColumnName="PROC_FG" />
+                <ScalarProperty Name="TRANS_DT" ColumnName="TRANS_DT" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CBWSMSR">
+            <EntityTypeMapping TypeName="CMBASEModel.CBWSMSR">
+              <MappingFragment StoreEntitySet="CBWSMSR">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="NT_USER" ColumnName="NT_USER" />
+                <ScalarProperty Name="AN_ADDR" ColumnName="AN_ADDR" />
+                <ScalarProperty Name="AN_CONT" ColumnName="AN_CONT" />
+                <ScalarProperty Name="TEL" ColumnName="TEL" />
+                <ScalarProperty Name="PROC_FG" ColumnName="PROC_FG" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DSMLIST">
+            <EntityTypeMapping TypeName="CMBASEModel.DSMLIST">
+              <MappingFragment StoreEntitySet="DSMLIST">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="NT_SUBJECT" ColumnName="NT_SUBJECT" />
+                <ScalarProperty Name="NT_DT" ColumnName="NT_DT" />
+                <ScalarProperty Name="NT_TM" ColumnName="NT_TM" />
+                <ScalarProperty Name="NT_CATY" ColumnName="NT_CATY" />
+                <ScalarProperty Name="NT_USER" ColumnName="NT_USER" />
+                <ScalarProperty Name="NT_CONT" ColumnName="NT_CONT" />
+                <ScalarProperty Name="NT_RPLY" ColumnName="NT_RPLY" />
+                <ScalarProperty Name="NT_FG" ColumnName="NT_FG" />
+                <ScalarProperty Name="ADV_UID" ColumnName="ADV_UID" />
+                <ScalarProperty Name="RPLY_USER" ColumnName="RPLY_USER" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="dtproperties">
+            <EntityTypeMapping TypeName="CMBASEModel.dtproperties">
+              <MappingFragment StoreEntitySet="dtproperties">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="objectid" ColumnName="objectid" />
+                <ScalarProperty Name="property" ColumnName="property" />
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="uvalue" ColumnName="uvalue" />
+                <ScalarProperty Name="lvalue" ColumnName="lvalue" />
+                <ScalarProperty Name="version" ColumnName="version" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MACPOST">
+            <EntityTypeMapping TypeName="CMBASEModel.MACPOST">
+              <MappingFragment StoreEntitySet="MACPOST">
+                <ScalarProperty Name="CITY_ID" ColumnName="CITY_ID" />
+                <ScalarProperty Name="TOWN_ID" ColumnName="TOWN_ID" />
+                <ScalarProperty Name="CITY" ColumnName="CITY" />
+                <ScalarProperty Name="TOWN" ColumnName="TOWN" />
+                <ScalarProperty Name="LIFE_CATY" ColumnName="LIFE_CATY" />
+                <ScalarProperty Name="PTCOD" ColumnName="PTCOD" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_TM" ColumnName="UPD_TM" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+                <ScalarProperty Name="P_PRICE" ColumnName="P_PRICE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OGCDEPT">
+            <EntityTypeMapping TypeName="CMBASEModel.OGCDEPT">
+              <MappingFragment StoreEntitySet="OGCDEPT">
+                <ScalarProperty Name="DEPT_NO" ColumnName="DEPT_NO" />
+                <ScalarProperty Name="AN_DEPT_NO" ColumnName="AN_DEPT_NO" />
+                <ScalarProperty Name="O_DEPT_NO" ColumnName="O_DEPT_NO" />
+                <ScalarProperty Name="DNO" ColumnName="DNO" />
+                <ScalarProperty Name="DEPT_NAME" ColumnName="DEPT_NAME" />
+                <ScalarProperty Name="SMP_DEPT_NAME" ColumnName="SMP_DEPT_NAME" />
+                <ScalarProperty Name="AD_DEPT_NO" ColumnName="AD_DEPT_NO" />
+                <ScalarProperty Name="AD_DEPT_NAME" ColumnName="AD_DEPT_NAME" />
+                <ScalarProperty Name="DEPT_CHIEF" ColumnName="DEPT_CHIEF" />
+                <ScalarProperty Name="DEPT_WGT" ColumnName="DEPT_WGT" />
+                <ScalarProperty Name="DATA_TP" ColumnName="DATA_TP" />
+                <ScalarProperty Name="CITYLIST" ColumnName="CITYLIST" />
+                <ScalarProperty Name="DPU_ID" ColumnName="DPU_ID" />
+                <ScalarProperty Name="UNIT_ID" ColumnName="UNIT_ID" />
+                <ScalarProperty Name="DEF_PAGE" ColumnName="DEF_PAGE" />
+                <ScalarProperty Name="MGR_FG" ColumnName="MGR_FG" />
+                <ScalarProperty Name="DEPT_STAT" ColumnName="DEPT_STAT" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OGCDPUR">
+            <EntityTypeMapping TypeName="CMBASEModel.OGCDPUR">
+              <MappingFragment StoreEntitySet="OGCDPUR">
+                <ScalarProperty Name="DEPT_NO" ColumnName="DEPT_NO" />
+                <ScalarProperty Name="USR_ID" ColumnName="USR_ID" />
+                <ScalarProperty Name="DATA_TP" ColumnName="DATA_TP" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OGCUATH">
+            <EntityTypeMapping TypeName="CMBASEModel.OGCUATH">
+              <MappingFragment StoreEntitySet="OGCUATH">
+                <ScalarProperty Name="DEPT_NO" ColumnName="DEPT_NO" />
+                <ScalarProperty Name="PRG_ID" ColumnName="PRG_ID" />
+                <ScalarProperty Name="DATA_TP" ColumnName="DATA_TP" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_TM" ColumnName="UPD_TM" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OGCUSER">
+            <EntityTypeMapping TypeName="CMBASEModel.OGCUSER">
+              <MappingFragment StoreEntitySet="OGCUSER">
+                <ScalarProperty Name="USR_ID" ColumnName="USR_ID" />
+                <ScalarProperty Name="LDAP_ID" ColumnName="LDAP_ID" />
+                <ScalarProperty Name="USR_NAME" ColumnName="USR_NAME" />
+                <ScalarProperty Name="USR_PSW" ColumnName="USR_PSW" />
+                <ScalarProperty Name="AGENT" ColumnName="AGENT" />
+                <ScalarProperty Name="EMAIL" ColumnName="EMAIL" />
+                <ScalarProperty Name="TITLE" ColumnName="TITLE" />
+                <ScalarProperty Name="TEL_O" ColumnName="TEL_O" />
+                <ScalarProperty Name="TEL_M" ColumnName="TEL_M" />
+                <ScalarProperty Name="TEL_F" ColumnName="TEL_F" />
+                <ScalarProperty Name="USR_STAT" ColumnName="USR_STAT" />
+                <ScalarProperty Name="NOTE" ColumnName="NOTE" />
+                <ScalarProperty Name="DEPT_DESC" ColumnName="DEPT_DESC" />
+                <ScalarProperty Name="SUB_DEPT" ColumnName="SUB_DEPT" />
+                <ScalarProperty Name="ADM_DP" ColumnName="ADM_DP" />
+                <ScalarProperty Name="ADM_UID" ColumnName="ADM_UID" />
+                <ScalarProperty Name="ADDRESS" ColumnName="ADDRESS" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+                <ScalarProperty Name="FALL_TIME" ColumnName="FALL_TIME" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OTCUSER">
+            <EntityTypeMapping TypeName="CMBASEModel.OTCUSER">
+              <MappingFragment StoreEntitySet="OTCUSER">
+                <ScalarProperty Name="USR_ID" ColumnName="USR_ID" />
+                <ScalarProperty Name="USR_NAME" ColumnName="USR_NAME" />
+                <ScalarProperty Name="USR_PSW" ColumnName="USR_PSW" />
+                <ScalarProperty Name="AGENT" ColumnName="AGENT" />
+                <ScalarProperty Name="EMAIL" ColumnName="EMAIL" />
+                <ScalarProperty Name="TEL_O" ColumnName="TEL_O" />
+                <ScalarProperty Name="TEL_M" ColumnName="TEL_M" />
+                <ScalarProperty Name="TEL_F" ColumnName="TEL_F" />
+                <ScalarProperty Name="USR_STAT" ColumnName="USR_STAT" />
+                <ScalarProperty Name="NOTE" ColumnName="NOTE" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_TM" ColumnName="UPD_TM" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+                <ScalarProperty Name="DEPT_DESC" ColumnName="DEPT_DESC" />
+                <ScalarProperty Name="SUB_DEPT" ColumnName="SUB_DEPT" />
+                <ScalarProperty Name="ADM_DP" ColumnName="ADM_DP" />
+                <ScalarProperty Name="ADM_UID" ColumnName="ADM_UID" />
+                <ScalarProperty Name="ADDRESS" ColumnName="ADDRESS" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SECCITY">
+            <EntityTypeMapping TypeName="CMBASEModel.SECCITY">
+              <MappingFragment StoreEntitySet="SECCITY">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="DEPT_NO" ColumnName="DEPT_NO" />
+                <ScalarProperty Name="USR_ID" ColumnName="USR_ID" />
+                <ScalarProperty Name="CITY" ColumnName="CITY" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+                <ScalarProperty Name="TOWN" ColumnName="TOWN" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMCAUTH">
+            <EntityTypeMapping TypeName="CMBASEModel.SMCAUTH">
+              <MappingFragment StoreEntitySet="SMCAUTH">
+                <ScalarProperty Name="DEPT_NO" ColumnName="DEPT_NO" />
+                <ScalarProperty Name="SYS_ID" ColumnName="SYS_ID" />
+                <ScalarProperty Name="DATA_TP" ColumnName="DATA_TP" />
+                <ScalarProperty Name="CUS_FG" ColumnName="CUS_FG" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMCFILETMP">
+            <EntityTypeMapping TypeName="CMBASEModel.SMCFILETMP">
+              <MappingFragment StoreEntitySet="SMCFILETMP">
+                <ScalarProperty Name="FRM_ID" ColumnName="FRM_ID" />
+                <ScalarProperty Name="KEY_ID" ColumnName="KEY_ID" />
+                <ScalarProperty Name="ITEM_ID" ColumnName="ITEM_ID" />
+                <ScalarProperty Name="USR_ID" ColumnName="USR_ID" />
+                <ScalarProperty Name="PHOTO_NAME" ColumnName="PHOTO_NAME" />
+                <ScalarProperty Name="PHOTO_FULL" ColumnName="PHOTO_FULL" />
+                <ScalarProperty Name="PHOTO_POSTER" ColumnName="PHOTO_POSTER" />
+                <ScalarProperty Name="PHOTO_THUMB" ColumnName="PHOTO_THUMB" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMCNEWS">
+            <EntityTypeMapping TypeName="CMBASEModel.SMCNEWS">
+              <MappingFragment StoreEntitySet="SMCNEWS">
+                <ScalarProperty Name="NEWSID" ColumnName="NEWSID" />
+                <ScalarProperty Name="HEADLINE" ColumnName="HEADLINE" />
+                <ScalarProperty Name="SUMMARY" ColumnName="SUMMARY" />
+                <ScalarProperty Name="STARTDATE" ColumnName="STARTDATE" />
+                <ScalarProperty Name="ENDDATE" ColumnName="ENDDATE" />
+                <ScalarProperty Name="BODY" ColumnName="BODY" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMCNEWSCODE">
+            <EntityTypeMapping TypeName="CMBASEModel.SMCNEWSCODE">
+              <MappingFragment StoreEntitySet="SMCNEWSCODE">
+                <ScalarProperty Name="SYS_ID" ColumnName="SYS_ID" />
+                <ScalarProperty Name="CATY_ID" ColumnName="CATY_ID" />
+                <ScalarProperty Name="CATY_COD" ColumnName="CATY_COD" />
+                <ScalarProperty Name="CODE_DESC" ColumnName="CODE_DESC" />
+                <ScalarProperty Name="DESC_COD" ColumnName="DESC_COD" />
+                <ScalarProperty Name="SPEC_FG" ColumnName="SPEC_FG" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_TM" ColumnName="UPD_TM" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMCNEWSDOC">
+            <EntityTypeMapping TypeName="CMBASEModel.SMCNEWSDOC">
+              <MappingFragment StoreEntitySet="SMCNEWSDOC">
+                <ScalarProperty Name="NEWSID" ColumnName="NEWSID" />
+                <ScalarProperty Name="FILID" ColumnName="FILID" />
+                <ScalarProperty Name="FILE_DESC" ColumnName="FILE_DESC" />
+                <ScalarProperty Name="FILE_PATH" ColumnName="FILE_PATH" />
+                <ScalarProperty Name="FILE_BODY" ColumnName="FILE_BODY" />
+                <ScalarProperty Name="FILE_SIZE" ColumnName="FILE_SIZE" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMCPOSTN">
+            <EntityTypeMapping TypeName="CMBASEModel.SMCPOSTN">
+              <MappingFragment StoreEntitySet="SMCPOSTN">
+                <ScalarProperty Name="CITY_ID" ColumnName="CITY_ID" />
+                <ScalarProperty Name="CITY" ColumnName="CITY" />
+                <ScalarProperty Name="TOWN" ColumnName="TOWN" />
+                <ScalarProperty Name="LIFE_CATY" ColumnName="LIFE_CATY" />
+                <ScalarProperty Name="CPA_CITY_ID" ColumnName="CPA_CITY_ID" />
+                <ScalarProperty Name="CPA_TOWN_ID" ColumnName="CPA_TOWN_ID" />
+                <ScalarProperty Name="PTCOD" ColumnName="PTCOD" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="SUP1" ColumnName="SUP1" />
+                <ScalarProperty Name="SUP2" ColumnName="SUP2" />
+                <ScalarProperty Name="MEB" ColumnName="MEB" />
+                <ScalarProperty Name="POP_CNT" ColumnName="POP_CNT" />
+                <ScalarProperty Name="DOR_CNT" ColumnName="DOR_CNT" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_TM" ColumnName="UPD_TM" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMCPROG">
+            <EntityTypeMapping TypeName="CMBASEModel.SMCPROG">
+              <MappingFragment StoreEntitySet="SMCPROG">
+                <ScalarProperty Name="PRG_ID" ColumnName="PRG_ID" />
+                <ScalarProperty Name="PRG_NAME" ColumnName="PRG_NAME" />
+                <ScalarProperty Name="PRG_SEQ" ColumnName="PRG_SEQ" />
+                <ScalarProperty Name="MOD_ID" ColumnName="MOD_ID" />
+                <ScalarProperty Name="MOD_NAME" ColumnName="MOD_NAME" />
+                <ScalarProperty Name="MOD_SEQ" ColumnName="MOD_SEQ" />
+                <ScalarProperty Name="PRG_TP" ColumnName="PRG_TP" />
+                <ScalarProperty Name="PRG_DIR" ColumnName="PRG_DIR" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_TM" ColumnName="UPD_TM" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMCROAD">
+            <EntityTypeMapping TypeName="CMBASEModel.SMCROAD">
+              <MappingFragment StoreEntitySet="SMCROAD">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ZIP" ColumnName="ZIP" />
+                <ScalarProperty Name="CITY" ColumnName="CITY" />
+                <ScalarProperty Name="TOWN" ColumnName="TOWN" />
+                <ScalarProperty Name="ROAD" ColumnName="ROAD" />
+                <ScalarProperty Name="NOTE" ColumnName="NOTE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMCSYSC">
+            <EntityTypeMapping TypeName="CMBASEModel.SMCSYSC">
+              <MappingFragment StoreEntitySet="SMCSYSC">
+                <ScalarProperty Name="SYS_ID" ColumnName="SYS_ID" />
+                <ScalarProperty Name="SYS_NAME" ColumnName="SYS_NAME" />
+                <ScalarProperty Name="GSYS_ID" ColumnName="GSYS_ID" />
+                <ScalarProperty Name="HOSTNAME" ColumnName="HOSTNAME" />
+                <ScalarProperty Name="DBNAME" ColumnName="DBNAME" />
+                <ScalarProperty Name="DBUID" ColumnName="DBUID" />
+                <ScalarProperty Name="DBPSW" ColumnName="DBPSW" />
+                <ScalarProperty Name="FILE_PATH" ColumnName="FILE_PATH" />
+                <ScalarProperty Name="HTTPNAME" ColumnName="HTTPNAME" />
+                <ScalarProperty Name="TARGET" ColumnName="TARGET" />
+                <ScalarProperty Name="LEV" ColumnName="LEV" />
+                <ScalarProperty Name="DATA_TP" ColumnName="DATA_TP" />
+                <ScalarProperty Name="SYS_ORD" ColumnName="SYS_ORD" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UMCLOGR">
+            <EntityTypeMapping TypeName="CMBASEModel.UMCLOGR">
+              <MappingFragment StoreEntitySet="UMCLOGR">
+                <ScalarProperty Name="USR_ID" ColumnName="USR_ID" />
+                <ScalarProperty Name="USR_PSW" ColumnName="USR_PSW" />
+                <ScalarProperty Name="LOG_CNT" ColumnName="LOG_CNT" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_TM" ColumnName="UPD_TM" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UMCUSER_TEMP">
+            <EntityTypeMapping TypeName="CMBASEModel.UMCUSER_TEMP">
+              <MappingFragment StoreEntitySet="UMCUSER_TEMP">
+                <ScalarProperty Name="USR_ID" ColumnName="USR_ID" />
+                <ScalarProperty Name="IC_SN" ColumnName="IC_SN" />
+                <ScalarProperty Name="WORK_GP" ColumnName="WORK_GP" />
+                <ScalarProperty Name="FL_GP" ColumnName="FL_GP" />
+                <ScalarProperty Name="SC_NO" ColumnName="SC_NO" />
+                <ScalarProperty Name="DEPT_NO" ColumnName="DEPT_NO" />
+                <ScalarProperty Name="CITYLIST" ColumnName="CITYLIST" />
+                <ScalarProperty Name="RATE" ColumnName="RATE" />
+                <ScalarProperty Name="MAG_SC_NO" ColumnName="MAG_SC_NO" />
+                <ScalarProperty Name="USR_NAME" ColumnName="USR_NAME" />
+                <ScalarProperty Name="PASSWD" ColumnName="PASSWD" />
+                <ScalarProperty Name="EMAIL" ColumnName="EMAIL" />
+                <ScalarProperty Name="TEL_O" ColumnName="TEL_O" />
+                <ScalarProperty Name="TEL_H" ColumnName="TEL_H" />
+                <ScalarProperty Name="TEL_M" ColumnName="TEL_M" />
+                <ScalarProperty Name="TEL_F" ColumnName="TEL_F" />
+                <ScalarProperty Name="U_STAT" ColumnName="U_STAT" />
+                <ScalarProperty Name="V_DATE" ColumnName="V_DATE" />
+                <ScalarProperty Name="STOP_FG" ColumnName="STOP_FG" />
+                <ScalarProperty Name="NOTE" ColumnName="NOTE" />
+                <ScalarProperty Name="MAG_FG" ColumnName="MAG_FG" />
+                <ScalarProperty Name="SRV_TP" ColumnName="SRV_TP" />
+                <ScalarProperty Name="CPAMI_DEPT_NO" ColumnName="CPAMI_DEPT_NO" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_TM" ColumnName="UPD_TM" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+                <ScalarProperty Name="LMT_DT" ColumnName="LMT_DT" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OGCTITLE">
+            <EntityTypeMapping TypeName="CMBASEModel.OGCTITLE">
+              <MappingFragment StoreEntitySet="OGCTITLE">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="TITLE" ColumnName="TITLE" />
+                <ScalarProperty Name="NAME" ColumnName="NAME" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OTCDEPT">
+            <EntityTypeMapping TypeName="CMBASEModel.OTCDEPT">
+              <MappingFragment StoreEntitySet="OTCDEPT">
+                <ScalarProperty Name="DEPT_NO" ColumnName="DEPT_NO" />
+                <ScalarProperty Name="AN_DEPT_NO" ColumnName="AN_DEPT_NO" />
+                <ScalarProperty Name="O_DEPT_NO" ColumnName="O_DEPT_NO" />
+                <ScalarProperty Name="DNO" ColumnName="DNO" />
+                <ScalarProperty Name="DEPT_NAME" ColumnName="DEPT_NAME" />
+                <ScalarProperty Name="DEPT_CHIEF" ColumnName="DEPT_CHIEF" />
+                <ScalarProperty Name="DEPT_WGT" ColumnName="DEPT_WGT" />
+                <ScalarProperty Name="DATA_TP" ColumnName="DATA_TP" />
+                <ScalarProperty Name="DPU_ID" ColumnName="DPU_ID" />
+                <ScalarProperty Name="UNIT_ID" ColumnName="UNIT_ID" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_TM" ColumnName="UPD_TM" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+                <ScalarProperty Name="DEF_PAGE" ColumnName="DEF_PAGE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OTCDPUR">
+            <EntityTypeMapping TypeName="CMBASEModel.OTCDPUR">
+              <MappingFragment StoreEntitySet="OTCDPUR">
+                <ScalarProperty Name="DEPT_NO" ColumnName="DEPT_NO" />
+                <ScalarProperty Name="USR_ID" ColumnName="USR_ID" />
+                <ScalarProperty Name="DATA_TP" ColumnName="DATA_TP" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_TM" ColumnName="UPD_TM" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMCPOST">
+            <EntityTypeMapping TypeName="CMBASEModel.SMCPOST">
+              <MappingFragment StoreEntitySet="SMCPOST">
+                <ScalarProperty Name="CITY_ID" ColumnName="CITY_ID" />
+                <ScalarProperty Name="CITY" ColumnName="CITY" />
+                <ScalarProperty Name="TOWN" ColumnName="TOWN" />
+                <ScalarProperty Name="LIFE_CATY" ColumnName="LIFE_CATY" />
+                <ScalarProperty Name="CPA_CITY_ID" ColumnName="CPA_CITY_ID" />
+                <ScalarProperty Name="CPA_TOWN_ID" ColumnName="CPA_TOWN_ID" />
+                <ScalarProperty Name="PTCOD" ColumnName="PTCOD" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="SUP1" ColumnName="SUP1" />
+                <ScalarProperty Name="SUP2" ColumnName="SUP2" />
+                <ScalarProperty Name="MEB" ColumnName="MEB" />
+                <ScalarProperty Name="POP_CNT" ColumnName="POP_CNT" />
+                <ScalarProperty Name="DOR_CNT" ColumnName="DOR_CNT" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="UPD_TM" ColumnName="UPD_TM" />
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMCMENU3">
+            <EntityTypeMapping TypeName="CMBASEModel.SMCMENU3">
+              <MappingFragment StoreEntitySet="SMCMENU3">
+                <ScalarProperty Name="SYS_ORD" ColumnName="SYS_ORD" />
+                <ScalarProperty Name="DATA_TP" ColumnName="DATA_TP" />
+                <ScalarProperty Name="TARGET" ColumnName="TARGET" />
+                <ScalarProperty Name="HTTPNAME" ColumnName="HTTPNAME" />
+                <ScalarProperty Name="FILE_PATH" ColumnName="FILE_PATH" />
+                <ScalarProperty Name="APP_PATH" ColumnName="APP_PATH" />
+                <ScalarProperty Name="DBPSW" ColumnName="DBPSW" />
+                <ScalarProperty Name="DBUID" ColumnName="DBUID" />
+                <ScalarProperty Name="DBNAME" ColumnName="DBNAME" />
+                <ScalarProperty Name="HOSTNAME" ColumnName="HOSTNAME" />
+                <ScalarProperty Name="GSYSID" ColumnName="GSYSID" />
+                <ScalarProperty Name="SYS_NAME" ColumnName="SYS_NAME" />
+                <ScalarProperty Name="AN_SYS_ID" ColumnName="AN_SYS_ID" />
+                <ScalarProperty Name="SYS_ID" ColumnName="SYS_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OGCORIGI">
+            <EntityTypeMapping TypeName="CMBASEModel.OGCORIGI">
+              <MappingFragment StoreEntitySet="OGCORIGI">
+                <ScalarProperty Name="ORIGINAL_PSW" ColumnName="ORIGINAL_PSW" />
+                <ScalarProperty Name="USER_ID" ColumnName="USER_ID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMCCODE">
+            <EntityTypeMapping TypeName="CMBASEModel.SMCCODE">
+              <MappingFragment StoreEntitySet="SMCCODE">
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+                <ScalarProperty Name="UPD_TM" ColumnName="UPD_TM" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="SPEC_FG" ColumnName="SPEC_FG" />
+                <ScalarProperty Name="DESC_COD" ColumnName="DESC_COD" />
+                <ScalarProperty Name="CODE_DESC" ColumnName="CODE_DESC" />
+                <ScalarProperty Name="CATY_COD" ColumnName="CATY_COD" />
+                <ScalarProperty Name="CATY_ID" ColumnName="CATY_ID" />
+                <ScalarProperty Name="SYS_ID" ColumnName="SYS_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMCLOGS">
+            <EntityTypeMapping TypeName="CMBASEModel.SMCLOGS">
+              <MappingFragment StoreEntitySet="SMCLOGS">
+                <ScalarProperty Name="UPD_UID" ColumnName="UPD_UID" />
+                <ScalarProperty Name="UPD_DT" ColumnName="UPD_DT" />
+                <ScalarProperty Name="ADD_DT" ColumnName="ADD_DT" />
+                <ScalarProperty Name="ACTION_DESC" ColumnName="ACTION_DESC" />
+                <ScalarProperty Name="ACTION_TYPE" ColumnName="ACTION_TYPE" />
+                <ScalarProperty Name="LOGIN_STATE" ColumnName="LOGIN_STATE" />
+                <ScalarProperty Name="LOGIN_DT" ColumnName="LOGIN_DT" />
+                <ScalarProperty Name="LOGIN_IP" ColumnName="LOGIN_IP" />
+                <ScalarProperty Name="USR_ID" ColumnName="USR_ID" />
+                <ScalarProperty Name="DID" ColumnName="DID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMV_SMCCITY">
+            <EntityTypeMapping TypeName="CMBASEModel.SMV_SMCCITY">
+              <MappingFragment StoreEntitySet="SMV_SMCCITY">
+                <ScalarProperty Name="CITY" ColumnName="CITY" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMV_SMCTOWN">
+            <EntityTypeMapping TypeName="CMBASEModel.SMV_SMCTOWN">
+              <MappingFragment StoreEntitySet="SMV_SMCTOWN">
+                <ScalarProperty Name="TOWN" ColumnName="TOWN" />
+                <ScalarProperty Name="CITY" ColumnName="CITY" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="無" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

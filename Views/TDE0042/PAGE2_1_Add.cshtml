@@ -1,0 +1,200 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>新增經費來源</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .btn-toolbar {
+            margin-top: 20px;
+        }
+
+        .info-row {
+            background-color: #e8f4fc;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .required-label::after {
+            content: " *";
+            color: red;
+        }
+
+        .optional-section {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px dashed #ddd;
+        }
+
+        .optional-section h5 {
+            margin-top: 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    @if(TempData["Success"] != null) {
+        <div class="alert alert-success alert-dismissible" id="successAlert">
+            @TempData["Success"]
+            <button type="button" class="close" onclick="$('#successAlert').hide();">&times;</button>
+        </div>
+    }
+    @if(TempData["Error"] != null) {
+        <div class="alert alert-danger alert-dismissible" id="errorAlert">
+            @TempData["Error"]
+            <button type="button" class="close" onclick="$('#errorAlert').hide();">&times;</button>
+        </div>
+    }
+
+    @using(Html.BeginForm("PAGE2_1_Add_Save", "TDE0042", FormMethod.Post, new { id = "mainForm" })) {
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" name="TD_CODE" value="@ViewBag.TD_CODE" />
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-primary text-white fw-bold">
+                <strong>新增經費來源</strong>
+            </div>
+            <div class="card-body">
+                <!-- 工程資訊（唯讀） -->
+                <div class="info-row">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span class="info-label">工程編號：</span>
+                            @ViewBag.TD_CODE
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 5px;">
+                        <div class="col-md-12">
+                            <span class="info-label">工程名稱：</span>
+                            @ViewBag.TD_NAME
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 選擇計畫（必填） -->
+                <div class="form-group">
+                    <label class="required-label">選擇計畫</label>
+                    @Html.DropDownList("PID", ViewBag.PlanList as SelectList, new { @class = "form-control", id = "PID", required = "required" })
+                    <p class="help-block text-muted">選擇要關聯的年度計畫</p>
+                </div>
+
+                <!-- 經費代碼（必填） -->
+                <div class="form-group">
+                    <label class="required-label">經費代碼</label>
+                    @Html.DropDownList("FD_CODE", ViewBag.FD_CODE_List as SelectList, new { @class = "form-control", id = "FD_CODE", required = "required" })
+                </div>
+
+                <!-- 經費資料（選填） -->
+                <div class="optional-section">
+                    <h5>初始經費資料（選填）</h5>
+                    <p class="text-muted small">可在新增後透過「中央款分配數」按鈕再新增經費明細</p>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>年度</label>
+                                <input type="text" class="form-control" name="SYR" id="SYR" maxlength="4" placeholder="例：114" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>經費層級</label>
+                                @Html.DropDownList("FIT_CODE", ViewBag.FIT_CODE_List as SelectList, new { @class = "form-control", id = "FIT_CODE" })
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>金額</label>
+                                <input type="number" class="form-control" name="FUND" id="FUND" placeholder="金額" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>說明</label>
+                        <input type="text" class="form-control" name="FUND_DESC" id="FUND_DESC" placeholder="經費說明（選填）" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-toolbar">
+            <button type="submit" class="btn btn-primary" id="btnSave">
+                <i class="fa-solid fa-floppy-disk"></i> 新增
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="closeWindow();">
+                <i class="fa-solid fa-xmark"></i> 取消
+            </button>
+        </div>
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 關閉視窗
+        function closeWindow() {
+            if (typeof top.close2_1_Add === 'function') {
+                top.close2_1_Add();
+            } else {
+                window.close();
+            }
+        }
+
+        // 表單驗證
+        $('#mainForm').on('submit', function (e) {
+            var pid = $('#PID').val();
+            if (!pid) {
+                alert('請選擇計畫');
+                e.preventDefault();
+                return false;
+            }
+            var fdCode = $('#FD_CODE').val();
+            if (!fdCode) {
+                alert('請選擇經費代碼');
+                e.preventDefault();
+                return false;
+            }
+            return true;
+        });
+
+        // 當選擇計畫時，自動填入年度
+        $('#PID').on('change', function () {
+            var selectedText = $(this).find('option:selected').text();
+            // 從 "(114) 計畫名稱" 格式中取出年度
+            var match = selectedText.match(/^\((\d+)\)/);
+            if (match && match[1]) {
+                $('#SYR').val(match[1]);
+            }
+        });
+    </script>
+</body>
+</html>

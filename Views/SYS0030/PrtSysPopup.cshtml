@@ -1,0 +1,193 @@
+﻿@{
+    Layout = null;
+    var cityList = ViewBag.CityList as System.Data.DataTable;
+    var startYears = ViewBag.StartYears as System.Data.DataTable;
+    var endYears = ViewBag.EndYears as System.Data.DataTable;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>列印下水道系統經費統計表</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        body {
+            padding: 15px;
+            font-family: "微軟正黑體", sans-serif;
+            background-color: #F4F4FF;
+        }
+
+        .table-style {
+            width: 100%;
+            background-color: #F4F4FF;
+            border-color: #86AEDB;
+            border-width: 1.5pt;
+            border-style: Solid;
+            border-collapse: collapse;
+        }
+
+            .table-style td {
+                padding: 8px;
+                border: 1.5pt solid #86AEDB;
+            }
+
+        .tableTag12 {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #333;
+            width: 220px;
+            text-align: right;
+        }
+
+        .tableTag10 {
+            font-size: 10pt;
+        }
+
+        .LblState {
+            background-color: #558DCC;
+            font-size: 12pt;
+            font-weight: bold;
+            padding: 6px 20px;
+            color: white;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .checkbox-container {
+            display: inline-block;
+            margin-right: 15px;
+            margin-bottom: 5px;
+        }
+
+            .checkbox-container input {
+                margin-right: 4px;
+                vertical-align: middle;
+            }
+
+        .btn-group-action {
+            margin-bottom: 8px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 5px;
+        }
+    </style>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript">
+        function closeDialog() {
+            // 呼叫父視窗 jQuery UI 剛性收納彈窗
+            if (parent && parent.$) {
+                parent.$('#PRT_SYS_Dialog').dialog('close');
+            }
+        }
+
+        function selectAllCities(status) {
+            $(".city-chk").prop("checked", status);
+        }
+    </script>
+</head>
+<body>
+    @using (Html.BeginForm("ExportPrtSys", "SYS0030", FormMethod.Post, new { id = "popupForm" }))
+    {
+        <input type="hidden" name="STAT_NO" value="@ViewBag.STAT_NO" />
+
+        <table class="table-style">
+            <tr>
+                <td colspan="2" style="background-color: #E2ECF7;">
+                    <table style="width:100%;">
+                        <tr>
+                            <td style="border:0; padding:0; text-align:left;">
+                                <div class="LblState">下水道系統經費統計表</div>
+                            </td>
+                            <td style="border:0; padding:0; text-align:right;">
+                                <button type="button" class="btn btn-secondary" onclick="closeDialog();">關閉</button>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableTag12">下水道系統歸屬縣市別：</td>
+                <td class="tableTag10">
+                    <div class="btn-group-action">
+                        <button type="button" class="btn btn-info btn-xs" onclick="selectAllCities(true);">全選</button>
+                        <button type="button" class="btn btn-secondary btn-xs" onclick="selectAllCities(false);">全不選</button>
+                    </div>
+                    <div>
+                        @if (cityList != null)
+                        {
+                            foreach (System.Data.DataRow row in cityList.Rows)
+                            {
+                                var cityName = row["CITY"].ToString();
+                                <label class="checkbox-container">
+                                    <input type="checkbox" name="SelectedCities" value="@cityName" class="city-chk" checked />
+                                    @cityName
+                                </label>
+                            }
+                        }
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableTag12">下水道系統名稱：</td>
+                <td class="tableTag10">
+                    <input type="text" name="sSYS_NAME" id="sSYS_NAME" class="form-control" style="width:95%; display:inline-block;" />
+                </td>
+            </tr>
+            <tr>
+                <td class="tableTag12">區間年度：</td>
+                <td class="tableTag10">
+                    <select name="sSYR" id="sSYR" class="form-control" style="width:auto; display:inline-block;">
+                        @if (startYears != null)
+                        {
+                            foreach (System.Data.DataRow row in startYears.Rows)
+                            {
+                                <option value="@row["SYR"]">@row["SYR"]</option>
+                            }
+                        }
+                    </select>
+                    ~
+                    <select name="eSYR" id="eSYR" class="form-control" style="width:auto; display:inline-block;">
+                        @if (endYears != null)
+                        {
+                            foreach (System.Data.DataRow row in endYears.Rows)
+                            {
+                                <option value="@row["SYR"]">@row["SYR"]</option>
+                            }
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableTag12">是否補助：</td>
+                <td class="tableTag10">
+                    <label style="margin-right:15px;"><input type="radio" name="IS_SUP" value="Y" checked /> 有補助</label>
+                    <label style="margin-right:15px;"><input type="radio" name="IS_SUP" value="N" /> 無補助</label>
+                    <label><input type="radio" name="IS_SUP" value="" /> 所有</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableTag12">經費歸零案：</td>
+                <td class="tableTag10">
+                    <select name="IS_ALL_YR_FUND" id="IS_ALL_YR_FUND" class="form-control" style="width:auto;">
+                        <option value="Y" selected>包含</option>
+                        <option value="N">不包含</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableTag12">資料呈現方式：</td>
+                <td class="tableTag10">
+                    <label style="margin-right:15px;"><input type="checkbox" name="DATA_TYPE" value="ALL" checked /> 所有工程</label>
+                    <label style="margin-right:15px;"><input type="checkbox" name="DATA_TYPE" value="CITY" checked /> 依下水道系統歸屬縣市別區分</label>
+                    <label><input type="checkbox" name="DATA_TYPE" value="SYS_ID" checked /> 依下水道系統區分</label>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align:center; padding:15px;">
+                    <button type="submit" class="btn btn-danger" style="padding:6px 30px; font-weight:bold;">列印 Excel 統計表</button>
+                </td>
+            </tr>
+        </table>
+    }
+</body>
+</html>

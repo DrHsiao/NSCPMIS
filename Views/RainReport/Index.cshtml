@@ -1,0 +1,182 @@
+﻿@{
+    ViewBag.Title = "(雨水)例行性管考報表：I-1.雨水例行性管考報表";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head{
+    <link rel="stylesheet" href="~/Content/views/report.css">
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body style="text-align: left; " class="model-form">
+
+    <style>
+        .my-text {
+            font-size: 30px;
+            line-height: 1.8;
+        }
+
+        .checkbox-container {
+            border: 1.5px solid #000000;
+            padding: 1px;
+            display: inline-block;
+        }
+
+            .checkbox-container label {
+                display: block;
+            }
+
+        select {
+            width: auto;
+            max-width: 100%;
+        }
+
+        h2 {
+            font-size: 1.5em;
+        }
+
+        select, option {
+            font-size: 2.8rem;
+        }
+
+        input[type="checkbox"] {
+            transform: scale(1.5);
+        }
+
+        .checkbox-container {
+            padding-left: 10px;
+        }
+
+            .checkbox-container input[type="checkbox"] {
+                margin-right: 10px;
+            }
+    </style>
+
+    <form method="post" action="@Url.Action("Index")" class="my-text" id="dynamicForm">
+
+        <h2>例行性管考報表:</h2>
+
+        報表類型:
+        <select id="choosestate">
+            <option value="Index" @{if (ViewBag.State == "Index") { <text> selected</text> }}>I-1.雨水例行性管考報表</option>
+            <option value="2_2" @{if (ViewBag.State == "2_2") { <text> selected</text> }}>A-2.細項執行情形表</option>
+            <option value="4_2" @{if (ViewBag.State == "4_2") { <text> selected</text> }}>A-4.跨年度細項執行情形表</option>
+            <option value="6_2" @{if (ViewBag.State == "6_2") { <text> selected</text> }}>B-1.修正預算作業表</option>
+            <option value="9_2" @{if (ViewBag.State == "9_2") { <text> selected</text> }}>E-1.功能細項執行表(自訂欄位)</option>
+            <option value="10_2" @{if (ViewBag.State == "10_2") { <text> selected</text> }}>F-1.相關計畫年度補助經費表</option>
+            <option value="12_2" @{if (ViewBag.State == "12_2") { <text> selected</text> }}>H-1.在建工程抽查/查核/督導統計表</option>
+        </select>
+        <br />
+
+        工作計畫:
+        <select id="choose" name="PID" required>
+
+            <option value="" disabled selected>請選擇</option>
+
+            @foreach (var item in ViewBag.Plan)
+            {
+                <option value="@item.PID">@item.PJ_NAME</option>
+            }
+
+            @*<option value="298,299,300">(114~114)前瞻基礎建設計畫-縣市管河川及區域排水整理改善計畫</option>
+            <option value="284,285,286">(113~113)前瞻基礎建設計畫-縣市管河川及區域排水整理改善計畫</option>
+            <option value="269,270,271">(112~112)前瞻基礎建設計畫-縣市管河川及區域排水整理改善計畫</option>
+            <option value="255,256,267">(111~111)前瞻基礎建設計畫-縣市管河川及區域排水整理改善計畫</option>
+            <option value="242,243,244">(110~110)前瞻基礎建設計畫-縣市管河川及區域排水整理改善計畫</option>
+            <option value="209,210">(109~109)前瞻基礎建設計畫-縣市管河川及區域排水整理改善計畫</option>
+            <option value="207,208">(108~108)前瞻基礎建設計畫-縣市管河川及區域排水整理改善計畫</option>*@
+
+        </select>
+        <br />
+
+        選擇報表:
+        <select id="Report" name="Form" required>
+            <option value="RPT0001">經費調整表</option>
+            <option value="RPT0002">執行情形表</option>
+            <option value="RPT0003">前瞻計畫執行情形表</option>
+        </select>
+
+        <div>
+            資料統計截至:
+            <select id="SYR" name="SYR" required>
+                <option value="" disabled selected>------</option>
+            </select>年
+            <select name="SMN">
+                @for (int i = 1; i < 13; i++)
+                {
+                    <option value="@i.ToString("D2")" @(i == DateTime.Now.Month ? "selected" : "" )>@string.Format("{0}月", @i)</option>
+                }
+
+            </select>
+        </div>
+        <br />
+
+        <button name="Button" value="1" type="submit">EXCEL匯出</button> <button name="Button" value="2" type="submit">ODS匯出</button>
+
+        @* 匯出失敗（查無資料）時由 ReportPrintExceptionFilter 攔截並以 Session 帶入訊息後導回本頁 *@
+        @Html.Partial("_ReportMessage")
+
+    </form>
+
+</body>
+</html>
+
+<script>
+
+    $(function () {
+        $("#choose").change(function () {
+            var selectedValue = $(this).val();
+            $.ajax({
+                url:'@Url.Action("ChooseYear", "Report")',
+                type: 'post',
+                cache: false,
+                async: false,
+                dataType: 'json',
+                data: { PID: selectedValue },
+                success: function (data1) {
+
+                    var data = JSON.parse(data1);
+
+                    console.log(data);
+
+                    if (data.length > 0) {
+                        $('#SYR').empty();
+                        $('#SYR').append($('<option value="" disabled selected></option>').val('').text('請選擇'));
+                        $.each(data, function (i, item) {
+                            $('#SYR').append($('<option></option>').val(item.SYR).text(item.SYR));
+                        })
+                    }
+                    else {
+                    $('#SYR').empty();
+                    $('#SYR').append($('<option></option>').val('').text('------'));
+                    }
+                }
+            });
+        });
+    });
+
+    $(function () {
+        $("#choosestate").change(function () {
+            var selectedValue = $(this).val();
+            $.ajax({
+                url:'@Url.Action("ChooseState", "Report")',
+                type: 'post',
+                cache: false,
+                async: false,
+                data: { value: selectedValue },
+                success: function (result) {
+                    window.location.href = result;
+                }
+            });
+        });
+    });
+
+</script>

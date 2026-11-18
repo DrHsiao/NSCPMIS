@@ -1,0 +1,160 @@
+﻿@model IEnumerable<WCals.Models.CMBASEModels.SiteCityViewModel>
+
+@{
+    ViewBag.Title = "例行性管考報表：A-5.細項執行情形表(前瞻計畫)";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head{
+
+    <link rel="stylesheet" href="~/Content/views/report.css">
+
+    <style>
+        input[type="checkbox"] {
+            transform: scale(1.8) translateY(-2px);
+        }
+
+        label {
+            font-weight: normal;
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="h2 border-bottom pb-2 mb-3">
+            例行性管考報表[0.1.1]
+
+            <small> </small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/Home")"> 首頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                例行性管考報表
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fa-solid fa-file"></i>
+                A-5.細項執行情形表(前瞻計畫)
+            </li>
+        </ol>
+    </div>
+</div>
+
+<form method="post" action="@Url.Action("ReportPrint5")" class="my-text">
+    @*<h2>例行性管考報表:</h2>*@
+
+    報表類型:
+    <select id="choose">
+        <option value="1" @{if (ViewBag.State == "1") { <text> selected</text> }}>A-1.一億元以上工程計畫執行情形表</option>
+        <option value="2" @{if (ViewBag.State == "2") { <text> selected</text> }}>A-2.細項執行情形表</option>
+        <option value="3" @{if (ViewBag.State == "3") { <text> selected</text> }}>A-3.跨年度一億元以上工程計畫執行情形表</option>
+        <option value="4" @{if (ViewBag.State == "4") { <text> selected</text> }}>A-4.跨年度細項執行情形表</option>
+        <option value="5" @{if (ViewBag.State == "5") { <text> selected</text> }}>A-5.細項執行情形表(前瞻計畫)</option>
+        <option value="6" @{if (ViewBag.State == "6") { <text> selected</text> }}>B-1.修正預算作業表</option>
+        <option value="7" @{if (ViewBag.State == "7") { <text> selected</text> }}>C-1.99年振興經濟表格</option>
+        <option value="8" @{if (ViewBag.State == "8") { <text> selected</text> }}>D-1.公共建設推動會報執行情形表</option>
+        <option value="9" @{if (ViewBag.State == "9") { <text> selected</text> }}>E-1.工程細項執行表(自訂欄位)</option>
+        <option value="10" @{if (ViewBag.State == "10") { <text> selected</text> }}>F-1.相關計畫年度補助經費表</option>
+        <option value="12" @{if (ViewBag.State == "12") { <text> selected</text> }}>H-1.在建工程抽查/查核/督導統計表</option>
+    </select>
+    <br />
+
+    選擇年度:
+    <select id="Year" name="SYR" required>
+        <option value="" disabled selected>請選擇</option>
+
+        @foreach (var item in ViewBag.year)
+        {
+            <option>@item.SYR</option>
+        }
+    </select>
+    <br />
+
+    選擇計畫:
+    <select id="Value" name="PID" required>
+        <option>------</option>
+    </select>
+
+    @if (ViewBag.State == "2" || ViewBag.State == "5")
+    {
+        <div>資料年分: <input type="text" class="input_font" name="YearWrite" style="width:67px; height:35px" required /></div>
+    }
+
+    <div>
+        資料月份:
+        <select name="SMN">
+            @for (int i = 1; i < 13; i++)
+            {
+                <option value="@i.ToString("D2")" @(i == DateTime.Now.Month ? "selected" : "" )>@string.Format("{0}月", @i)</option>
+            }
+        </select>
+    </div>
+
+    @if (ViewBag.State == "2" || ViewBag.State == "5")
+    {
+        <div>
+            縣市別:
+            <input type="checkbox" value="北區" id="Site1" name="Site" onchange="checkAll1('北區')" />
+            <label for="Site1">北區</label>
+            <input type="checkbox" value="中區" id="Site2" name="Site" onchange="checkAll2('中區')" />
+            <label for="Site2">中區</label>
+            <input type="checkbox" value="南區" id="Site3" name="Site" onchange="checkAll3('南區')" />
+            <label for="Site3">南區</label>
+
+            @{
+                int count = 0;
+            }
+
+            <div>
+                @foreach (var item in Model.Select(m => m.sECCITY.CITY).Distinct())
+                {
+                    foreach (var item2 in Model.Where(m => m.sMCPOSTN.CITY == item && m.sMCPOSTN.AREA == "北區").GroupBy(m => m.sMCPOSTN.CITY).Select(g => g.First()))
+                    {
+                        <input type="checkbox" value="@item" id="@item2.sMCPOSTN.AREA" name="CityList" class="city-checkbox">
+                    }
+                    foreach (var item2 in Model.Where(m => m.sMCPOSTN.CITY == item && m.sMCPOSTN.AREA == "中區").GroupBy(m => m.sMCPOSTN.CITY).Select(g => g.First()))
+                    {
+                        <input type="checkbox" value="@item" id="@item2.sMCPOSTN.AREA" name="CityList" class="city-checkbox">
+                    }
+                    foreach (var item2 in Model.Where(m => m.sMCPOSTN.CITY == item && m.sMCPOSTN.AREA == "南區").GroupBy(m => m.sMCPOSTN.CITY).Select(g => g.First()))
+                    {
+                        <input type="checkbox" value="@item" id="@item2.sMCPOSTN.AREA" name="CityList" class="city-checkbox">
+                    }
+                    <label for="City">@item</label>
+                    count++;
+
+                    if (count % 8 == 0)
+                    {
+                        <br />
+                    }
+                }
+            </div>
+        </div>
+
+        <div>
+            經費歸零案:
+            <select name="funding">
+                <option value="Y"> 含經費歸零案 </option>
+                <option value="N"> 不含經費歸零案 </option>
+            </select>
+        </div>
+    }
+    <br />
+
+    <button type="submit"> EXCEL匯出</button>
+    <button type="submit" name="ods" value="1">ODS匯出</button>
+</form>
+
+@section scripts {
+
+    <script type="text/javascript">
+        var pjYearUrl = '@Url.Action("ChoosePJYear", "Report")';
+        var stateUrl = '@Url.Action("ChooseState", "Report")';
+        var orderUrl = '@Url.Action("Orders", "Report")';
+    </script>
+
+    <script src="~/Scripts/Report/State5.js" type="text/javascript"></script>
+}

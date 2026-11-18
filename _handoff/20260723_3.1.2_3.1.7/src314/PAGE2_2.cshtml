@@ -1,0 +1,290 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.TDE0040Model
+@{
+    ViewBag.Title = "保留款";
+    Layout = null;
+
+    string tdName = "";
+    if(Model.TDMFORM != null) {
+        tdName = Model.TDMFORM.TD_NAME;
+    }
+
+    System.Data.DataTable dtList = ViewBag.List1 as System.Data.DataTable;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <style>
+ html, body {
+      height: 100%;
+        margin: 0;
+     padding: 0;
+        }
+
+        body {
+         padding: 5px;
+            box-sizing: border-box;
+   display: flex;
+    flex-direction: column;
+        }
+
+        .section-header {
+       background-color: #f5f5f5;
+        border-left: 4px solid #0275d8;
+            padding: 10px 15px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+       font-weight: bold;
+    font-size: 14px;
+     }
+
+        .table-responsive {
+            overflow-x: auto;
+ }
+
+        .add-row {
+        background-color: #f9f9f9;
+        }
+
+        .add-row td {
+            vertical-align: middle !important;
+        }
+    
+        /* 表格框線與排版美化 */
+        .table-bordered { border: 0 !important; }
+        .table-bordered th, .table-bordered td { border: 0 !important; border-bottom: 1px solid #e2e8f0 !important; }
+        .table > thead > tr > th { 
+            border-bottom: 2px solid #337ab7 !important; 
+            background-color: #f8fafc; 
+            color: #334155; 
+        }
+        .table > tbody > tr:last-child > td { border-bottom: 0 !important; }
+</style>
+</head>
+<body>
+    @if(TempData["Success"] != null) {
+     <div class="alert alert-success alert-dismissible" role="alert" id="successAlert">
+            <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+            @TempData["Success"]
+  </div>
+    }
+    @if(TempData["Error"] != null) {
+        <div class="alert alert-danger alert-dismissible" role="alert" id="errorAlert">
+      <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+            @TempData["Error"]
+        </div>
+    }
+
+    <div id="messageDiv"></div>
+
+    @* 3.1.4rev：業主要求移除標題上方這顆橫跨整列的「關閉」鈕(重複)，保留列表下方那一顆 *@
+
+    <h4 class="page-header">@tdName - 保留款管理</h4>
+
+  @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.TD_CODE)
+
+    <div class="section-header">保留款列表</div>
+
+    <div class="table-responsive" style="margin-top: 0px;">
+    <table class="table table-sm" id="dataTable">
+         <thead>
+        <tr style="background-color: #5599dd; color: white;">
+        <th style="width: 150px; text-align: center;">保留金額</th>
+    <th style="width: 150px; text-align: center;">發生權責數</th>
+  <th style="width: 150px; text-align: center;">特別分配數</th>
+          <th style="min-width: 200px;">保留原因</th>
+  @*<th style="width: 120px; text-align: center;">操作</th>
+   </tr>*@
+ </thead>
+            <tbody id="dataBody">
+                @if(dtList != null && dtList.Rows.Count > 0) {
+             foreach(System.Data.DataRow row in dtList.Rows) {
+           string rid = row.Table.Columns.Contains("RID") && row["RID"] != DBNull.Value ? row["RID"].ToString() : "";
+          string revFund = row.Table.Columns.Contains("REV_FUND") && row["REV_FUND"] != DBNull.Value ? Convert.ToDecimal(row["REV_FUND"]).ToString("0.##") : "";
+              string ocrFund = row.Table.Columns.Contains("OCR_FUND") && row["OCR_FUND"] != DBNull.Value ? Convert.ToDecimal(row["OCR_FUND"]).ToString("0.##") : "";
+   string spdFund = row.Table.Columns.Contains("SPD_FUND") && row["SPD_FUND"] != DBNull.Value ? Convert.ToDecimal(row["SPD_FUND"]).ToString("0.##") : "";
+       string revResn = row.Table.Columns.Contains("REV_RESN") && row["REV_RESN"] != DBNull.Value ? row["REV_RESN"].ToString() : "";
+
+         <tr data-rid="@rid">
+      <td>
+               <input type="number" name="REV_FUND" value="@revFund" class="form-control form-control-sm edit-field" data-field="REV_FUND" step="0.01" style="text-align: right;" />
+   </td>
+            <td>
+              <input type="number" name="OCR_FUND" value="@ocrFund" class="form-control form-control-sm edit-field" data-field="OCR_FUND" step="0.01" style="text-align: right;" />
+        </td>
+       <td>
+  <input type="number" name="SPD_FUND" value="@spdFund" class="form-control form-control-sm edit-field" data-field="SPD_FUND" step="0.01" style="text-align: right;" />
+   </td>
+        <td>
+                 <input type="text" name="REV_RESN" value="@revResn" class="form-control form-control-sm edit-field" data-field="REV_RESN" />
+         </td>
+          @*<td style="text-align: center;">
+         <button type="button" class="btn btn-primary btn-sm btn-update" onclick="updateRow(this);"><i class="fa-solid fa-floppy-disk me-1"></i> 儲存</button>
+      <button type="button" class="btn btn-danger btn-sm btn-delete" onclick="deleteRow(this);">刪除</button>
+    </td>*@
+            </tr>
+       }
+     }
+       </tbody>
+            @*<tfoot>
+          <tr class="add-row">
+          <td>
+             <input type="number" id="new_REV_FUND" class="form-control form-control-sm" step="0.01" style="text-align: right;" placeholder="保留金額" />
+              </td>
+          <td>
+             <input type="number" id="new_OCR_FUND" class="form-control form-control-sm" step="0.01" style="text-align: right;" placeholder="發生權責數" />
+               </td>
+       <td>
+           <input type="number" id="new_SPD_FUND" class="form-control form-control-sm" step="0.01" style="text-align: right;" placeholder="特別分配數" />
+ </td>
+            <td>
+        <input type="text" id="new_REV_RESN" class="form-control form-control-sm" placeholder="保留原因" />
+    </td>
+           <td style="text-align: center;">
+            <button type="button" class="btn btn-success btn-sm" onclick="addRow();">
+                 <i class="fa-solid fa-plus"></i> 新增
+      </button>
+     </td>
+    </tr>
+            </tfoot>*@
+        </table>
+    </div>
+
+    <!-- 按鈕區 -->
+    <div style="margin-top: 15px;">
+        <button type="button" onclick="closeDialog();" class="btn btn-outline-secondary shadow-sm btn-lg"><i class="fa-solid fa-xmark me-1"></i> 關閉</button>
+  </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+    <script>
+      var TD_CODE = '@Model.TD_CODE';
+
+     function showMessage(type, message) {
+        var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    var html = '<div class="alert ' + alertClass + ' alert-dismissible" role="alert">' +
+ '<button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>' +
+     message + '</div>';
+  $('#messageDiv').html(html);
+            setTimeout(function() {
+             $('#messageDiv').html('');
+  }, 3000);
+   }
+
+        // 新增資料
+        function addRow() {
+     var revFund = $('#new_REV_FUND').val();
+  var ocrFund = $('#new_OCR_FUND').val();
+            var spdFund = $('#new_SPD_FUND').val();
+            var revResn = $('#new_REV_RESN').val();
+
+            $.ajax({
+      url: '@Url.Action("PAGE2_2_Add", "TDE0042")',
+           type: 'POST',
+        data: {
+TD_CODE: TD_CODE,
+            REV_FUND: revFund || null,
+   OCR_FUND: ocrFund || null,
+        SPD_FUND: spdFund || null,
+          REV_RESN: revResn
+       },
+           success: function(result) {
+         if (result.success) {
+       showMessage('success', result.message);
+    // 重新載入頁面
+               location.reload();
+            } else {
+               showMessage('error', result.message);
+      }
+         },
+         error: function(e) {
+        showMessage('error', '新增失敗：' + e.statusText);
+        }
+ });
+        }
+
+// 更新資料
+        function updateRow(btn) {
+      var row = $(btn).closest('tr');
+ var rid = row.data('rid');
+    var revFund = row.find('[data-field="REV_FUND"]').val();
+ var ocrFund = row.find('[data-field="OCR_FUND"]').val();
+    var spdFund = row.find('[data-field="SPD_FUND"]').val();
+   var revResn = row.find('[data-field="REV_RESN"]').val();
+
+ $.ajax({
+   url: '@Url.Action("PAGE2_2_Update", "TDE0042")',
+        type: 'POST',
+                data: {
+          RID: rid,
+    REV_FUND: revFund || null,
+       OCR_FUND: ocrFund || null,
+    SPD_FUND: spdFund || null,
+  REV_RESN: revResn
+   },
+        success: function(result) {
+ if (result.success) {
+showMessage('success', result.message);
+     } else {
+    showMessage('error', result.message);
+        }
+    },
+  error: function() {
+ showMessage('error', '更新失敗');
+    }
+         });
+  }
+
+    // 刪除資料
+        function deleteRow(btn) {
+            if (!confirm('確定要刪除此筆資料嗎？')) {
+                return;
+ }
+
+      var row = $(btn).closest('tr');
+       var rid = row.data('rid');
+
+    $.ajax({
+          url: '@Url.Action("PAGE2_2_Delete", "TDE0042")',
+     type: 'POST',
+    data: {
+         RID: rid
+            },
+           success: function(result) {
+                if (result.success) {
+         showMessage('success', result.message);
+  row.remove();
+     } else {
+        showMessage('error', result.message);
+    }
+          },
+          error: function() {
+           showMessage('error', '刪除失敗');
+           }
+            });
+     }
+
+    // 關閉對話框
+     function closeDialog() {
+            var topWindow = window;
+            while (topWindow.parent && topWindow.parent !== topWindow) {
+      topWindow = topWindow.parent;
+          if (typeof topWindow.close2 === 'function') {
+        topWindow.close2();
+      return;
+        }
+          }
+      }
+  </script>
+</body>
+</html>

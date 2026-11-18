@@ -1,0 +1,279 @@
+﻿@using PagedList.Mvc
+@model WCals.ViewModels.NewModels.SUG0010Model
+@{
+    ViewBag.Title = "建議案管理";
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+@section head{
+        <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet" />
+        <style>
+        .card.with-nav-tabs {
+            display: flex;
+            flex-direction: column;
+            min-height: 600px;
+        }
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+        .tab-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .tab-pane {
+            flex: 1;
+            display: none;
+        }
+        .tab-pane.active {
+            display: flex;
+            flex-direction: column;
+        }
+        .tab-pane iframe {
+            flex: 1;
+            width: 100%;
+            min-height: 500px;
+            border: 0;
+        }
+        .ui-dialog {
+            z-index: 4000;
+        }
+    
+        /* 頁籤顏色修正 */
+        .card-header-tabs .nav-link:not(.active) {
+            color: #ffffff !important;
+            opacity: 0.85;
+        }
+        .card-header-tabs .nav-link:not(.active):hover {
+            opacity: 1;
+            color: #ffffff !important;
+        }
+        .card-header-tabs .nav-link.active {
+            color: #337ab7 !important;
+            font-weight: bold;
+        }
+</style>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            建議案管理
+            <small></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa-solid fa-dashboard"></i><a href="@Url.Content("~/")Home"> 首頁</a>
+            </li>
+            <li class="active">
+                <i class="fa-solid fa-file"></i>
+                <a href="@Url.Content("~/")SUG0000">建議案管理</a>
+            </li>
+        </ol>
+    </div>
+</div>
+
+@using (Html.BeginForm("Index", "SUG0000", FormMethod.Post, new { id = "mainForm" }))
+{
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white fw-bold">查詢條件</div>
+        <table class="table table-striped table-hover align-middle mb-0">
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="input-group">
+                                <span class="input-group-text">交辦人</span>
+                                @Html.TextBoxFor(x => x.INSTRUCT_NAME, new { @class = "form-control", id = "INSTRUCT_NAME" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group">
+                                <span class="input-group-text">建議人</span>
+                                @Html.TextBoxFor(x => x.SUG_NAME, new { @class = "form-control", id = "SUG_NAME" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group">
+                                <span class="input-group-text">關鍵字</span>
+                                @Html.TextBoxFor(x => x.SUG_CONTENT, new { @class = "form-control", id = "SUG_CONTENT" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group">
+                                <span class="input-group-text">起始日期</span>
+                                @Html.TextBoxFor(x => x.START_DATE, new { @class = "form-control", id = "START_DATE", placeholder = "yyyy/MM/dd" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group">
+                                <span class="input-group-text">結束日期</span>
+                                @Html.TextBoxFor(x => x.END_DATE, new { @class = "form-control", id = "END_DATE", placeholder = "yyyy/MM/dd" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary" type="button" onclick="searchData()"><i class="fa-solid fa-search"></i> 查詢</button>
+                            <button class="btn btn-success" type="button" onclick="openEdit(0)"><i class="fa-solid fa-plus"></i> 新增</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 頁籤區域 -->
+    <div class="card shadow-sm border-0 mb-4 with-nav-tabs">
+        <div class="card-header bg-primary text-white fw-bold">
+            <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                <li id="li1" role="presentation"  class="nav-item"><button type="button" class="nav-link active" data-bs-target="#tab1"    aria-controls="tab1" role="tab"  data-bs-toggle="tab">列管中</button></li>
+                <li id="li2" role="presentation" class="nav-item"><button type="button" class="nav-link" data-bs-target="#tab2"    aria-controls="tab2" role="tab"  data-bs-toggle="tab">已結案</button></li>
+            </ul>
+        </div>
+
+        <div class="card-body">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="tab1">
+                    <iframe id="iframe1" src=""></iframe>
+                </div>
+                <div class="tab-pane fade" id="tab2">
+                    <iframe id="iframe2" src=""></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 編輯對話框 -->
+    <div id="editDialog" title="編輯建議案" style="padding:5px;">
+        <iframe id="editFrame" src="" style="width:100%;height:100%;border:0;"></iframe>
+    </div>
+
+    <!-- 結案對話框 -->
+    <div id="closeDialog" title="結案" style="padding:5px;">
+        <iframe id="closeFrame" src="" style="width:100%;height:100%;border:0;"></iframe>
+    </div>
+}
+
+<script>
+    var h = $(window).height();
+    var w = $(window).width();
+
+    // 初始化對話框
+    function ActionDialog(id, wRatio, hRatio) {
+        wRatio = (typeof wRatio === "number" && !isNaN(wRatio)) ? wRatio : 0.8;
+        hRatio = (typeof hRatio === "number" && !isNaN(hRatio)) ? hRatio : 0.9;
+
+        $("#" + id).dialog({
+            autoOpen: false,
+            maxWidth: w,
+            maxHeight: h,
+            width: w * wRatio,
+            height: h * hRatio,
+            modal: true
+        });
+    }
+
+    // 初始化所有對話框
+    ActionDialog("editDialog", 0.7, 0.85);
+    ActionDialog("closeDialog", 0.6, 0.65);
+
+    $(document).ready(function () {
+        // 頁面載入時自動載入當前預設頁籤的對應資料
+        searchData();
+    });
+
+    // 頁籤切換時載入對應 iframe
+    $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+        // 樣式切換 logic
+        
+        
+
+        var target = $(e.target).attr("data-bs-target");
+        var tabNo = target.replace('#tab', '');
+        var iframe = $('#iframe' + tabNo);
+
+        // 如果 iframe 尚未載入，則載入
+        if (!iframe.attr('src') || iframe.attr('src') === '') {
+            loadIframe(tabNo);
+        }
+    });
+
+    function loadIframe(tabNo) {
+        var url = '@Url.Content("~/SUG0000/Tab")';
+        url += '?tab=' + tabNo;
+        url += '&INSTRUCT_NAME=' + encodeURIComponent($('#INSTRUCT_NAME').val() || '');
+        url += '&SUG_NAME=' + encodeURIComponent($('#SUG_NAME').val() || '');
+        url += '&SUG_CONTENT=' + encodeURIComponent($('#SUG_CONTENT').val() || '');
+        url += '&START_DATE=' + encodeURIComponent($('#START_DATE').val() || '');
+        url += '&END_DATE=' + encodeURIComponent($('#END_DATE').val() || '');
+        url += '&_t=' + new Date().getTime();
+
+        $('#iframe' + tabNo).attr('src', url);
+    }
+
+    function searchData() {
+        var activeTab = $('.nav-tabs button.active').attr('data-bs-target').replace('#tab', '');
+        loadIframe(activeTab);
+    }
+
+    // 開啟編輯對話框
+    function openEdit(sugId) {
+        var url = '@Url.Content("~/SUG0000/Edit")' + '?SUG_ID=' + sugId;
+        $("#editFrame").attr("src", url);
+        $("#editDialog").dialog("option", "title", sugId > 0 ? "編輯建議案" : "新增建議案");
+        $("#editDialog").dialog("open");
+    }
+
+    // 開啟結案對話框
+    function openClose(sugId) {
+        var url = '@Url.Content("~/SUG0000/Close")' + '?SUG_ID=' + sugId;
+        $("#closeFrame").attr("src", url);
+        $("#closeDialog").dialog("open");
+    }
+
+    // 關閉對話框並重新整理
+    function closeDialogAndRefresh() {
+        $("#editDialog").dialog("close");
+        $("#closeDialog").dialog("close");
+        refreshCurrentTab();
+    }
+
+    function closeEditDialog() {
+        $("#editDialog").dialog("close");
+    }
+
+    function closeCloseDialog() {
+        $("#closeDialog").dialog("close");
+    }
+
+    // 重新整理當前頁籤
+    function refreshCurrentTab() {
+        var activeTab = $('.nav-tabs button.active').attr('data-bs-target').replace('#tab', '');
+        loadIframe(activeTab);
+    }
+
+    // 刪除建議案
+    function deleteSug(sugId) {
+        if (!confirm('確定要刪除此建議案嗎？')) return;
+
+        $.ajax({
+            url: '@Url.Action("Delete", "SUG0000")',
+            type: 'POST',
+            data: { SUG_ID: sugId },
+            success: function (result) {
+                if (result.success) {
+                    alert('刪除成功');
+                    refreshCurrentTab();
+                } else {
+                    alert('刪除失敗: ' + result.message);
+                }
+            },
+            error: function () {
+                alert('刪除失敗');
+            }
+        });
+    }
+</script>

@@ -1,0 +1,222 @@
+﻿@model  IEnumerable<WCals.Models.OGCDEPT>
+@{
+    Layout = "~/Views/Shared/_Layout2_v2.cshtml";
+}
+
+<div class="card mb-3"><div class="card-body">
+    <h1>分支計畫</h1>
+    <hr />
+    <div class="form-horizontal">
+
+        <div class="form-group">
+            <span class="col-form-label col-md-2">主計畫名稱</span>
+            <div class="col-md-3">
+                <input id="MASTER_PJ_NAME" value="@ViewBag.Master_Plan_Name" readonly type="text" class="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="col-form-label col-md-2">主計畫年分</span>
+            <div class="col-md-3">
+                <input id="MASTER_SYR" value="@ViewBag.Master_Plan_SYR" readonly type="text" class="form-control" />
+            </div>
+        </div>
+
+        <br />
+        <h1>計畫內容</h1>
+        <hr />
+        <form id="CRUD_FORM" action="@Url.Action("Branch_Plan_Create_Function","WorkPlanMainten")">
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫年度</span>
+                <div class="col-md-3">
+                    <input id="SYR_STATUS" type="text" class="form-control" name="SYR" required/>
+                </div>
+                <div class="col-md-7">
+                    <input type="submit" value="存檔" class="btn btn-secondary" />
+                    <a href="@Url.Action("Index","WorkPlanMainten")" class="btn btn-primary">返回</a>
+                </div>
+            </div>
+
+            <div class="form-group" hidden>
+                <span class="col-form-label col-md-2">計畫AN_PID</span>
+                <div class="col-md-3">
+                    <input id="AN_PID" value="@ViewBag.Master_Plan_PID" type="text" class="form-control" name="AN_PID" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫名稱</span>
+                <div class="col-md-3">
+                    <input id="PJ_NAME" type="text" class="form-control" name="PJ_NAME" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">工作計畫編號</span>
+                <div class="col-md-3">
+                    <input id="WK_CODE" value="@ViewBag.Master_Plan_WK_CODE" readonly type="text" class="form-control" name="WK_CODE" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">工作計畫簡碼</span>
+                <div class="col-md-3">
+                    <input id="SIP_W_CODE" type="text" class="form-control" name="SIP_W_CODE" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">分支計畫編號</span>
+                <div class="col-md-3">
+                    <input id="PJ_CODE" type="text" class="form-control" name="PJ_CODE" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">年度預算</span>
+                <div class="col-md-3">
+                    <input id="PJ_FUND" type="text" class="form-control" name="PJ_FUND" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">會計計畫編號</span>
+                <div class="col-md-3">
+                    <input id="W_CODE_N" type="text" class="form-control" name="W_CODE_N" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">
+                    經費來源代碼<br />
+                    (公務預算:00000)
+                </span>
+                <div class="col-md-3">
+                    <input id="E_CODE_N" type="text" class="form-control" name="E_CODE_N" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">
+                    保留款<br />
+                    會計計畫編號
+                </span>
+                <div class="col-md-3">
+                    <input id="W_CODE" type="text" class="form-control" name="W_CODE" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">
+                    保留款<br />
+                    經費來源代碼<br />
+                    (公務預算:00000)
+                </span>
+                <div class="col-md-3">
+                    <input id="E_CODE" type="text" class="form-control" name="E_CODE" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經管單位</span>
+                <div class="col-md-3">
+                    <select id="ADV_DP_NAME" name="ADV_DP_NAME" class="form-select" required>
+
+                        <option selected disabled>請選擇</option>
+                        @foreach (var item in Model)
+                        {
+                            <option>@item.DEPT_NAME</option>
+                        }
+                    </select>
+                    @*<input id="ADV_DP_NAME" type="text" class="form-control" name="ADV_DP_NAME" />*@
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經管人員</span>
+                <div class="col-md-3" >
+                    <select id="ADV_UID_NAME" name="ADV_UID_NAME" class="form-select" required>
+                    </select>
+                    @*<input id="ADV_UID_NAME" type="text" class="form-control" name="ADV_UID_NAME" />*@
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">經費類別</span>
+                <div class="col-md-3">
+                    <select name="FUND_CATY" class="form-select" required>
+                        <option value="Y">公務預算</option>
+                        <option value="S">特別預算</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <span class="col-form-label col-md-2">計畫序號</span>
+                <div class="col-md-3">
+                    <input id="GP_ORDER" type="text" class="form-control" name="GP_ORDER" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">主計畫種類</span>
+                <div class="col-md-3">
+                    <select id="TYPE" name="Water_Type" class="form-select" required>
+                        <option disabled selected>
+                            請選擇
+                        </option>
+                        <option>
+                            雨水使用
+                        </option>
+                        <option>
+                            污水使用
+                        </option>
+                        <option>
+                            營管使用
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="col-form-label col-md-2">辦理內容概述</span>
+                <div class="col-md-3">
+                    <input id="CONT_DESC" type="text" class="form-control" name="CONT_DESC" required/>
+                </div>
+            </div>
+        </form>
+
+        <div class="form-group">
+            <span class="col-form-label col-md-2"></span>
+            <div class="col-md-3">
+            </div>
+        </div>
+
+    </div>
+
+</div></div>
+
+
+<script>
+    $('#ADV_DP_NAME').change(function () {
+        var DEPT_NAME = $('#ADV_DP_NAME').val();
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Branch_Plan_DEPTNAME_AJAX", "WorkPlanMainten")',
+            data: { DEPT_NAME: DEPT_NAME },
+            success: function (data1) {
+                var data = JSON.parse(data1);
+                if (data.length > 0) {
+                    $('#ADV_UID_NAME').empty();
+                    $('#ADV_UID_NAME').append($('<option value="" selected disabled></option>').val('').text('請選擇'));
+                    $.each(data, function (i, item) {
+                        $('#ADV_UID_NAME').append($('<option></option>').val(item.USER_ID).text(item.USER_NAME));
+                    })
+                }
+                else {
+                    $('#ADV_UID_NAME').empty();
+                    $('#ADV_UID_NAME').append($('<option></option>').val('').text('------'));
+                }
+            }
+        });
+    })
+</script>
